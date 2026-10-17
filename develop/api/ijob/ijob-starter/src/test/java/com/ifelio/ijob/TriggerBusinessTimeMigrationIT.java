@@ -2,6 +2,7 @@ package com.ifelio.ijob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.ifelio.ijob.contract.enums.TargetType;
 import com.ifelio.ijob.contract.enums.TriggerStatus;
@@ -44,7 +45,10 @@ class TriggerBusinessTimeMigrationIT {
                     + " ifj_trigger(id,target_type,target_id,trigger_type,idempotency_key,status,trigger_time)"
                     + " VALUES(1,'TASK',1,'MANUAL','legacy','SUCCESS','2026-10-10 16:30:00.000')");
         flyway.target("37").load().migrate();
-        new SqliteSchemaCompatibilityInspector(ds).verify();
+        // V37 is a historical fixture, not a release V1 installation.
+        assertThrows(
+                IllegalStateException.class,
+                () -> new SqliteSchemaCompatibilityInspector(ds).verify());
         var config =
                 new Configuration(
                         new Environment("business-time", new JdbcTransactionFactory(), ds));

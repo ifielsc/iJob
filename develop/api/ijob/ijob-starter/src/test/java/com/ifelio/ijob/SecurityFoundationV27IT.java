@@ -219,13 +219,21 @@ class SecurityFoundationV27IT {
         assertEquals(
                 0L,
                 jdbc.queryForObject("SELECT revision FROM ifj_schedule WHERE id=1", Long.class));
-        switch (vendor) {
-            case "mysql" -> new MySqlSchemaCompatibilityInspector(dataSource).verify();
-            case "postgresql" -> new PostgreSqlSchemaCompatibilityInspector(dataSource).verify();
-            case "sqlserver" -> new SqlServerSchemaCompatibilityInspector(dataSource).verify();
-            case "oracle" -> new OracleSchemaCompatibilityInspector(dataSource).verify();
-            default -> new SqliteSchemaCompatibilityInspector(dataSource).verify();
-        }
+        // The historical upgrade must preserve auth semantics, while release startup rejects it.
+        assertThrows(
+                IllegalStateException.class,
+                () -> {
+                    switch (vendor) {
+                        case "mysql" -> new MySqlSchemaCompatibilityInspector(dataSource).verify();
+                        case "postgresql" ->
+                                new PostgreSqlSchemaCompatibilityInspector(dataSource).verify();
+                        case "sqlserver" ->
+                                new SqlServerSchemaCompatibilityInspector(dataSource).verify();
+                        case "oracle" ->
+                                new OracleSchemaCompatibilityInspector(dataSource).verify();
+                        default -> new SqliteSchemaCompatibilityInspector(dataSource).verify();
+                    }
+                });
         Configuration configuration = new Configuration();
         configuration.setDatabaseId(vendor);
         configuration.setMapUnderscoreToCamelCase(true);

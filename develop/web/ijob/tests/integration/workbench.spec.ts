@@ -68,7 +68,8 @@ with sqlite3.connect(p/'isolated.db') as db:
   expect(data.recentFailures.map((v: { id: string }) => v.id)).toEqual(['4', '9007199254740993'])
   await expect(page.getByTestId('total')).toHaveText('4')
   await expect(page.getByTestId('rate')).toHaveText('50.00%')
-  await expect(page.locator('.workbench-node')).toContainText('API-only')
+  await expect(page.locator('.workbench-node')).toContainText('Worker 角色未配置')
+  await expect(page.locator('.workbench-node')).toContainText('调度未启用')
   await expect(page.locator('.workbench-backlog')).toContainText('1')
   await page
     .locator('.workbench-distribution')

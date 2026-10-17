@@ -117,7 +117,7 @@ const settings = {
   'spring.datasource.url': `jdbc:sqlite:${join(directory, 'isolated.db').replaceAll('\\', '/')}?foreign_keys=on&busy_timeout=10000&journal_mode=WAL&transaction_mode=IMMEDIATE`,
   'spring.datasource.hikari.minimum-idle': 0,
   'spring.flyway.enabled': true,
-  'spring.flyway.locations': 'classpath:db/migration/sqlite',
+  'spring.flyway.locations': 'classpath:db/release/sqlite',
   'app.platform-database.vendor': 'SQLITE',
   'app.runtime.mode': 'STANDALONE',
   'app.runtime.instance-name': 'frontend-isolated',

@@ -48,15 +48,17 @@ Full 尚未接入本次基础工作流。它需要 Windows（包含 BAT/PowerShe
 
 浏览器基线复验同时修复通知候选翻页后下拉框焦点丢失，并将工作台、生产通知记录空状态测试从过期 CSS 类改为可访问状态角色断言，同时对齐通知投递接口；没有放宽等待断言或跳过失败用例。云端 Windows 测试按真实路径比较 SQLite 目录，兼容 runner 的短路径别名；Linux 英文认证页在较矮视口的溢出通过收紧表单间距修复，仍保留小视口滚动和所有操作入口。
 
+本地扩展集成入口、P2 隔离环境方案和 P3 清点方法见[隔离集成与发布准备](isolated-integration.md)。保持本工作流完整，不以专项结果替代 Basic。
+
 ## 后端 IT 分组与后续覆盖
 
 基础入口明确选择 `*Test,RealSqliteMigrationIT,SqliteOfflineMigrationIT,SecurityHttpIT`，检查两个工程实际有测试执行，并要求三套 IT 有非跳过的成功用例。JUnit 汇总保留 failures/errors/skipped，跳过不会记为执行成功。Maven 的 `surefire.failIfNoSpecifiedTests=false` 仅容许不包含这些测试的子模块为空。
 
 基础环境不提供 Kafka/RabbitMQ，因此 RealMessageSourcesTest 中两项由 IJOB_MQ_IT 控制的真实消息源检查允许跳过，并明确记录；其他 suite 出现跳过会使入口失败。消息源真实集成需后续独立接入，不能算在基础通过范围内。
 
-其余 IT 仍需单独编排，不能直接把所有 `*IT` 接到基础任务：
+以下 IT 不在基础任务内，按专用入口编排，不能直接把所有 `*IT` 接到基础任务：
 
-- 本地 HTTP/SQLite 专项：ConcurrencyHttpIT、DataCheckHttpIT、DiagnosticsHttpIT、EtlFileIncrementalIT、FilesHttpIT、InstanceLogSnapshotIT、PushHttpIT、SecurityCompletionIT、Stage9cLifecycleHttpIT、TableIdMigrationIT、TriggerBusinessTimeMigrationIT、UnifiedExperienceHttpIT、WorkbenchHttpIT。
+- 本地 HTTP/SQLite 专项（使用 `tools/ci/verify-local-integration.ps1` 精确选择并要求零跳过）：ConcurrencyHttpIT、DataCheckHttpIT、DiagnosticsHttpIT、EtlFileIncrementalIT、FilesHttpIT、InstanceLogSnapshotIT、PushHttpIT、SecurityCompletionIT、Stage9cLifecycleHttpIT、TableIdMigrationIT、TriggerBusinessTimeMigrationIT、UnifiedExperienceHttpIT、WorkbenchHttpIT。
 - 四种服务数据库：Mysql/Postgresql/SqlServer/OracleDatabaseProvisionerIT、RealMysql/RealPostgresql/RealSqlServer/RealOracleMigrationIT、MysqlV19UpgradeIT、OracleIdSegmentConcurrencyIT。
 - 按 vendor/目标环境及历史数据编排：ParameterTemplateMigrationIT、TableIdServerMigrationIT、RuntimeGovernanceV26IT、SecurityFoundationV27IT、RealCrossDatabaseMigrationIT。
 

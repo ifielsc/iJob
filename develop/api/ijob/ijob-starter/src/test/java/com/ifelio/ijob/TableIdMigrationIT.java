@@ -34,7 +34,7 @@ class TableIdMigrationIT {
     @TempDir Path directory;
 
     @Test
-    void freshInstallShouldHaveIndependentSeedsAndNoLegacyTables() throws Exception {
+    void legacyFreshInstallShouldHaveIndependentSeedsAndNoLegacyTables() throws Exception {
         var ds = database("fresh");
         migrate(ds, "35");
         var jdbc = new JdbcTemplate(ds);
@@ -54,7 +54,10 @@ class TableIdMigrationIT {
         try (var c = ds.getConnection()) {
             TableIdSchemaVerifier.verify(c);
         }
-        new SqliteSchemaCompatibilityInspector(ds).verify();
+        // Historical migrations remain testable but cannot be used as a release database.
+        assertThrows(
+                IllegalStateException.class,
+                () -> new SqliteSchemaCompatibilityInspector(ds).verify());
         var factory = sessions(ds);
         var generator = generator(factory);
         assertEquals(1, generator.nextId(IdNamespace.CALENDAR));
@@ -79,6 +82,29 @@ class TableIdMigrationIT {
                 scalar(
                         jdbc,
                         "SELECT COUNT(*) FROM ifj_id_segment WHERE segment_key='pk:ifj_resource'"));
+    }
+
+    @Test
+    void releaseBaselinePassesStartupInspectionAndUsesIndependentIdSeeds() throws Exception {
+        var ds = database("release");
+        var flyway =
+                Flyway.configure()
+                        .dataSource(ds)
+                        .locations("classpath:db/release/sqlite")
+                        .table("ifj_schema_history")
+                        .cleanDisabled(true)
+                        .load();
+        ReleaseSchemaBoundary.beforeMigration(flyway, "sqlite");
+        assertEquals(1, flyway.migrate().migrationsExecuted);
+        ReleaseSchemaBoundary.beforeMigration(flyway, "sqlite");
+        new SqliteSchemaCompatibilityInspector(ds).verify();
+        try (var connection = ds.getConnection()) {
+            TableIdSchemaVerifier.verify(connection);
+        }
+        var generator = generator(sessions(ds));
+        assertEquals(1, generator.nextId(IdNamespace.CALENDAR));
+        assertEquals(1, generator.nextId(IdNamespace.TASK));
+        assertEquals(0, flyway.migrate().migrationsExecuted);
     }
 
     @Test

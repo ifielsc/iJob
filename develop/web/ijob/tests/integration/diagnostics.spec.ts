@@ -63,8 +63,21 @@ with sqlite3.connect(p/'isolated.db') as db:
   expect(JSON.stringify(data)).not.toContain('private')
   await expect(page.locator('tbody')).toContainText('Published task')
   await page.getByRole('button', { name: '查看 10 的证据', exact: true }).click()
+  const triggerDetail = page.waitForResponse(
+    (r) => new URL(r.url()).pathname === '/api/triggers/10' && r.request().method() === 'GET',
+  )
   await page.locator('.diagnostics-drawer').getByRole('link', { name: '查看触发记录' }).click()
-  await expect(page.locator('.run-drawer')).toContainText('800')
+  const inspected = await triggerDetail
+  expect(inspected.status()).toBe(200)
+  expect((await inspected.json()).data).toMatchObject({
+    id: '10',
+    targetId: '800',
+    taskDefinitionId: '801',
+  })
+  await expect(
+    page.locator('.run-drawer').getByText('记录 ID', { exact: true }).locator('+ dd'),
+  ).toHaveText('10')
+  await expect(page.locator('.run-drawer')).toContainText('历史名称不可用')
   await page.keyboard.press('Escape')
   await page.getByRole('link', { name: '返回运行诊断', exact: false }).click()
   await expect(page.getByTestId('diagnostics-count')).toBeVisible()

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { fileConfig } from '../etl-fixture'
-test('real SQLite V30: ETL publish, edit, exact markers, revision conflict and source reference protection', async ({
+test('real isolated SQLite: ETL publish, edit, exact markers, revision conflict and source reference protection', async ({
   page,
   request,
 }) => {

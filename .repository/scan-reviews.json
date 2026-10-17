@@ -681,21 +681,21 @@
     },
     {
       "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/SecurityFoundationV27IT.java",
-      "line": 345,
+      "line": 353,
       "rule": "credential-setter",
       "line_sha256": "f7560241dd192623e310031cf272bfc65057a36aff0cbfa5a12b4b293a13a696",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
       "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/SecurityFoundationV27IT.java",
-      "line": 366,
+      "line": 374,
       "rule": "credential-setter",
       "line_sha256": "06b28f0e11978f497ac6430944072efb8a45c14f005bb4b96d7aef03cd7f024b",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
       "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/SecurityFoundationV27IT.java",
-      "line": 511,
+      "line": 519,
       "rule": "credential-setter",
       "line_sha256": "f52ebde84d986858b94da21c3b501f809c78cca69f3f01f2dd8618b4b836ac9e",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."

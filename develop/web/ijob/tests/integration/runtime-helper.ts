@@ -66,6 +66,14 @@ export async function verifyRuntime(
     expect(typeof row.id).toBe('string')
     if (row.notifyConfigId) expect(typeof row.notifyConfigId).toBe('string')
   }
+  await expect(
+    page.getByRole('tabpanel', { name: '发送记录', exact: true }).getByRole('status'),
+  ).toHaveText('暂无记录')
+  const attempts = page.waitForResponse(
+    (r) => new URL(r.url()).pathname === '/api/notify-send-logs' && r.request().method() === 'GET',
+  )
+  await page.getByRole('button', { name: '逐次发送记录', exact: true }).click()
+  expect((await attempts).ok()).toBe(true)
   await expect(page.locator('.runs-page')).toBeVisible()
   await expect(page.locator('.request-error')).toHaveCount(0)
   expect((await request.get('/api/notify-send-logs')).status()).toBe(401)

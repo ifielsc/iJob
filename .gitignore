@@ -3460,6 +3460,7 @@
 !/develop/web/ijob/vite.config.ts
 !/develop/web/ijob/vitest.config.ts
 !/document/ci/basic-ci.md
+!/document/ci/isolated-integration.md
 !/document/examples/deployment/frontend.env.local.example
 !/document/examples/deployment/nginx.conf.example
 !/document/repository/private-repository.md
@@ -3467,6 +3468,8 @@
 !/tools/ci/fixtures/remote-publication-fixture.py
 !/tools/ci/fixtures/stage7e-sftp-fixture.py
 !/tools/ci/install-maven.ps1
+!/tools/ci/inventory-dependencies.py
 !/tools/ci/requirements.txt
 !/tools/ci/verify-docker.py
+!/tools/ci/verify-local-integration.ps1
 !/tools/repository/prepare.py
