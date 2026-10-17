@@ -4,11 +4,14 @@ import com.ifelio.ijob.plugin.push.PushMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MetricsPublisher extends AbstractPushPublisher {
     private final PublishMetrics metrics;
+    private final Set<CompletableFuture<Void>> completions = ConcurrentHashMap.newKeySet();
     private final AtomicReference<Throwable> firstFailure = new AtomicReference<>();
 
     public MetricsPublisher(PushPublisher delegate, PublishMetrics metrics) {
@@ -46,6 +49,7 @@ public class MetricsPublisher extends AbstractPushPublisher {
             return CompletableFuture.failedFuture(exception);
         }
         CompletableFuture<Void> tracked = new CompletableFuture<>();
+        completions.add(tracked);
         future.whenComplete(
                 (ignored, failure) -> {
                     metrics.complete(failure);
@@ -62,6 +66,7 @@ public class MetricsPublisher extends AbstractPushPublisher {
                 });
         tracked.whenComplete(
                 (ignored, failure) -> {
+                    completions.remove(tracked);
                     if (tracked.isCancelled() && !future.isDone()) {
                         future.cancel(true);
                     }
@@ -71,7 +76,11 @@ public class MetricsPublisher extends AbstractPushPublisher {
 
     @Override
     public void flush() {
+        CompletableFuture<Void> snapshot =
+                CompletableFuture.allOf(completions.toArray(CompletableFuture[]::new));
         super.flush();
+        // The inner send window can finish before our outcome callbacks run.
+        snapshot.handle((ignored, failure) -> null).join();
         // A full inner window may already have drained and failed during publish().
         // Retain that failure even when the caller relies on flush instead of joining batches.
         Throwable failure = firstFailure.get();

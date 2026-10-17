@@ -38,15 +38,15 @@ python tools/ci/verify-docker.py --run-id local-docker-001
 
 FTP/SFTP 单元测试使用已审查的 `tools/ci/fixtures` 回环内存服务，主机密钥每次生成，不读取业务文件。初次干净构建发现这两个 fixture 未随初始源码入库，本次补齐并去掉 Java 测试的机器专用 Python 路径；外层历史原件不改动。
 
-基础检查同时发现 Windows 脚本取消后的临时文件句柄短暂占用问题：清理现对文件系统异常最多重试 1 秒，并保留线程中断状态。现有重复 20 次的取消回归保持断言不变；冻结交付包不随这处源码修复更新。
+基础检查同时发现 Windows 脚本取消后的临时文件句柄短暂占用问题：清理现对文件系统异常最多重试 1 秒，并保留线程中断状态。现有重复 20 次的取消回归保持断言不变；冻结交付包不随这处源码修复更新。云端还发现发送窗口 flush 与计数回调之间的竞态，现等待本次发送的计数回调完成再返回，并用受控线程回归验证。脚本编码测试显式设置 BAT UTF-8 代码页，以及 PowerShell UTF-16 脚本/UTF-8 输出，继续断言中文结果，避免依赖操作系统默认语言。
 
 配置回归已对齐既定交付：ETL/批量 ETL 默认开启，STATIC 默认认证不变。私有 application-local.yml 原本就不入库，旧测试对其内容的依赖改为检查它未混入打包资源；CI 不生成或复制个人配置来满足测试。
 
-前端默认 Suite 为 Basic。`-Suite Full` 在 Basic 后顺序运行 security、batch-etl、diagnostics、etl、localjar、monitor、workbench 七套真实后端集成，不能在同一主机同时运行这些固定端口配置。parameters 专项配置是默认 E2E 已包含的 parameters.spec.ts 的独立入口，不在基础流程中重复执行。
+前端默认 Suite 为 Basic。CI 将普通 E2E 和生产构建浏览器测试分成 4 片，每片在独立 runner 使用 1 个 worker；每片仍执行完整静态检查、单测和构建，Docker 等待四片全部通过。这样避免小规格私有仓库 runner 上四个浏览器争用资源；不放宽用例超时、不跳过测试。报告 selection.json 标明分片，统计单测时不能把四片重复执行误算为新增用例。本地默认不分片；可用 `-Shard 1/4 -BrowserWorkers 1` 单独复现某片。`-Suite Full` 在 Basic 后顺序运行 security、batch-etl、diagnostics、etl、localjar、monitor、workbench 七套真实后端集成，不能在同一主机同时运行这些固定端口配置。parameters 专项配置是默认 E2E 已包含的 parameters.spec.ts 的独立入口，不在基础流程中重复执行。
 
 Full 尚未接入本次基础工作流。它需要 Windows（包含 BAT/PowerShell 场景）、同提交后端和 SPI JAR、JDK 21、Python/Paramiko、Git Shell、PostgreSQL initdb/pg_ctl/psql。使用 `IJOB_TEST_PYTHON`、`IJOB_TEST_SH`、`IJOB_TEST_PG_BIN` 显式指定工具；其他 JAR/目录覆盖见[前端说明](../../develop/web/ijob/README.md)。所有 fixture 必须在新的临时目录运行，不使用用户数据。工作台与诊断 fixture 已改用可配置 Python；未以本次 Basic 通过宣称 Full 已通过。
 
-浏览器基线复验同时修复通知候选翻页后下拉框焦点丢失，并将工作台、生产通知记录空状态测试从过期 CSS 类改为可访问状态角色断言，同时对齐通知投递接口；没有放宽等待断言或跳过失败用例。
+浏览器基线复验同时修复通知候选翻页后下拉框焦点丢失，并将工作台、生产通知记录空状态测试从过期 CSS 类改为可访问状态角色断言，同时对齐通知投递接口；没有放宽等待断言或跳过失败用例。云端 Windows 测试按真实路径比较 SQLite 目录，兼容 runner 的短路径别名；Linux 英文认证页在较矮视口的溢出通过收紧表单间距修复，仍保留小视口滚动和所有操作入口。
 
 ## 后端 IT 分组与后续覆盖
 

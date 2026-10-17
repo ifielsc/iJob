@@ -1,6 +1,8 @@
 param(
     [Parameter(Mandatory = $true)][ValidatePattern('^[a-zA-Z0-9-]+$')][string]$RunId,
-    [ValidateSet('Basic', 'Full')][string]$Suite = 'Basic'
+    [ValidateSet('Basic', 'Full')][string]$Suite = 'Basic',
+    [ValidatePattern('^[1-9][0-9]*/[1-9][0-9]*$')][string]$Shard,
+    [ValidateRange(0, 64)][int]$BrowserWorkers = 0
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
@@ -8,7 +10,12 @@ $webRoot = Join-Path $projectRoot 'develop/web/ijob'
 $reportRoot = Join-Path $projectRoot "test/reports/$RunId"
 if (Test-Path -LiteralPath $reportRoot) { throw 'Evidence directory already exists; choose a new RunId.' }
 if ($Suite -eq 'Full' -and [IO.Path]::DirectorySeparatorChar -ne '\') { throw 'Full includes Windows BAT/PowerShell integration; use a Windows worker.' }
+if ($Shard) {
+    $parts = $Shard.Split('/')
+    if ($Suite -ne 'Basic' -or [int]$parts[0] -gt [int]$parts[1]) { throw 'Sharding requires Basic and an index no greater than the total.' }
+}
 New-Item -ItemType Directory -Path $reportRoot | Out-Null
+@{ suite = $Suite; shard = $Shard; browserWorkers = $BrowserWorkers } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $reportRoot 'selection.json')
 Push-Location $webRoot
 $oldHtml = $env:PLAYWRIGHT_HTML_OUTPUT_DIR
 $oldJunit = $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE
@@ -46,7 +53,10 @@ try {
         $env:PLAYWRIGHT_HTML_OUTPUT_DIR = Join-Path $reportRoot "$name-html"
         $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE = Join-Path $reportRoot "$name-junit.xml"
         # Configs start their own servers; execute sequentially to avoid port collisions.
-        & pnpm exec playwright test --config $browser.Config '--reporter=list,junit,html' --output (Join-Path $reportRoot $name) 2>&1 | Tee-Object -FilePath (Join-Path $reportRoot "$name.log")
+        $browserArgs = @('exec', 'playwright', 'test', '--config', $browser.Config, '--reporter=list,junit,html', '--output', (Join-Path $reportRoot $name))
+        if ($Shard) { $browserArgs += @('--shard', $Shard) }
+        if ($BrowserWorkers) { $browserArgs += @('--workers', $BrowserWorkers) }
+        & pnpm @browserArgs 2>&1 | Tee-Object -FilePath (Join-Path $reportRoot "$name.log")
         if ($LASTEXITCODE -ne 0) { throw "$name failed: $LASTEXITCODE" }
         [xml]$junit = Get-Content -Raw -LiteralPath $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE
         if ([int]$junit.testsuites.tests -le [int]$junit.testsuites.skipped) { throw "No active browser tests: $name" }

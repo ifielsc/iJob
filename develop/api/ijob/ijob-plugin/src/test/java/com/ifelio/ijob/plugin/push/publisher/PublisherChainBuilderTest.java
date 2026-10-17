@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.ifelio.ijob.plugin.push.FutureWindow;
 import com.ifelio.ijob.plugin.push.PushMessage;
 import com.ifelio.ijob.plugin.push.compress.CompressionService;
 import com.ifelio.ijob.plugin.push.retry.RetryExecutor;
@@ -17,6 +18,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class PublisherChainBuilderTest {
@@ -130,6 +135,42 @@ class PublisherChainBuilderTest {
         assertEquals(0, metrics.getFailedCount());
         assertTrue(message.isCompressed());
         assertEquals("gzip", message.getHeaders().get("content-encoding"));
+    }
+
+    @Test
+    void flushMustWaitForOutcomeAccountingAfterSendCompletes() throws Exception {
+        CompletableFuture<Void> sent = new CompletableFuture<>();
+        CountDownLatch innerFlushed = new CountDownLatch(1);
+        AsyncPublisher inner =
+                new AsyncPublisher(
+                        new RecordingPublisher(message -> sent),
+                        new FutureWindow(2, 5, TimeUnit.SECONDS)) {
+                    @Override
+                    public void flush() {
+                        super.flush();
+                        innerFlushed.countDown();
+                    }
+                };
+        PublishMetrics metrics = new PublishMetrics();
+        MetricsPublisher publisher = new MetricsPublisher(inner, metrics);
+        CompletableFuture<Void> result =
+                publisher.publish(PushMessage.builder().payload("payload").build());
+        try (var workers = Executors.newFixedThreadPool(2)) {
+            CompletableFuture<Void> flushed;
+            synchronized (metrics) {
+                workers.submit(() -> sent.complete(null));
+                flushed = CompletableFuture.runAsync(publisher::flush, workers);
+                assertTrue(innerFlushed.await(5, TimeUnit.SECONDS));
+                assertThrows(TimeoutException.class, () -> flushed.get(100, TimeUnit.MILLISECONDS));
+                assertFalse(result.isDone());
+            }
+            flushed.get(5, TimeUnit.SECONDS);
+            assertTrue(result.isDone());
+            assertEquals(1, metrics.getSuccessCount());
+            assertEquals(0, metrics.getFailedCount());
+        } finally {
+            publisher.close();
+        }
     }
 
     @Test

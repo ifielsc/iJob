@@ -81,7 +81,11 @@ jobs:
           if-no-files-found: warn
 
   frontend:
-    name: Frontend
+    name: Frontend ${{ matrix.shard }}/4
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     needs: repository
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -101,11 +105,11 @@ jobs:
           pnpm exec playwright install --with-deps chromium
       - name: Static, unit, build and browser checks
         shell: pwsh
-        run: ./test/tools/verify-frontend.ps1 -RunId frontend-${{ github.run_id }}-${{ github.run_attempt }} -Suite Basic
+        run: ./test/tools/verify-frontend.ps1 -RunId frontend-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }} -Suite Basic -Shard '${{ matrix.shard }}/4' -BrowserWorkers 1
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
-          name: frontend-${{ github.run_id }}-${{ github.run_attempt }}
+          name: frontend-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard }}
           path: test/reports/frontend-*
           retention-days: 14
           if-no-files-found: warn

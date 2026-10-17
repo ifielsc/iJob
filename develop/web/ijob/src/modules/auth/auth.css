@@ -158,8 +158,12 @@
     padding-bottom: 8px;
   }
   .auth-card {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  .auth-form {
+    gap: 10px;
+    margin-top: 14px;
   }
   .auth-footer {
     padding-top: 10px;

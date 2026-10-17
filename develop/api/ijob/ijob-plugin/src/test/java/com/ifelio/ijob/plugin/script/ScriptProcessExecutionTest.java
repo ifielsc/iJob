@@ -219,16 +219,15 @@ class ScriptProcessExecutionTest {
     }
 
     @Test
-    void windowsBatShouldSupportSeparateNativeScriptAndOutputCharsets() throws Exception {
+    void windowsBatShouldSupportExplicitUtf8ScriptAndOutputCharsets() throws Exception {
         if (!isWindows()) {
             return;
         }
-        Charset nativeCharset = nativeCharset();
         ScriptTaskConfig config = new ScriptTaskConfig();
         config.setEngine(ScriptEngine.BAT);
-        config.setScript("@echo off\r\necho 中文编码\r\n");
-        config.setScriptCharset(nativeCharset.name());
-        config.setOutputCharset(nativeCharset.name());
+        config.setScript("@echo off\r\nchcp 65001 >nul\r\necho 中文编码\r\n");
+        config.setScriptCharset("UTF-8");
+        config.setOutputCharset("UTF-8");
         BatScriptExecutor executor =
                 new BatScriptExecutor(streamPool(), new ProcessStreamCollector());
 
@@ -243,16 +242,17 @@ class ScriptProcessExecutionTest {
     }
 
     @Test
-    void windowsPowerShellShouldSupportNativeScriptAndOutputCharsets() throws Exception {
+    void windowsPowerShellShouldSupportSeparateScriptAndOutputCharsets() throws Exception {
         if (!isWindows()) {
             return;
         }
-        Charset nativeCharset = nativeCharset();
         ScriptTaskConfig config = new ScriptTaskConfig();
         config.setEngine(ScriptEngine.POWERSHELL);
-        config.setScript("Write-Output '中文编码'");
-        config.setScriptCharset(nativeCharset.name());
-        config.setOutputCharset(nativeCharset.name());
+        config.setScript(
+                "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); "
+                        + "Write-Output '中文编码'");
+        config.setScriptCharset("UTF-16");
+        config.setOutputCharset("UTF-8");
         PowerShellExecutor executor =
                 new PowerShellExecutor(streamPool(), new ProcessStreamCollector());
 
@@ -341,11 +341,6 @@ class ScriptProcessExecutionTest {
 
     private boolean isWindows() {
         return System.getProperty("os.name").toLowerCase().contains("windows");
-    }
-
-    private Charset nativeCharset() {
-        return Charset.forName(
-                System.getProperty("native.encoding", Charset.defaultCharset().name()));
     }
 
     private void awaitExit(ProcessHandle processHandle) throws Exception {
