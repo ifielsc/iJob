@@ -7,17 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 class SqliteDatabasePathTest {
     @TempDir Path temporaryDirectory;
 
     @Test
-    void shouldNormalizeAbsoluteLocalFileAndDeriveSidecar() {
+    void shouldNormalizeAbsoluteLocalFileAndDeriveSidecar() throws IOException {
         Path database = temporaryDirectory.resolve("nested/../platform.db");
         Path normalized = SqliteDatabasePath.fromJdbcUrl("jdbc:sqlite:" + database);
 
-        assertEquals(temporaryDirectory.resolve("platform.db"), normalized);
+        assertEquals(temporaryDirectory.toRealPath().resolve("platform.db"), normalized);
         assertEquals(Path.of(normalized + ".ijob.lock"), SqliteDatabasePath.lockFile(normalized));
     }
 
