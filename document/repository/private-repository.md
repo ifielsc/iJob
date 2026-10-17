@@ -1,6 +1,48 @@
-# 私有仓库本地准备
+# 私有仓库维护与同步
 
-本说明记录初始白名单、忽略规则与敏感信息检查。后续本地 Git 初始化与首次提交从已核验的干净候选目录进行，不能直接把历史工作区整体入库。远程 GitHub 仓库尚未创建，未设置 remote 或推送；实际本地提交状态以 Git 日志为准。
+2026-10-18 已创建 [ifelio/iJob](https://github.com/ifelio/iJob)，状态为 Private，默认分支 main，只有所有者 ifelio，无其他协作者或待接受邀请。首个提交为 `92eed059e605833fcd6f98a1a1c512297c7973c9`，首次导入 2,190 个文件；远程路径、模式及 blob 哈希与审核后的本地提交一致。
+
+本机使用 HTTPS + GCM 浏览器授权，提交身份为 ifelio 与 GitHub 隐私邮箱，仅在当前仓库设置。认证秘密不写入仓库。GitHub 仓库是源码库，完整交付包和历史验收资料继续保存在维护工作区。
+
+## 在哪里继续开发
+
+在已连接 `https://github.com/ifelio/iJob.git` 的 Git 根目录下继续维护 `develop/api/ijob`、`develop/api/ijob-monitor-agent`、`develop/web/ijob` 和文档。维护电脑已将整个仓库（含 .git 和未提交文档）迁移到独立的正式源码目录，不再使用 test 下的候选目录；具体本机路径见外层工作区入口。此目录不能按临时测试产物清理或重新导出覆盖。
+
+用 `git rev-parse --show-toplevel`、`git remote -v` 确认位置和远程。旧外层 develop 树是导入前保留副本，不能与本仓库同时作为编辑入口，也不能整目录复制覆盖本仓库。历史报告和机器专用路径留在外层工作区索引。
+
+当前冻结交付名为 `release-1.0.0-20261017-setup-guide`，位于维护工作区 outputs。源码仓库不含 outputs、用户数据或发布二进制，也没有创建 GitHub Release。提交/推送不会更新已交付 JAR 或部署应用。
+
+## 日常同步 GitHub
+
+开始修改前确认工作区干净；有未提交改动时先审阅并保存，不执行清理或强制重置。然后在本仓库执行：
+
+```sh
+git status --short
+git switch main
+git pull --ff-only origin main
+```
+
+修改、执行与改动相关的检查后，运行敏感信息扫描。将 RUN_ID 替换为每次唯一的证据目录名：
+
+```sh
+python tools/repository/prepare.py scan --report test/reports/RUN_ID/scan.json
+```
+
+新增文件须先加入逐文件白名单并重新生成忽略规则，见下文。扫描通过后，仅暂存本次要交付的文件；下面以文档修改为例，其他修改请替换路径和提交说明：
+
+```sh
+git add -- README.md document/repository/private-repository.md develop/deployment/first-run/README.md
+git diff --cached --stat
+git diff --cached
+git commit -m "docs: update repository and configuration guidance"
+git push origin main
+git fetch origin
+git rev-parse HEAD
+git rev-parse origin/main
+git status --short
+```
+
+只有完成检查且希望同步时才执行 commit / push。最后两个提交号应相同，工作区应符合预期。若远程已有新提交导致拒推，先获取并审阅差异、解决冲突和重新验证；不使用 force push 覆盖远程。GCM 如要求重新登录，在浏览器完成授权，不把 token 拼入 origin URL。
 
 ## 白名单
 
@@ -30,15 +72,17 @@ python tools/repository/prepare.py export --destination test/repository-candidat
 
 扫描包含常见私钥/供应商 token、凭据赋值/Setter、URL 中凭据、BCrypt 字面量、内网地址、个人路径和邮件地址。命中记录只含文件、行、规则和行摘要；模拟测试凭据、占位符、界面文案等在 [scan-reviews.json](../../.repository/scan-reviews.json) 逐条注明理由。审查项绑定精确行摘要，修改后须重新审查；真实本地值、私钥和供应商 token 不能用该表豁免。没有整目录免检规则。
 
-启发式扫描不等于证明不存在秘密。二进制仅允许审查后的应用图片，另核对内容/用途；未扫描不存在的 Git 历史。后续真正提交时还需复查 staged diff、实际 Git 忽略行为与提交历史；若发现实际暴露，按泄露范围撤回并轮换，而非仅删文件。
+启发式扫描不等于证明不存在秘密。二进制仅允许审查后的应用图片，另核对内容/用途；prepare.py 只扫描白名单文件，不扫描 Git 历史。首次提交的完整文件树已经核验；后续每次提交仍需复查 staged diff、实际 Git 忽略行为和必要的历史检查；若发现实际暴露，按泄露范围撤回并轮换，而非仅删文件。
 
 新增文件先核实用途/内容，再加入 `allowlist.json`，运行 `python tools/repository/prepare.py ignore` 重新生成根 `.gitignore`，复验并导出新的候选目录。不能通过批量扩大通配符或 `git add -f` 跳过审查。根规则使用精确路径，新增秘密或构建产物默认被拒绝；`.gitignore` 对将来已经跟踪的文件不提供保护。
 
-## 后续需要准备
+## 剩余事项（按建议顺序）
 
-1. GitHub 归属：个人账号或组织，以及准确 owner 和期望仓库名；初次必须为 Private。
-2. 协作者名单和所需权限；仅自己维护可先不邀请任何人。
-3. 本机 Git 提交显示姓名、邮箱（可选择平台提供的隐私邮箱）；本机登录方式选择 SSH 或 HTTPS。实际授权时在本机登录，不在聊天、源码或文档中粘贴 token/私钥。
-4. 若组织要求指定默认分支、分支保护或 CI 运行器，提供要求。没有特殊要求时可后续采用 main；本轮尚未创建分支或 CI。
+1. 仓库维护：准备 CI，覆盖后端、Agent、前端和 Docker；后续文档与源码变更按上述审阅、检查、提交和同步流程维护。五库测试使用隔离资源，受限数据库的运行器/Secrets 单独配置，不连接现有 QA/cluster。
+2. 发布基线：从已记录提交重新构建候选，补齐依赖/SBOM、漏洞适用性与处置、第三方许可、制品哈希、镜像 digest、迁移线和变更日志。既有隔离验收不能替代新候选的必要回归。
+3. 生产目标环境：确定数据库精确版本/字符集、主机资源、单机或双节点、插件解释器/文件资源；落实 TLS、访问控制、readiness 负载均衡、日志、告警与负责人。
+4. 迁移与恢复：在另行授权后准备最新一致快照，验证原密钥/文件/在途任务、真实同包迁移、首次写入及回退；目前外层数据与 QA/cluster 仍保持原样。生产备份周期、恢复和长期实际负载仍需签收。
+5. 后续目录治理：继续核对剩余目录、测试与备份恢复用途；有引用或未确认的材料保留，不按日期/命名直接删除。
+6. 未来公开：确定许可证/版权、素材和数据库驱动再分发条件，补公开贡献/安全文档并再次检查历史。保持私有，不把此次入库视作公开授权。
 
-现在不需要生产数据库密码、QA/cluster 密钥或云服务秘密。CI 真正接入隔离数据库时再配置受限运行器和平台 Secrets。未来转公开前另行确定版权归属、许可证、品牌素材/字体/驱动及依赖再分发条件；本轮不擅自添加许可证。
+仓库名、可见性、分支、协作者、提交身份和 HTTPS 认证已经落实，不再列为待准备信息。暂不需要生产数据库密码或 QA/cluster 密钥。

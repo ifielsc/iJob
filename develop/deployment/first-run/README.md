@@ -93,6 +93,40 @@ PostgreSQL 默认 schema 为 `public`；使用其他 schema 时，在应用进�
 
 例如定时全局开关是 `app.schedule.enabled=true`，当前向导已默认开启。页面里的调度还需启用且满足 Cron、时区、有效期和目标条件。具体任务、资源、调度保存在数据库，通常不需要重启；仅开全局开关不会自动创建任务或调度。
 
+### 5.1 文件里没列出的配置怎么改
+
+生成的 application.properties 是常用项集合，不是完整配置白名单。只要当前版本已经读取/绑定这个配置项，就可以在同一个外部文件补写完整键名；没有该键时沿用内置默认值。不要修改 JAR 内文件，也不用重新运行初始化向导。
+
+例如，想改变内置 HTTP 连接/读取超时，可在 `IJOB_HOME/application.properties` 中添加以下配置；如果同名键已经存在，就修改原行，不重复追加：
+
+```properties
+app.http.connect-timeout=10s
+app.http.read-timeout=60s
+```
+
+这两个键在当前源码中存在，内置值分别为 5s 和 30s。示例是按需覆盖，不改变当前交付的默认配置。它们作用于使用平台统一 HTTP 客户端配置的调用，不代表所有插件或外部系统的全部超时。
+
+确认支持的键、类型与单位时，查阅对应发布版本的 [application.yml](../../api/ijob/ijob-starter/src/main/resources/application.yml)、其导入的 database 配置及 [AppProperties](../../api/ijob/ijob-common/src/main/java/com/ifelio/ijob/common/config/AppProperties.java)。其他配置类、Spring Boot/组件配置、日志 XML 也可能提供配置入口，不能只按生成文件判断是否支持。完整二进制交付中可查随包源码归档；不要用未来分支新增的键配置旧 JAR。任意自造键不会自动增加功能，拼写错误可能被忽略。
+
+操作步骤：确认当前安装的 IJOB_HOME → 停机并保留配置/数据/原密钥的备份 → 添加或修改已支持的键 → 按原方式启动 → 核对日志、实际功能与预期值。普通外部文件修改不支持自动热加载；不要为检查配置把包含秘密的完整配置或 env 端点公开。
+
+### 5.2 生效来源与边界
+
+Windows/Linux 原生启动器通过 `spring.config.additional-location` 加载安装数据目录的文件；Docker 首次启动模板把同一个宿主配置挂载为 `/run/secrets/application.properties` 并加载。外部文件可覆盖包内默认值，命令行、Java 系统属性、直接绑定的环境变量或 SPRING_APPLICATION_JSON 仍可能覆盖文件。`IJOB_*` 中也有仅供 YAML 占位符或启动器使用的变量，不应把所有名称一律当成更高优先级的配置。框架加载规则见 [Spring Boot 3.5 外部配置说明](https://docs.spring.io/spring-boot/3.5/reference/features/external-config.html)。
+
+原生启动器显式设置 profile、Web 目录和日志配置位置等参数；Linux start.sh 不接受任意额外参数。若这些固定参数与文件冲突，应按启动器设计处理，不能假设在文件里改同名项一定有效，也不能假设启动器会读取 JAVA_OPTS。
+
+| 想改的内容 | 正确位置 |
+| --- | --- |
+| 已支持的 app.*、server.*、spring.* 应用配置 | 安装数据目录的 application.properties；检查类型、单位和更高优先级来源，重启生效 |
+| 原生日志文件大小/保留期 | 同一文件可加 `ijob.logging.max-file-size=20MB`、`ijob.logging.max-history=30`、`ijob.logging.total-size-cap=500MB`；只适用于随包原生日志 XML |
+| Docker 日志轮转、端口映射、容器资源/环境 | 宿主 compose.yaml；修改后使用同一项目执行 compose up -d 重新协调，需要时重建容器，不能只改 application.properties |
+| IJOB_HOME、JDK 路径、JVM 堆大小 | 启动环境或明确支持这些参数的服务/启动器；这些不是普通 Spring 应用配置 |
+| 具体任务、资源、调度参数 | 管理页面和数据库；与全局开关分开 |
+| 当前程序完全没有读取或支持的新功能参数 | 先开发配置绑定/行为及验证，再发布新版；仅增加配置行不会实现功能 |
+
+Docker 修改已挂载文件后需要重启应用；若编辑器原子替换文件使容器仍绑定旧文件，需使用同一项目重新创建 backend 容器。路径/环境/Compose 配置变更也需重新协调，不删除数据目录或卷。集群的共享认证、密钥和兼容配置需按集群步骤统一调整；切换数据库产品仍按第 4 节处理，不能仅加一个 vendor/JDBC 键。
+
 ## 6. 从 STATIC 切换到 DATABASE（单实例）
 
 适用于当前 1.0.0、没有既有集群兼容记录的单实例安装；不包含旧版本数据库升级。先停机、备份，并核对平台账号表是否为空或已有启用管理员。不要重建业务库或更换 AES 密钥。
