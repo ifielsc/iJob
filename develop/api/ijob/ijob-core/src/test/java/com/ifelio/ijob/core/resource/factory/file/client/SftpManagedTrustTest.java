@@ -32,15 +32,15 @@ class SftpManagedTrustTest {
     void managedAndFileTrustConnectButChangedIdentityNeverAuthenticates(boolean legacy)
             throws Exception {
         Path project = Path.of("").toAbsolutePath();
-        while (!Files.exists(project.resolve("test/tools/stage7e-sftp-fixture.py"))) {
+        while (!Files.exists(project.resolve("tools/ci/fixtures/stage7e-sftp-fixture.py"))) {
             project = project.getParent();
             if (project == null) throw new IllegalStateException("Fixture not found");
         }
         Process process =
                 new ProcessBuilder(
-                                System.getProperty(
-                                        "fixture.python", "D:/ProgramData/anaconda3/python.exe"),
-                                project.resolve("test/tools/stage7e-sftp-fixture.py").toString(),
+                                System.getProperty("fixture.python", "python"),
+                                project.resolve("tools/ci/fixtures/stage7e-sftp-fixture.py")
+                                        .toString(),
                                 legacy ? "--legacy" : "--modern")
                         .redirectError(ProcessBuilder.Redirect.DISCARD)
                         .start();

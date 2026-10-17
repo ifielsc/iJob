@@ -48,7 +48,9 @@ test('viewer empty window hides approvals but retains current backlog', async ({
   await expect(page.locator('.workbench-empty')).toContainText('此时间窗内没有根运行')
   await expect(page.locator('.workbench-approvals')).toHaveCount(0)
   await expect(page.locator('.workbench-backlog')).toContainText('3')
-  await expect(page.locator('.workbench-empty-table')).toBeVisible()
+  await expect(
+    page.getByRole('status').filter({ hasText: '此时间窗内没有失败或超时的根运行。' }),
+  ).toBeVisible()
 })
 test('queries preserve fixed bounds and status links carry the correct time scope', async ({
   page,

@@ -1,9 +1,10 @@
 {
   "schema": 1,
-  "purpose": "Exact initial private-repository file allowlist; adding files requires review. No Git operation is authorized.",
+  "purpose": "Exact reviewed private-repository file allowlist; adding files requires review.",
   "files": [
     ".editorconfig",
     ".gitattributes",
+    ".github/workflows/ci.yml",
     ".gitignore",
     ".repository/allowlist.json",
     ".repository/scan-reviews.json",
@@ -2187,10 +2188,16 @@
     "develop/web/ijob/tsconfig.json",
     "develop/web/ijob/vite.config.ts",
     "develop/web/ijob/vitest.config.ts",
+    "document/ci/basic-ci.md",
     "document/examples/deployment/frontend.env.local.example",
     "document/examples/deployment/nginx.conf.example",
     "document/repository/private-repository.md",
     "test/tools/verify-frontend.ps1",
+    "tools/ci/fixtures/remote-publication-fixture.py",
+    "tools/ci/fixtures/stage7e-sftp-fixture.py",
+    "tools/ci/install-maven.ps1",
+    "tools/ci/requirements.txt",
+    "tools/ci/verify-docker.py",
     "tools/repository/prepare.py"
   ]
 }

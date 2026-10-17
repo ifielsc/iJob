@@ -76,7 +76,7 @@ function query(value: string) {
 }
 function turn(value: number) {
   page.value = value
-  void load()
+  void retry()
 }
 function visibility(value: boolean) {
   show.value = value

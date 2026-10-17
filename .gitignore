@@ -1,6 +1,8 @@
 # Generated from .repository/allowlist.json by tools/repository/prepare.py
 # Deny by default. Do not use git add -f to bypass review.
 /*
+!/.github/
+/.github/*
 !/.repository/
 /.repository/*
 !/develop/
@@ -11,18 +13,24 @@
 /test/*
 !/tools/
 /tools/*
+!/.github/workflows/
+/.github/workflows/*
 !/develop/api/
 /develop/api/*
 !/develop/deployment/
 /develop/deployment/*
 !/develop/web/
 /develop/web/*
+!/document/ci/
+/document/ci/*
 !/document/examples/
 /document/examples/*
 !/document/repository/
 /document/repository/*
 !/test/tools/
 /test/tools/*
+!/tools/ci/
+/tools/ci/*
 !/tools/repository/
 /tools/repository/*
 !/develop/api/ijob/
@@ -39,6 +47,8 @@
 /develop/web/ijob/*
 !/document/examples/deployment/
 /document/examples/deployment/*
+!/tools/ci/fixtures/
+/tools/ci/fixtures/*
 !/develop/api/ijob-monitor-agent/.mvn/
 /develop/api/ijob-monitor-agent/.mvn/*
 !/develop/api/ijob-monitor-agent/src/
@@ -1265,6 +1275,7 @@
 /develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/factory/service/client/*
 !/.editorconfig
 !/.gitattributes
+!/.github/workflows/ci.yml
 !/.gitignore
 !/.repository/allowlist.json
 !/.repository/scan-reviews.json
@@ -3448,8 +3459,14 @@
 !/develop/web/ijob/tsconfig.json
 !/develop/web/ijob/vite.config.ts
 !/develop/web/ijob/vitest.config.ts
+!/document/ci/basic-ci.md
 !/document/examples/deployment/frontend.env.local.example
 !/document/examples/deployment/nginx.conf.example
 !/document/repository/private-repository.md
 !/test/tools/verify-frontend.ps1
+!/tools/ci/fixtures/remote-publication-fixture.py
+!/tools/ci/fixtures/stage7e-sftp-fixture.py
+!/tools/ci/install-maven.ps1
+!/tools/ci/requirements.txt
+!/tools/ci/verify-docker.py
 !/tools/repository/prepare.py

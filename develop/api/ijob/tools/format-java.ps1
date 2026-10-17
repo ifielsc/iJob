@@ -1,7 +1,7 @@
 param(
     [switch]$Check,
-    [string]$FormatterJar = (Join-Path $env:USERPROFILE '.m2/repository/com/google/googlejavaformat/google-java-format/1.24.0/google-java-format-1.24.0-all-deps.jar'),
-    [string]$JavaExecutable = (Join-Path $env:JAVA_HOME 'bin/java.exe')
+    [string]$FormatterJar = (Join-Path ([Environment]::GetFolderPath('UserProfile')) '.m2/repository/com/google/googlejavaformat/google-java-format/1.24.0/google-java-format-1.24.0-all-deps.jar'),
+    [string]$JavaExecutable = (Join-Path $env:JAVA_HOME $(if ([IO.Path]::DirectorySeparatorChar -eq '\') { 'bin/java.exe' } else { 'bin/java' }))
 )
 
 $ErrorActionPreference = 'Stop'

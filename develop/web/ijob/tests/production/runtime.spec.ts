@@ -12,7 +12,7 @@ test('production runtime and notification record chunks load with exact identifi
     targetId: '9007199254740993',
     status: 'SUCCESS',
   }
-  await page.route(/\/api\/(auth|instances|notify-send-logs)(?:[/?]|$)/, async (route) => {
+  await page.route(/\/api\/(auth|instances|notification-deliveries)(?:[/?]|$)/, async (route) => {
     const path = new URL(route.request().url()).pathname
     const data =
       path === '/api/auth/me'
@@ -26,8 +26,8 @@ test('production runtime and notification record chunks load with exact identifi
           }
         : path.endsWith('/tree')
           ? { rootInstanceId: id, nodes: [instance], gatewayDecisions: [], maxNodes: 2000 }
-          : path === '/api/notify-send-logs'
-            ? { list: [], total: 0 }
+          : path === '/api/notification-deliveries'
+            ? { list: [], total: 0, pageNum: 1, pageSize: 20, pages: 0 }
             : instance
     await route.fulfill({ json: { success: true, code: 200, data } })
   })
@@ -35,7 +35,9 @@ test('production runtime and notification record chunks load with exact identifi
   await expect(page.locator('.run-node')).toContainText(id)
   await page.getByRole('link', { name: '通知管理', exact: true }).click()
   await page.getByRole('tab', { name: '发送记录', exact: true }).click()
-  await expect(page.locator('.runs-page')).toContainText('没有符合条件的记录。')
+  await expect(
+    page.getByRole('tabpanel', { name: '发送记录', exact: true }).getByRole('status'),
+  ).toHaveText('暂无记录')
   expect(errors).toEqual([])
 })
 

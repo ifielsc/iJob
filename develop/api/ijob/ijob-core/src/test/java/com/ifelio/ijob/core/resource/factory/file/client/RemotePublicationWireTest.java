@@ -28,14 +28,14 @@ class RemotePublicationWireTest {
             throws Exception {
         Path root = Path.of("").toAbsolutePath();
         while (root != null
-                && !Files.exists(root.resolve("test/tools/remote-publication-fixture.py")))
+                && !Files.exists(root.resolve("tools/ci/fixtures/remote-publication-fixture.py")))
             root = root.getParent();
         if (root == null) throw new IllegalStateException("Fixture missing");
         var process =
                 new ProcessBuilder(
-                                System.getProperty(
-                                        "fixture.python", "D:/ProgramData/anaconda3/python.exe"),
-                                root.resolve("test/tools/remote-publication-fixture.py").toString(),
+                                System.getProperty("fixture.python", "python"),
+                                root.resolve("tools/ci/fixtures/remote-publication-fixture.py")
+                                        .toString(),
                                 protocol)
                         .redirectError(ProcessBuilder.Redirect.DISCARD)
                         .start();

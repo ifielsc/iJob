@@ -19,7 +19,7 @@ test('real diagnostics reads four categories and safe drilldown', async ({ page 
   await page.getByRole('button', { name: '登录', exact: true }).click()
   await expect(page.locator('nav a[href="/diagnostics"]')).toBeVisible()
   const seeded = spawnSync(
-    'D:/ProgramData/anaconda3/python.exe',
+    process.env.IJOB_TEST_PYTHON || 'python',
     [
       '-c',
       `

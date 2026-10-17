@@ -1,46 +1,63 @@
-param([Parameter(Mandatory = $true)][ValidatePattern('^[a-zA-Z0-9-]+$')][string]$RunId)
+param(
+    [Parameter(Mandatory = $true)][ValidatePattern('^[a-zA-Z0-9-]+$')][string]$RunId,
+    [ValidateSet('Basic', 'Full')][string]$Suite = 'Basic'
+)
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $webRoot = Join-Path $projectRoot 'develop/web/ijob'
 $reportRoot = Join-Path $projectRoot "test/reports/$RunId"
 if (Test-Path -LiteralPath $reportRoot) { throw 'Evidence directory already exists; choose a new RunId.' }
+if ($Suite -eq 'Full' -and [IO.Path]::DirectorySeparatorChar -ne '\') { throw 'Full includes Windows BAT/PowerShell integration; use a Windows worker.' }
 New-Item -ItemType Directory -Path $reportRoot | Out-Null
 Push-Location $webRoot
 $oldHtml = $env:PLAYWRIGHT_HTML_OUTPUT_DIR
 $oldJunit = $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE
 try {
+    $expectedPnpm = (Get-Content package.json -Raw | ConvertFrom-Json).packageManager -replace '^pnpm@', ''
+    $actualPnpm = & pnpm --version
+    if ($LASTEXITCODE -ne 0 -or $actualPnpm.Trim() -ne $expectedPnpm) { throw "Use pnpm $expectedPnpm" }
     $commands = @(
         @{ Name = 'runtime'; Args = @('check:runtime') },
         @{ Name = 'typecheck'; Args = @('typecheck') },
         @{ Name = 'lint'; Args = @('lint') },
+        @{ Name = 'boundaries'; Args = @('check:boundaries') },
         @{ Name = 'format'; Args = @('format:check') },
         @{ Name = 'unit'; Args = @('test', '--reporter=default', '--reporter=junit', "--outputFile=$(Join-Path $reportRoot 'unit-junit.xml')") },
-        @{ Name = 'build'; Args = @('build') }
+        @{ Name = 'build'; Args = @('build') },
+        @{ Name = 'bundle'; Args = @('check:bundle') }
     )
     foreach ($command in $commands) {
-        & pnpm @($command.Args) 2>&1 | Tee-Object -FilePath (Join-Path $reportRoot "$($command.Name).log")
+        $commandArgs = $command.Args
+        & pnpm @commandArgs 2>&1 | Tee-Object -FilePath (Join-Path $reportRoot "$($command.Name).log")
         if ($LASTEXITCODE -ne 0) { throw "$($command.Name) failed: $LASTEXITCODE" }
     }
-    $env:PLAYWRIGHT_HTML_OUTPUT_DIR = Join-Path $reportRoot 'playwright-html'
-    $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE = Join-Path $reportRoot 'browser-junit.xml'
-    & pnpm exec playwright test --reporter=list,junit,html --output (Join-Path $reportRoot 'browser') 2>&1 | Tee-Object -FilePath (Join-Path $reportRoot 'browser.log')
-    if ($LASTEXITCODE -ne 0) { throw "Browser tests failed: $LASTEXITCODE" }
-    $env:PLAYWRIGHT_HTML_OUTPUT_DIR = Join-Path $reportRoot 'production-html'
-    $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE = Join-Path $reportRoot 'production-junit.xml'
-    & pnpm exec playwright test --config playwright.production.config.ts --reporter=list,junit,html --output (Join-Path $reportRoot 'production') 2>&1 | Tee-Object -FilePath (Join-Path $reportRoot 'production.log')
-    if ($LASTEXITCODE -ne 0) { throw "Production smoke test failed: $LASTEXITCODE" }
-    $env:PLAYWRIGHT_HTML_OUTPUT_DIR = Join-Path $reportRoot 'integration-html'
-    $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE = Join-Path $reportRoot 'integration-junit.xml'
-    & pnpm exec playwright test --config playwright.integration.config.ts --reporter=list,junit,html --output (Join-Path $reportRoot 'integration') 2>&1 | Tee-Object -FilePath (Join-Path $reportRoot 'integration.log')
-    if ($LASTEXITCODE -ne 0) { throw "Isolated backend integration failed: $LASTEXITCODE" }
-    & pnpm list --depth 0 --json | Out-File -LiteralPath (Join-Path $reportRoot 'dependencies.json') -Encoding utf8
+    $browsers = @(
+        @{ Name = 'browser'; Config = 'playwright.config.ts' },
+        @{ Name = 'production'; Config = 'playwright.production.config.ts' }
+    )
+    if ($Suite -eq 'Full') {
+        $browsers += @{ Name = 'security-integration'; Config = 'playwright.integration.config.ts' }
+        foreach ($name in @('batch-etl','diagnostics','etl','localjar','monitor','workbench')) {
+            $browsers += @{ Name = "$name-integration"; Config = "playwright.$name-integration.config.ts" }
+        }
+    }
+    foreach ($browser in $browsers) {
+        $name = $browser.Name
+        $env:PLAYWRIGHT_HTML_OUTPUT_DIR = Join-Path $reportRoot "$name-html"
+        $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE = Join-Path $reportRoot "$name-junit.xml"
+        # Configs start their own servers; execute sequentially to avoid port collisions.
+        & pnpm exec playwright test --config $browser.Config '--reporter=list,junit,html' --output (Join-Path $reportRoot $name) 2>&1 | Tee-Object -FilePath (Join-Path $reportRoot "$name.log")
+        if ($LASTEXITCODE -ne 0) { throw "$name failed: $LASTEXITCODE" }
+        [xml]$junit = Get-Content -Raw -LiteralPath $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE
+        if ([int]$junit.testsuites.tests -le [int]$junit.testsuites.skipped) { throw "No active browser tests: $name" }
+    }
+    Write-Output "Frontend $Suite verification passed: $reportRoot"
+} finally {
+    $env:PLAYWRIGHT_HTML_OUTPUT_DIR = $oldHtml
+    $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE = $oldJunit
     $records = Get-ChildItem -LiteralPath $reportRoot -Recurse -File | ForEach-Object {
         [pscustomobject]@{ Path = [IO.Path]::GetRelativePath($reportRoot, $_.FullName); SHA256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
     }
     $records | Export-Csv -LiteralPath (Join-Path $reportRoot 'evidence-sha256.csv') -Encoding utf8 -NoTypeInformation
-    Write-Output "Frontend verification passed: $reportRoot"
-} finally {
-    $env:PLAYWRIGHT_HTML_OUTPUT_DIR = $oldHtml
-    $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE = $oldJunit
     Pop-Location
 }

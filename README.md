@@ -18,6 +18,8 @@
 
 ## 源码与交付的区别
 
+基础 GitHub Actions 与本地统一检查入口见 [CI 说明](document/ci/basic-ci.md)。工作流只检查和构建，不推送镜像或部署；真实后端浏览器集成、容器运行及五库验收另行接入。
+
 后续开发在连接 `origin` 的 Git 工作目录中进行，以 `git rev-parse --show-toplevel` 确认根目录。维护电脑上的精确路径记在外层工作区入口；旧外层 develop 树、冻结 release 包和数据目录不作为日常开发位置。
 
 当前完整交付包名称仍为 `release-1.0.0-20261017-setup-guide`，保存在维护工作区的 outputs 下，没有上传为 GitHub Release。源码更新不会自动更新其中 JAR、镜像、静态文件和源码压缩包；重新发布必须另建候选、执行对应门禁并记录提交号。

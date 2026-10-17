@@ -17,7 +17,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -95,12 +97,40 @@ public abstract class AbstractProcessScriptExecutor implements ScriptExecutor {
             cancelIfRunning(stdoutFuture);
             cancelIfRunning(stderrFuture);
             context.cleanupResources();
-            Files.deleteIfExists(scriptFile.toPath());
+            deleteScriptFile(scriptFile.toPath());
         }
     }
 
     protected Process startProcess(ProcessBuilder builder) throws IOException {
         return builder.start();
+    }
+
+    private void deleteScriptFile(Path file) throws IOException {
+        // Windows can briefly retain a script handle after process termination.
+        // Keep cleanup bounded and preserve cancellation while waiting for release.
+        boolean interrupted = Thread.interrupted();
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(1);
+        try {
+            while (true) {
+                try {
+                    Files.deleteIfExists(file);
+                    return;
+                } catch (FileSystemException failure) {
+                    if (System.nanoTime() >= deadline) {
+                        throw failure;
+                    }
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(20);
+                    } catch (InterruptedException interruption) {
+                        interrupted = true;
+                    }
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private Charset resolveCharset(String preferred, String legacy) {

@@ -18,7 +18,7 @@ pnpm dev
 
 ## 测试
 
-`pnpm check` 包含版本、类型、lint、边界、格式、单元测试和构建。安装 Playwright Chromium 后执行 `pnpm test:e2e`。完整脚本位于 [verify-frontend.ps1](../../../test/tools/verify-frontend.ps1)，只使用新证据 RunId；输出被根忽略规则排除。
+`pnpm check` 包含版本、类型、lint、边界、格式、单元测试、构建和包体积检查。安装 Playwright Chromium 后执行 `pnpm test:e2e`。统一脚本位于 [verify-frontend.ps1](../../../test/tools/verify-frontend.ps1)，默认 `-Suite Basic` 覆盖这些检查及普通/production 浏览器测试；`-Suite Full` 在 Windows 上追加七套真实后端集成。只使用新证据 RunId；输出被根忽略规则排除。覆盖边界和工具要求见 [CI 说明](../../../document/ci/basic-ci.md)。
 
 集成测试使用独立临时 SQLite 数据库，需先构建后端 1.0.0，设置 `IJOB_TEST_PASSWORD` 和 `IJOB_TEST_JAVA_HOME`（或 `JAVA_HOME`，JDK 21）。辅助脚本默认查找后端和 SPI 的 1.0.0 JAR；自定义构件分别通过 `IJOB_TEST_BACKEND_JAR`、`IJOB_TEST_PLUGIN_SPI_JAR` 指定。必要时用 `IJOB_TEST_CRYPTO_JAR` 指定 spring-security-crypto JAR。
 

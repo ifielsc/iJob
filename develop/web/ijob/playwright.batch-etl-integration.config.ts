@@ -29,7 +29,7 @@ export default defineConfig({
       reuseExistingServer: false,
     },
     {
-      command: 'corepack pnpm dev --port 5176',
+      command: 'pnpm dev --port 5176',
       url: 'http://127.0.0.1:5176',
       reuseExistingServer: false,
       env: { IJOB_DEV_API_TARGET: 'http://127.0.0.1:18087' },

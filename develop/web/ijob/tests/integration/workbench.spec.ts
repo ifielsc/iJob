@@ -22,7 +22,7 @@ test('real workbench excludes children and keeps current backlog outside the win
   await expect(page.locator('nav a[href="/workbench"]')).toBeVisible()
   // Fixture writes are confined to the disposable API-only SQLite database.
   const seeded = spawnSync(
-    'D:/ProgramData/anaconda3/python.exe',
+    process.env.IJOB_TEST_PYTHON || 'python',
     [
       '-c',
       `

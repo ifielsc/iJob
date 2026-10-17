@@ -2,7 +2,6 @@ import { expect } from '@playwright/test'
 import type { Page, APIRequestContext } from '@playwright/test'
 import { spawn } from 'node:child_process'
 import { join } from 'node:path'
-import { homedir } from 'node:os'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 export async function verifyScriptTasks(
@@ -104,11 +103,7 @@ export async function verifyScriptTasks(
       env: {
         ...process.env,
         IJOB_TEST_SH:
-          process.env.IJOB_TEST_SH ||
-          join(
-            homedir(),
-            '.cache/codex-runtimes/codex-primary-runtime/dependencies/native/git/usr/bin/sh.exe',
-          ),
+          process.env.IJOB_TEST_SH || (process.platform === 'win32' ? 'sh.exe' : '/bin/sh'),
       },
       stdio: ['ignore', 'pipe', 'ignore'],
     },

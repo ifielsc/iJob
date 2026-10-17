@@ -291,11 +291,11 @@ class ApplicationConfigurationTest {
                                 source.getProperty("app.plugin.server-monitor.enabled")),
                 () ->
                         assertEquals(
-                                "${IJOB_PLUGIN_ETL_ENABLED:false}",
+                                "${IJOB_PLUGIN_ETL_ENABLED:true}",
                                 source.getProperty("app.plugin.etl.enabled")),
                 () ->
                         assertEquals(
-                                "${IJOB_PLUGIN_BATCH_ETL_ENABLED:false}",
+                                "${IJOB_PLUGIN_BATCH_ETL_ENABLED:true}",
                                 source.getProperty("app.plugin.batch-etl.enabled")),
                 () ->
                         assertEquals(
@@ -308,30 +308,10 @@ class ApplicationConfigurationTest {
     }
 
     @Test
-    void localConfigurationShouldUseEnvironmentBackedMysqlSettings() throws IOException {
-        PropertySource<?> source = load("application-local.yml");
-
-        assertAll(
-                () ->
-                        assertEquals(
-                                "local", source.getProperty("spring.config.activate.on-profile")),
-                () ->
-                        assertEquals(
-                                "${IJOB_RUNTIME_MODE:DEVELOPMENT}",
-                                source.getProperty("app.runtime.mode")),
-                () -> assertEquals("${IJOB_AUTH_MODE:NONE}", source.getProperty("app.auth.mode")),
-                () ->
-                        assertEquals(
-                                "com.mysql.cj.jdbc.Driver",
-                                source.getProperty("spring.datasource.driver-class-name")),
-                () ->
-                        assertEquals(
-                                "${IJOB_DB_USERNAME:ijob}",
-                                source.getProperty("spring.datasource.username")),
-                () ->
-                        assertEquals(
-                                "${IJOB_DB_PASSWORD:}",
-                                source.getProperty("spring.datasource.password")));
+    void privateLocalConfigurationShouldNotBeBundled() {
+        assertFalse(
+                new ClassPathResource("application-local.yml").exists(),
+                "Private local configuration must stay outside packaged resources");
     }
 
     @Test

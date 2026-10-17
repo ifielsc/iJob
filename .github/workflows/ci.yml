@@ -1,0 +1,133 @@
+name: Basic CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: basic-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository:
+    name: Repository checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Verify exact tracked allowlist
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          expected = set(json.loads(Path('.repository/allowlist.json').read_text())['files'])
+          actual = set(subprocess.check_output(['git', 'ls-files', '-z']).decode().strip('\0').split('\0'))
+          assert actual == expected, f'Allowlist mismatch: {sorted(actual ^ expected)}'
+          PY
+      - name: Scan reviewed source files
+        run: python tools/repository/prepare.py scan --report test/reports/repository/scan.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: repository-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test/reports/repository
+          retention-days: 14
+          if-no-files-found: warn
+
+  backend-agent:
+    name: Backend and Agent
+    needs: repository
+    runs-on: windows-2025
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: 'develop/api/**/pom.xml'
+      - name: Install verified Maven 3.9.11
+        run: ./tools/ci/install-maven.ps1 -Destination (Join-Path $env:RUNNER_TEMP 'ijob-maven')
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install loopback FTP/SFTP fixture dependency
+        run: python -m pip install -r tools/ci/requirements.txt
+      - name: Format, compile, test and package backend and Agent
+        run: ./develop/api/ijob/tools/verify-backend.ps1 -RunId backend-${{ github.run_id }}-${{ github.run_attempt }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: backend-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test/reports/backend-*
+          retention-days: 14
+          if-no-files-found: warn
+
+  frontend:
+    name: Frontend
+    needs: repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: develop/web/ijob/.node-version
+          package-manager-cache: false
+      - name: Install pinned pnpm and dependencies
+        working-directory: develop/web/ijob
+        run: |
+          npm install --global pnpm@11.19.0
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+      - name: Static, unit, build and browser checks
+        shell: pwsh
+        run: ./test/tools/verify-frontend.ps1 -RunId frontend-${{ github.run_id }}-${{ github.run_attempt }} -Suite Basic
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: frontend-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test/reports/frontend-*
+          retention-days: 14
+          if-no-files-found: warn
+
+  docker:
+    name: Docker validation and build
+    needs: [backend-agent, frontend]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Validate five database templates and build three local images
+        run: python tools/ci/verify-docker.py --run-id docker-${{ github.run_id }}-${{ github.run_attempt }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: docker-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test/reports/docker-*
+          retention-days: 14
+          if-no-files-found: warn
