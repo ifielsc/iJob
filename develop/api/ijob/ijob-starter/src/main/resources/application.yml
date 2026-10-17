@@ -1,0 +1,238 @@
+spring:
+  application:
+    name: ijob
+  messages:
+    fallback-to-system-locale: false
+    encoding: UTF-8
+  profiles:
+    default: local
+  config:
+    import: "optional:classpath:database/${IJOB_PLATFORM_DB:mysql}.yml"
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+  web:
+    locale: ${IJOB_DEFAULT_LOCALE:en}
+    locale-resolver: accept-header
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  sql:
+    init:
+      mode: never
+  flyway:
+    enabled: ${IJOB_FLYWAY_ENABLED:false}
+    locations: classpath:db/release/${IJOB_PLATFORM_DB:mysql}
+    table: ifj_schema_history
+    baseline-on-migrate: false
+    validate-on-migrate: true
+    clean-disabled: true
+
+server:
+  port: ${IJOB_SERVER_PORT:8080}
+  shutdown: graceful
+
+mybatis:
+  mapper-locations: "classpath*:mapper/**/*.xml"
+  configuration:
+    map-underscore-to-camel-case: true
+
+app:
+  scheduling:
+    pool-size: ${IJOB_SCHEDULING_POOL_SIZE:8}
+    shutdown-timeout: ${IJOB_SCHEDULING_SHUTDOWN_TIMEOUT:30s}
+  platform-database:
+    vendor: ${IJOB_PLATFORM_DB:mysql}
+  notification:
+    locale: ${IJOB_NOTIFICATION_LOCALE:en}
+    outbox:
+      enabled: ${IJOB_NOTIFICATION_OUTBOX_ENABLED:true}
+      scan-interval: ${IJOB_NOTIFICATION_OUTBOX_SCAN_INTERVAL:1s}
+      renew-interval: ${IJOB_NOTIFICATION_OUTBOX_RENEW_INTERVAL:10s}
+      lease-duration: ${IJOB_NOTIFICATION_OUTBOX_LEASE_DURATION:30s}
+      retry-delay: ${IJOB_NOTIFICATION_OUTBOX_RETRY_DELAY:30s}
+      scan-batch-size: ${IJOB_NOTIFICATION_OUTBOX_SCAN_BATCH_SIZE:100}
+      max-attempts: ${IJOB_NOTIFICATION_OUTBOX_MAX_ATTEMPTS:5}
+  cache-consistency:
+    max-staleness: ${IJOB_CACHE_MAX_STALENESS:5s}
+  runtime:
+    mode: ${IJOB_RUNTIME_MODE:STANDALONE}
+    instance-name: ${IJOB_RUNTIME_INSTANCE_NAME:}
+    roles: ${IJOB_RUNTIME_ROLES:API,SCHEDULER,WORKER,MAINTENANCE}
+    groups: ${IJOB_RUNTIME_GROUPS:}
+    allowed-task-ids: ${IJOB_RUNTIME_ALLOWED_TASK_IDS:}
+    allowed-job-ids: ${IJOB_RUNTIME_ALLOWED_JOB_IDS:}
+    singleton-lock-name: ${IJOB_SINGLETON_LOCK_NAME:ijob:standalone}
+    heartbeat-interval: ${IJOB_RUNTIME_HEARTBEAT_INTERVAL:5s}
+    # Runtime/log tables only. Management tables use 1; DAG detail tables use 100.
+    id-segment-size: ${IJOB_ID_SEGMENT_SIZE:1000}
+    work-queue:
+      scan-interval: ${IJOB_WORK_QUEUE_SCAN_INTERVAL:1s}
+      max-idle-scan-interval: ${IJOB_WORK_QUEUE_MAX_IDLE_SCAN_INTERVAL:5s}
+      scan-jitter: ${IJOB_WORK_QUEUE_SCAN_JITTER:200ms}
+      renew-interval: ${IJOB_WORK_QUEUE_RENEW_INTERVAL:5s}
+      scan-batch-size: ${IJOB_WORK_QUEUE_SCAN_BATCH_SIZE:100}
+      max-inflight-roots: ${IJOB_WORK_QUEUE_MAX_INFLIGHT_ROOTS:20}
+      lease-duration: ${IJOB_WORK_QUEUE_LEASE_DURATION:30s}
+      retry-delay: ${IJOB_WORK_QUEUE_RETRY_DELAY:5s}
+      max-attempts: ${IJOB_WORK_QUEUE_MAX_ATTEMPTS:5}
+    command:
+      scan-interval: ${IJOB_RUNTIME_COMMAND_SCAN_INTERVAL:250ms}
+      scan-batch-size: ${IJOB_RUNTIME_COMMAND_SCAN_BATCH_SIZE:100}
+      retry-delay: ${IJOB_RUNTIME_COMMAND_RETRY_DELAY:250ms}
+      timeout: ${IJOB_RUNTIME_COMMAND_TIMEOUT:5m}
+    concurrency-permit:
+      wait-timeout: ${IJOB_CONCURRENCY_PERMIT_WAIT_TIMEOUT:5m}
+      retry-interval: ${IJOB_CONCURRENCY_PERMIT_RETRY_INTERVAL:100ms}
+      max-retry-interval: ${IJOB_CONCURRENCY_PERMIT_MAX_RETRY_INTERVAL:2s}
+      retry-jitter: ${IJOB_CONCURRENCY_PERMIT_RETRY_JITTER:100ms}
+      renew-interval: ${IJOB_CONCURRENCY_PERMIT_RENEW_INTERVAL:5s}
+      lease-duration: ${IJOB_CONCURRENCY_PERMIT_LEASE_DURATION:30s}
+    maintenance:
+      enabled: ${IJOB_MAINTENANCE_ENABLED:true}
+      scan-interval: ${IJOB_MAINTENANCE_SCAN_INTERVAL:5s}
+      renew-interval: ${IJOB_MAINTENANCE_RENEW_INTERVAL:10s}
+      lease-duration: ${IJOB_MAINTENANCE_LEASE_DURATION:30s}
+      stale-run-timeout: ${IJOB_MAINTENANCE_STALE_RUN_TIMEOUT:30s}
+      orphan-grace: ${IJOB_MAINTENANCE_ORPHAN_GRACE:1m}
+      batch-size: ${IJOB_MAINTENANCE_BATCH_SIZE:100}
+      max-batches-per-run: ${IJOB_MAINTENANCE_MAX_BATCHES_PER_RUN:10}
+  auth:
+    mode: ${IJOB_AUTH_MODE:STATIC}
+    username: ${IJOB_AUTH_USERNAME:}
+    password-hash: "${IJOB_AUTH_PASSWORD_HASH:}"
+    bootstrap-enabled: ${IJOB_AUTH_BOOTSTRAP_ENABLED:false}
+  security:
+    aes:
+      key: "${IJOB_CONFIG_AES_KEY:}"
+      key-id: "${IJOB_CONFIG_AES_KEY_ID:local}"
+  schedule:
+    enabled: ${IJOB_SCHEDULE_ENABLED:false}
+    scan-interval: ${IJOB_SCHEDULE_SCAN_INTERVAL:1s}
+    initial-delay: ${IJOB_SCHEDULE_INITIAL_DELAY:5s}
+    scan-batch-size: ${IJOB_SCHEDULE_SCAN_BATCH_SIZE:100}
+    max-triggers-per-scan: ${IJOB_SCHEDULE_MAX_TRIGGERS_PER_SCAN:100}
+    zone-id: ${IJOB_SCHEDULE_ZONE_ID:Asia/Shanghai}
+    misfire-policy: ${IJOB_SCHEDULE_MISFIRE_POLICY:FIRE_ONCE}
+    misfire-grace: ${IJOB_SCHEDULE_MISFIRE_GRACE:60s}
+    max-catchup-window: ${IJOB_SCHEDULE_MAX_CATCHUP_WINDOW:24h}
+    max-catchup-count: ${IJOB_SCHEDULE_MAX_CATCHUP_COUNT:10}
+  event:
+    ingress:
+      enabled: ${IJOB_EVENT_INGRESS_ENABLED:false}
+    recovery:
+      enabled: ${IJOB_EVENT_RECOVERY_ENABLED:true}
+      scan-interval: ${IJOB_EVENT_RECOVERY_SCAN_INTERVAL:1s}
+      scan-batch-size: ${IJOB_EVENT_RECOVERY_SCAN_BATCH_SIZE:100}
+  retention:
+    enabled: ${IJOB_RETENTION_ENABLED:false}
+    dry-run: ${IJOB_RETENTION_DRY_RUN:true}
+    initial-delay: ${IJOB_RETENTION_INITIAL_DELAY:1m}
+    interval: ${IJOB_RETENTION_INTERVAL:1h}
+    batch-size: ${IJOB_RETENTION_BATCH_SIZE:500}
+    max-batches-per-run: ${IJOB_RETENTION_MAX_BATCHES_PER_RUN:10}
+    execution: ${IJOB_RETENTION_EXECUTION:90d}
+    notification: ${IJOB_RETENTION_NOTIFICATION:90d}
+    event: ${IJOB_RETENTION_EVENT:180d}
+    app-run: ${IJOB_RETENTION_APP_RUN:30d}
+    audit: ${IJOB_RETENTION_AUDIT:90d}
+  http:
+    connect-timeout: ${IJOB_HTTP_CONNECT_TIMEOUT:5s}
+    read-timeout: ${IJOB_HTTP_READ_TIMEOUT:30s}
+  execution:
+    shutdown-timeout: ${IJOB_EXECUTION_SHUTDOWN_TIMEOUT:30s}
+    trigger:
+      core-size: ${IJOB_TRIGGER_POOL_CORE_SIZE:4}
+      max-size: ${IJOB_TRIGGER_POOL_MAX_SIZE:20}
+      queue-capacity: ${IJOB_TRIGGER_POOL_QUEUE_CAPACITY:0}
+      keep-alive: ${IJOB_TRIGGER_POOL_KEEP_ALIVE:60s}
+    job:
+      core-size: ${IJOB_JOB_POOL_CORE_SIZE:4}
+      max-size: ${IJOB_JOB_POOL_MAX_SIZE:20}
+      queue-capacity: ${IJOB_JOB_POOL_QUEUE_CAPACITY:0}
+      keep-alive: ${IJOB_JOB_POOL_KEEP_ALIVE:60s}
+    dag:
+      core-size: ${IJOB_DAG_POOL_CORE_SIZE:8}
+      max-size: ${IJOB_DAG_POOL_MAX_SIZE:32}
+      queue-capacity: ${IJOB_DAG_POOL_QUEUE_CAPACITY:500}
+      keep-alive: ${IJOB_DAG_POOL_KEEP_ALIVE:60s}
+    task:
+      core-size: ${IJOB_TASK_POOL_CORE_SIZE:8}
+      max-size: ${IJOB_TASK_POOL_MAX_SIZE:32}
+      queue-capacity: ${IJOB_TASK_POOL_QUEUE_CAPACITY:1000}
+      keep-alive: ${IJOB_TASK_POOL_KEEP_ALIVE:60s}
+    script:
+      core-size: ${IJOB_SCRIPT_POOL_CORE_SIZE:4}
+      max-size: ${IJOB_SCRIPT_POOL_MAX_SIZE:16}
+      queue-capacity: ${IJOB_SCRIPT_POOL_QUEUE_CAPACITY:0}
+      keep-alive: ${IJOB_SCRIPT_POOL_KEEP_ALIVE:60s}
+  plugin:
+    event:
+      enabled: ${IJOB_PLUGIN_EVENT_ENABLED:true}
+    script:
+      enabled: ${IJOB_PLUGIN_SCRIPT_ENABLED:true}
+    sql:
+      enabled: ${IJOB_PLUGIN_SQL_ENABLED:true}
+    file-transfer:
+      enabled: ${IJOB_PLUGIN_FILE_TRANSFER_ENABLED:true}
+    api-call:
+      enabled: ${IJOB_PLUGIN_API_CALL_ENABLED:true}
+    push:
+      enabled: ${IJOB_PLUGIN_PUSH_ENABLED:true}
+    data-check:
+      enabled: ${IJOB_PLUGIN_DATA_CHECK_ENABLED:true}
+    server-monitor:
+      enabled: ${IJOB_PLUGIN_SERVER_MONITOR_ENABLED:true}
+    etl:
+      enabled: ${IJOB_PLUGIN_ETL_ENABLED:true}
+    batch-etl:
+      enabled: ${IJOB_PLUGIN_BATCH_ETL_ENABLED:true}
+    local-jar:
+      enabled: ${IJOB_PLUGIN_LOCAL_JAR_ENABLED:false}
+      root-directory: "${IJOB_PLUGIN_LOCAL_JAR_ROOT:}"
+      max-jar-bytes: ${IJOB_PLUGIN_LOCAL_JAR_MAX_BYTES:67108864}
+      max-jar-entries: ${IJOB_PLUGIN_LOCAL_JAR_MAX_ENTRIES:10000}
+      max-expanded-bytes: ${IJOB_PLUGIN_LOCAL_JAR_MAX_EXPANDED_BYTES:268435456}
+      max-compression-ratio: ${IJOB_PLUGIN_LOCAL_JAR_MAX_COMPRESSION_RATIO:100}
+      max-cached-loaders: ${IJOB_PLUGIN_LOCAL_JAR_MAX_CACHED_LOADERS:32}
+
+sa-token:
+  token-name: ${IJOB_AUTH_TOKEN_NAME:ijob-token}
+  timeout: ${IJOB_AUTH_TIMEOUT_SECONDS:1800}
+  active-timeout: ${IJOB_AUTH_ACTIVE_TIMEOUT_SECONDS:300}
+  is-concurrent: false
+  is-share: false
+  is-read-cookie: false
+  is-read-header: true
+  is-write-header: false
+  token-style: uuid
+  is-log: false
+
+logging:
+  pattern:
+    level: "%5p [traceId=%X{traceId:-} trigger=%X{triggerId:-} root=%X{rootInstanceId:-} instance=%X{instanceId:-} command=%X{commandId:-} outbox=%X{outboxId:-} attempt=%X{attempt:-} taskAttempt=%X{taskAttempt:-} fence=%X{fence:-}]"
+  level:
+    root: INFO
+    com.ifelio.ijob: INFO
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,runtime,singletonLock,coordination,db
+      show-details: never
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

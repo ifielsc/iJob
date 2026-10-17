@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.notify.NotifySendLogMapper">
+
+    <resultMap id="NotifySendLogDtoResultMap"
+               type="com.ifelio.ijob.contract.notify.NotifySendLogDTO">
+        <id property="id" column="id"/>
+        <result property="sourceType" column="source_type"
+                javaType="com.ifelio.ijob.contract.enums.NotifySendSource"/>
+        <result property="correlationId" column="correlation_id"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="targetType" column="target_type"
+                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+        <result property="targetId" column="target_id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="notifyBindingId" column="notify_binding_id"/>
+        <result property="notifyConfigId" column="notify_config_id"/>
+        <result property="notifyType" column="notify_type"
+                javaType="com.ifelio.ijob.contract.enums.NotifyType"/>
+        <result property="result" column="result"
+                javaType="com.ifelio.ijob.contract.enums.NotifySendResult"/>
+        <result property="failureCode" column="failure_code"/>
+        <result property="failureSummary" column="failure_summary"/>
+        <result property="durationMs" column="duration_ms"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <insert id="insertStarted"
+            parameterType="com.ifelio.ijob.infra.entity.notify.NotifySendLog">
+        INSERT INTO ifj_notify_send_log (
+            id,
+            source_type,
+            correlation_id,
+            operator_id,
+            target_type,
+            target_id,
+            instance_id,
+            notify_binding_id,
+            notify_config_id,
+            result,
+            create_time,
+            update_time
+        ) VALUES (
+            #{id},
+            #{sourceType},
+            #{correlationId},
+            #{operatorId},
+            #{targetType},
+            #{targetId},
+            #{instanceId},
+            #{notifyBindingId},
+            #{notifyConfigId},
+            'STARTED',
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+    <update id="completeIfStarted"
+            parameterType="com.ifelio.ijob.infra.entity.notify.NotifySendLog">
+        UPDATE ifj_notify_send_log
+        SET notify_type = #{notifyType},
+            result = #{result},
+            failure_code = #{failureCode},
+            failure_summary = #{failureSummary},
+            duration_ms = #{durationMs},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+          AND result = 'STARTED'
+    </update>
+
+    <select id="selectDtoList"
+            parameterType="com.ifelio.ijob.contract.notify.NotifySendLogPageQuery"
+            resultMap="NotifySendLogDtoResultMap">
+        SELECT
+            id,
+            source_type,
+            correlation_id,
+            operator_id,
+            target_type,
+            target_id,
+            instance_id,
+            notify_binding_id,
+            notify_config_id,
+            notify_type,
+            result,
+            failure_code,
+            failure_summary,
+            duration_ms,
+            create_time,
+            update_time
+        FROM ifj_notify_send_log
+        WHERE create_time &gt;= #{fromTime}
+          AND create_time &lt;= #{toTime}
+        <if test="sourceType != null">
+            AND source_type = #{sourceType}
+        </if>
+        <if test="result != null">
+            AND result = #{result}
+        </if>
+        <if test="notifyConfigId != null">
+            AND notify_config_id = #{notifyConfigId}
+        </if>
+        <if test="targetType != null">
+            AND target_type = #{targetType}
+        </if>
+        <if test="targetId != null">
+            AND target_id = #{targetId}
+        </if>
+        <if test="instanceId != null">
+            AND instance_id = #{instanceId}
+        </if>
+        ORDER BY create_time DESC, id DESC
+    </select>
+
+</mapper>

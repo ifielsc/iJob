@@ -1,0 +1,131 @@
+.json-form {
+  min-width: 0;
+  width: 100%;
+}
+.json-toolbar,
+.json-actions,
+.json-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.json-toolbar {
+  margin-bottom: 10px;
+}
+.json-modes {
+  display: flex;
+  gap: 4px;
+  margin-right: auto;
+}
+.json-root-type {
+  width: 125px;
+}
+.json-table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.json-table-bounded {
+  max-height: min(320px, 42dvh);
+  scrollbar-gutter: stable;
+  scroll-padding-top: 36px;
+}
+.json-table-bounded > table > thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.json-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  font-size: 13px;
+}
+.json-table th,
+.json-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.json-table th {
+  background: var(--panel);
+  white-space: nowrap;
+  font-weight: 500;
+}
+.json-table tr:last-child td {
+  border-bottom: 0;
+}
+.json-table tr.selected {
+  background: var(--selected);
+}
+.json-table tr.selected td:first-child {
+  box-shadow: inset 3px 0 #3264dc;
+}
+.json-table button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.json-summary {
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  white-space: pre-wrap;
+}
+.json-sql-table {
+  table-layout: fixed;
+}
+.json-sql-table th:first-child {
+  width: 52px;
+}
+.json-sql-table .json-summary {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.json-actions {
+  margin: 10px 0;
+}
+.json-current {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.json-current strong {
+  font-size: 13px;
+}
+.json-inline > label {
+  min-width: 60px;
+  font-size: 13px;
+}
+.json-inline > .n-input,
+.json-inline > .n-select {
+  flex: 1;
+  min-width: 120px;
+}
+.json-empty,
+.json-hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+.json-error {
+  color: #d03050;
+  font-size: 12px;
+}
+@media (max-width: 560px) {
+  .json-table th,
+  .json-table td {
+    padding: 6px;
+  }
+  .json-current {
+    padding: 8px;
+  }
+}

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.ClusterStateMapper">
+    <select id="selectValue" resultType="java.lang.String">
+        SELECT state_value
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+    </select>
+
+<select id="selectValue" databaseId="sqlite" resultType="java.lang.String">
+        SELECT state_value
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now'))
+    </select>
+
+<select id="selectValue" databaseId="oracle" resultType="java.lang.String">
+        SELECT state_value
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+    </select>
+
+<select id="selectValue" databaseId="sqlserver" resultType="java.lang.String">
+        SELECT state_value
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; SYSUTCDATETIME())
+    </select>
+
+    <select id="selectTimeoutSeconds" resultType="java.lang.Long">
+        SELECT CASE
+                   WHEN expires_at IS NULL THEN -1
+                   ELSE GREATEST(TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP(3), expires_at), 0)
+               END
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+    </select>
+
+    <insert id="upsert">
+        INSERT INTO ifj_cluster_state (state_key, state_value, expires_at)
+        VALUES (#{stateKey}, #{stateValue},
+                CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                     ELSE TIMESTAMPADD(SECOND, #{timeoutSeconds}, CURRENT_TIMESTAMP(3)) END)
+        ON DUPLICATE KEY UPDATE
+            state_value = VALUES(state_value),
+            expires_at = VALUES(expires_at),
+            update_time = CURRENT_TIMESTAMP(3)
+    </insert>
+
+    <update id="updateValue">
+        UPDATE ifj_cluster_state
+        SET state_value = #{stateValue}, update_time = CURRENT_TIMESTAMP(3)
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+    </update>
+
+<update id="updateValue" databaseId="sqlite">
+        UPDATE ifj_cluster_state
+        SET state_value = #{stateValue}, update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now'))
+    </update>
+
+<update id="updateValue" databaseId="oracle">
+        UPDATE ifj_cluster_state
+        SET state_value = #{stateValue}, update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+    </update>
+
+<update id="updateValue" databaseId="sqlserver">
+        UPDATE ifj_cluster_state
+        SET state_value = #{stateValue}, update_time = SYSUTCDATETIME()
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; SYSUTCDATETIME())
+    </update>
+
+    <update id="updateTimeout">
+        UPDATE ifj_cluster_state
+        SET expires_at = CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                              ELSE TIMESTAMPADD(SECOND, #{timeoutSeconds}, CURRENT_TIMESTAMP(3)) END,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+    </update>
+
+    <delete id="delete">
+        DELETE FROM ifj_cluster_state WHERE state_key = #{stateKey}
+    </delete>
+
+    <select id="searchKeys" resultType="java.lang.String">
+        SELECT state_key
+        FROM ifj_cluster_state
+        WHERE state_key LIKE CONCAT(#{prefix}, '%', #{keyword}, '%')
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+        ORDER BY state_key
+        <choose>
+            <when test="ascending">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{start}
+    </select>
+    <select id="searchKeys" databaseId="postgresql" resultType="java.lang.String">
+        SELECT state_key
+        FROM ifj_cluster_state
+        WHERE LOWER(state_key) LIKE LOWER(CONCAT(#{prefix}, '%', #{keyword}, '%'))
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+        ORDER BY state_key
+        <choose>
+            <when test="ascending">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{start}
+    </select>
+
+<select id="searchKeys" databaseId="sqlite" resultType="java.lang.String">
+        SELECT state_key
+        FROM ifj_cluster_state
+        WHERE LOWER(state_key) LIKE LOWER((#{prefix} || '%' || #{keyword} || '%'))
+          AND (expires_at IS NULL OR expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now'))
+        ORDER BY state_key
+        <choose>
+            <when test="ascending">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{start}
+    </select>
+
+<select id="searchKeys" databaseId="oracle" resultType="java.lang.String">
+        SELECT * FROM (
+            SELECT ijob_page_.*, ROWNUM AS ijob_row_no_ FROM (
+
+        SELECT state_key
+        FROM ifj_cluster_state
+        WHERE LOWER(state_key) LIKE LOWER((#{prefix} || '%' || #{keyword} || '%'))
+          AND (expires_at IS NULL OR expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+        ORDER BY state_key
+        <choose>
+            <when test="ascending">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+       
+            ) ijob_page_
+            WHERE ROWNUM &lt;= (#{start} + #{size})
+        )
+        WHERE ijob_row_no_ &gt; #{start}</select>
+
+<select id="searchKeys" databaseId="sqlserver" resultType="java.lang.String">
+        SELECT state_key
+        FROM ifj_cluster_state
+        WHERE LOWER(state_key) LIKE LOWER(CONCAT(#{prefix}, '%', #{keyword}, '%'))
+          AND (expires_at IS NULL OR expires_at &gt; SYSUTCDATETIME())
+        ORDER BY state_key
+        <choose>
+            <when test="ascending">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+
+    <insert id="insertIfAbsent">
+        INSERT IGNORE INTO ifj_cluster_state (state_key, state_value, expires_at)
+        VALUES (#{stateKey}, #{stateValue}, NULL)
+    </insert>
+
+    <delete id="deleteExpired">
+        DELETE state_record
+        FROM ifj_cluster_state state_record
+        JOIN (
+            SELECT state_key
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= CURRENT_TIMESTAMP(3)
+            ORDER BY expires_at, state_key
+            LIMIT #{limit}
+        ) expired ON expired.state_key = state_record.state_key
+    </delete>
+
+    <select id="selectTimeoutSeconds" databaseId="postgresql" resultType="java.lang.Long">
+        SELECT CASE
+                   WHEN expires_at IS NULL THEN -1
+                   ELSE CAST(GREATEST(FLOOR(EXTRACT(EPOCH FROM (expires_at - CURRENT_TIMESTAMP(3)))), 0) AS BIGINT)
+               END
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+    </select>
+
+<select id="selectTimeoutSeconds" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT CASE
+                   WHEN expires_at IS NULL THEN -1
+                   ELSE CAST(MAX((julianday(expires_at) - julianday(strftime('%Y-%m-%d %H:%M:%f','now'))) * 86400, 0) AS INTEGER)
+               END
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now'))
+    </select>
+
+<select id="selectTimeoutSeconds" databaseId="oracle" resultType="java.lang.Long">
+        SELECT CASE
+                   WHEN expires_at IS NULL THEN -1
+                   ELSE TRUNC(GREATEST((CAST(expires_at AS DATE) - CAST(CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) AS DATE)) * 86400, 0))
+               END
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+    </select>
+
+<select id="selectTimeoutSeconds" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT CASE
+                   WHEN expires_at IS NULL THEN -1
+                   ELSE CONVERT(bigint, CASE WHEN DATEDIFF_BIG(SECOND, SYSUTCDATETIME(), expires_at) > 0 THEN DATEDIFF_BIG(SECOND, SYSUTCDATETIME(), expires_at) ELSE 0 END)
+               END
+        FROM ifj_cluster_state
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; SYSUTCDATETIME())
+    </select>
+<insert id="upsert" databaseId="postgresql">
+        INSERT INTO ifj_cluster_state (state_key, state_value, expires_at)
+        VALUES (#{stateKey}, #{stateValue},
+                CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                     ELSE (CURRENT_TIMESTAMP(3) + (#{timeoutSeconds} * INTERVAL '1 second')) END)
+        ON CONFLICT (state_key) DO UPDATE SET
+            state_value = EXCLUDED.state_value,
+            expires_at = EXCLUDED.expires_at,
+            update_time = CURRENT_TIMESTAMP(3)
+    </insert>
+
+<insert id="upsert" databaseId="sqlite">
+        INSERT INTO ifj_cluster_state (state_key, state_value, expires_at)
+        VALUES (#{stateKey}, #{stateValue},
+                CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                     ELSE strftime('%Y-%m-%d %H:%M:%f','now', printf('+%d seconds', #{timeoutSeconds})) END)
+        ON CONFLICT (state_key) DO UPDATE SET
+            state_value = EXCLUDED.state_value,
+            expires_at = EXCLUDED.expires_at,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+    </insert>
+
+<insert id="upsert" databaseId="oracle">
+        DECLARE
+            new_state_value CLOB := #{stateValue,jdbcType=CLOB};
+            new_expires_at TIMESTAMP(3);
+        BEGIN
+            IF #{timeoutSeconds} &lt; 0 THEN
+                new_expires_at := NULL;
+            ELSE
+                new_expires_at := SYS_EXTRACT_UTC(SYSTIMESTAMP) + NUMTODSINTERVAL(#{timeoutSeconds}, 'SECOND');
+            END IF;
+            UPDATE ifj_cluster_state
+            SET state_value = new_state_value,
+                expires_at = new_expires_at,
+                update_time = SYS_EXTRACT_UTC(SYSTIMESTAMP)
+            WHERE state_key = #{stateKey};
+            IF SQL%ROWCOUNT = 0 THEN
+                BEGIN
+                    INSERT INTO ifj_cluster_state (state_key, state_value, expires_at)
+                    VALUES (#{stateKey}, new_state_value, new_expires_at);
+                EXCEPTION
+                    WHEN DUP_VAL_ON_INDEX THEN
+                        UPDATE ifj_cluster_state
+                        SET state_value = new_state_value,
+                            expires_at = new_expires_at,
+                            update_time = SYS_EXTRACT_UTC(SYSTIMESTAMP)
+                        WHERE state_key = #{stateKey};
+                END;
+            END IF;
+        END;</insert>
+
+<insert id="upsert" databaseId="sqlserver">
+        SET NOCOUNT ON;
+        UPDATE ifj_cluster_state WITH (UPDLOCK, HOLDLOCK)
+        SET state_value = #{stateValue},
+            expires_at = CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                              ELSE DATEADD(SECOND, #{timeoutSeconds}, SYSUTCDATETIME()) END,
+            update_time = SYSUTCDATETIME()
+        WHERE state_key = #{stateKey};
+        IF @@ROWCOUNT = 0
+        BEGIN
+            INSERT INTO ifj_cluster_state (state_key, state_value, expires_at)
+            VALUES (#{stateKey}, #{stateValue},
+                    CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                         ELSE DATEADD(SECOND, #{timeoutSeconds}, SYSUTCDATETIME()) END)
+        END;
+        SET NOCOUNT OFF;
+        UPDATE ifj_cluster_state SET state_key = state_key WHERE state_key = #{stateKey}</insert>
+<update id="updateTimeout" databaseId="postgresql">
+        UPDATE ifj_cluster_state
+        SET expires_at = CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                              ELSE (CURRENT_TIMESTAMP(3) + (#{timeoutSeconds} * INTERVAL '1 second')) END,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+    </update>
+
+<update id="updateTimeout" databaseId="sqlite">
+        UPDATE ifj_cluster_state
+        SET expires_at = CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                              ELSE strftime('%Y-%m-%d %H:%M:%f','now', printf('+%d seconds', #{timeoutSeconds})) END,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now'))
+    </update>
+
+<update id="updateTimeout" databaseId="oracle">
+        UPDATE ifj_cluster_state
+        SET expires_at = CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                              ELSE CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{timeoutSeconds}, 'SECOND') END,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+    </update>
+
+<update id="updateTimeout" databaseId="sqlserver">
+        UPDATE ifj_cluster_state
+        SET expires_at = CASE WHEN #{timeoutSeconds} &lt; 0 THEN NULL
+                              ELSE DATEADD(SECOND, #{timeoutSeconds}, SYSUTCDATETIME()) END,
+            update_time = SYSUTCDATETIME()
+        WHERE state_key = #{stateKey}
+          AND (expires_at IS NULL OR expires_at &gt; SYSUTCDATETIME())
+    </update>
+<insert id="insertIfAbsent" databaseId="postgresql">
+        INSERT INTO ifj_cluster_state (state_key, state_value, expires_at)
+        VALUES (#{stateKey}, #{stateValue}, NULL)
+        ON CONFLICT (state_key) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="sqlite">
+        INSERT INTO ifj_cluster_state (state_key, state_value, expires_at)
+        VALUES (#{stateKey}, #{stateValue}, NULL)
+        ON CONFLICT (state_key) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="oracle">
+        MERGE INTO ifj_cluster_state target
+        USING (SELECT 1 AS marker FROM dual) source
+        ON (target.state_key = #{stateKey})
+        WHEN NOT MATCHED THEN INSERT (state_key, state_value, expires_at)
+        VALUES (#{stateKey}, #{stateValue}, NULL)</insert>
+
+<insert id="insertIfAbsent" databaseId="sqlserver">
+        IF NOT EXISTS (SELECT 1 FROM ifj_cluster_state WITH (UPDLOCK, HOLDLOCK) WHERE state_key = #{stateKey})
+        BEGIN
+
+        INSERT INTO ifj_cluster_state (state_key, state_value, expires_at)
+        VALUES (#{stateKey}, #{stateValue}, NULL)
+        END</insert>
+<delete id="deleteExpired" databaseId="postgresql">
+        WITH expired AS (
+            SELECT state_key
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= CURRENT_TIMESTAMP(3)
+            ORDER BY expires_at, state_key
+            LIMIT #{limit}
+        )
+        DELETE FROM ifj_cluster_state state_record
+        USING expired
+        WHERE state_record.state_key = expired.state_key
+    </delete>
+
+<delete id="deleteExpired" databaseId="sqlite">
+        WITH expired AS (
+            SELECT state_key
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+            ORDER BY expires_at, state_key
+            LIMIT #{limit}
+        )
+        DELETE FROM ifj_cluster_state WHERE state_key IN (SELECT state_key FROM expired)
+    </delete>
+
+<delete id="deleteExpired" databaseId="oracle">
+        DELETE FROM ifj_cluster_state
+        WHERE state_key IN (
+            SELECT state_key FROM (
+                SELECT state_key FROM ifj_cluster_state
+                WHERE expires_at IS NOT NULL AND expires_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+                ORDER BY expires_at, state_key
+            ) WHERE ROWNUM &lt;= #{limit}
+        )</delete>
+
+<delete id="deleteExpired" databaseId="sqlserver">
+        WITH expired AS (
+            SELECT state_key
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= SYSUTCDATETIME()
+            ORDER BY expires_at, state_key
+            OFFSET 0 ROWS FETCH NEXT #{limit} ROWS ONLY
+        )
+        DELETE FROM ifj_cluster_state WHERE state_key IN (SELECT state_key FROM expired)
+    </delete>
+</mapper>

@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: ${IJOB_SQLITE_POOL_SIZE:4}
+      connection-init-sql: "PRAGMA foreign_keys = ON"
+      data-source-properties:
+        busy_timeout: ${IJOB_SQLITE_BUSY_TIMEOUT_MS:5000}
+        journal_mode: WAL
+        synchronous: NORMAL
+        transaction_mode: IMMEDIATE
+
+pagehelper:
+  helper-dialect: sqlite

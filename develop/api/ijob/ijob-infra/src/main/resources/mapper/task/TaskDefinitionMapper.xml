@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskDefinitionMapper">
+
+    <resultMap id="TaskDefinitionResultMap"
+               type="com.ifelio.ijob.infra.entity.task.TaskDefinition">
+        <id property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="revision" column="revision"/>
+        <result property="name" column="name"/>
+        <result property="pluginType" column="plugin_type"
+                javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+        <result property="pluginConfig" column="plugin_config"/>
+        <result property="retryTimes" column="retry_times"/>
+        <result property="retryInterval" column="retry_interval"/>
+        <result property="timeout" column="timeout"/>
+        <result property="enabled" column="enabled"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="TaskDefinitionColumns">
+        id,
+        task_id,
+        revision,
+        name,
+        plugin_type,
+        plugin_config,
+        retry_times,
+        retry_interval,
+        timeout,
+        enabled,
+        description,
+        create_time
+    </sql>
+
+    <select id="selectById" resultMap="TaskDefinitionResultMap">
+        SELECT
+        <include refid="TaskDefinitionColumns"/>
+        FROM ifj_task_definition
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectListByTaskId"
+            resultMap="TaskDefinitionResultMap">
+        SELECT
+        <include refid="TaskDefinitionColumns"/>
+        FROM ifj_task_definition
+        WHERE task_id = #{taskId}
+        ORDER BY revision ASC, id ASC
+    </select>
+
+    <insert id="insert"
+            parameterType="com.ifelio.ijob.infra.entity.task.TaskDefinition">
+        INSERT INTO ifj_task_definition (
+            id,
+            task_id,
+            revision,
+            name,
+            plugin_type,
+            plugin_config,
+            retry_times,
+            retry_interval,
+            timeout,
+            enabled,
+            description,
+            create_time
+        ) VALUES (
+            #{id},
+            #{taskId},
+            #{revision},
+            #{name},
+            #{pluginType},
+            #{pluginConfig},
+            #{retryTimes},
+            #{retryInterval},
+            #{timeout},
+            #{enabled},
+            #{description},
+            #{createTime}
+        )
+    </insert>
+
+</mapper>

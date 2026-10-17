@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <springProperty scope="context" name="NATIVE_LOG_DIR" source="ijob.native.log-directory" defaultValue="logs"/>
+    <springProperty scope="context" name="NATIVE_LOG_SESSION" source="ijob.native.log-session" defaultValue="manual"/>
+    <springProperty scope="context" name="NATIVE_MAX_SIZE" source="ijob.logging.max-file-size" defaultValue="10MB"/>
+    <springProperty scope="context" name="NATIVE_MAX_HISTORY" source="ijob.logging.max-history" defaultValue="14"/>
+    <springProperty scope="context" name="NATIVE_TOTAL_CAP" source="ijob.logging.total-size-cap" defaultValue="200MB"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <appender name="NATIVE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${NATIVE_LOG_DIR}/ijob.log</file>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>[launch=${NATIVE_LOG_SESSION}] ${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${NATIVE_LOG_DIR}/archive/ijob.%d{yyyy-MM-dd,UTC}.%i.log.gz</fileNamePattern>
+            <maxFileSize>${NATIVE_MAX_SIZE}</maxFileSize>
+            <maxHistory>${NATIVE_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${NATIVE_TOTAL_CAP}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+    <springProfile name="native-background">
+        <root level="INFO"><appender-ref ref="NATIVE_FILE"/></root>
+    </springProfile>
+    <springProfile name="!native-background">
+        <root level="INFO"><appender-ref ref="CONSOLE"/><appender-ref ref="NATIVE_FILE"/></root>
+    </springProfile>
+</configuration>

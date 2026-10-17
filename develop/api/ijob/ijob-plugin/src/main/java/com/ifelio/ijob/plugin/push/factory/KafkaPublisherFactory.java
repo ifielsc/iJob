@@ -1,0 +1,36 @@
+package com.ifelio.ijob.plugin.push.factory;
+
+import com.ifelio.ijob.contract.enums.ResourceType;
+import com.ifelio.ijob.core.resource.ResourceClientLease;
+import com.ifelio.ijob.core.resource.ResourceRuntimeService;
+import com.ifelio.ijob.core.resource.factory.mq.kafka.KafkaClient;
+import com.ifelio.ijob.plugin.push.publisher.KafkaPublisher;
+import com.ifelio.ijob.plugin.push.publisher.PushPublisher;
+import com.ifelio.ijob.plugin.push.resolver.PushTaskPublishConfig;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+
+@Component
+@RequiredArgsConstructor
+public class KafkaPublisherFactory implements PushPublisherFactory {
+    private final ResourceRuntimeService runtimeService;
+
+    @Override
+    public ResourceType supportType() {
+        return ResourceType.KAFKA;
+    }
+
+    @Override
+    public PushPublisher create(PushTaskPublishConfig config) {
+        ResourceClientLease<KafkaClient> lease =
+                runtimeService.leaseClient(
+                        config.getResourceId(), ResourceType.KAFKA, KafkaClient.class);
+        Map<String, Object> props = config.getProperties();
+        return new KafkaPublisher(
+                lease.getClient().getProducer(), (String) props.get("topic"), lease);
+    }
+}

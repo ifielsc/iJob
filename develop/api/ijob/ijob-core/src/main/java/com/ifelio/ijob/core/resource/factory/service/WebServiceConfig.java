@@ -1,0 +1,15 @@
+package com.ifelio.ijob.core.resource.factory.service;
+
+import lombok.Data;
+
+@Data
+public class WebServiceConfig {
+    private String wsdl;
+
+    /** targetNamespace */
+    private String namespace;
+
+    private String serviceName;
+
+    private String portName;
+}

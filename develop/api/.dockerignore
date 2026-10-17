@@ -1,0 +1,15 @@
+**
+!ijob/
+!ijob/pom.xml
+!ijob/ijob-*/
+!ijob/ijob-*/pom.xml
+!ijob/ijob-*/src/
+!ijob/ijob-*/src/**
+!ijob-monitor-agent/
+!ijob-monitor-agent/pom.xml
+!ijob-monitor-agent/src/
+!ijob-monitor-agent/src/**
+!ijob-monitor-agent/tools/
+!ijob-monitor-agent/tools/docker/
+!ijob-monitor-agent/tools/docker/**
+**/application-local.yml

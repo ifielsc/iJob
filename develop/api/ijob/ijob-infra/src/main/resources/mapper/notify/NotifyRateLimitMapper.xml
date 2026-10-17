@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.notify.NotifyRateLimitMapper">
+    <insert id="insertIfAbsent">INSERT INTO ifj_notify_rate_limit (target_key, next_allowed_at) VALUES (#{key}, 0) ON DUPLICATE KEY UPDATE target_key = target_key</insert>
+    <insert id="insertIfAbsent" databaseId="postgresql">INSERT INTO ifj_notify_rate_limit (target_key, next_allowed_at) VALUES (#{key}, 0) ON CONFLICT (target_key) DO NOTHING</insert>
+    <insert id="insertIfAbsent" databaseId="sqlite">INSERT OR IGNORE INTO ifj_notify_rate_limit (target_key, next_allowed_at) VALUES (#{key}, 0)</insert>
+    <insert id="insertIfAbsent" databaseId="sqlserver">MERGE ifj_notify_rate_limit WITH (HOLDLOCK) AS target USING (SELECT #{key} AS target_key) AS source ON target.target_key = source.target_key WHEN NOT MATCHED THEN INSERT (target_key, next_allowed_at) VALUES (source.target_key, 0);</insert>
+    <insert id="insertIfAbsent" databaseId="oracle">BEGIN INSERT INTO ifj_notify_rate_limit (target_key, next_allowed_at) VALUES (#{key}, 0); EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;</insert>
+    <select id="selectDeadline" resultType="java.lang.Long">SELECT next_allowed_at FROM ifj_notify_rate_limit WHERE target_key = #{key}</select>
+    <update id="acquire">UPDATE ifj_notify_rate_limit SET next_allowed_at = #{deadline} WHERE target_key = #{key} AND next_allowed_at &lt;= #{now}</update>
+    <update id="cooldown">UPDATE ifj_notify_rate_limit SET next_allowed_at = #{deadline} WHERE target_key = #{key} AND next_allowed_at &lt; #{deadline}</update>
+</mapper>

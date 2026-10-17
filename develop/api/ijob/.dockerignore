@@ -1,0 +1,10 @@
+**
+!pom.xml
+!ijob-*/
+!ijob-*/pom.xml
+!ijob-*/src/
+!ijob-*/src/**
+!tools/
+!tools/docker/
+!tools/docker/**
+**/application-local.yml

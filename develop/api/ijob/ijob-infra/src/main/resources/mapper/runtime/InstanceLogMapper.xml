@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.InstanceLogMapper">
+
+    <resultMap id="instanceLogResultMap"
+               type="com.ifelio.ijob.infra.entity.runtime.InstanceLog">
+        <id property="id" column="id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="logTime" column="log_time"/>
+        <result property="level" column="level"/>
+        <result property="content" column="content"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.InstanceLog">
+        INSERT INTO ifj_instance_log (
+            id, instance_id, log_time, level, content
+        ) VALUES (
+            #{id}, #{instanceId}, #{logTime}, #{level}, #{content}
+        )
+    </insert>
+
+<insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.InstanceLog" databaseId="oracle">
+        INSERT INTO ifj_instance_log (
+            id, instance_id, log_time, log_level, content
+        ) VALUES (
+            #{id}, #{instanceId}, #{logTime}, #{level}, #{content}
+        )
+    </insert>
+
+    <select id="selectAfterId" resultMap="instanceLogResultMap">
+        SELECT id, instance_id, log_time, level, content
+        FROM ifj_instance_log
+        WHERE instance_id = #{instanceId}
+          AND id &gt; #{afterId}
+        ORDER BY id ASC
+        LIMIT #{limit}
+    </select>
+
+<select id="selectAfterId" resultMap="instanceLogResultMap" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT id, instance_id, log_time, log_level AS "level", content
+        FROM ifj_instance_log
+        WHERE instance_id = #{instanceId}
+          AND id &gt; #{afterId}
+        ORDER BY id ASC
+       
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+    <select id="selectAfterId" resultMap="instanceLogResultMap" databaseId="sqlserver">
+        SELECT TOP (#{limit}) id, instance_id, log_time, level, content
+        FROM ifj_instance_log
+        WHERE instance_id = #{instanceId}
+          AND id &gt; #{afterId}
+        ORDER BY id ASC
+    </select>
+<select id="selectRunAfterId" resultMap="instanceLogResultMap">
+SELECT l.id, l.instance_id, l.log_time, l.level, l.content FROM ifj_instance_log l
+        WHERE l.id &gt; #{afterId} AND EXISTS (
+            SELECT 1 FROM ifj_instance i WHERE i.id = l.instance_id
+            AND (i.root_instance_id = #{rootId} OR i.id = #{rootId}))
+        ORDER BY l.id ASC LIMIT #{limit}
+</select>
+<select id="selectRunAfterId" resultMap="instanceLogResultMap" databaseId="oracle">
+SELECT * FROM (SELECT l.id, l.instance_id, l.log_time, l.log_level AS "level", l.content FROM ifj_instance_log l
+        WHERE l.id &gt; #{afterId} AND EXISTS (
+            SELECT 1 FROM ifj_instance i WHERE i.id = l.instance_id
+            AND (i.root_instance_id = #{rootId} OR i.id = #{rootId}))
+        ORDER BY l.id ASC) WHERE ROWNUM &lt;= #{limit}
+</select>
+<select id="selectRunAfterId" resultMap="instanceLogResultMap" databaseId="sqlserver">
+SELECT TOP (#{limit}) l.id, l.instance_id, l.log_time, l.level, l.content FROM ifj_instance_log l
+        WHERE l.id &gt; #{afterId} AND EXISTS (
+            SELECT 1 FROM ifj_instance i WHERE i.id = l.instance_id
+            AND (i.root_instance_id = #{rootId} OR i.id = #{rootId}))
+        ORDER BY l.id ASC
+</select>
+    <sql id="latestScope">
+        FROM ifj_instance_log l
+        <choose>
+            <when test="runScope">
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_instance i WHERE i.id = l.instance_id
+                    AND (i.root_instance_id = #{instanceId} OR i.id = #{instanceId})
+                )
+            </when>
+            <otherwise>WHERE l.instance_id = #{instanceId}</otherwise>
+        </choose>
+        ORDER BY l.log_time DESC, l.id DESC
+    </sql>
+    <select id="selectLatest" resultMap="instanceLogResultMap">
+        SELECT l.id, l.instance_id, l.log_time, l.level, l.content
+        <include refid="latestScope"/>
+        LIMIT #{limit}
+    </select>
+    <select id="selectLatest" databaseId="oracle" resultMap="instanceLogResultMap">
+        SELECT * FROM (
+            SELECT l.id, l.instance_id, l.log_time, l.log_level AS "level", l.content
+            <include refid="latestScope"/>
+        ) WHERE ROWNUM &lt;= #{limit}
+    </select>
+    <select id="selectLatest" databaseId="sqlserver" resultMap="instanceLogResultMap">
+        SELECT TOP (#{limit}) l.id, l.instance_id, l.log_time, l.level, l.content
+        <include refid="latestScope"/>
+    </select>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.EtlFileStateMapper">
+  <update id="acquire">
+    UPDATE ifj_etl_checkpoint SET owner_instance_id=#{instanceId}, owner_token=#{token}
+    WHERE task_id=#{taskId} AND checkpoint_key=#{key}
+      AND (owner_token IS NULL OR EXISTS (
+        SELECT 1 FROM ifj_instance previous_owner WHERE previous_owner.id=owner_instance_id
+          AND previous_owner.status IN ('SUCCESS','FAILED','STOPPED','TIMED_OUT','SKIPPED')
+      ))
+  </update>
+  <update id="guard">
+    UPDATE ifj_etl_checkpoint SET owner_token=#{token}
+    WHERE task_id=#{taskId} AND checkpoint_key=#{key} AND owner_token=#{token}
+  </update>
+  <update id="release">
+    UPDATE ifj_etl_checkpoint SET owner_token=NULL, owner_instance_id=NULL
+    WHERE task_id=#{taskId} AND checkpoint_key=#{key} AND owner_token=#{token}
+  </update>
+  <select id="digest" resultType="string">
+    SELECT content_digest FROM ifj_etl_file_record
+    WHERE task_id=#{taskId} AND checkpoint_key=#{key} AND path_hash=#{pathHash}
+  </select>
+  <delete id="deleteRecord">
+    DELETE FROM ifj_etl_file_record WHERE task_id=#{taskId} AND checkpoint_key=#{key} AND path_hash=#{pathHash}
+  </delete>
+  <insert id="insertRecord">
+    INSERT INTO ifj_etl_file_record(task_id,checkpoint_key,path_hash,content_digest,marker_value,last_instance_id)
+    VALUES(#{taskId},#{key},#{pathHash},#{digest},#{marker},#{instanceId})
+  </insert>
+</mapper>

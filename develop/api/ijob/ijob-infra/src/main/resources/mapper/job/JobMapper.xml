@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobMapper">
+
+    <resultMap id="JobResultMap"
+               type="com.ifelio.ijob.infra.entity.job.Job">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="timeout" column="timeout"/>
+        <result property="enabled" column="enabled"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="JobColumns">
+        id,
+        name,
+        timeout,
+        enabled,
+        description,
+        create_time,
+        update_time
+    </sql>
+
+    <select id="selectById" resultMap="JobResultMap">
+        SELECT
+        <include refid="JobColumns"/>
+        FROM ifj_job
+        WHERE id = #{id}
+          AND retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+          AND retired_time IS NULL
+          AND current_definition_id IS NOT NULL
+          AND current_revision IS NOT NULL
+    </select>
+
+<select id="selectById" resultMap="JobResultMap" databaseId="oracle">
+        SELECT
+        <include refid="JobColumns"/>
+        FROM ifj_job
+        WHERE id = #{id}
+          AND retired = 0
+          AND retired_time IS NULL
+          AND current_definition_id IS NOT NULL
+          AND current_revision IS NOT NULL
+    </select>
+
+</mapper>

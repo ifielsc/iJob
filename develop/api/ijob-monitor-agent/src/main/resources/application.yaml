@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ijob-monitor-agent
+
+agent:
+  token: ${IJOB_AGENT_TOKEN:}
+  collect-timeout: ${IJOB_AGENT_COLLECT_TIMEOUT:10000}
+  collect-concurrency: ${IJOB_AGENT_COLLECT_CONCURRENCY:2}
+  collect-queue-capacity: ${IJOB_AGENT_COLLECT_QUEUE_CAPACITY:4}

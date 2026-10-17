@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobReferenceSnapshotMapper">
+
+    <select id="selectAllJobIds" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_job
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectJobReferences"
+            resultType="com.ifelio.ijob.infra.mapper.job.JobReferenceRow">
+        SELECT job.id AS jobId,
+               node.ref_id AS referencedJobId
+        FROM ifj_job job
+        JOIN ifj_job_definition_node node ON node.definition_id = job.current_definition_id
+        WHERE node.node_type = 'JOB' AND node.node_kind = 'EXECUTION'
+        ORDER BY job.id ASC, node.ref_id ASC, node.id ASC
+    </select>
+
+</mapper>

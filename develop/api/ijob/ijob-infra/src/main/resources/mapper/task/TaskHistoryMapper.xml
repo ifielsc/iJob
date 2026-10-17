@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskHistoryMapper">
+    <select id="selectVersions" resultType="com.ifelio.ijob.contract.task.TaskVersionDTO">
+        SELECT task_id AS taskId, id AS definitionId, revision, name,
+               plugin_type AS pluginType, enabled, create_time AS publishedAt
+        FROM ifj_task_definition WHERE task_id = #{taskId}
+        ORDER BY revision DESC, id DESC
+    </select>
+</mapper>

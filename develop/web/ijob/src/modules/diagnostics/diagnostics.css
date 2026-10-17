@@ -1,0 +1,230 @@
+.diagnostics-page {
+  min-width: 0;
+  font-size: 13px;
+}
+.diagnostics-page .page-heading {
+  margin-bottom: 16px;
+}
+.diagnostics-page .subtitle {
+  margin-top: 6px;
+}
+.diagnostics-page h2 {
+  font-size: 15px;
+  margin: 0;
+}
+.diagnostics-page p {
+  margin: 0;
+}
+.diagnostics-note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.diagnostics-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.diagnostics-toolbar .n-select {
+  width: 95px;
+}
+.diagnostics-toolbar .n-button,
+.diagnostics-drawer .n-button {
+  height: 32px;
+}
+.diagnostics-observed {
+  margin-left: auto;
+}
+.diagnostics-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  min-width: 0;
+}
+.diagnostics-explanation {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--selected);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.diagnostics-explanation svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.diagnostics-explanation .diagnostics-note {
+  margin-top: 5px;
+}
+.diagnostics-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.diagnostics-section-heading > span:last-child {
+  margin-left: auto;
+}
+.diagnostics-badge {
+  background: var(--selected);
+  color: var(--primary);
+  border-radius: 12px;
+  padding: 3px 9px;
+  font-size: 12px;
+}
+.diagnostics-node dl {
+  display: grid;
+  grid-template-columns: auto 1fr auto 1fr;
+  gap: 8px 20px;
+  margin: 0 0 10px;
+}
+.diagnostics-node dd {
+  margin: 0;
+}
+.diagnostics-table-scroll {
+  overflow-x: auto;
+}
+.diagnostics-results table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+  font-size: 13px;
+}
+.diagnostics-results th {
+  text-align: left;
+  background: var(--selected);
+  font-size: 12px;
+}
+.diagnostics-results th,
+.diagnostics-results td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.diagnostics-results td:first-child {
+  max-width: 280px;
+  overflow-wrap: anywhere;
+}
+.diagnostics-results td small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+}
+.diagnostics-results th:last-child,
+.diagnostics-results td:last-child {
+  position: sticky;
+  right: 0;
+  background: var(--panel);
+  min-width: 100px;
+}
+.diagnostics-results th:last-child {
+  background: var(--selected);
+}
+.diagnostics-state {
+  color: var(--warning);
+}
+.diagnostics-time {
+  white-space: nowrap;
+}
+.diagnostics-more {
+  padding: 10px;
+  background: var(--selected);
+  margin-bottom: 12px !important;
+}
+.diagnostics-empty {
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+}
+.diagnostics-empty svg {
+  color: var(--muted);
+}
+.diagnostics-empty h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.diagnostics-empty p {
+  color: var(--muted);
+}
+.diagnostics-footnote {
+  margin-top: 16px !important;
+}
+.diagnostics-drawer {
+  font-size: 13px;
+}
+.diagnostics-drawer .n-drawer-footer {
+  gap: 12px;
+}
+.diagnostics-primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.diagnostics-condition {
+  background: var(--selected);
+  color: var(--warning);
+  padding: 12px;
+  border-radius: 6px;
+  margin: 0 0 20px;
+  font-weight: 600;
+}
+.diagnostics-evidence {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 15px 12px;
+  margin: 0 0 20px;
+  line-height: 1.6;
+}
+.diagnostics-evidence dt {
+  color: var(--muted);
+}
+.diagnostics-evidence dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.diagnostics-evidence-section {
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 18px;
+  line-height: 1.7;
+}
+.diagnostics-evidence-section h3 {
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+.diagnostics-evidence-section ol {
+  padding-left: 20px;
+}
+@media (max-width: 650px) {
+  .diagnostics-panel {
+    padding: 14px;
+  }
+  .diagnostics-observed {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+  .diagnostics-node dl {
+    grid-template-columns: auto 1fr;
+  }
+  .diagnostics-evidence {
+    grid-template-columns: 100px 1fr;
+  }
+}

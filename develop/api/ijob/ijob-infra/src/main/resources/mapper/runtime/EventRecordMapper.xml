@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.EventRecordMapper">
+    <resultMap id="eventRecordResultMap"
+               type="com.ifelio.ijob.infra.entity.runtime.EventRecord">
+        <id property="id" column="id"/>
+        <result property="eventCode" column="event_code"/>
+        <result property="sourceType" column="source_type"/>
+        <result property="sourceKey" column="source_key"/>
+        <result property="businessKey" column="business_key"/>
+        <result property="correlationKey" column="correlation_key"/>
+        <result property="idempotencyKey" column="idempotency_key"/>
+        <result property="occurredAt" column="occurred_at"/>
+        <result property="arrivedAt" column="arrived_at"/>
+        <result property="summary" column="summary"/>
+        <result property="payload" column="payload"/>
+        <result property="payloadDigest" column="payload_digest"/>
+        <result property="payloadBytes" column="payload_bytes"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+    <sql id="columns">id, event_code, source_type, source_key,
+        business_key, correlation_key, idempotency_key, occurred_at,
+        arrived_at, summary, payload, payload_digest, payload_bytes,
+        create_time</sql>
+    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.EventRecord">
+        INSERT INTO ifj_event (id, event_code, source_type, source_key,
+            business_key, correlation_key, idempotency_key, occurred_at,
+            arrived_at, summary, payload, payload_digest, payload_bytes)
+        VALUES (#{id}, #{eventCode}, #{sourceType}, #{sourceKey},
+            #{businessKey}, #{correlationKey}, #{idempotencyKey},
+            #{occurredAt}, #{arrivedAt}, #{summary}, #{payload},
+            #{payloadDigest}, #{payloadBytes})
+    </insert>
+    <insert id="insert" databaseId="postgresql" parameterType="com.ifelio.ijob.infra.entity.runtime.EventRecord">
+        INSERT INTO ifj_event (id, event_code, source_type, source_key,
+            business_key, correlation_key, idempotency_key, occurred_at,
+            arrived_at, summary, payload, payload_digest, payload_bytes)
+        VALUES (#{id}, #{eventCode}, #{sourceType}, #{sourceKey},
+            #{businessKey}, #{correlationKey}, #{idempotencyKey},
+            #{occurredAt}, #{arrivedAt}, #{summary}, #{payload},
+            #{payloadDigest}, #{payloadBytes})
+        ON CONFLICT (source_key, idempotency_key) DO NOTHING
+    </insert>
+    <select id="selectById" resultMap="eventRecordResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event WHERE id = #{id}
+    </select>
+    <select id="selectBySourceAndIdempotency" resultMap="eventRecordResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event
+        WHERE source_key = #{sourceKey} AND idempotency_key = #{idempotencyKey}
+    </select>
+    <select id="selectFirstMatching" resultMap="eventRecordResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event
+        WHERE event_code = #{eventCode} AND arrived_at &gt;= #{acceptAfter}
+          AND (#{businessKey} IS NULL OR business_key = #{businessKey})
+          AND (#{correlationKey} IS NULL OR correlation_key = #{correlationKey})
+        ORDER BY arrived_at ASC, id ASC LIMIT 1
+    </select>
+
+<select id="selectFirstMatching" resultMap="eventRecordResultMap" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT <include refid="columns"/> FROM ifj_event
+        WHERE event_code = #{eventCode} AND arrived_at &gt;= #{acceptAfter}
+          AND (#{businessKey} IS NULL OR business_key = #{businessKey})
+          AND (#{correlationKey} IS NULL OR correlation_key = #{correlationKey})
+        ORDER BY arrived_at ASC, id ASC
+        ) WHERE ROWNUM &lt;= 1</select>
+    <select id="selectMatchingForWait" resultMap="eventRecordResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event
+        WHERE event_code = #{eventCode} AND arrived_at &gt;= #{acceptAfter}
+          AND (#{businessKey} IS NULL OR business_key = #{businessKey})
+          AND (#{correlationKey} IS NULL OR correlation_key = #{correlationKey})
+        ORDER BY arrived_at ASC, id ASC LIMIT #{limit}
+    </select>
+
+<select id="selectMatchingForWait" resultMap="eventRecordResultMap" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT <include refid="columns"/> FROM ifj_event
+        WHERE event_code = #{eventCode} AND arrived_at &gt;= #{acceptAfter}
+          AND (#{businessKey} IS NULL OR business_key = #{businessKey})
+          AND (#{correlationKey} IS NULL OR correlation_key = #{correlationKey})
+        ORDER BY arrived_at ASC, id ASC
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+    <select id="selectFirstMatching" resultMap="eventRecordResultMap" databaseId="sqlserver">
+        SELECT TOP (1) <include refid="columns"/> FROM ifj_event
+        WHERE event_code = #{eventCode} AND arrived_at &gt;= #{acceptAfter}
+          AND (#{businessKey} IS NULL OR business_key = #{businessKey})
+          AND (#{correlationKey} IS NULL OR correlation_key = #{correlationKey})
+        ORDER BY arrived_at ASC, id ASC
+    </select>
+
+    <select id="selectMatchingForWait" resultMap="eventRecordResultMap" databaseId="sqlserver">
+        SELECT TOP (#{limit}) <include refid="columns"/> FROM ifj_event
+        WHERE event_code = #{eventCode} AND arrived_at &gt;= #{acceptAfter}
+          AND (#{businessKey} IS NULL OR business_key = #{businessKey})
+          AND (#{correlationKey} IS NULL OR correlation_key = #{correlationKey})
+        ORDER BY arrived_at ASC, id ASC
+    </select>
+</mapper>

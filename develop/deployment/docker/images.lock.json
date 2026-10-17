@@ -1,0 +1,22 @@
+{
+  "maven": {
+    "tag": "library/maven:3.9.11-eclipse-temurin-21",
+    "image": "library/maven@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237",
+    "digest": "sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237"
+  },
+  "jre": {
+    "tag": "library/eclipse-temurin:21.0.12.1_1-jre-jammy",
+    "image": "library/eclipse-temurin@sha256:affcab5356e1270ac35d2361ee83135af2f03e8d580eca78a6d5d6fdbf048db0",
+    "digest": "sha256:affcab5356e1270ac35d2361ee83135af2f03e8d580eca78a6d5d6fdbf048db0"
+  },
+  "node": {
+    "tag": "library/node:24.14.1-bookworm-slim",
+    "image": "library/node@sha256:b506e7321f176aae77317f99d67a24b272c1f09f1d10f1761f2773447d8da26c",
+    "digest": "sha256:b506e7321f176aae77317f99d67a24b272c1f09f1d10f1761f2773447d8da26c"
+  },
+  "nginx": {
+    "tag": "nginxinc/nginx-unprivileged:1.30.6-alpine",
+    "image": "nginxinc/nginx-unprivileged@sha256:782bb89768cc87b7f95c18b95baa1af250e5d451f26794f59363540161147c01",
+    "digest": "sha256:782bb89768cc87b7f95c18b95baa1af250e5d451f26794f59363540161147c01"
+  }
+}

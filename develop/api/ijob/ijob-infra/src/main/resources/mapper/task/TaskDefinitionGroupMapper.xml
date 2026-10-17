@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskDefinitionGroupMapper">
+    <insert id="insert">
+        INSERT INTO ifj_task_definition_group (definition_id, group_code, create_time)
+        VALUES (#{definitionId}, #{groupCode}, #{createTime})
+    </insert>
+    <select id="selectByDefinitionIds" resultType="com.ifelio.ijob.infra.mapper.group.DefinitionGroupRow">
+        SELECT definition_id, group_code
+        FROM ifj_task_definition_group
+        WHERE definition_id IN
+        <foreach collection="definitionIds" item="id" open="(" separator="," close=")">#{id}</foreach>
+        ORDER BY definition_id, group_code
+    </select>
+</mapper>

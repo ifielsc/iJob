@@ -1,0 +1,183 @@
+/* Route-scoped rollout: other business surfaces retain their previous geometry. */
+.application.compact-shell {
+  grid-template-columns: 208px minmax(0, 1fr);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.compact-shell .brand {
+  padding: 22px 22px 18px;
+}
+.compact-shell .wordmark {
+  font-size: 30px;
+}
+.compact-shell .brand-subtitle {
+  font-size: 12px;
+  margin-top: 5px;
+}
+.compact-shell .navigation {
+  padding: 6px 12px;
+}
+.compact-shell .nav-link {
+  min-height: 38px;
+  padding: 8px 12px;
+  gap: 10px;
+}
+.compact-shell .nav-link svg {
+  width: 18px;
+  height: 18px;
+}
+.compact-shell .nav-group {
+  margin: 12px 12px 6px;
+}
+.compact-shell .sidebar-bottom {
+  padding: 14px;
+}
+.compact-shell .topbar {
+  min-height: 56px;
+  padding: 10px 22px;
+}
+.compact-shell .topbar-actions {
+  gap: 12px;
+}
+.compact-shell main {
+  padding: 24px;
+}
+.compact-shell h1 {
+  font-size: 24px;
+  font-weight: 600;
+}
+.compact-shell h2 {
+  font-size: 16px;
+}
+.compact-shell h3 {
+  font-size: 13px;
+}
+.compact-shell .page-heading {
+  margin-bottom: 18px;
+}
+.compact-shell .eyebrow {
+  margin-bottom: 6px;
+}
+.compact-shell .subtitle {
+  font-size: 13px;
+  margin-top: 6px;
+}
+.compact-shell .panel {
+  padding: 20px;
+  border-radius: 14px;
+}
+.compact-shell .section-heading {
+  margin-bottom: 14px;
+}
+.compact-shell .roles-panel {
+  margin-top: 18px;
+}
+.compact-shell .roles-panel > p {
+  font-size: 12px;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+.compact-shell .table-scroll {
+  border-radius: 9px;
+}
+.compact-shell th,
+.compact-shell td {
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.compact-shell th {
+  font-size: 12px;
+}
+.compact-shell td strong {
+  font-weight: 500;
+}
+.compact-shell .role-chip {
+  font-size: 12px;
+}
+.compact-shell .notice {
+  padding: 9px 12px;
+  font-size: 12px;
+}
+.compact-shell .users-table {
+  min-width: 640px;
+  table-layout: fixed;
+}
+.compact-shell .users-table th:nth-child(1) {
+  width: 24%;
+}
+.compact-shell .users-table th:nth-child(2) {
+  width: 27%;
+}
+.compact-shell .users-table th:nth-child(5) {
+  width: 160px;
+}
+.compact-shell .roles-table td {
+  min-width: 100px;
+  max-width: none;
+}
+.compact-shell .roles-table td:first-child {
+  width: 115px;
+  vertical-align: top;
+  color: var(--primary);
+  font-weight: 500;
+}
+.compact-shell .permission-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.application.compact-shell.is-collapsed {
+  grid-template-columns: 64px minmax(0, 1fr);
+}
+.compact-shell.is-collapsed .brand {
+  padding: 22px 12px;
+}
+.compact-shell.is-collapsed .navigation {
+  padding: 6px;
+}
+.compact-shell.is-collapsed .nav-link {
+  padding: 9px 16px;
+}
+@media (max-width: 1100px) {
+  .compact-shell .environment {
+    display: none;
+  }
+}
+@media (max-width: 900px) {
+  .application.compact-shell {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+  .compact-shell .brand {
+    padding: 20px 6px;
+  }
+  .compact-shell .wordmark {
+    font-size: 22px;
+  }
+  .compact-shell .navigation {
+    padding: 6px;
+  }
+  .compact-shell .nav-link {
+    padding: 9px 12px;
+  }
+  .compact-shell .sidebar-bottom {
+    padding: 12px;
+  }
+  .compact-shell main {
+    padding: 18px 14px;
+  }
+  .compact-shell .topbar {
+    padding: 10px 14px;
+  }
+  .compact-shell .panel {
+    padding: 16px;
+  }
+  .compact-shell .page-heading {
+    gap: 12px;
+  }
+}

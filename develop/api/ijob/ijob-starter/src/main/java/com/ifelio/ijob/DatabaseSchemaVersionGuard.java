@@ -1,0 +1,34 @@
+package com.ifelio.ijob;
+
+import com.ifelio.ijob.common.config.AppProperties;
+import com.ifelio.ijob.common.config.AppProperties.PlatformDatabaseVendor;
+import com.ifelio.ijob.framework.database.schema.SchemaCompatibilityInspector;
+
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+public class DatabaseSchemaVersionGuard {
+    private final List<SchemaCompatibilityInspector> inspectors;
+    private final AppProperties appProperties;
+
+    public DatabaseSchemaVersionGuard(
+            List<SchemaCompatibilityInspector> inspectors, AppProperties appProperties) {
+        this.inspectors = inspectors;
+        this.appProperties = appProperties;
+    }
+
+    public void verify() {
+        PlatformDatabaseVendor vendor = appProperties.getPlatformDatabase().getVendor();
+        inspectors.stream()
+                .filter(inspector -> inspector.vendor() == vendor)
+                .findFirst()
+                .orElseThrow(
+                        () ->
+                                new IllegalStateException(
+                                        "No schema compatibility inspector is available for "
+                                                + vendor))
+                .verify();
+    }
+}

@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    hikari:
+      connection-init-sql: "SET TIME ZONE 'UTC'"
+      schema: ${IJOB_PLATFORM_DB_SCHEMA:public}
+  flyway:
+    default-schema: ${IJOB_PLATFORM_DB_SCHEMA:public}
+
+app:
+  platform-database:
+    schema: ${IJOB_PLATFORM_DB_SCHEMA:public}
+
+pagehelper:
+  helper-dialect: postgresql

@@ -1,0 +1,352 @@
+.workspace {
+  min-width: 0;
+}
+.workspace-shortcut,
+.identity-actions,
+.identity-name,
+.identity-state,
+.workspace-guide-label,
+.workspace-section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.workspace-shortcut {
+  flex-shrink: 0;
+}
+.workspace-identity {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px 24px;
+  padding: 16px 22px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+.identity-name {
+  min-width: 0;
+  color: var(--muted);
+}
+.identity-name > svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.identity-name > span {
+  overflow-wrap: anywhere;
+}
+.identity-name strong {
+  color: var(--text);
+  font-weight: 600;
+  margin-left: 10px;
+}
+.identity-actions {
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+}
+.identity-state {
+  color: var(--muted);
+}
+.identity-state svg {
+  flex-shrink: 0;
+}
+.identity-error {
+  flex-basis: 100%;
+  margin: 0;
+}
+.workspace-start {
+  margin-bottom: 20px;
+}
+.workspace-section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.workspace-section-heading p,
+.workspace-guide-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+.workspace-section-heading p {
+  margin-top: 7px;
+}
+.workspace-guide-label {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+.guide-steps,
+.guide-modules,
+.guide-plugins {
+  display: grid;
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+.guide-steps {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+.guide-steps.review-steps {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+.guide-steps li {
+  min-width: 0;
+  padding: 0 12px 0 0;
+  border-right: 1px solid var(--border);
+}
+.guide-steps li:last-child {
+  border-right: 0;
+}
+.step-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+.step-number {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.guide-steps p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.step-optional {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.workspace-content {
+  padding-top: 12px;
+}
+.workspace-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+.workspace-tabs button {
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+}
+.workspace-tabs button[aria-selected='true'] {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.workspace-tab-intro {
+  color: var(--muted);
+  margin: 4px 0 20px;
+  font-size: 13px;
+}
+.guide-modules,
+.guide-plugins {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.module-card,
+.plugin-card {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 17px;
+  background: var(--panel);
+}
+.module-card:focus-within {
+  border-color: var(--primary);
+}
+.module-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.module-link strong {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+.module-link > svg:last-child {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.module-icon {
+  background: var(--selected);
+  color: var(--primary);
+  border-radius: 9px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.module-card p,
+.plugin-card > p {
+  color: var(--muted);
+  margin-top: 10px;
+  font-size: 13px;
+}
+.resource-guide {
+  border-top: 1px solid var(--border);
+  margin-top: 22px;
+  padding-top: 18px;
+}
+.resource-guide h3 {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.resource-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+}
+.resource-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.plugin-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 10px;
+}
+.plugin-heading > span {
+  font-size: 11px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.plugin-card dl {
+  display: grid;
+  gap: 7px;
+  margin: 14px 0;
+  font-size: 13px;
+}
+.plugin-card dl > div {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 8px;
+}
+.plugin-card dt,
+.plugin-resources > span:first-child {
+  color: var(--muted);
+}
+.plugin-card dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.plugin-resources {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+}
+.plugin-resources > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 14px;
+}
+.plugin-note {
+  color: var(--muted);
+  margin-top: 18px;
+  font-size: 13px;
+}
+.guide-operations {
+  display: grid;
+  gap: 12px;
+}
+.guide-operations details {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  background: var(--panel);
+}
+.guide-operations summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.guide-operations p {
+  color: var(--muted);
+  margin: 12px 0;
+  max-width: 920px;
+}
+.guide-operations a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.workspace-empty {
+  color: var(--muted);
+  padding: 22px 0;
+}
+@media (max-width: 1200px) {
+  .guide-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .guide-steps li:nth-child(3n) {
+    border-right: 0;
+  }
+}
+@media (max-width: 960px) {
+  .guide-modules,
+  .guide-plugins {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .workspace .page-heading {
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .workspace-identity {
+    padding: 16px;
+  }
+  .identity-name {
+    flex-wrap: wrap;
+  }
+  .workspace .panel {
+    padding: 18px;
+  }
+  .workspace-guide-label {
+    display: none;
+  }
+  .guide-steps,
+  .guide-steps.review-steps {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .guide-steps li {
+    border-right: 0;
+    padding: 0;
+  }
+  .guide-steps p {
+    margin-top: 5px;
+  }
+  .step-optional {
+    margin-top: 4px;
+  }
+  .guide-modules,
+  .guide-plugins {
+    grid-template-columns: 1fr;
+  }
+}

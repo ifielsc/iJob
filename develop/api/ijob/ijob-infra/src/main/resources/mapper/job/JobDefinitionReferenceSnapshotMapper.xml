@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobDefinitionReferenceSnapshotMapper">
+
+    <select id="selectAllCurrentJobIds" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_job
+        WHERE retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+          AND retired_time IS NULL
+          AND current_definition_id IS NOT NULL
+          AND current_revision IS NOT NULL
+        ORDER BY id ASC
+    </select>
+
+<select id="selectAllCurrentJobIds" resultType="java.lang.Long" databaseId="oracle">
+        SELECT id
+        FROM ifj_job
+        WHERE retired = 0
+          AND retired_time IS NULL
+          AND current_definition_id IS NOT NULL
+          AND current_revision IS NOT NULL
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectCurrentJobReferences"
+            resultType="com.ifelio.ijob.infra.mapper.job.JobReferenceRow">
+        SELECT job.id AS jobId,
+               node.ref_id AS referencedJobId
+        FROM ifj_job job
+        JOIN ifj_job_definition_node node
+          ON node.definition_id = job.current_definition_id
+        JOIN ifj_job referenced
+          ON referenced.id = node.ref_id
+         AND referenced.retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+         AND referenced.retired_time IS NULL
+         AND referenced.current_definition_id IS NOT NULL
+         AND referenced.current_revision IS NOT NULL
+        WHERE job.retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+          AND job.retired_time IS NULL
+          AND node.node_type = 'JOB'
+        ORDER BY job.id ASC, node.ref_id ASC, node.id ASC
+    </select>
+
+<select id="selectCurrentJobReferences"
+            resultType="com.ifelio.ijob.infra.mapper.job.JobReferenceRow" databaseId="oracle">
+        SELECT job.id AS jobId,
+               node.ref_id AS referencedJobId
+        FROM ifj_job job
+        JOIN ifj_job_definition_node node
+          ON node.definition_id = job.current_definition_id
+        JOIN ifj_job referenced
+          ON referenced.id = node.ref_id
+         AND referenced.retired = 0
+         AND referenced.retired_time IS NULL
+         AND referenced.current_definition_id IS NOT NULL
+         AND referenced.current_revision IS NOT NULL
+        WHERE job.retired = 0
+          AND job.retired_time IS NULL
+          AND node.node_type = 'JOB'
+        ORDER BY job.id ASC, node.ref_id ASC, node.id ASC
+    </select>
+
+    <select id="selectCurrentJobDefinitionId" resultType="java.lang.Long">
+        SELECT current_definition_id
+        FROM ifj_job
+        WHERE id = #{jobId}
+          AND retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+    </select>
+
+<select id="selectCurrentJobDefinitionId" resultType="java.lang.Long" databaseId="oracle">
+        SELECT current_definition_id
+        FROM ifj_job
+        WHERE id = #{jobId}
+          AND retired = 0
+    </select>
+
+</mapper>

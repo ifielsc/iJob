@@ -1,0 +1,4 @@
+# Preserve audited bytes, especially frozen Flyway SQL checksums.
+* -text
+*.png binary
+*.webp binary

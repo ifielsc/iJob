@@ -1,0 +1,19 @@
+package com.ifelio.ijob.contract.notify;
+
+import com.ifelio.ijob.contract.enums.NotifyType;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString(exclude = {"emailConfig", "dingTalkConfig", "webhookConfig"})
+public class NotifyConfigUpsertRequest {
+    private String name;
+    private NotifyType type;
+    private Boolean enabled;
+    private NotifyConfigRequest.Email emailConfig;
+    private NotifyConfigRequest.DingTalk dingTalkConfig;
+    private NotifyConfigRequest.Webhook webhookConfig;
+}

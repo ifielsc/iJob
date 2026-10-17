@@ -1,0 +1,9 @@
+spring:
+  config:
+    activate:
+      on-profile: mail
+
+app:
+  notify:
+    email:
+      enabled: true

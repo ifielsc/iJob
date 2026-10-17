@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.schedule.ScheduleMapper">
+
+    <resultMap id="ScheduleResultMap"
+               type="com.ifelio.ijob.infra.entity.schedule.Schedule">
+        <id property="id" column="id"/>
+        <result property="revision" column="revision"/>
+        <result property="targetType" column="target_type"
+                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+        <result property="targetId" column="target_id"/>
+        <result property="targetName" column="target_name"/>
+        <result property="scheduleType" column="schedule_type"
+                javaType="com.ifelio.ijob.contract.enums.ScheduleType"/>
+        <result property="cronExpr" column="cron_expr"/>
+        <result property="intervalSec" column="interval_sec"/>
+        <result property="calendarId" column="calendar_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="enabled" column="enabled"/>
+        <result property="lastFireTime" column="last_fire_time"/>
+        <result property="nextFireTime" column="next_fire_time"/>
+        <result property="misfirePolicy" column="misfire_policy"
+                javaType="com.ifelio.ijob.contract.enums.ScheduleMisfirePolicy"/>
+        <result property="misfireGraceSec" column="misfire_grace_sec"/>
+        <result property="maxCatchupCount" column="max_catchup_count"/>
+        <result property="maxQueueDelaySec" column="max_queue_delay_sec"/>
+        <result property="fireClaimToken" column="fire_claim_token"/>
+        <result property="fireClaimedAt" column="fire_claimed_at"/>
+        <result property="variables" column="variables"/>
+        <result property="parameterForm" column="parameter_form"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="ScheduleColumns">
+        id,
+        revision,
+        target_type,
+        target_id,
+        schedule_type,
+        cron_expr,
+        interval_sec,
+        calendar_id,
+        start_time,
+        end_time,
+        enabled,
+        last_fire_time,
+        next_fire_time,
+        misfire_policy,
+        misfire_grace_sec,
+        max_catchup_count,
+        max_queue_delay_sec,
+        fire_claim_token,
+        fire_claimed_at,
+        variables,
+        parameter_form,
+        create_time,
+        update_time
+    </sql>
+
+    <!-- Read-only name projection: current target identity, no historical definition/config join. -->
+    <sql id="TargetName">
+        CASE target_type
+            WHEN 'TASK' THEN (SELECT t.name FROM ifj_task t WHERE t.id = ifj_schedule.target_id)
+            WHEN 'JOB' THEN (SELECT j.name FROM ifj_job j WHERE j.id = ifj_schedule.target_id)
+        END
+    </sql>
+
+    <select id="selectList" resultMap="ScheduleResultMap">
+        SELECT
+        <include refid="ScheduleColumns"/>,
+        <include refid="TargetName"/> AS target_name
+        FROM ifj_schedule
+        <where>
+            <if test="targetType != null">
+                target_type = #{targetType}
+            </if>
+            <if test="targetId != null">
+                AND target_id = #{targetId}
+            </if>
+            <if test="targetName != null and targetName.trim() != ''">
+                AND <include refid="TargetName"/> LIKE #{targetNamePattern} ESCAPE '!'
+            </if>
+            <if test="scheduleType != null">
+                AND schedule_type = #{scheduleType}
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+        </where>
+        ORDER BY update_time DESC, id DESC
+    </select>
+
+    <select id="selectById" resultMap="ScheduleResultMap">
+        SELECT
+        <include refid="ScheduleColumns"/>,
+        <include refid="TargetName"/> AS target_name
+        FROM ifj_schedule
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByFireClaimToken" resultMap="ScheduleResultMap">
+        SELECT
+        <include refid="ScheduleColumns"/>
+        FROM ifj_schedule
+        WHERE fire_claim_token = #{fireClaimToken}
+    </select>
+
+    <select id="selectIdsForUpdate" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+        FOR UPDATE
+    </select>
+
+<select id="selectIdsForUpdate" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+    </select>
+
+<select id="selectIdsForUpdate" databaseId="oracle" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+    </select>
+
+<select id="selectIdsForUpdate" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+    </select>
+
+    <select id="selectListByTargetId" resultMap="ScheduleResultMap">
+        SELECT
+        <include refid="ScheduleColumns"/>
+        FROM ifj_schedule
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+        ORDER BY id
+    </select>
+
+    <select id="selectIdsForTrigger" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        WHERE enabled = TRUE
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= CURRENT_TIMESTAMP(3)
+          AND (start_time IS NULL OR start_time &lt;= CURRENT_TIMESTAMP(3))
+        ORDER BY next_fire_time, id
+        LIMIT #{limit}
+    </select>
+
+<select id="selectIdsForTrigger" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        WHERE enabled = TRUE
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (start_time IS NULL OR start_time &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+        ORDER BY next_fire_time, id
+        LIMIT #{limit}
+    </select>
+
+<select id="selectIdsForTrigger" databaseId="oracle" resultType="java.lang.Long">
+
+        SELECT id
+        FROM ifj_schedule
+        WHERE enabled = 1
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND (start_time IS NULL OR start_time &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+        AND ROWNUM &lt;= #{limit}
+        FOR UPDATE SKIP LOCKED
+    </select>
+
+<select id="selectIdsForTrigger" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT TOP (#{limit}) id
+        FROM ifj_schedule WITH (UPDLOCK, READPAST, ROWLOCK)
+        WHERE enabled = 1
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= SYSUTCDATETIME()
+          AND (start_time IS NULL OR start_time &lt;= SYSUTCDATETIME())
+        ORDER BY next_fire_time, id
+        
+    </select>
+
+    <select id="selectDueForTriggerForUpdate" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        WHERE id = #{id}
+          AND enabled = TRUE
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= CURRENT_TIMESTAMP(3)
+          AND (start_time IS NULL OR start_time &lt;= CURRENT_TIMESTAMP(3))
+          AND fire_claim_token IS NULL
+        FOR UPDATE SKIP LOCKED
+    </select>
+
+<select id="selectDueForTriggerForUpdate" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        WHERE id = #{id}
+          AND enabled = TRUE
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (start_time IS NULL OR start_time &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          AND fire_claim_token IS NULL
+    </select>
+
+<select id="selectDueForTriggerForUpdate" databaseId="oracle" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule
+        WHERE id = #{id}
+          AND enabled = 1
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND (start_time IS NULL OR start_time &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          AND fire_claim_token IS NULL
+        FOR UPDATE SKIP LOCKED
+    </select>
+
+<select id="selectDueForTriggerForUpdate" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_schedule WITH (UPDLOCK, READPAST, ROWLOCK)
+        WHERE id = #{id}
+          AND enabled = 1
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= SYSUTCDATETIME()
+          AND (start_time IS NULL OR start_time &lt;= SYSUTCDATETIME())
+          AND fire_claim_token IS NULL
+    </select>
+
+    <update id="claimDueForTrigger">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            fire_claim_token = #{fireClaimToken},
+            fire_claimed_at = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND enabled = TRUE
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= CURRENT_TIMESTAMP(3)
+          AND (start_time IS NULL OR start_time &lt;= CURRENT_TIMESTAMP(3))
+          AND fire_claim_token IS NULL
+    </update>
+
+<update id="claimDueForTrigger" databaseId="sqlite">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            fire_claim_token = #{fireClaimToken},
+            fire_claimed_at = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND enabled = TRUE
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (start_time IS NULL OR start_time &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          AND fire_claim_token IS NULL
+    </update>
+
+<update id="claimDueForTrigger" databaseId="oracle">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            fire_claim_token = #{fireClaimToken},
+            fire_claimed_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND enabled = 1
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND (start_time IS NULL OR start_time &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          AND fire_claim_token IS NULL
+    </update>
+
+<update id="claimDueForTrigger" databaseId="sqlserver">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            fire_claim_token = #{fireClaimToken},
+            fire_claimed_at = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND enabled = 1
+          AND next_fire_time IS NOT NULL
+          AND next_fire_time &lt;= SYSUTCDATETIME()
+          AND (start_time IS NULL OR start_time &lt;= SYSUTCDATETIME())
+          AND fire_claim_token IS NULL
+    </update>
+
+    <insert id="insert"
+            parameterType="com.ifelio.ijob.infra.entity.schedule.Schedule">
+        INSERT INTO ifj_schedule (
+            id,
+            target_type,
+            target_id,
+            schedule_type,
+            cron_expr,
+            interval_sec,
+            calendar_id,
+            start_time,
+            end_time,
+            enabled,
+            last_fire_time,
+            next_fire_time,
+            misfire_policy,
+            misfire_grace_sec,
+            max_catchup_count,
+            max_queue_delay_sec,
+            variables,
+        parameter_form,
+            create_time,
+            update_time
+        ) VALUES (
+            #{id},
+            #{targetType},
+            #{targetId},
+            #{scheduleType},
+            #{cronExpr},
+            #{intervalSec},
+            #{calendarId},
+            #{startTime,jdbcType=TIMESTAMP},
+            #{endTime,jdbcType=TIMESTAMP},
+            #{enabled},
+            #{lastFireTime,jdbcType=TIMESTAMP},
+            #{nextFireTime,jdbcType=TIMESTAMP},
+            #{misfirePolicy},
+            #{misfireGraceSec},
+            #{maxCatchupCount},
+            #{maxQueueDelaySec},
+            #{variables},
+            #{parameterForm},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <update id="updateById"
+            parameterType="com.ifelio.ijob.infra.entity.schedule.Schedule">
+        UPDATE ifj_schedule
+        SET target_type = #{targetType},
+            target_id = #{targetId},
+            schedule_type = #{scheduleType},
+            cron_expr = #{cronExpr},
+            interval_sec = #{intervalSec},
+            calendar_id = #{calendarId},
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            end_time = #{endTime,jdbcType=TIMESTAMP},
+            enabled = #{enabled},
+            next_fire_time = #{nextFireTime,jdbcType=TIMESTAMP},
+            misfire_policy = #{misfirePolicy},
+            misfire_grace_sec = #{misfireGraceSec},
+            max_catchup_count = #{maxCatchupCount},
+            max_queue_delay_sec = #{maxQueueDelaySec},
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            variables = #{variables},
+            parameter_form = #{parameterForm},
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            revision = revision + 1
+        WHERE id = #{id} AND revision = #{revision}
+    </update>
+
+    <update id="updateEnabledById"
+            parameterType="com.ifelio.ijob.infra.entity.schedule.Schedule">
+        UPDATE ifj_schedule
+        SET enabled = #{enabled},
+            next_fire_time = #{nextFireTime,jdbcType=TIMESTAMP},
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = #{updateTime,jdbcType=TIMESTAMP},
+            revision = revision + 1
+        WHERE id = #{id} AND revision = #{revision}
+    </update>
+
+    <update id="updateFireTimeIfClaimed">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            last_fire_time = #{schedule.lastFireTime,jdbcType=TIMESTAMP},
+            next_fire_time = #{schedule.nextFireTime,jdbcType=TIMESTAMP},
+            enabled = #{schedule.enabled},
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{schedule.id}
+          AND enabled = TRUE
+          AND next_fire_time &lt;=&gt; #{expectedNextFireTime,jdbcType=TIMESTAMP}
+          AND fire_claim_token = #{fireClaimToken}
+    </update>
+
+    <update id="disableByTargetId">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            enabled = FALSE,
+            next_fire_time = NULL,
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+          AND enabled = TRUE
+    </update>
+
+<update id="disableByTargetId" databaseId="sqlite">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            enabled = FALSE,
+            next_fire_time = NULL,
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+          AND enabled = TRUE
+    </update>
+
+<update id="disableByTargetId" databaseId="oracle">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            enabled = 0,
+            next_fire_time = NULL,
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+          AND enabled = 1
+    </update>
+
+<update id="disableByTargetId" databaseId="sqlserver">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            enabled = 0,
+            next_fire_time = NULL,
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+          AND enabled = 1
+    </update>
+
+    <select id="countByCalendarIds" resultType="int">
+        SELECT COUNT(1)
+        FROM ifj_schedule
+        <choose>
+            <when test="calendarIds != null and !calendarIds.isEmpty()">
+                WHERE calendar_id IN
+                <foreach collection="calendarIds" item="calendarId"
+                         open="(" separator="," close=")">
+                    #{calendarId}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM ifj_schedule
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByIds">
+        DELETE FROM ifj_schedule
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+    </delete>
+
+
+    <update id="updateFireTimeIfClaimed" databaseId="postgresql">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            last_fire_time = #{schedule.lastFireTime,jdbcType=TIMESTAMP},
+            next_fire_time = #{schedule.nextFireTime,jdbcType=TIMESTAMP},
+            enabled = #{schedule.enabled},
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{schedule.id}
+          AND enabled = TRUE
+          AND next_fire_time IS NOT DISTINCT FROM #{expectedNextFireTime,jdbcType=TIMESTAMP}
+          AND fire_claim_token = #{fireClaimToken}
+    </update>
+
+<update id="updateFireTimeIfClaimed" databaseId="sqlite">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            last_fire_time = #{schedule.lastFireTime,jdbcType=TIMESTAMP},
+            next_fire_time = #{schedule.nextFireTime,jdbcType=TIMESTAMP},
+            enabled = #{schedule.enabled},
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{schedule.id}
+          AND enabled = TRUE
+          AND next_fire_time IS #{expectedNextFireTime,jdbcType=TIMESTAMP}
+          AND fire_claim_token = #{fireClaimToken}
+    </update>
+
+<update id="updateFireTimeIfClaimed" databaseId="oracle">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            last_fire_time = #{schedule.lastFireTime,jdbcType=TIMESTAMP},
+            next_fire_time = #{schedule.nextFireTime,jdbcType=TIMESTAMP},
+            enabled = #{schedule.enabled},
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{schedule.id}
+          AND enabled = 1
+          AND (next_fire_time = #{expectedNextFireTime,jdbcType=TIMESTAMP} OR (next_fire_time IS NULL AND #{expectedNextFireTime,jdbcType=TIMESTAMP} IS NULL))
+          AND fire_claim_token = #{fireClaimToken}
+    </update>
+
+<update id="updateFireTimeIfClaimed" databaseId="sqlserver">
+        UPDATE ifj_schedule
+        SET revision = revision + 1,
+            last_fire_time = #{schedule.lastFireTime,jdbcType=TIMESTAMP},
+            next_fire_time = #{schedule.nextFireTime,jdbcType=TIMESTAMP},
+            enabled = #{schedule.enabled},
+            fire_claim_token = NULL,
+            fire_claimed_at = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{schedule.id}
+          AND enabled = 1
+          AND (next_fire_time = #{expectedNextFireTime,jdbcType=TIMESTAMP} OR (next_fire_time IS NULL AND #{expectedNextFireTime,jdbcType=TIMESTAMP} IS NULL))
+          AND fire_claim_token = #{fireClaimToken}
+    </update>
+</mapper>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobCurrentDefinitionMapper">
+
+    <resultMap id="CurrentDefinitionRowResultMap"
+               type="com.ifelio.ijob.infra.mapper.job.JobCurrentDefinitionRow">
+        <id property="id" column="id"/>
+        <result property="currentDefinitionId"
+                column="current_definition_id"/>
+        <result property="currentRevision" column="current_revision"/>
+        <result property="retired" column="retired"/>
+        <result property="retiredTime" column="retired_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="JobListResultMap"
+               type="com.ifelio.ijob.contract.job.JobListDTO">
+        <id property="id" column="id"/>
+        <result property="nodeCount" column="node_count"/>
+        <result property="name" column="name"/>
+        <result property="timeout" column="timeout"/>
+        <result property="enabled" column="enabled"/>
+        <result property="description" column="description"/>
+        <result property="currentDefinitionId"
+                column="current_definition_id"/>
+        <result property="currentRevision" column="current_revision"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectDtoList"
+            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            resultMap="JobListResultMap">
+        SELECT identity.id,
+               definition.name,
+               definition.timeout,
+               definition.enabled,
+               definition.description,
+               identity.current_definition_id,
+               identity.current_revision,
+               identity.update_time,
+               (SELECT COUNT(*) FROM ifj_job_definition_node n WHERE n.definition_id = identity.current_definition_id) AS node_count
+        FROM ifj_job identity
+        JOIN ifj_job_definition definition
+          ON definition.id = identity.current_definition_id
+         AND definition.job_id = identity.id
+         AND definition.revision = identity.current_revision
+        <where>
+            identity.retired = FALSE
+            AND identity.retired_time IS NULL
+            <if test="id != null">AND identity.id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND definition.name LIKE #{namePattern} ESCAPE '!'
+            </if>
+            <if test="enabled != null">
+                AND definition.enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_job_definition_group definition_group
+                    WHERE definition_group.definition_id = definition.id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY identity.update_time DESC, identity.id DESC
+    </select>
+
+    <select id="selectDtoList" databaseId="postgresql"
+            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            resultMap="JobListResultMap">
+        SELECT identity.id,
+               definition.name,
+               definition.timeout,
+               definition.enabled,
+               definition.description,
+               identity.current_definition_id,
+               identity.current_revision,
+               identity.update_time,
+               (SELECT COUNT(*) FROM ifj_job_definition_node n WHERE n.definition_id = identity.current_definition_id) AS node_count
+        FROM ifj_job identity
+        JOIN ifj_job_definition definition
+          ON definition.id = identity.current_definition_id
+         AND definition.job_id = identity.id
+         AND definition.revision = identity.current_revision
+        <where>
+            identity.retired = FALSE
+            AND identity.retired_time IS NULL
+            <if test="id != null">AND identity.id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND LOWER(definition.name) LIKE LOWER(#{namePattern}) ESCAPE '!'
+            </if>
+            <if test="enabled != null">
+                AND definition.enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_job_definition_group definition_group
+                    WHERE definition_group.definition_id = definition.id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY identity.update_time DESC, identity.id DESC
+    </select>
+
+<select id="selectDtoList" databaseId="sqlite"
+            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            resultMap="JobListResultMap">
+        SELECT identity.id,
+               definition.name,
+               definition.timeout,
+               definition.enabled,
+               definition.description,
+               identity.current_definition_id,
+               identity.current_revision,
+               identity.update_time,
+               (SELECT COUNT(*) FROM ifj_job_definition_node n WHERE n.definition_id = identity.current_definition_id) AS node_count
+        FROM ifj_job identity
+        JOIN ifj_job_definition definition
+          ON definition.id = identity.current_definition_id
+         AND definition.job_id = identity.id
+         AND definition.revision = identity.current_revision
+        <where>
+            identity.retired = FALSE
+            AND identity.retired_time IS NULL
+            <if test="id != null">AND identity.id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND LOWER(definition.name) LIKE LOWER(#{namePattern}) ESCAPE '!'
+            </if>
+            <if test="enabled != null">
+                AND definition.enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_job_definition_group definition_group
+                    WHERE definition_group.definition_id = definition.id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY identity.update_time DESC, identity.id DESC
+    </select>
+
+<select id="selectDtoList" databaseId="oracle"
+            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            resultMap="JobListResultMap">
+        SELECT identity.id,
+               definition.name,
+               definition.timeout,
+               definition.enabled,
+               definition.description,
+               identity.current_definition_id,
+               identity.current_revision,
+               identity.update_time,
+               (SELECT COUNT(*) FROM ifj_job_definition_node n WHERE n.definition_id = identity.current_definition_id) AS node_count
+        FROM ifj_job identity
+        JOIN ifj_job_definition definition
+          ON definition.id = identity.current_definition_id
+         AND definition.job_id = identity.id
+         AND definition.revision = identity.current_revision
+        <where>
+            identity.retired = 0
+            AND identity.retired_time IS NULL
+            <if test="id != null">AND identity.id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND LOWER(definition.name) LIKE LOWER(#{namePattern}) ESCAPE '!'
+            </if>
+            <if test="enabled != null">
+                AND definition.enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_job_definition_group definition_group
+                    WHERE definition_group.definition_id = definition.id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY identity.update_time DESC, identity.id DESC
+    </select>
+
+<select id="selectDtoList" databaseId="sqlserver"
+            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            resultMap="JobListResultMap">
+        SELECT job_identity.id,
+               definition.name,
+               definition.timeout,
+               definition.enabled,
+               definition.description,
+               job_identity.current_definition_id,
+               job_identity.current_revision,
+               job_identity.update_time,
+               (SELECT COUNT(*) FROM ifj_job_definition_node n WHERE n.definition_id = job_identity.current_definition_id) AS node_count
+        FROM ifj_job job_identity
+        JOIN ifj_job_definition definition
+          ON definition.id = job_identity.current_definition_id
+         AND definition.job_id = job_identity.id
+         AND definition.revision = job_identity.current_revision
+        <where>
+            job_identity.retired = 0
+            AND job_identity.retired_time IS NULL
+            <if test="id != null">AND job_identity.id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND LOWER(definition.name) LIKE LOWER(#{namePattern}) ESCAPE '!'
+            </if>
+            <if test="enabled != null">
+                AND definition.enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_job_definition_group definition_group
+                    WHERE definition_group.definition_id = definition.id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY job_identity.update_time DESC, job_identity.id DESC
+    </select>
+
+    <select id="selectById" resultMap="CurrentDefinitionRowResultMap">
+        SELECT id,
+               current_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_job
+        WHERE id = #{id}
+    </select>
+
+</mapper>

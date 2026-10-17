@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.notify.NotificationDeliveryMapper">
+    <sql id="columns">o.id, o.notify_config_id, c.name AS config_name, o.notify_type, o.source_type, o.subject, o.target_id, o.instance_id, o.status, o.attempt_count, o.max_attempts, o.last_failure_code AS failure_code, o.last_failure_summary AS failure_summary, o.http_status, o.available_at, o.create_time, o.delivered_at, o.update_time</sql>
+    <select id="selectDtoList" resultType="com.ifelio.ijob.contract.notify.NotificationDeliveryDTO">
+        SELECT <include refid="columns"/> FROM ifj_notification_outbox o LEFT JOIN ifj_notify_config c ON c.id = o.notify_config_id
+        WHERE o.create_time &gt;= #{fromTime} AND o.create_time &lt;= #{toTime}
+        <if test="deliveryStatus != null and deliveryStatus != ''">
+            <choose><when test="deliveryStatus == 'RATE_WAIT'">AND o.status = 'RETRY_WAIT' AND o.last_failure_code = 'RATE_WAIT'</when>
+            <otherwise>AND o.status = #{deliveryStatus}</otherwise></choose>
+        </if>
+        <if test="notifyConfigId != null">AND o.notify_config_id = #{notifyConfigId}</if>
+        <if test="instanceId != null">AND o.instance_id = #{instanceId}</if>
+        <if test="sourceType != null">AND o.source_type = #{sourceType}</if>
+        <if test="targetType != null">AND o.target_type = #{targetType} AND o.target_id = #{targetId}</if>
+        ORDER BY o.create_time DESC, o.id DESC
+    </select>
+    <select id="selectDtoById" resultType="com.ifelio.ijob.contract.notify.NotificationDeliveryDTO">
+        SELECT <include refid="columns"/> FROM ifj_notification_outbox o LEFT JOIN ifj_notify_config c ON c.id = o.notify_config_id WHERE o.id = #{id}
+    </select>
+</mapper>

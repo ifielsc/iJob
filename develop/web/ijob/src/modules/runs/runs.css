@@ -1,0 +1,540 @@
+.runs-page {
+  font-size: 13px;
+  min-width: 0;
+  color: var(--text);
+}
+.runs-page h1 {
+  font-size: 24px;
+  margin: 0;
+}
+.runs-page h2 {
+  font-size: 18px;
+  margin: 0;
+}
+.runs-page h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.run-panel {
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  min-width: 0;
+}
+.run-tabs,
+.run-toolbar,
+.run-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.run-tabs {
+  margin: 0 0 16px;
+}
+.run-tabs.run-toolbar {
+  justify-content: flex-start;
+}
+.runs-page h1 {
+  overflow-wrap: anywhere;
+}
+.run-table td:first-child {
+  white-space: nowrap;
+}
+.run-toolbar {
+  justify-content: space-between;
+  margin: 16px 0;
+}
+.run-right {
+  justify-content: flex-end;
+}
+.run-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+.run-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.run-field > label {
+  flex: none;
+  white-space: nowrap;
+}
+.run-field > :last-child {
+  width: var(--filter-width, 160px);
+  min-width: 0;
+}
+.run-field.run-filter-name > :last-child,
+.run-id-field > :last-child {
+  width: 210px;
+}
+.run-time-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 16px;
+  margin-top: 16px;
+}
+.run-time-label {
+  padding-top: 6px;
+}
+.run-date-pair {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  min-width: 0;
+}
+.run-date {
+  width: 210px;
+  position: relative;
+}
+.run-date + .run-date::before {
+  content: '—';
+  position: absolute;
+  left: -20px;
+  top: 6px;
+  color: var(--muted);
+}
+.run-date-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.run-advanced {
+  margin-top: 16px;
+}
+.run-field-error {
+  color: var(--error);
+  font-size: 12px;
+  margin: 6px 0 0;
+}
+.run-panel > form {
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) {
+  .run-field {
+    width: 100%;
+  }
+  .run-field > :last-child,
+  .run-field.run-filter-name > :last-child {
+    flex: 1;
+    width: 0;
+  }
+  .run-date-pair {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+  .run-date {
+    width: 100%;
+  }
+  .run-date + .run-date::before {
+    display: none;
+  }
+  .run-date-label {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    display: block;
+    margin-bottom: 6px;
+  }
+}
+.run-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.run-rotated {
+  transform: rotate(180deg);
+}
+.run-table-scroll {
+  overflow: auto;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.run-table {
+  width: 100%;
+  min-width: 820px;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+}
+.run-table th,
+.run-table td {
+  padding: 10px 12px;
+  height: 46px;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  max-width: 300px;
+}
+.run-table th {
+  background: var(--selected);
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.run-table td {
+  background: var(--panel);
+}
+.run-table tbody tr:hover td {
+  background: var(--selected);
+}
+.run-table .run-sticky {
+  position: sticky;
+  right: 0;
+  width: 76px;
+  min-width: 76px;
+  box-shadow: -2px 0 3px var(--border);
+}
+.run-meta {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.run-meta dt {
+  color: var(--muted);
+}
+.run-meta dd {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  user-select: text;
+}
+.run-drawer {
+  max-width: 100vw;
+}
+.run-layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.run-tree {
+  max-height: 70vh;
+  overflow: auto;
+}
+.run-node {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 9px 10px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  font: inherit;
+}
+.run-tree-row {
+  display: flex;
+  align-items: start;
+  min-width: 0;
+}
+.run-disclosure {
+  flex: none;
+  width: 20px;
+  padding: 8px 0;
+  color: var(--text);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+.run-node[aria-current='true'] {
+  background: var(--selected);
+  border-color: var(--border);
+}
+.run-node small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.run-code {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 60vh;
+  font: 12px/1.7 monospace;
+  margin: 12px 0;
+}
+.run-status {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: var(--selected);
+  font-size: 12px;
+}
+.run-status[data-status='FAILED'],
+.run-status[data-status='TIMED_OUT'],
+.run-status[data-status='DELIVERY_FAILED'],
+.run-status[data-status='REJECTED'] {
+  color: var(--error);
+}
+.run-status[data-status='SUCCESS'],
+.run-status[data-status='DELIVERED'],
+.run-status[data-status='SUCCEEDED'] {
+  color: var(--success);
+}
+.run-command {
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+.run-tree-toggle {
+  display: none;
+}
+@media (max-width: 800px) {
+  .run-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .run-tree-toggle {
+    display: block;
+  }
+  .run-tree {
+    max-height: 300px;
+  }
+  .run-tree-panel:not(.is-open) .run-tree {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  .run-panel {
+    padding: 16px;
+  }
+  .run-meta {
+    grid-template-columns: 110px minmax(0, 1fr);
+  }
+  .run-filters > div,
+  .run-filters > .run-date,
+  .run-filters > .run-filter-name {
+    width: 100%;
+  }
+  .run-tabs {
+    gap: 6px;
+  }
+}
+
+.run-filter-targetType {
+  --filter-width: 120px;
+}
+.run-filter-triggerType {
+  --filter-width: 140px;
+}
+.run-filter-result {
+  --filter-width: 220px;
+}
+.run-actions > * {
+  height: 32px;
+}
+
+.run-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin: 16px 0;
+}
+.run-detail-heading {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.run-detail-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.run-detail-heading > .run-note {
+  margin: 8px 0 0;
+}
+.run-detail-progress.experience-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  max-width: 360px;
+}
+.run-detail-progress > small,
+.run-detail-progress > span {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.run-detail-progress > progress {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+}
+.run-detail-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  max-width: 100%;
+}
+.run-detail-actions > .run-actions {
+  justify-content: flex-end;
+}
+.run-root-controls {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.run-root-controls > .run-note {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.run-control-hint {
+  flex-basis: 100%;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin: 0;
+}
+.run-section-heading {
+  margin: 0 0 16px;
+  min-height: 32px;
+}
+@media (max-width: 600px) {
+  .run-detail-actions {
+    align-items: flex-start;
+    width: 100%;
+  }
+  .run-detail-actions > .run-actions {
+    justify-content: flex-start;
+  }
+}
+.run-graph-panel {
+  margin-bottom: 16px;
+}
+.run-graph-panel h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.run-graph-canvas {
+  height: 430px;
+  margin-top: 12px;
+}
+.run-graph-legend,
+.run-graph-selection {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+.run-graph-selection {
+  margin-top: 12px;
+  min-height: 32px;
+}
+.run-graph-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.run-graph-badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+.run-graph-badge[data-status='SUCCESS'] {
+  color: var(--success);
+}
+.run-graph-badge[data-status='RUNNING'],
+.run-graph-badge[data-status='WAITING_EVENT'] {
+  color: var(--primary);
+}
+.run-graph-badge[data-status='FAILED'],
+.run-graph-badge[data-status='TIMED_OUT'] {
+  color: var(--error);
+}
+.run-graph-badge[data-status='PAUSED'] {
+  color: var(--warning);
+}
+.run-graph-canvas .job-node:not(.job-node-gateway) {
+  height: 96px;
+  border-left-width: 4px;
+}
+.run-graph-canvas .job-node[data-runtime-status='SUCCESS'] {
+  border-color: var(--success);
+}
+.run-graph-canvas .job-node[data-runtime-status='WAITING_EVENT'],
+.run-graph-canvas .job-node[data-runtime-status='RUNNING'] {
+  border-color: var(--primary);
+}
+.run-graph-canvas .job-node[data-runtime-status='FAILED'],
+.run-graph-canvas .job-node[data-runtime-status='TIMED_OUT'] {
+  border-color: var(--error);
+}
+.run-graph-canvas .job-node .run-graph-badge {
+  margin-top: 6px;
+}
+.run-graph-canvas .job-canvas-count {
+  top: 12px;
+  bottom: auto;
+  right: 12px;
+}
+.run-graph-canvas .job-node-gateway {
+  width: 140px;
+  height: 140px;
+}
+.run-graph-canvas .job-node-gateway .run-graph-badge {
+  font-size: 11px;
+}
+@media (max-width: 640px) {
+  .run-graph-canvas {
+    height: 420px;
+  }
+  .run-graph-canvas .job-canvas {
+    min-height: 0;
+  }
+}
+
+.experience-filters > .n-select {
+  width: 150px;
+}
+.experience-filters > .n-input {
+  width: min(100%, 300px);
+}
+.run-code .run-log-line {
+  display: flex;
+  gap: 12px;
+}
+.run-code .run-log-line > span {
+  min-width: 0;
+}
+.run-code.experience-log-wrap .run-log-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.run-code:not(.experience-log-wrap) .run-log-line {
+  white-space: pre;
+}
+.run-code .run-log-line:has(.identity-text) > .identity-text {
+  flex: 0 0 135px;
+}

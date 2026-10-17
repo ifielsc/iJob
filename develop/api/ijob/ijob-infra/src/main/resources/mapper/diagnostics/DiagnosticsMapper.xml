@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.diagnostics.DiagnosticsMapper">
+    <!-- The service applies LIMIT+1 without a count query. Only explicit safe fields are read. -->
+    <select id="selectItems" timeout="5"
+            resultType="com.ifelio.ijob.contract.diagnostics.DiagnosticItemDTO">
+        <choose>
+            <when test="category.name() == 'ROOT_DEADLINE_EXCEEDED'">
+                SELECT execution.id, execution.id AS root_instance_id,
+                    execution.id AS instance_id, execution.trigger_id,
+                    execution.target_type, execution.target_id, execution.status,
+                    CASE WHEN execution.target_type = 'TASK' THEN task_snapshot.name
+                         WHEN execution.target_type = 'JOB' THEN job_snapshot.name ELSE NULL END AS name,
+                    execution.timeout_at AS observed_deadline, execution.create_time
+                FROM ifj_instance execution
+                LEFT JOIN ifj_task_definition task_snapshot ON task_snapshot.id = execution.task_definition_id
+                LEFT JOIN ifj_job_definition job_snapshot ON job_snapshot.id = execution.definition_id
+                WHERE execution.parent_instance_id IS NULL
+                    AND execution.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+                    AND execution.timeout_at &lt;= #{now}
+                ORDER BY execution.timeout_at, execution.id
+            </when>
+            <when test="category.name() == 'COMMAND_EXPIRED'">
+                SELECT command_record.request_id AS id, command_record.trigger_id,
+                    command_record.root_instance_id, command_record.instance_id,
+                    command_record.status, command_record.command_type,
+                    command_record.expires_at AS observed_deadline, command_record.create_time
+                FROM ifj_runtime_command command_record
+                WHERE command_record.status IN ('PENDING', 'PROCESSING')
+                    AND command_record.expires_at &lt;= #{now}
+                ORDER BY command_record.expires_at, command_record.request_id
+            </when>
+            <otherwise>
+                SELECT work_item.trigger_id AS id, work_item.trigger_id,
+                    work_item.root_instance_id, trigger_record.target_type, trigger_record.target_id,
+                    CASE WHEN trigger_record.target_type = 'TASK' THEN task_snapshot.name
+                         WHEN trigger_record.target_type = 'JOB' THEN job_snapshot.name ELSE NULL END AS name,
+                    work_item.status, work_item.create_time,
+                    <choose>
+                        <when test="category.name() == 'LEASE_EXPIRED'">
+                            work_item.lease_deadline AS observed_deadline
+                        </when>
+                        <otherwise>work_item.available_at AS observed_deadline</otherwise>
+                    </choose>
+                FROM ifj_trigger_work_item work_item
+                JOIN ifj_trigger trigger_record ON trigger_record.id = work_item.trigger_id
+                LEFT JOIN ifj_task_definition task_snapshot ON task_snapshot.id = trigger_record.task_definition_id
+                LEFT JOIN ifj_job_definition job_snapshot ON job_snapshot.id = trigger_record.definition_id
+                WHERE
+                    <choose>
+                        <when test="category.name() == 'LEASE_EXPIRED'">
+                            work_item.status = 'CLAIMED' AND work_item.lease_deadline &lt;= #{now}
+                        </when>
+                        <otherwise>
+                            work_item.status IN ('READY', 'RETRY_WAIT')
+                            AND work_item.available_at &lt;= #{queueCutoff}
+                            AND (work_item.expires_at IS NULL OR work_item.expires_at &gt; #{now})
+                            AND work_item.attempt_count &lt; work_item.max_attempts
+                        </otherwise>
+                    </choose>
+                ORDER BY observed_deadline, work_item.trigger_id
+            </otherwise>
+        </choose>
+    </select>
+</mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.DagGatewayDecisionMapper">
+
+    <resultMap id="decisionResultMap"
+               type="com.ifelio.ijob.infra.entity.runtime.DagGatewayDecision">
+        <id property="id" column="id"/>
+        <result property="jobInstanceId" column="job_instance_id"/>
+        <result property="definitionNodeId" column="definition_node_id"/>
+        <result property="evaluationNo" column="evaluation_no"/>
+        <result property="selectedEdgeIds" column="selected_edge_ids"/>
+        <result property="contextDigest" column="context_digest"/>
+        <result property="evaluatorVersion" column="evaluator_version"/>
+        <result property="status" column="status"
+                javaType="com.ifelio.ijob.contract.enums.GatewayDecisionStatus"/>
+        <result property="errorCode" column="error_code"/>
+        <result property="executionFence" column="execution_fence"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="decisionColumns">
+        id, job_instance_id, definition_node_id, evaluation_no,
+        selected_edge_ids, context_digest, evaluator_version, status,
+        error_code, execution_fence, create_time
+    </sql>
+
+    <select id="selectByJobInstanceId" resultMap="decisionResultMap">
+        SELECT <include refid="decisionColumns"/>
+        FROM ifj_dag_gateway_decision
+        WHERE job_instance_id = #{jobInstanceId}
+        ORDER BY definition_node_id ASC, evaluation_no DESC
+    </select>
+
+    <select id="selectByJobInstanceIds" resultMap="decisionResultMap">
+        SELECT <include refid="decisionColumns"/>
+        FROM ifj_dag_gateway_decision
+        WHERE job_instance_id IN
+        <foreach collection="jobInstanceIds" item="jobInstanceId" open="(" separator="," close=")">
+            #{jobInstanceId}
+        </foreach>
+        ORDER BY job_instance_id ASC, definition_node_id ASC, evaluation_no DESC
+    </select>
+
+    <select id="selectByJobInstanceAndNode" resultMap="decisionResultMap">
+        SELECT <include refid="decisionColumns"/>
+        FROM ifj_dag_gateway_decision
+        WHERE job_instance_id = #{jobInstanceId}
+          AND definition_node_id = #{definitionNodeId}
+        ORDER BY evaluation_no DESC
+    </select>
+
+    <sql id="ownedExecution">
+        EXISTS (
+            SELECT 1
+            FROM ifj_instance job_instance
+            WHERE job_instance.id = #{decision.jobInstanceId}
+              AND job_instance.root_instance_id = #{rootInstanceId}
+              AND job_instance.trigger_id = #{triggerId}
+              AND job_instance.execution_fence = #{decision.executionFence}
+              AND (
+                  #{decision.executionFence} = 0
+                  OR EXISTS (
+                      SELECT 1
+                      FROM ifj_trigger_work_item work_item
+                      WHERE work_item.trigger_id = #{triggerId}
+                        AND work_item.root_instance_id = #{rootInstanceId}
+                        AND work_item.status = 'CLAIMED'
+                        AND work_item.fence_token = #{decision.executionFence}
+                        AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+                  )
+              )
+        )
+    </sql>
+
+    <insert id="insertIfOwned">
+        INSERT INTO ifj_dag_gateway_decision (
+            id, job_instance_id, definition_node_id, evaluation_no,
+            selected_edge_ids, context_digest, evaluator_version, status,
+            error_code, execution_fence, create_time
+        )
+        SELECT
+            #{decision.id}, #{decision.jobInstanceId}, #{decision.definitionNodeId},
+            #{decision.evaluationNo}, #{decision.selectedEdgeIds},
+            #{decision.contextDigest}, #{decision.evaluatorVersion},
+            #{decision.status}, #{decision.errorCode}, #{decision.executionFence},
+            #{decision.createTime}
+        WHERE <include refid="ownedExecution"/>
+    </insert>
+
+    <insert id="insertIfOwned" databaseId="sqlite">
+        INSERT INTO ifj_dag_gateway_decision (
+            id, job_instance_id, definition_node_id, evaluation_no,
+            selected_edge_ids, context_digest, evaluator_version, status,
+            error_code, execution_fence, create_time
+        )
+        SELECT
+            #{decision.id}, #{decision.jobInstanceId}, #{decision.definitionNodeId},
+            #{decision.evaluationNo}, #{decision.selectedEdgeIds},
+            #{decision.contextDigest}, #{decision.evaluatorVersion},
+            #{decision.status}, #{decision.errorCode}, #{decision.executionFence},
+            #{decision.createTime}
+        WHERE EXISTS (
+            SELECT 1 FROM ifj_instance job_instance
+            WHERE job_instance.id = #{decision.jobInstanceId}
+              AND job_instance.root_instance_id = #{rootInstanceId}
+              AND job_instance.trigger_id = #{triggerId}
+              AND job_instance.execution_fence = #{decision.executionFence}
+              AND (#{decision.executionFence} = 0 OR EXISTS (
+                  SELECT 1 FROM ifj_trigger_work_item work_item
+                  WHERE work_item.trigger_id = #{triggerId}
+                    AND work_item.root_instance_id = #{rootInstanceId}
+                    AND work_item.status = 'CLAIMED'
+                    AND work_item.fence_token = #{decision.executionFence}
+                    AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+              ))
+        )
+    </insert>
+
+    <insert id="insertIfOwned" databaseId="oracle">
+        INSERT INTO ifj_dag_gateway_decision (
+            id, job_instance_id, definition_node_id, evaluation_no,
+            selected_edge_ids, context_digest, evaluator_version, status,
+            error_code, execution_fence, create_time
+        )
+        SELECT
+            #{decision.id}, #{decision.jobInstanceId}, #{decision.definitionNodeId},
+            #{decision.evaluationNo}, #{decision.selectedEdgeIds},
+            #{decision.contextDigest}, #{decision.evaluatorVersion},
+            #{decision.status}, #{decision.errorCode}, #{decision.executionFence},
+            #{decision.createTime}
+        FROM dual
+        WHERE EXISTS (
+            SELECT 1 FROM ifj_instance job_instance
+            WHERE job_instance.id = #{decision.jobInstanceId}
+              AND job_instance.root_instance_id = #{rootInstanceId}
+              AND job_instance.trigger_id = #{triggerId}
+              AND job_instance.execution_fence = #{decision.executionFence}
+              AND (#{decision.executionFence} = 0 OR EXISTS (
+                  SELECT 1 FROM ifj_trigger_work_item work_item
+                  WHERE work_item.trigger_id = #{triggerId}
+                    AND work_item.root_instance_id = #{rootInstanceId}
+                    AND work_item.status = 'CLAIMED'
+                    AND work_item.fence_token = #{decision.executionFence}
+                    AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+              ))
+        )
+    </insert>
+
+    <insert id="insertIfOwned" databaseId="sqlserver">
+        INSERT INTO ifj_dag_gateway_decision (
+            id, job_instance_id, definition_node_id, evaluation_no,
+            selected_edge_ids, context_digest, evaluator_version, status,
+            error_code, execution_fence, create_time
+        )
+        SELECT
+            #{decision.id}, #{decision.jobInstanceId}, #{decision.definitionNodeId},
+            #{decision.evaluationNo}, #{decision.selectedEdgeIds},
+            #{decision.contextDigest}, #{decision.evaluatorVersion},
+            #{decision.status}, #{decision.errorCode}, #{decision.executionFence},
+            #{decision.createTime}
+        WHERE EXISTS (
+            SELECT 1 FROM ifj_instance job_instance
+            WHERE job_instance.id = #{decision.jobInstanceId}
+              AND job_instance.root_instance_id = #{rootInstanceId}
+              AND job_instance.trigger_id = #{triggerId}
+              AND job_instance.execution_fence = #{decision.executionFence}
+              AND (#{decision.executionFence} = 0 OR EXISTS (
+                  SELECT 1 FROM ifj_trigger_work_item work_item
+                  WHERE work_item.trigger_id = #{triggerId}
+                    AND work_item.root_instance_id = #{rootInstanceId}
+                    AND work_item.status = 'CLAIMED'
+                    AND work_item.fence_token = #{decision.executionFence}
+                    AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+              ))
+        )
+    </insert>
+</mapper>

@@ -1,0 +1,198 @@
+[
+  {
+    "plugin": "SQL",
+    "scope": "tasks",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/sql/SqlTaskConfig.java",
+    "fields": [
+      "resourceId",
+      "script",
+      "delimiter",
+      "transaction",
+      "continueOnError",
+      "queryTimeoutSeconds",
+      "minRows",
+      "maxRows",
+      "resultVariable"
+    ]
+  },
+  {
+    "plugin": "SCRIPT",
+    "scope": "tasks",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/script/ScriptTaskConfig.java",
+    "fields": [
+      "executionMode",
+      "sshResourceId",
+      "engine",
+      "interpreter",
+      "script",
+      "workingDir",
+      "env",
+      "charset",
+      "scriptCharset",
+      "outputCharset"
+    ]
+  },
+  {
+    "plugin": "EVENT",
+    "scope": "eventTask",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/event/EventTaskConfig.java",
+    "fields": [
+      "action",
+      "eventCode",
+      "businessKey",
+      "correlationKey",
+      "idempotencyKey",
+      "occurredAt",
+      "summary",
+      "payload",
+      "suppressSameInbound",
+      "timeoutSeconds",
+      "lookbackSeconds",
+      "allowedOperatorIds",
+      "fileResourceId",
+      "filePath",
+      "filePattern",
+      "recursive",
+      "minStableAgeSeconds",
+      "maxMatches",
+      "fileCaseSensitive",
+      "maxDepth",
+      "maxScannedEntries",
+      "scanTimeoutSeconds"
+    ]
+  },
+  {
+    "plugin": "API_CALL",
+    "scope": "apiCall",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/apicall/ApiCallConfig.java",
+    "fields": [
+      "remoteStop",
+      "resourceId",
+      "path",
+      "method",
+      "headers",
+      "body",
+      "webService",
+      "maxResponseBytes",
+      "extractors",
+      "successCondition"
+    ]
+  },
+  {
+    "plugin": "ETL",
+    "scope": "etl",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/etl/config/EtlTaskConfig.java",
+    "fields": [
+      "version",
+      "execution",
+      "source",
+      "transforms",
+      "validations",
+      "target",
+      "incremental",
+      "allowNonIdempotentRetry"
+    ]
+  },
+  {
+    "plugin": "BATCH_ETL",
+    "scope": "batchEtl",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/batchetl/config/BatchEtlTaskConfig.java",
+    "fields": [
+      "version",
+      "sourceResourceId",
+      "sourceSchema",
+      "targetResourceId",
+      "targetSchema",
+      "tables",
+      "logicalKeys",
+      "extractMode",
+      "incremental",
+      "loadMode",
+      "nullPolicy",
+      "targetNaming",
+      "clearBeforeImport",
+      "clearMode",
+      "acknowledgeNonTransactionalTruncate",
+      "acknowledgePartialCommit",
+      "allowNonIdempotentRetry",
+      "execution"
+    ]
+  },
+  {
+    "plugin": "SERVER_MONITOR",
+    "scope": "monitor",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/servermonitor/config/MonitorConfig.java",
+    "fields": ["resourceId", "collect", "rules", "notify"]
+  },
+  {
+    "plugin": "LOCAL_JAR",
+    "scope": "localJar",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/localjar/LocalJarTaskConfig.java",
+    "fields": [
+      "formatVersion",
+      "jarFile",
+      "jarSize",
+      "sha256",
+      "implementationVersion",
+      "spiVersion",
+      "entryClass",
+      "userConfig"
+    ]
+  },
+  {
+    "plugin": "FILE_TRANSFER",
+    "scope": "files",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/filetransfer/FileTransferConfig.java",
+    "fields": [
+      "mode",
+      "sourceResourceId",
+      "targetResourceId",
+      "sourcePath",
+      "targetPath",
+      "filePattern",
+      "recursive",
+      "decompressType",
+      "compressType",
+      "remotePublishMode",
+      "overwrite",
+      "deleteSource",
+      "archiveName",
+      "compressionLevel",
+      "maxArchiveEntries",
+      "maxExtractedEntryBytes",
+      "maxExtractedTotalBytes",
+      "maxCompressionRatio",
+      "maxScanDepth",
+      "maxScannedEntries",
+      "maxSourceFileBytes",
+      "maxSourceTotalBytes",
+      "maxStagingBytes"
+    ]
+  },
+  {
+    "plugin": "PUSH",
+    "scope": "push",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/push/PushTaskConfig.java",
+    "fields": [
+      "sourceResourceId",
+      "sql",
+      "target",
+      "serializer",
+      "compression",
+      "fetchSize",
+      "batchSize",
+      "maxInflight",
+      "publishTimeoutSeconds",
+      "retryTimes",
+      "maxMessageBytes",
+      "maxMessages",
+      "maxTotalPayloadBytes"
+    ]
+  },
+  {
+    "plugin": "DATA_CHECK",
+    "scope": "dataCheck",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/datacheck/config/DataCheckConfig.java",
+    "fields": ["resourceId", "checks", "queryTimeoutSeconds", "handlers"]
+  }
+]

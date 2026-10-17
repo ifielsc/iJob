@@ -1,0 +1,227 @@
+.approvals-page {
+  font-size: 13px;
+  min-width: 0;
+}
+.approvals-page h1 {
+  font-size: 24px;
+  margin: 0;
+}
+.approval-panel {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.approval-section {
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--primary);
+  font-size: 14px;
+}
+.approval-filters,
+.approval-advanced {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px 16px;
+}
+.approval-filters {
+  margin-bottom: 20px;
+}
+.approval-advanced {
+  width: 100%;
+}
+.approval-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.approval-filter > label {
+  white-space: nowrap;
+}
+.approval-filter > div {
+  width: 200px;
+}
+.approval-filter .n-select {
+  width: 150px;
+}
+.approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.approval-table-scroll {
+  overflow-x: auto;
+}
+.approval-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  min-width: 800px;
+}
+.approval-table th,
+.approval-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.5;
+  font-size: 13px;
+}
+.approval-table th {
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--selected);
+}
+.approval-table td {
+  background: var(--panel);
+}
+.approval-table tr:hover td {
+  background: var(--selected);
+}
+.approval-table small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.approval-fixed {
+  position: sticky;
+  right: 0;
+  width: 70px;
+  box-shadow: -3px 0 6px var(--glow);
+}
+.approval-time {
+  white-space: nowrap;
+}
+.approval-status {
+  display: inline-flex;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.approval-status[data-status='WAITING'],
+.approval-status[data-status='TIMED_OUT'] {
+  color: var(--warning);
+}
+.approval-status[data-status='APPROVED'] {
+  color: var(--success);
+}
+.approval-status[data-status='REJECTED'] {
+  color: var(--error);
+}
+.approval-drawer {
+  font-size: 13px;
+}
+.approval-drawer-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+.approval-drawer-title h2 {
+  font-size: 18px;
+  margin: 0;
+}
+.approval-detail {
+  font-size: 13px;
+}
+.approval-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.approval-identity strong {
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+.approval-identity > .n-button {
+  margin-left: auto;
+}
+.approval-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 6px 0;
+}
+.approval-meta {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.8fr) minmax(0, 1.5fr);
+  gap: 16px 14px;
+  margin: 24px 0 16px;
+}
+.approval-meta dt {
+  color: var(--muted);
+}
+.approval-meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.approval-comment {
+  white-space: pre-wrap;
+}
+.approval-decision {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  margin-top: 20px;
+}
+.approval-decision h3 {
+  font-size: 16px;
+  margin: 0 0 16px;
+}
+.approval-decision label {
+  display: block;
+  margin: 16px 0 6px;
+}
+.approval-counter {
+  text-align: right;
+  color: var(--muted);
+  font-size: 12px;
+  margin: 6px 0 16px;
+}
+.approval-unknown {
+  border: 1px solid var(--warning);
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.approval-unknown strong {
+  color: var(--warning);
+}
+.approval-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.approval-spacer {
+  flex: 1;
+}
+.approval-entry {
+  margin-bottom: 16px;
+}
+@media (max-width: 480px) {
+  .approval-filter {
+    width: 100%;
+  }
+  .approval-filter > div {
+    flex: 1;
+    min-width: 0;
+  }
+  .approval-meta {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .approval-meta dd {
+    margin-bottom: 10px;
+  }
+  .approval-panel {
+    padding: 14px;
+  }
+}

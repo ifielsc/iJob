@@ -1,0 +1,64 @@
+name: ijob-v1-candidate
+
+x-backend: &backend
+  image: ijob-backend:${IJOB_IMAGE_TAG:-1.0.0}
+  build:
+    context: ../../api/ijob
+    args:
+      MAVEN_IMAGE: ${IJOB_MAVEN_IMAGE:?Load images.env}
+      JRE_IMAGE: ${IJOB_JRE_IMAGE:?Load images.env}
+  read_only: true
+  tmpfs:
+    - /tmp:size=256m,mode=0700,uid=10001,gid=10001,exec
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  init: true
+  restart: unless-stopped
+  stop_grace_period: 120s
+  mem_limit: 1g
+  cpus: 2.0
+  secrets:
+    - source: ijob_config
+      target: ijob.yaml
+  logging:
+    driver: json-file
+    options: {max-size: 10m, max-file: '5'}
+
+services:
+  backend:
+    <<: *backend
+    environment:
+      IJOB_PLATFORM_DB: ${IJOB_PLATFORM_DB:?Choose one of the five databases}
+      IJOB_RUNTIME_MODE: STANDALONE
+      IJOB_RUNTIME_INSTANCE_NAME: container-a
+    volumes:
+      - backend-data:/var/lib/ijob
+  web:
+    image: ijob-web:${IJOB_IMAGE_TAG:-1.0.0}
+    build:
+      context: ../../web/ijob
+      args:
+        NODE_IMAGE: ${IJOB_NODE_IMAGE:?Load images.env}
+        NGINX_IMAGE: ${IJOB_NGINX_IMAGE:?Load images.env}
+    ports:
+      - ${IJOB_HTTP_BIND:-127.0.0.1}:${IJOB_HTTP_PORT:-18080}:8080
+    depends_on:
+      backend: {condition: service_healthy}
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    stop_grace_period: 30s
+    mem_limit: 128m
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '5'}
+
+secrets:
+  ijob_config:
+    file: ${IJOB_CONFIG_PATH:?Set an absolute private YAML path outside the build context}
+volumes:
+  backend-data:

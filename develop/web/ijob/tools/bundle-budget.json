@@ -1,0 +1,8 @@
+{
+  "routes": {
+    "index.html": 270000,
+    "src/modules/auth/LoginView.vue": 300000,
+    "src/modules/jobs/JobEditor.vue": 600000,
+    "src/modules/tasks/TasksView.vue": 480000
+  }
+}

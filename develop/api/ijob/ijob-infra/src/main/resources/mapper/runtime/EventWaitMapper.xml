@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.EventWaitMapper">
+    <resultMap id="eventWaitResultMap"
+               type="com.ifelio.ijob.infra.entity.runtime.EventWait">
+        <id property="id" column="id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="rootInstanceId" column="root_instance_id"/>
+        <result property="attemptNo" column="attempt_no"/>
+        <result property="waitType" column="wait_type"/>
+        <result property="status" column="status"/>
+        <result property="eventCode" column="event_code"/>
+        <result property="businessKey" column="business_key"/>
+        <result property="correlationKey" column="correlation_key"/>
+        <result property="acceptAfter" column="accept_after"/>
+        <result property="timeoutAt" column="timeout_at"/>
+        <result property="matchedEventId" column="matched_event_id"/>
+        <result property="allowedOperatorIds" column="allowed_operator_ids"/>
+        <result property="decisionBy" column="decision_by"/>
+        <result property="decisionComment" column="decision_comment"/>
+        <result property="resolvedAt" column="resolved_at"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <sql id="columns">id, instance_id, root_instance_id, attempt_no,
+        wait_type, status, event_code, business_key, correlation_key,
+        accept_after, timeout_at, matched_event_id, allowed_operator_ids,
+        decision_by, decision_comment, resolved_at, create_time, update_time</sql>
+    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.EventWait">
+        INSERT INTO ifj_event_wait (id, instance_id, root_instance_id,
+            attempt_no, wait_type, status, event_code, business_key,
+            correlation_key, accept_after, timeout_at, matched_event_id,
+            allowed_operator_ids, decision_by, decision_comment, resolved_at)
+        VALUES (#{id}, #{instanceId}, #{rootInstanceId}, #{attemptNo},
+            #{waitType}, #{status}, #{eventCode}, #{businessKey},
+            #{correlationKey}, #{acceptAfter}, #{timeoutAt,jdbcType=TIMESTAMP},
+            #{matchedEventId}, #{allowedOperatorIds}, #{decisionBy},
+            #{decisionComment}, #{resolvedAt,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertOperator">
+        INSERT INTO ifj_event_wait_operator (wait_id, operator_id, create_time)
+        VALUES (#{waitId}, #{operatorId}, CURRENT_TIMESTAMP(3))
+    </insert>
+
+<insert id="insertOperator" databaseId="sqlite">
+        INSERT INTO ifj_event_wait_operator (wait_id, operator_id, create_time)
+        VALUES (#{waitId}, #{operatorId}, strftime('%Y-%m-%d %H:%M:%f','now'))
+    </insert>
+
+<insert id="insertOperator" databaseId="oracle">
+        INSERT INTO ifj_event_wait_operator (wait_id, operator_id, create_time)
+        VALUES (#{waitId}, #{operatorId}, CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+    </insert>
+
+<insert id="insertOperator" databaseId="sqlserver">
+        INSERT INTO ifj_event_wait_operator (wait_id, operator_id, create_time)
+        VALUES (#{waitId}, #{operatorId}, SYSUTCDATETIME())
+    </insert>
+    <select id="selectById" resultMap="eventWaitResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event_wait WHERE id = #{id}
+    </select>
+    <select id="selectByInstanceAndAttempt" resultMap="eventWaitResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE instance_id = #{instanceId} AND attempt_no = #{attemptNo}
+    </select>
+    <select id="selectLatestByInstance" resultMap="eventWaitResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE instance_id = #{instanceId}
+        ORDER BY attempt_no DESC, id DESC LIMIT 1
+    </select>
+
+<select id="selectLatestByInstance" resultMap="eventWaitResultMap" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE instance_id = #{instanceId}
+        ORDER BY attempt_no DESC, id DESC
+        ) WHERE ROWNUM &lt;= 1</select>
+    <select id="selectOperatorIds" resultType="java.lang.String">
+        SELECT operator_id FROM ifj_event_wait_operator
+        WHERE wait_id = #{waitId}
+        ORDER BY operator_id ASC
+    </select>
+    <resultMap id="eventWaitDtoMap" type="com.ifelio.ijob.contract.event.EventWaitDTO">
+        <result property="id" column="id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="rootInstanceId" column="root_instance_id"/>
+        <result property="waitType" column="wait_type"/>
+        <result property="status" column="status"/>
+        <result property="eventCode" column="event_code"/>
+        <result property="businessKey" column="business_key"/>
+        <result property="correlationKey" column="correlation_key"/>
+        <result property="acceptAfter" column="accept_after"/>
+        <result property="timeoutAt" column="timeout_at"/>
+        <result property="matchedEventId" column="matched_event_id"/>
+        <result property="decisionBy" column="decision_by"/>
+        <result property="decisionComment" column="decision_comment"/>
+        <result property="resolvedAt" column="resolved_at"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="taskName" column="task_name"/>
+        <result property="rootTargetName" column="root_target_name"/>
+        <result property="taskId" column="task_id"/>
+        <result property="taskDefinitionId" column="task_definition_id"/>
+        <result property="attemptNo" column="attempt_no"/>
+    </resultMap>
+    <sql id="contextColumns">
+        task_snapshot.name AS task_name, execution.target_id AS task_id,
+        execution.task_definition_id, wait_record.attempt_no,
+        CASE WHEN root_execution.target_type = 'JOB' THEN root_job.name
+             WHEN root_execution.target_type = 'TASK' THEN root_task.name
+             ELSE NULL END AS root_target_name
+    </sql>
+    <sql id="contextJoins">
+        LEFT JOIN ifj_instance execution ON execution.id = wait_record.instance_id
+        LEFT JOIN ifj_task_definition task_snapshot ON task_snapshot.id = execution.task_definition_id
+        LEFT JOIN ifj_instance root_execution ON root_execution.id = wait_record.root_instance_id
+        LEFT JOIN ifj_job_definition root_job ON root_job.id = root_execution.definition_id
+        LEFT JOIN ifj_task_definition root_task ON root_task.id = root_execution.task_definition_id
+    </sql>
+    <select id="selectContext" resultMap="eventWaitDtoMap">
+        SELECT <include refid="contextColumns"/> FROM ifj_event_wait wait_record
+        <include refid="contextJoins"/>
+        WHERE wait_record.id = #{id}
+    </select>
+    <select id="selectApprovalList" resultMap="eventWaitDtoMap">
+        SELECT wait_record.id, wait_record.instance_id, wait_record.root_instance_id,
+            wait_record.wait_type, wait_record.status, wait_record.event_code,
+            wait_record.business_key, wait_record.correlation_key, wait_record.accept_after,
+            wait_record.timeout_at, wait_record.matched_event_id, wait_record.decision_by,
+            wait_record.decision_comment, wait_record.resolved_at,
+            wait_record.create_time, wait_record.update_time, <include refid="contextColumns"/>
+        FROM ifj_event_wait wait_record
+        <include refid="contextJoins"/>
+        WHERE wait_record.wait_type = 'APPROVAL'
+          AND EXISTS (
+            SELECT 1 FROM ifj_event_wait_operator wait_operator
+            WHERE wait_operator.wait_id = wait_record.id
+              AND wait_operator.operator_id = #{operatorId}
+          )
+        <if test="query.status != null">
+          AND wait_record.status = #{query.status}
+        </if>
+        <if test="query.instanceId != null">
+          AND wait_record.instance_id = #{query.instanceId}
+        </if>
+        <if test="query.rootInstanceId != null">
+          AND wait_record.root_instance_id = #{query.rootInstanceId}
+        </if>
+        <if test="query.taskNamePattern != null">
+          AND LOWER(task_snapshot.name) LIKE LOWER(#{query.taskNamePattern}) ESCAPE '!'
+        </if>
+        ORDER BY wait_record.create_time DESC, wait_record.id DESC
+    </select>
+    <select id="selectWaitingForEvent" resultMap="eventWaitResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE status = 'WAITING' AND wait_type = 'EVENT'
+          AND event_code = #{eventCode} AND accept_after &lt;= #{arrivedAt}
+          AND (business_key IS NULL OR business_key = #{businessKey})
+          AND (correlation_key IS NULL OR correlation_key = #{correlationKey})
+        ORDER BY id ASC
+    </select>
+    <select id="selectRecoverableWaitingBatch"
+            resultMap="eventWaitResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE status = 'WAITING' AND wait_type = 'EVENT'
+          AND EXISTS (
+            SELECT 1 FROM ifj_event event_record
+            WHERE event_record.event_code = ifj_event_wait.event_code
+              AND event_record.arrived_at &gt;= ifj_event_wait.accept_after
+              AND (ifj_event_wait.business_key IS NULL
+                OR event_record.business_key = ifj_event_wait.business_key)
+              AND (ifj_event_wait.correlation_key IS NULL
+                OR event_record.correlation_key = ifj_event_wait.correlation_key)
+          )
+        ORDER BY id ASC LIMIT #{limit}
+    </select>
+
+<select id="selectRecoverableWaitingBatch"
+            resultMap="eventWaitResultMap" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE status = 'WAITING' AND wait_type = 'EVENT'
+          AND EXISTS (
+            SELECT 1 FROM ifj_event event_record
+            WHERE event_record.event_code = ifj_event_wait.event_code
+              AND event_record.arrived_at &gt;= ifj_event_wait.accept_after
+              AND (ifj_event_wait.business_key IS NULL
+                OR event_record.business_key = ifj_event_wait.business_key)
+              AND (ifj_event_wait.correlation_key IS NULL
+                OR event_record.correlation_key = ifj_event_wait.correlation_key)
+          )
+        ORDER BY id ASC
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+    <select id="selectWaitingByRoot" resultMap="eventWaitResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE root_instance_id = #{rootInstanceId} AND status = 'WAITING'
+        ORDER BY id ASC
+    </select>
+    <select id="selectWaitingByInstance" resultMap="eventWaitResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE instance_id = #{instanceId} AND status = 'WAITING'
+        ORDER BY id ASC
+    </select>
+    <select id="selectTimedOut" resultMap="eventWaitResultMap">
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE status = 'WAITING' AND timeout_at IS NOT NULL
+          AND timeout_at &lt;= #{now}
+        ORDER BY timeout_at ASC, id ASC LIMIT #{limit}
+    </select>
+
+<select id="selectTimedOut" resultMap="eventWaitResultMap" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT <include refid="columns"/> FROM ifj_event_wait
+        WHERE status = 'WAITING' AND timeout_at IS NOT NULL
+          AND timeout_at &lt;= #{now}
+        ORDER BY timeout_at ASC, id ASC
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+    <select id="selectResolvedRootIds" resultType="java.lang.Long">
+        SELECT DISTINCT w.root_instance_id
+        FROM ifj_event_wait w
+        JOIN ifj_instance i ON i.id = w.root_instance_id
+        WHERE w.status &lt;&gt; 'WAITING' AND i.status = 'WAITING_EVENT'
+          AND NOT EXISTS (
+            SELECT 1 FROM ifj_event_wait pending
+            WHERE pending.root_instance_id = w.root_instance_id
+              AND pending.status = 'WAITING'
+          )
+        ORDER BY w.root_instance_id ASC LIMIT #{limit}
+    </select>
+
+<select id="selectResolvedRootIds" resultType="java.lang.Long" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT DISTINCT w.root_instance_id
+        FROM ifj_event_wait w
+        JOIN ifj_instance i ON i.id = w.root_instance_id
+        WHERE w.status &lt;&gt; 'WAITING' AND i.status = 'WAITING_EVENT'
+          AND NOT EXISTS (
+            SELECT 1 FROM ifj_event_wait pending
+            WHERE pending.root_instance_id = w.root_instance_id
+              AND pending.status = 'WAITING'
+          )
+        ORDER BY w.root_instance_id ASC
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+    <update id="resolveIfWaiting">
+        UPDATE ifj_event_wait SET status = #{status},
+            matched_event_id = #{matchedEventId}, decision_by = #{decisionBy},
+            decision_comment = #{decisionComment}, resolved_at = #{resolvedAt,jdbcType=TIMESTAMP},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id} AND status = 'WAITING'
+    </update>
+
+<update id="resolveIfWaiting" databaseId="sqlite">
+        UPDATE ifj_event_wait SET status = #{status},
+            matched_event_id = #{matchedEventId}, decision_by = #{decisionBy},
+            decision_comment = #{decisionComment}, resolved_at = #{resolvedAt,jdbcType=TIMESTAMP},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id} AND status = 'WAITING'
+    </update>
+
+<update id="resolveIfWaiting" databaseId="oracle">
+        UPDATE ifj_event_wait SET status = #{status},
+            matched_event_id = #{matchedEventId}, decision_by = #{decisionBy},
+            decision_comment = #{decisionComment}, resolved_at = #{resolvedAt,jdbcType=TIMESTAMP},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id} AND status = 'WAITING'
+    </update>
+
+<update id="resolveIfWaiting" databaseId="sqlserver">
+        UPDATE ifj_event_wait SET status = #{status},
+            matched_event_id = #{matchedEventId}, decision_by = #{decisionBy},
+            decision_comment = #{decisionComment}, resolved_at = #{resolvedAt,jdbcType=TIMESTAMP},
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id} AND status = 'WAITING'
+    </update>
+    <select id="selectLatestByInstance" resultMap="eventWaitResultMap" databaseId="sqlserver">
+        SELECT TOP (1) <include refid="columns"/> FROM ifj_event_wait
+        WHERE instance_id = #{instanceId}
+        ORDER BY attempt_no DESC, id DESC
+    </select>
+
+    <select id="selectRecoverableWaitingBatch"
+            resultMap="eventWaitResultMap" databaseId="sqlserver">
+        SELECT TOP (#{limit}) <include refid="columns"/> FROM ifj_event_wait
+        WHERE status = 'WAITING' AND wait_type = 'EVENT'
+          AND EXISTS (
+            SELECT 1 FROM ifj_event event_record
+            WHERE event_record.event_code = ifj_event_wait.event_code
+              AND event_record.arrived_at &gt;= ifj_event_wait.accept_after
+              AND (ifj_event_wait.business_key IS NULL
+                OR event_record.business_key = ifj_event_wait.business_key)
+              AND (ifj_event_wait.correlation_key IS NULL
+                OR event_record.correlation_key = ifj_event_wait.correlation_key)
+          )
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectTimedOut" resultMap="eventWaitResultMap" databaseId="sqlserver">
+        SELECT TOP (#{limit}) <include refid="columns"/> FROM ifj_event_wait
+        WHERE status = 'WAITING' AND timeout_at IS NOT NULL
+          AND timeout_at &lt;= #{now}
+        ORDER BY timeout_at ASC, id ASC
+    </select>
+
+    <select id="selectResolvedRootIds" resultType="java.lang.Long" databaseId="sqlserver">
+        SELECT DISTINCT TOP (#{limit}) w.root_instance_id
+        FROM ifj_event_wait w
+        JOIN ifj_instance i ON i.id = w.root_instance_id
+        WHERE w.status &lt;&gt; 'WAITING' AND i.status = 'WAITING_EVENT'
+          AND NOT EXISTS (
+            SELECT 1 FROM ifj_event_wait pending
+            WHERE pending.root_instance_id = w.root_instance_id
+              AND pending.status = 'WAITING'
+          )
+        ORDER BY w.root_instance_id ASC
+    </select>
+</mapper>

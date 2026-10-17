@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.AppRunMapper">
+    <update id="markStaleActiveRunsCrashed">
+        UPDATE ifj_app_run
+        SET status = 'CRASHED', stopped_at = CURRENT_TIMESTAMP(3),
+            heartbeat_at = CURRENT_TIMESTAMP(3)
+        WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+          AND run_id &lt;&gt; #{excludeRunId}
+          AND heartbeat_at &lt;= TIMESTAMPADD(
+              MICROSECOND, -#{staleMicros}, CURRENT_TIMESTAMP(3))
+        ORDER BY heartbeat_at ASC, run_id ASC
+        LIMIT #{limit}
+    </update>
+    <insert id="insertStarting">
+        INSERT INTO ifj_app_run (
+            run_id, instance_name, runtime_mode, roles, worker_groups,
+            worker_task_ids, worker_job_ids,
+            runtime_protocol_version, status,
+            application_version, host_name, process_id,
+            started_at, heartbeat_at
+        ) VALUES (
+            #{runId}, #{instanceName}, #{runtimeMode}, #{roles}, #{workerGroups},
+            #{workerTaskIds}, #{workerJobIds},
+            #{runtimeProtocolVersion}, 'STARTING',
+            #{applicationVersion}, #{hostName}, #{processId},
+            #{startedAt}, #{startedAt}
+        )
+    </insert>
+    <update id="markRunning">
+        UPDATE ifj_app_run
+        SET status = 'RUNNING', heartbeat_at = CURRENT_TIMESTAMP(3)
+        WHERE run_id = #{runId} AND status = 'STARTING'
+    </update>
+
+<update id="markRunning" databaseId="sqlite">
+        UPDATE ifj_app_run
+        SET status = 'RUNNING', heartbeat_at = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE run_id = #{runId} AND status = 'STARTING'
+    </update>
+
+<update id="markRunning" databaseId="oracle">
+        UPDATE ifj_app_run
+        SET status = 'RUNNING', heartbeat_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE run_id = #{runId} AND status = 'STARTING'
+    </update>
+
+<update id="markRunning" databaseId="sqlserver">
+        UPDATE ifj_app_run
+        SET status = 'RUNNING', heartbeat_at = SYSUTCDATETIME()
+        WHERE run_id = #{runId} AND status = 'STARTING'
+    </update>
+    <update id="heartbeat">
+        UPDATE ifj_app_run
+        SET heartbeat_at = CURRENT_TIMESTAMP(3)
+        WHERE run_id = #{runId} AND status IN ('RUNNING', 'DRAINING')
+    </update>
+
+<update id="heartbeat" databaseId="sqlite">
+        UPDATE ifj_app_run
+        SET heartbeat_at = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE run_id = #{runId} AND status IN ('RUNNING', 'DRAINING')
+    </update>
+
+<update id="heartbeat" databaseId="oracle">
+        UPDATE ifj_app_run
+        SET heartbeat_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE run_id = #{runId} AND status IN ('RUNNING', 'DRAINING')
+    </update>
+
+<update id="heartbeat" databaseId="sqlserver">
+        UPDATE ifj_app_run
+        SET heartbeat_at = SYSUTCDATETIME()
+        WHERE run_id = #{runId} AND status IN ('RUNNING', 'DRAINING')
+    </update>
+    <update id="markDraining">
+        UPDATE ifj_app_run
+        SET status = 'DRAINING', heartbeat_at = CURRENT_TIMESTAMP(3)
+        WHERE run_id = #{runId} AND status = 'RUNNING'
+    </update>
+
+<update id="markDraining" databaseId="sqlite">
+        UPDATE ifj_app_run
+        SET status = 'DRAINING', heartbeat_at = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE run_id = #{runId} AND status = 'RUNNING'
+    </update>
+
+<update id="markDraining" databaseId="oracle">
+        UPDATE ifj_app_run
+        SET status = 'DRAINING', heartbeat_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE run_id = #{runId} AND status = 'RUNNING'
+    </update>
+
+<update id="markDraining" databaseId="sqlserver">
+        UPDATE ifj_app_run
+        SET status = 'DRAINING', heartbeat_at = SYSUTCDATETIME()
+        WHERE run_id = #{runId} AND status = 'RUNNING'
+    </update>
+    <update id="markStopped">
+        UPDATE ifj_app_run
+        SET status = 'STOPPED', stopped_at = CURRENT_TIMESTAMP(3),
+            heartbeat_at = CURRENT_TIMESTAMP(3)
+        WHERE run_id = #{runId}
+          AND status IN ('STARTING', 'RUNNING', 'DRAINING')
+    </update>
+
+<update id="markStopped" databaseId="sqlite">
+        UPDATE ifj_app_run
+        SET status = 'STOPPED', stopped_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            heartbeat_at = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE run_id = #{runId}
+          AND status IN ('STARTING', 'RUNNING', 'DRAINING')
+    </update>
+
+<update id="markStopped" databaseId="oracle">
+        UPDATE ifj_app_run
+        SET status = 'STOPPED', stopped_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            heartbeat_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE run_id = #{runId}
+          AND status IN ('STARTING', 'RUNNING', 'DRAINING')
+    </update>
+
+<update id="markStopped" databaseId="sqlserver">
+        UPDATE ifj_app_run
+        SET status = 'STOPPED', stopped_at = SYSUTCDATETIME(),
+            heartbeat_at = SYSUTCDATETIME()
+        WHERE run_id = #{runId}
+          AND status IN ('STARTING', 'RUNNING', 'DRAINING')
+    </update>
+
+    <update id="markStaleActiveRunsCrashed" databaseId="postgresql">
+        WITH candidates AS (
+            SELECT run_id
+            FROM ifj_app_run
+            WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+              AND run_id &lt;&gt; #{excludeRunId}
+              AND heartbeat_at &lt;= (CURRENT_TIMESTAMP(3) - (#{staleMicros} * INTERVAL '1 microsecond'))
+            ORDER BY heartbeat_at ASC, run_id ASC
+            LIMIT #{limit}
+        )
+        UPDATE ifj_app_run
+        SET status = 'CRASHED', stopped_at = CURRENT_TIMESTAMP(3),
+            heartbeat_at = CURRENT_TIMESTAMP(3)
+        FROM candidates
+        WHERE ifj_app_run.run_id = candidates.run_id
+    </update>
+
+<update id="markStaleActiveRunsCrashed" databaseId="sqlite">
+        WITH candidates AS (
+            SELECT run_id
+            FROM ifj_app_run
+            WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+              AND run_id &lt;&gt; #{excludeRunId}
+              AND heartbeat_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now', printf('-%.6f seconds', (#{staleMicros} / 1000000.0)))
+            ORDER BY heartbeat_at ASC, run_id ASC
+            LIMIT #{limit}
+        )
+        UPDATE ifj_app_run
+        SET status = 'CRASHED', stopped_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            heartbeat_at = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM candidates
+        WHERE ifj_app_run.run_id = candidates.run_id
+    </update>
+
+<update id="markStaleActiveRunsCrashed" databaseId="oracle">
+        UPDATE ifj_app_run
+        SET status = 'CRASHED', stopped_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)), heartbeat_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE run_id IN (
+            SELECT run_id FROM (
+                SELECT run_id FROM ifj_app_run
+                WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+                  AND run_id &lt;&gt; #{excludeRunId}
+                  AND heartbeat_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) - NUMTODSINTERVAL(#{staleMicros} / 1000000, 'SECOND')
+                ORDER BY heartbeat_at, run_id
+            ) WHERE ROWNUM &lt;= #{limit}
+        )</update>
+
+<update id="markStaleActiveRunsCrashed" databaseId="sqlserver">
+        WITH candidates AS (
+            SELECT run_id
+            FROM ifj_app_run
+            WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+              AND run_id &lt;&gt; #{excludeRunId}
+              AND heartbeat_at &lt;= DATEADD(MILLISECOND, -(#{staleMicros} / 1000), SYSUTCDATETIME())
+            ORDER BY heartbeat_at ASC, run_id ASC
+            OFFSET 0 ROWS FETCH NEXT #{limit} ROWS ONLY
+        )
+        UPDATE ifj_app_run
+        SET status = 'CRASHED', stopped_at = SYSUTCDATETIME(),
+            heartbeat_at = SYSUTCDATETIME()
+        FROM candidates
+        WHERE ifj_app_run.run_id = candidates.run_id
+    </update>
+</mapper>

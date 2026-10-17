@@ -1,0 +1,56 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index bcaa315f06c3a7811520ad90e73fced58dd23eca..abb17e64735aa1e8a5c4a5d30973330d960f0ca1 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -605,10 +605,13 @@ async function editState(payload) {
+ //#region src/core/timeline/storage.ts
+ const TIMELINE_LAYERS_STATE_STORAGE_ID = "__VUE_DEVTOOLS_KIT_TIMELINE_LAYERS_STATE__";
+ function addTimelineLayersStateToStorage(state) {
++	try {
+ 	if (!_vue_devtools_shared.isBrowser || typeof localStorage === "undefined" || localStorage === null) return;
+ 	localStorage.setItem(TIMELINE_LAYERS_STATE_STORAGE_ID, JSON.stringify(state));
++	} catch { /* Storage is optional for developer tooling. */ }
+ }
+ function getTimelineLayersStateFromStorage() {
++	try {
+ 	if (typeof window === "undefined" || !_vue_devtools_shared.isBrowser || typeof localStorage === "undefined" || localStorage === null) return {
+ 		recordingState: false,
+ 		mouseEventEnabled: false,
+@@ -626,6 +629,9 @@ function getTimelineLayersStateFromStorage() {
+ 		performanceEventEnabled: false,
+ 		selected: ""
+ 	};
++	} catch {
++		return { recordingState: false, mouseEventEnabled: false, keyboardEventEnabled: false, componentEventEnabled: false, performanceEventEnabled: false, selected: "" };
++	}
+ }
+ //#endregion
+ //#region src/ctx/timeline.ts
+diff --git a/dist/index.js b/dist/index.js
+index 75557e80e8a530346753cb29b176fb1de97a8763..cefa3c17c0b47518acc3e7b105b42b60203c2a04 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -604,10 +604,13 @@ async function editState(payload) {
+ //#region src/core/timeline/storage.ts
+ const TIMELINE_LAYERS_STATE_STORAGE_ID = "__VUE_DEVTOOLS_KIT_TIMELINE_LAYERS_STATE__";
+ function addTimelineLayersStateToStorage(state) {
++	try {
+ 	if (!isBrowser || typeof localStorage === "undefined" || localStorage === null) return;
+ 	localStorage.setItem(TIMELINE_LAYERS_STATE_STORAGE_ID, JSON.stringify(state));
++	} catch { /* Storage is optional for developer tooling. */ }
+ }
+ function getTimelineLayersStateFromStorage() {
++	try {
+ 	if (typeof window === "undefined" || !isBrowser || typeof localStorage === "undefined" || localStorage === null) return {
+ 		recordingState: false,
+ 		mouseEventEnabled: false,
+@@ -625,6 +628,9 @@ function getTimelineLayersStateFromStorage() {
+ 		performanceEventEnabled: false,
+ 		selected: ""
+ 	};
++	} catch {
++		return { recordingState: false, mouseEventEnabled: false, keyboardEventEnabled: false, componentEventEnabled: false, performanceEventEnabled: false, selected: "" };
++	}
+ }
+ //#endregion
+ //#region src/ctx/timeline.ts

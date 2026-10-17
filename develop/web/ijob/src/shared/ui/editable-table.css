@@ -1,0 +1,115 @@
+.editable-table-section {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+.editable-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.editable-table-section .editable-table-toolbar h3 {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.editable-table-tools {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.editable-table-count {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.editable-table-scroll {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overscroll-behavior-x: contain;
+}
+.editable-table {
+  width: 100%;
+  min-width: 430px;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  text-align: left;
+  font-size: 13px;
+}
+.editable-table .editable-col-name {
+  width: 32%;
+}
+.editable-table .editable-col-actions {
+  width: 72px;
+}
+.editable-table th,
+.editable-table td {
+  box-sizing: border-box;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.editable-table th {
+  background: var(--selected);
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.editable-table td {
+  background: var(--panel);
+}
+.editable-table tr:last-child td {
+  border-bottom: 0;
+}
+.editable-table th:last-child,
+.editable-table td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  text-align: center;
+}
+.editable-table td:last-child {
+  vertical-align: middle;
+}
+.editable-table td .n-form-item {
+  min-width: 0;
+}
+.editable-table .preservation {
+  padding: 0 6px;
+  gap: 6px;
+}
+.editable-table .preservation > span {
+  font-size: 12px;
+}
+.editable-table .editable-table-empty {
+  position: static;
+  padding: 16px 8px;
+  color: var(--muted);
+  text-align: center;
+}
+.editable-required {
+  color: var(--error);
+  margin-right: 4px;
+}
+
+.editable-table-bounded > .editable-table-scroll {
+  max-height: min(320px, 42dvh);
+  overflow-y: auto;
+  scroll-padding-top: 40px;
+  scrollbar-gutter: stable;
+}
+.editable-table-bounded > .editable-table-scroll > table > thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.editable-table-bounded > .editable-table-scroll > table > thead > tr > th:last-child {
+  z-index: 3;
+}

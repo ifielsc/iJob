@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      connection-init-sql: "SET DATEFORMAT ymd"
+      schema: ${IJOB_PLATFORM_DB_SCHEMA:dbo}
+  flyway:
+    default-schema: ${IJOB_PLATFORM_DB_SCHEMA:dbo}
+
+app:
+  platform-database:
+    schema: ${IJOB_PLATFORM_DB_SCHEMA:dbo}
+
+pagehelper:
+  helper-dialect: sqlserver2012

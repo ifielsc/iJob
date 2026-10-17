@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskMapper">
+
+    <select id="selectGroupCodes" resultType="java.lang.String">
+        SELECT DISTINCT dg.group_code
+        FROM ifj_task t
+        JOIN ifj_task_definition_group dg ON dg.definition_id = t.current_task_definition_id
+        WHERE t.retired =
+        <choose>
+            <when test="_databaseId == 'oracle' or _databaseId == 'sqlserver'">0</when>
+            <otherwise>FALSE</otherwise>
+        </choose>
+        AND t.current_revision IS NOT NULL
+        AND dg.group_code LIKE #{pattern} ESCAPE '!'
+        ORDER BY dg.group_code
+    </select>
+
+    <resultMap id="TaskResultMap"
+               type="com.ifelio.ijob.infra.entity.task.Task">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="pluginType" column="plugin_type"
+                javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+        <result property="pluginConfig" column="plugin_config"/>
+        <result property="retryTimes" column="retry_times"/>
+        <result property="retryInterval" column="retry_interval"/>
+        <result property="timeout" column="timeout"/>
+        <result property="enabled" column="enabled"/>
+        <result property="description" column="description"/>
+        <result property="currentTaskDefinitionId"
+                column="current_task_definition_id"/>
+        <result property="currentRevision" column="current_revision"/>
+        <result property="retired" column="retired"/>
+        <result property="retiredTime" column="retired_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="TaskListResultMap"
+               type="com.ifelio.ijob.contract.task.TaskListDTO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="pluginType" column="plugin_type"
+                javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+        <result property="retryTimes" column="retry_times"/>
+        <result property="retryInterval" column="retry_interval"/>
+        <result property="timeout" column="timeout"/>
+        <result property="enabled" column="enabled"/>
+        <result property="description" column="description"/>
+        <result property="currentTaskDefinitionId"
+                column="current_task_definition_id"/>
+        <result property="currentRevision" column="current_revision"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="TaskColumns">
+        id,
+        name,
+        plugin_type,
+        plugin_config,
+        retry_times,
+        retry_interval,
+        timeout,
+        enabled,
+        description,
+        current_task_definition_id,
+        current_revision,
+        retired,
+        retired_time,
+        create_time,
+        update_time
+    </sql>
+
+    <select id="selectDtoList"
+            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            resultMap="TaskListResultMap">
+        SELECT
+            id,
+            name,
+            plugin_type,
+            retry_times,
+            retry_interval,
+            timeout,
+            enabled,
+            description,
+            current_task_definition_id,
+            current_revision,
+            update_time
+        FROM ifj_task
+        <where>
+            retired = FALSE
+            AND current_task_definition_id IS NOT NULL
+            AND current_revision IS NOT NULL
+            <if test="id != null">AND id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="pluginType != null">
+                AND plugin_type = #{pluginType}
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_task_definition_group definition_group
+                    WHERE definition_group.definition_id = current_task_definition_id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY update_time DESC, id DESC
+    </select>
+
+    <select id="selectDtoList" databaseId="postgresql"
+            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            resultMap="TaskListResultMap">
+        SELECT
+            id, name, plugin_type, retry_times, retry_interval, timeout,
+            enabled, description,
+            current_task_definition_id, current_revision, update_time
+        FROM ifj_task
+        <where>
+            retired = FALSE
+            AND current_task_definition_id IS NOT NULL
+            AND current_revision IS NOT NULL
+            <if test="id != null">AND id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND LOWER(name) LIKE LOWER(CONCAT('%', #{name}, '%'))
+            </if>
+            <if test="pluginType != null">
+                AND plugin_type = #{pluginType}
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_task_definition_group definition_group
+                    WHERE definition_group.definition_id = current_task_definition_id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY update_time DESC, id DESC
+    </select>
+
+<select id="selectDtoList" databaseId="sqlite"
+            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            resultMap="TaskListResultMap">
+        SELECT
+            id, name, plugin_type, retry_times, retry_interval, timeout,
+            enabled, description,
+            current_task_definition_id, current_revision, update_time
+        FROM ifj_task
+        <where>
+            retired = FALSE
+            AND current_task_definition_id IS NOT NULL
+            AND current_revision IS NOT NULL
+            <if test="id != null">AND id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND LOWER(name) LIKE LOWER(('%' || #{name} || '%'))
+            </if>
+            <if test="pluginType != null">
+                AND plugin_type = #{pluginType}
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_task_definition_group definition_group
+                    WHERE definition_group.definition_id = current_task_definition_id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY update_time DESC, id DESC
+    </select>
+
+<select id="selectDtoList" databaseId="oracle"
+            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            resultMap="TaskListResultMap">
+        SELECT
+            id, name, plugin_type, retry_times, retry_interval, timeout,
+            enabled, description,
+            current_task_definition_id, current_revision, update_time
+        FROM ifj_task
+        <where>
+            retired = 0
+            AND current_task_definition_id IS NOT NULL
+            AND current_revision IS NOT NULL
+            <if test="id != null">AND id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND LOWER(name) LIKE LOWER(('%' || #{name} || '%'))
+            </if>
+            <if test="pluginType != null">
+                AND plugin_type = #{pluginType}
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_task_definition_group definition_group
+                    WHERE definition_group.definition_id = current_task_definition_id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY update_time DESC, id DESC
+    </select>
+
+<select id="selectDtoList" databaseId="sqlserver"
+            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            resultMap="TaskListResultMap">
+        SELECT
+            id, name, plugin_type, retry_times, retry_interval, timeout,
+            enabled, description,
+            current_task_definition_id, current_revision, update_time
+        FROM ifj_task
+        <where>
+            retired = 0
+            AND current_task_definition_id IS NOT NULL
+            AND current_revision IS NOT NULL
+            <if test="id != null">AND id = #{id}</if>
+            <if test="name != null and name.trim() != ''">
+                AND LOWER(name) LIKE LOWER(CONCAT('%', #{name}, '%'))
+            </if>
+            <if test="pluginType != null">
+                AND plugin_type = #{pluginType}
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+            <if test="group != null">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_task_definition_group definition_group
+                    WHERE definition_group.definition_id = current_task_definition_id
+                      AND definition_group.group_code = #{group}
+                )
+            </if>
+        </where>
+        ORDER BY update_time DESC, id DESC
+    </select>
+
+    <select id="selectById" resultMap="TaskResultMap">
+        SELECT
+        <include refid="TaskColumns"/>
+        FROM ifj_task
+        WHERE id = #{id}
+          AND retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+          AND current_task_definition_id IS NOT NULL
+          AND current_revision IS NOT NULL
+    </select>
+
+<select id="selectById" resultMap="TaskResultMap" databaseId="oracle">
+        SELECT
+        <include refid="TaskColumns"/>
+        FROM ifj_task
+        WHERE id = #{id}
+          AND retired = 0
+          AND current_task_definition_id IS NOT NULL
+          AND current_revision IS NOT NULL
+    </select>
+
+</mapper>

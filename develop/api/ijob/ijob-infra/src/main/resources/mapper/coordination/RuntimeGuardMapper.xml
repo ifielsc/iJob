@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.RuntimeGuardMapper">
+    <!-- A real write acquires a transaction-duration lock on all five supported databases,
+         including SQLite. Always acquire before any reads in the guarded transaction. -->
+    <update id="lockAndAdvance">
+        UPDATE ifj_runtime_guard SET revision = revision + 1
+        WHERE guard_key = #{guardKey} AND revision &lt; 9223372036854775807
+    </update>
+    <select id="selectRevision" resultType="long">
+        SELECT revision FROM ifj_runtime_guard WHERE guard_key = #{guardKey}
+    </select>
+</mapper>

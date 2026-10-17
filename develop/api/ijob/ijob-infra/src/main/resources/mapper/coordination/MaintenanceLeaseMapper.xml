@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.MaintenanceLeaseMapper">
+    <resultMap id="maintenanceLeaseResultMap"
+               type="com.ifelio.ijob.infra.coordination.maintenance.MaintenanceLease">
+        <id property="leaseName" column="lease_name"/>
+        <result property="leaseOwner" column="lease_owner"/>
+        <result property="leaseToken" column="lease_token"/>
+        <result property="leaseDeadline" column="lease_deadline"/>
+        <result property="fenceToken" column="fence_token"/>
+        <result property="lastAcquiredAt" column="last_acquired_at"/>
+        <result property="lastCompletedAt" column="last_completed_at"/>
+        <result property="lastSuccess" column="last_success"/>
+        <result property="lastFailureCode" column="last_failure_code"/>
+    </resultMap>
+
+    <insert id="insertIfAbsent">
+        INSERT INTO ifj_maintenance_lease (lease_name)
+        VALUES (#{leaseName})
+        ON DUPLICATE KEY UPDATE lease_name = VALUES(lease_name)
+    </insert>
+
+    <update id="claim">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = #{leaseOwner},
+            lease_token = #{leaseToken},
+            lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            fence_token = fence_token + 1,
+            last_acquired_at = CURRENT_TIMESTAMP(3),
+            last_failure_code = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE lease_name = #{leaseName}
+          AND fence_token &lt; 9223372036854775807
+          AND (lease_owner IS NULL OR lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+    </update>
+
+    <select id="selectByToken" resultMap="maintenanceLeaseResultMap">
+        SELECT lease_name, lease_owner, lease_token, lease_deadline, fence_token,
+               last_acquired_at, last_completed_at, last_success, last_failure_code
+        FROM ifj_maintenance_lease
+        WHERE lease_token = #{leaseToken}
+    </select>
+
+    <update id="renew">
+        UPDATE ifj_maintenance_lease
+        SET lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <select id="lockIfHeld" resultType="java.lang.Long">
+        SELECT fence_token
+        FROM ifj_maintenance_lease
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+        FOR UPDATE
+    </select>
+
+<select id="lockIfHeld" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT fence_token
+        FROM ifj_maintenance_lease
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </select>
+
+<select id="lockIfHeld" databaseId="oracle" resultType="java.lang.Long">
+        SELECT fence_token
+        FROM ifj_maintenance_lease
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </select>
+
+<select id="lockIfHeld" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT fence_token
+        FROM ifj_maintenance_lease
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; SYSUTCDATETIME()
+    </select>
+
+    <update id="markCompleted">
+        UPDATE ifj_maintenance_lease
+        SET last_completed_at = CURRENT_TIMESTAMP(3),
+            last_success = TRUE,
+            last_failure_code = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="markCompleted" databaseId="sqlite">
+        UPDATE ifj_maintenance_lease
+        SET last_completed_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            last_success = TRUE,
+            last_failure_code = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="markCompleted" databaseId="oracle">
+        UPDATE ifj_maintenance_lease
+        SET last_completed_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            last_success = 1,
+            last_failure_code = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="markCompleted" databaseId="sqlserver">
+        UPDATE ifj_maintenance_lease
+        SET last_completed_at = SYSUTCDATETIME(),
+            last_success = 1,
+            last_failure_code = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+    <update id="release">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = NULL,
+            lease_token = NULL,
+            lease_deadline = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="release" databaseId="sqlite">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = NULL,
+            lease_token = NULL,
+            lease_deadline = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="release" databaseId="oracle">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = NULL,
+            lease_token = NULL,
+            lease_deadline = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="release" databaseId="sqlserver">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = NULL,
+            lease_token = NULL,
+            lease_deadline = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+    <insert id="insertIfAbsent" databaseId="postgresql">
+        INSERT INTO ifj_maintenance_lease (lease_name)
+        VALUES (#{leaseName})
+        ON CONFLICT (lease_name) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="sqlite">
+        INSERT INTO ifj_maintenance_lease (lease_name)
+        VALUES (#{leaseName})
+        ON CONFLICT (lease_name) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="oracle">
+        MERGE INTO ifj_maintenance_lease target
+        USING (SELECT 1 AS marker FROM dual) source
+        ON (target.lease_name = #{leaseName})
+        WHEN NOT MATCHED THEN INSERT (lease_name)
+        VALUES (#{leaseName})</insert>
+
+<insert id="insertIfAbsent" databaseId="sqlserver">
+        IF NOT EXISTS (SELECT 1 FROM ifj_maintenance_lease WITH (UPDLOCK, HOLDLOCK) WHERE lease_name = #{leaseName})
+        BEGIN
+
+        INSERT INTO ifj_maintenance_lease (lease_name)
+        VALUES (#{leaseName})
+        END</insert>
+<update id="claim" databaseId="postgresql">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = #{leaseOwner},
+            lease_token = #{leaseToken},
+            lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            fence_token = fence_token + 1,
+            last_acquired_at = CURRENT_TIMESTAMP(3),
+            last_failure_code = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE lease_name = #{leaseName}
+          AND fence_token &lt; 9223372036854775807
+          AND (lease_owner IS NULL OR lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+    </update>
+
+<update id="claim" databaseId="sqlite">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = #{leaseOwner},
+            lease_token = #{leaseToken},
+            lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            fence_token = fence_token + 1,
+            last_acquired_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            last_failure_code = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE lease_name = #{leaseName}
+          AND fence_token &lt; 9223372036854775807
+          AND (lease_owner IS NULL OR lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+    </update>
+
+<update id="claim" databaseId="oracle">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = #{leaseOwner},
+            lease_token = #{leaseToken},
+            lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            fence_token = fence_token + 1,
+            last_acquired_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            last_failure_code = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE lease_name = #{leaseName}
+          AND fence_token &lt; 9223372036854775807
+          AND (lease_owner IS NULL OR lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+    </update>
+
+<update id="claim" databaseId="sqlserver">
+        UPDATE ifj_maintenance_lease
+        SET lease_owner = #{leaseOwner},
+            lease_token = #{leaseToken},
+            lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            fence_token = fence_token + 1,
+            last_acquired_at = SYSUTCDATETIME(),
+            last_failure_code = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE lease_name = #{leaseName}
+          AND fence_token &lt; 9223372036854775807
+          AND (lease_owner IS NULL OR lease_deadline &lt;= SYSUTCDATETIME())
+    </update>
+<update id="renew" databaseId="postgresql">
+        UPDATE ifj_maintenance_lease
+        SET lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="renew" databaseId="sqlite">
+        UPDATE ifj_maintenance_lease
+        SET lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="renew" databaseId="oracle">
+        UPDATE ifj_maintenance_lease
+        SET lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </update>
+
+<update id="renew" databaseId="sqlserver">
+        UPDATE ifj_maintenance_lease
+        SET lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            update_time = SYSUTCDATETIME()
+        WHERE lease_name = #{leaseName}
+          AND lease_owner = #{leaseOwner}
+          AND lease_token = #{leaseToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+</mapper>

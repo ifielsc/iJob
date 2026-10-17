@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.workbench.WorkbenchMapper">
+    <sql id="count">COUNT(*)</sql>
+    <sql id="count" databaseId="sqlserver">COUNT_BIG(*)</sql>
+    <sql id="window">
+        execution.parent_instance_id IS NULL
+        AND execution.create_time &gt;= #{from}
+        AND execution.create_time &lt;= #{to}
+    </sql>
+    <select id="selectWindowStatuses" timeout="5"
+            resultType="com.ifelio.ijob.infra.mapper.workbench.WorkbenchStatusCount">
+        SELECT execution.status, <include refid="count"/> AS count
+        FROM ifj_instance execution WHERE <include refid="window"/>
+        GROUP BY execution.status
+    </select>
+    <select id="selectCurrentActiveRoots" timeout="5"
+            resultType="com.ifelio.ijob.infra.mapper.workbench.WorkbenchStatusCount">
+        SELECT status, <include refid="count"/> AS count FROM ifj_instance
+        WHERE parent_instance_id IS NULL
+          AND status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+        GROUP BY status
+    </select>
+    <select id="countPendingApprovals" timeout="5" resultType="long">
+        SELECT <include refid="count"/> FROM ifj_event_wait wait_record
+        WHERE wait_record.wait_type = 'APPROVAL' AND wait_record.status = 'WAITING'
+          AND EXISTS (
+            SELECT 1 FROM ifj_event_wait_operator wait_operator
+            WHERE wait_operator.wait_id = wait_record.id
+              AND wait_operator.operator_id = #{operatorId}
+          )
+    </select>
+    <!-- The service applies a database LIMIT of five, with no count query. -->
+    <select id="selectRecentFailures" timeout="5"
+            resultType="com.ifelio.ijob.contract.workbench.WorkbenchFailureDTO">
+        SELECT execution.id, execution.target_id, execution.target_type,
+            CASE WHEN execution.target_type = 'TASK' THEN task_snapshot.name
+                 WHEN execution.target_type = 'JOB' THEN job_snapshot.name ELSE NULL END AS name,
+            execution.status, execution.create_time, execution.end_time
+        FROM ifj_instance execution
+        LEFT JOIN ifj_task_definition task_snapshot ON task_snapshot.id = execution.task_definition_id
+        LEFT JOIN ifj_job_definition job_snapshot ON job_snapshot.id = execution.definition_id
+        WHERE <include refid="window"/>
+          AND execution.status IN ('FAILED', 'TIMED_OUT')
+        ORDER BY execution.create_time DESC, execution.id DESC
+    </select>
+</mapper>

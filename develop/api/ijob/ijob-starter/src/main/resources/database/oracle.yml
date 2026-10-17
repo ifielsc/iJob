@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      connection-init-sql: "ALTER SESSION SET TIME_ZONE = 'UTC'"
+  flyway:
+    default-schema: ${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}
+
+app:
+  platform-database:
+    schema: ${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}
+
+mybatis:
+  configuration:
+    jdbc-type-for-null: 'NULL'
+
+pagehelper:
+  helper-dialect: oracle

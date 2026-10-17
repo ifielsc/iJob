@@ -1,0 +1,22 @@
+services:
+  backend:
+    environment:
+      IJOB_RUNTIME_MODE: CLUSTER
+  backend-b:
+    depends_on:
+      backend: {condition: service_healthy}
+    extends:
+      file: compose.yaml
+      service: backend
+    environment:
+      IJOB_RUNTIME_MODE: CLUSTER
+      IJOB_RUNTIME_INSTANCE_NAME: container-b
+    volumes:
+      - backend-b-data:/var/lib/ijob
+  web:
+    depends_on:
+      backend-b: {condition: service_healthy}
+    volumes:
+      - ./nginx.cluster.conf:/etc/nginx/conf.d/default.conf:ro
+volumes:
+  backend-b-data:

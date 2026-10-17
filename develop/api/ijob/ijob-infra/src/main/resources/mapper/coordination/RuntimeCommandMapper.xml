@@ -1,0 +1,1475 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.RuntimeCommandMapper">
+
+    <resultMap id="runtimeCommandResultMap"
+               type="com.ifelio.ijob.infra.coordination.command.RuntimeCommand">
+        <id property="requestId" column="request_id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="rootInstanceId" column="root_instance_id"/>
+        <result property="triggerId" column="trigger_id"/>
+        <result property="commandType" column="command_type"/>
+        <result property="status" column="status"/>
+        <result property="requestedBy" column="requested_by"/>
+        <result property="resultMessage" column="result_message"/>
+        <result property="availableAt" column="available_at"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="processingOwner" column="processing_owner"/>
+        <result property="processingToken" column="processing_token"/>
+        <result property="processingFence" column="processing_fence"/>
+        <result property="processedAt" column="processed_at"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="runtimeCommandDtoResultMap"
+               type="com.ifelio.ijob.contract.runtime.RuntimeCommandDTO">
+        <id property="requestId" column="request_id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="rootInstanceId" column="root_instance_id"/>
+        <result property="triggerId" column="trigger_id"/>
+        <result property="commandType" column="command_type"/>
+        <result property="status" column="status"/>
+        <result property="requestedBy" column="requested_by"/>
+        <result property="resultMessage" column="result_message"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="processedAt" column="processed_at"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="commandColumns">
+        request_id, instance_id, root_instance_id, trigger_id, command_type, status,
+        requested_by, result_message, available_at, expires_at,
+        processing_owner, processing_token, processing_fence, processed_at,
+        create_time, update_time
+    </sql>
+
+    <insert id="insertFromInstance">
+        INSERT IGNORE INTO ifj_runtime_command (
+            request_id, instance_id, root_instance_id, trigger_id, command_type,
+            status, requested_by, available_at, expires_at
+        )
+        SELECT
+            #{requestId}, instance_record.id, instance_record.root_instance_id,
+            instance_record.trigger_id, #{commandType}, 'PENDING', #{requestedBy},
+            CURRENT_TIMESTAMP(3), TIMESTAMPADD(MICROSECOND, #{timeoutMicros}, CURRENT_TIMESTAMP(3))
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = #{instanceId}
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.trigger_id IS NOT NULL
+    </insert>
+
+    <select id="selectByRequestId" resultMap="runtimeCommandResultMap">
+        SELECT <include refid="commandColumns"/>
+        FROM ifj_runtime_command
+        WHERE request_id = #{requestId}
+    </select>
+
+    <select id="selectDtoByRequestId" resultMap="runtimeCommandDtoResultMap">
+        SELECT <include refid="commandColumns"/>
+        FROM ifj_runtime_command
+        WHERE request_id = #{requestId}
+    </select>
+
+    <update id="succeedInitiallySatisfied">
+        UPDATE ifj_runtime_command command_record
+        JOIN ifj_instance instance_record ON instance_record.id = command_record.instance_id
+        SET command_record.status = 'SUCCEEDED',
+            command_record.result_message = 'Requested state is already satisfied',
+            command_record.processed_at = CURRENT_TIMESTAMP(3),
+            command_record.update_time = CURRENT_TIMESTAMP(3)
+        WHERE command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'STOP' AND instance_record.status IN
+                    ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED'))
+            OR (command_record.command_type = 'PAUSE' AND instance_record.status = 'PAUSED')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status = 'RUNNING'))
+    </update>
+
+    <update id="rejectInitiallyInvalid">
+        UPDATE ifj_runtime_command command_record
+        JOIN ifj_instance instance_record ON instance_record.id = command_record.instance_id
+        SET command_record.status = 'REJECTED',
+            command_record.result_message = 'Command is not valid for the current instance state',
+            command_record.processed_at = CURRENT_TIMESTAMP(3),
+            command_record.update_time = CURRENT_TIMESTAMP(3)
+        WHERE command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'PAUSE' AND instance_record.status &lt;&gt; 'RUNNING')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status &lt;&gt; 'PAUSED')
+            OR (command_record.command_type = 'RETRY' AND (
+                instance_record.status NOT IN ('FAILED', 'TIMED_OUT')
+                OR instance_record.parent_instance_id IS NOT NULL
+                OR instance_record.id &lt;&gt; instance_record.root_instance_id)))
+    </update>
+
+    <update id="activateTriggerForRetry">
+        UPDATE ifj_trigger trigger_record
+        JOIN ifj_runtime_command command_record
+          ON command_record.trigger_id = trigger_record.id
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        SET trigger_record.status = 'RUNNING',
+            trigger_record.message = NULL,
+            trigger_record.error_code = NULL,
+            trigger_record.message_key = NULL,
+            trigger_record.message_args = NULL,
+            trigger_record.update_time = CURRENT_TIMESTAMP(3)
+        WHERE command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'RETRY'
+          AND trigger_record.status IN ('FAILED', 'TIMED_OUT')
+          AND work_item.status IN ('COMPLETED', 'DEAD')
+    </update>
+
+    <update id="requeueWorkForCommand">
+        UPDATE ifj_trigger_work_item work_item
+        JOIN ifj_runtime_command command_record
+          ON command_record.trigger_id = work_item.trigger_id
+        SET work_item.status = 'READY',
+            work_item.available_at = CURRENT_TIMESTAMP(3),
+            work_item.lease_owner = NULL,
+            work_item.claim_token = NULL,
+            work_item.lease_deadline = NULL,
+            work_item.attempt_count = CASE
+                WHEN command_record.command_type = 'RETRY' THEN 0
+                ELSE work_item.attempt_count
+            END,
+            work_item.last_error = NULL,
+            work_item.update_time = CURRENT_TIMESTAMP(3)
+        WHERE command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'RETRY'
+                AND work_item.status IN ('COMPLETED', 'DEAD'))
+            OR (command_record.command_type = 'STOP'
+                AND work_item.status = 'SUSPENDED'))
+    </update>
+
+    <select id="selectDispatchableRequestIds" resultType="java.lang.String">
+        SELECT command_record.request_id
+        FROM ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        WHERE command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= CURRENT_TIMESTAMP(3)
+          AND command_record.expires_at &gt; CURRENT_TIMESTAMP(3)
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+        ORDER BY command_record.create_time, command_record.request_id
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectDispatchableOwned"
+            resultType="com.ifelio.ijob.infra.coordination.command.RuntimeCommandCandidate">
+        SELECT command_record.request_id AS requestId,
+               command_record.trigger_id AS triggerId,
+               work_item.fence_token AS fenceToken
+        FROM ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        WHERE work_item.lease_owner = #{leaseOwner}
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+          AND command_record.available_at &lt;= CURRENT_TIMESTAMP(3)
+          AND command_record.expires_at &gt; CURRENT_TIMESTAMP(3)
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; work_item.fence_token))
+        ORDER BY command_record.create_time, command_record.request_id
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectDispatchableOwned" databaseId="sqlite"
+            resultType="com.ifelio.ijob.infra.coordination.command.RuntimeCommandCandidate">
+        SELECT command_record.request_id AS requestId,
+               command_record.trigger_id AS triggerId,
+               work_item.fence_token AS fenceToken
+        FROM ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        WHERE work_item.lease_owner = #{leaseOwner}
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+          AND command_record.available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND command_record.expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; work_item.fence_token))
+        ORDER BY command_record.create_time, command_record.request_id
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectDispatchableOwned" databaseId="oracle"
+            resultType="com.ifelio.ijob.infra.coordination.command.RuntimeCommandCandidate">
+        SELECT * FROM (
+          SELECT command_record.request_id AS requestId,
+                 command_record.trigger_id AS triggerId,
+                 work_item.fence_token AS fenceToken
+          FROM ifj_runtime_command command_record
+          JOIN ifj_trigger_work_item work_item
+            ON work_item.trigger_id = command_record.trigger_id
+          WHERE work_item.lease_owner = #{leaseOwner}
+            AND work_item.status = 'CLAIMED'
+            AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+            AND command_record.available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+            AND command_record.expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+            AND (command_record.status = 'PENDING'
+              OR (command_record.status = 'PROCESSING'
+                  AND command_record.processing_fence &lt;&gt; work_item.fence_token))
+          ORDER BY command_record.create_time, command_record.request_id
+        ) WHERE ROWNUM &lt;= #{limit}
+    </select>
+
+    <select id="selectDispatchableOwned" databaseId="sqlserver"
+            resultType="com.ifelio.ijob.infra.coordination.command.RuntimeCommandCandidate">
+        SELECT TOP (#{limit}) command_record.request_id AS requestId,
+               command_record.trigger_id AS triggerId,
+               work_item.fence_token AS fenceToken
+        FROM ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        WHERE work_item.lease_owner = #{leaseOwner}
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+          AND command_record.available_at &lt;= SYSUTCDATETIME()
+          AND command_record.expires_at &gt; SYSUTCDATETIME()
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; work_item.fence_token))
+        ORDER BY command_record.create_time, command_record.request_id
+    </select>
+
+<select id="selectDispatchableRequestIds" databaseId="sqlite" resultType="java.lang.String">
+        SELECT command_record.request_id
+        FROM ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        WHERE command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND command_record.expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+        ORDER BY command_record.create_time, command_record.request_id
+        LIMIT #{limit}
+    </select>
+
+<select id="selectDispatchableRequestIds" databaseId="oracle" resultType="java.lang.String">
+
+        SELECT command_record.request_id
+        FROM ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        WHERE command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND command_record.expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        AND ROWNUM &lt;= #{limit}
+        FOR UPDATE SKIP LOCKED
+    </select>
+
+<select id="selectDispatchableRequestIds" databaseId="sqlserver" resultType="java.lang.String">
+        SELECT TOP (#{limit}) command_record.request_id
+        FROM ifj_runtime_command command_record WITH (UPDLOCK, READPAST, ROWLOCK)
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        WHERE command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= SYSUTCDATETIME()
+          AND command_record.expires_at &gt; SYSUTCDATETIME()
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+        ORDER BY command_record.create_time, command_record.request_id
+        
+    </select>
+
+    <update id="claim">
+        UPDATE ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        SET command_record.status = 'PROCESSING',
+            command_record.processing_owner = #{leaseOwner},
+            command_record.processing_token = #{processingToken},
+            command_record.processing_fence = #{fenceToken},
+            command_record.result_message = NULL,
+            command_record.update_time = CURRENT_TIMESTAMP(3)
+        WHERE command_record.request_id = #{requestId}
+          AND command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= CURRENT_TIMESTAMP(3)
+          AND command_record.expires_at &gt; CURRENT_TIMESTAMP(3)
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = #{leaseOwner}
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="finish">
+        UPDATE ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        SET command_record.status = #{status},
+            command_record.result_message = #{resultMessage},
+            command_record.processing_owner = NULL,
+            command_record.processing_token = NULL,
+            command_record.processing_fence = NULL,
+            command_record.processed_at = CURRENT_TIMESTAMP(3),
+            command_record.update_time = CURRENT_TIMESTAMP(3)
+        WHERE command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.fence_token = command_record.processing_fence
+          AND (
+            (work_item.status = 'CLAIMED'
+              AND work_item.lease_owner = command_record.processing_owner
+              AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3))
+            <if test="status != null and status.name() == 'SUCCEEDED'">
+              OR (
+                command_record.command_type = 'STOP'
+                AND work_item.status = 'COMPLETED'
+                AND work_item.root_instance_id = command_record.root_instance_id
+                AND EXISTS (
+                  SELECT 1 FROM ifj_instance terminal_instance
+                  JOIN ifj_instance terminal_root ON terminal_root.id = command_record.root_instance_id
+                  WHERE terminal_instance.id = command_record.instance_id
+                    AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_instance.execution_fence = command_record.processing_fence
+                    AND terminal_root.execution_fence = command_record.processing_fence
+                )
+              )
+            </if>
+          )
+    </update>
+
+    <update id="defer">
+        UPDATE ifj_runtime_command command_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = command_record.trigger_id
+        SET command_record.status = 'PENDING',
+            command_record.result_message = #{resultMessage},
+            command_record.available_at = TIMESTAMPADD(MICROSECOND, #{delayMicros}, CURRENT_TIMESTAMP(3)),
+            command_record.processing_owner = NULL,
+            command_record.processing_token = NULL,
+            command_record.processing_fence = NULL,
+            command_record.update_time = CURRENT_TIMESTAMP(3)
+        WHERE command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = command_record.processing_owner
+          AND work_item.fence_token = command_record.processing_fence
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="expirePending">
+        UPDATE ifj_runtime_command command_record
+        JOIN (
+            SELECT request_id
+            FROM ifj_runtime_command
+            WHERE status IN ('PENDING', 'PROCESSING')
+              AND expires_at &lt;= CURRENT_TIMESTAMP(3)
+            ORDER BY expires_at, request_id
+            LIMIT #{limit}
+        ) expired ON expired.request_id = command_record.request_id
+        SET command_record.status = 'EXPIRED',
+            command_record.result_message = 'Command processing deadline elapsed',
+            command_record.processing_owner = NULL,
+            command_record.processing_token = NULL,
+            command_record.processing_fence = NULL,
+            command_record.processed_at = CURRENT_TIMESTAMP(3),
+            command_record.update_time = CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="expireByRequestId">
+        UPDATE ifj_runtime_command
+        SET status = 'EXPIRED',
+            result_message = 'Command processing deadline elapsed',
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = CURRENT_TIMESTAMP(3),
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE request_id = #{requestId}
+          AND status IN ('PENDING', 'PROCESSING')
+          AND expires_at &lt;= CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="expireByRequestId" databaseId="sqlite">
+        UPDATE ifj_runtime_command
+        SET status = 'EXPIRED',
+            result_message = 'Command processing deadline elapsed',
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE request_id = #{requestId}
+          AND status IN ('PENDING', 'PROCESSING')
+          AND expires_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="expireByRequestId" databaseId="oracle">
+        UPDATE ifj_runtime_command
+        SET status = 'EXPIRED',
+            result_message = 'Command processing deadline elapsed',
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE request_id = #{requestId}
+          AND status IN ('PENDING', 'PROCESSING')
+          AND expires_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </update>
+
+<update id="expireByRequestId" databaseId="sqlserver">
+        UPDATE ifj_runtime_command
+        SET status = 'EXPIRED',
+            result_message = 'Command processing deadline elapsed',
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = SYSUTCDATETIME(),
+            update_time = SYSUTCDATETIME()
+        WHERE request_id = #{requestId}
+          AND status IN ('PENDING', 'PROCESSING')
+          AND expires_at &lt;= SYSUTCDATETIME()
+    </update>
+
+    <insert id="insertFromInstance" databaseId="postgresql">
+        INSERT INTO ifj_runtime_command (
+            request_id, instance_id, root_instance_id, trigger_id, command_type,
+            status, requested_by, available_at, expires_at
+        )
+        SELECT
+            #{requestId}, instance_record.id, instance_record.root_instance_id,
+            instance_record.trigger_id, #{commandType}, 'PENDING', #{requestedBy},
+            CURRENT_TIMESTAMP(3), (CURRENT_TIMESTAMP(3) + (#{timeoutMicros} * INTERVAL '1 microsecond'))
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = #{instanceId}
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.trigger_id IS NOT NULL
+        ON CONFLICT (request_id) DO NOTHING
+    </insert>
+
+<insert id="insertFromInstance" databaseId="sqlite">
+        INSERT INTO ifj_runtime_command (
+            request_id, instance_id, root_instance_id, trigger_id, command_type,
+            status, requested_by, available_at, expires_at
+        )
+        SELECT
+            #{requestId}, instance_record.id, instance_record.root_instance_id,
+            instance_record.trigger_id, #{commandType}, 'PENDING', #{requestedBy},
+            strftime('%Y-%m-%d %H:%M:%f','now'), strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{timeoutMicros} / 1000000.0)))
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = #{instanceId}
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.trigger_id IS NOT NULL
+        ON CONFLICT (request_id) DO NOTHING
+    </insert>
+
+<insert id="insertFromInstance" databaseId="oracle">
+        MERGE INTO ifj_runtime_command target
+        USING (
+            SELECT #{requestId} AS request_id,
+                   instance_record.id AS instance_id,
+                   instance_record.root_instance_id AS root_instance_id,
+                   instance_record.trigger_id AS trigger_id,
+                   #{commandType} AS command_type,
+                   #{requestedBy} AS requested_by,
+                   CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) AS available_at,
+                   CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{timeoutMicros} / 1000000, 'SECOND') AS expires_at
+            FROM ifj_instance instance_record
+            WHERE instance_record.id = #{instanceId}
+              AND instance_record.root_instance_id IS NOT NULL
+              AND instance_record.trigger_id IS NOT NULL
+        ) source
+        ON (target.request_id = source.request_id)
+        WHEN NOT MATCHED THEN INSERT (
+            request_id, instance_id, root_instance_id, trigger_id, command_type,
+            status, requested_by, available_at, expires_at
+        ) VALUES (
+            source.request_id, source.instance_id, source.root_instance_id,
+            source.trigger_id, source.command_type, 'PENDING', source.requested_by,
+            source.available_at, source.expires_at
+        )</insert>
+
+<insert id="insertFromInstance" databaseId="sqlserver">
+        IF NOT EXISTS (SELECT 1 FROM ifj_runtime_command WITH (UPDLOCK, HOLDLOCK) WHERE request_id = #{requestId})
+        BEGIN
+
+        INSERT INTO ifj_runtime_command (
+            request_id, instance_id, root_instance_id, trigger_id, command_type,
+            status, requested_by, available_at, expires_at
+        )
+        SELECT
+            #{requestId}, instance_record.id, instance_record.root_instance_id,
+            instance_record.trigger_id, #{commandType}, 'PENDING', #{requestedBy},
+            SYSUTCDATETIME(), DATEADD(MILLISECOND, (#{timeoutMicros} / 1000), SYSUTCDATETIME())
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = #{instanceId}
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.trigger_id IS NOT NULL
+        END</insert>
+<update id="succeedInitiallySatisfied" databaseId="postgresql">
+        UPDATE ifj_runtime_command command_record
+        SET status = 'SUCCEEDED',
+            result_message = 'Requested state is already satisfied',
+            processed_at = CURRENT_TIMESTAMP(3),
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = command_record.instance_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'STOP' AND instance_record.status IN
+                    ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED'))
+            OR (command_record.command_type = 'PAUSE' AND instance_record.status = 'PAUSED')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status = 'RUNNING'))
+    </update>
+
+<update id="succeedInitiallySatisfied" databaseId="sqlite">
+        UPDATE ifj_runtime_command AS command_record
+        SET status = 'SUCCEEDED',
+            result_message = 'Requested state is already satisfied',
+            processed_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = command_record.instance_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'STOP' AND instance_record.status IN
+                    ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED'))
+            OR (command_record.command_type = 'PAUSE' AND instance_record.status = 'PAUSED')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status = 'RUNNING'))
+    </update>
+
+<update id="succeedInitiallySatisfied" databaseId="oracle">
+        MERGE INTO ifj_runtime_command command_record
+        USING (
+            SELECT command_record.ROWID AS target_rowid
+            FROM ifj_runtime_command command_record, ifj_instance instance_record
+            WHERE instance_record.id = command_record.instance_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'STOP' AND instance_record.status IN
+                    ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED'))
+            OR (command_record.command_type = 'PAUSE' AND instance_record.status = 'PAUSED')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status = 'RUNNING'))
+        ) source
+        ON (command_record.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = 'SUCCEEDED',
+            result_message = 'Requested state is already satisfied',
+            processed_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="succeedInitiallySatisfied" databaseId="sqlserver">
+        UPDATE command_record
+        SET status = 'SUCCEEDED',
+            result_message = 'Requested state is already satisfied',
+            processed_at = SYSUTCDATETIME(),
+            update_time = SYSUTCDATETIME()
+        FROM ifj_runtime_command AS command_record,
+             ifj_instance instance_record
+        WHERE instance_record.id = command_record.instance_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'STOP' AND instance_record.status IN
+                    ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED'))
+            OR (command_record.command_type = 'PAUSE' AND instance_record.status = 'PAUSED')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status = 'RUNNING'))
+    </update>
+<update id="rejectInitiallyInvalid" databaseId="postgresql">
+        UPDATE ifj_runtime_command command_record
+        SET status = 'REJECTED',
+            result_message = 'Command is not valid for the current instance state',
+            processed_at = CURRENT_TIMESTAMP(3),
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = command_record.instance_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'PAUSE' AND instance_record.status &lt;&gt; 'RUNNING')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status &lt;&gt; 'PAUSED')
+            OR (command_record.command_type = 'RETRY' AND (
+                instance_record.status NOT IN ('FAILED', 'TIMED_OUT')
+                OR instance_record.parent_instance_id IS NOT NULL
+                OR instance_record.id &lt;&gt; instance_record.root_instance_id)))
+    </update>
+
+<update id="rejectInitiallyInvalid" databaseId="sqlite">
+        UPDATE ifj_runtime_command AS command_record
+        SET status = 'REJECTED',
+            result_message = 'Command is not valid for the current instance state',
+            processed_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = command_record.instance_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'PAUSE' AND instance_record.status &lt;&gt; 'RUNNING')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status &lt;&gt; 'PAUSED')
+            OR (command_record.command_type = 'RETRY' AND (
+                instance_record.status NOT IN ('FAILED', 'TIMED_OUT')
+                OR instance_record.parent_instance_id IS NOT NULL
+                OR instance_record.id &lt;&gt; instance_record.root_instance_id)))
+    </update>
+
+<update id="rejectInitiallyInvalid" databaseId="oracle">
+        MERGE INTO ifj_runtime_command command_record
+        USING (
+            SELECT command_record.ROWID AS target_rowid
+            FROM ifj_runtime_command command_record, ifj_instance instance_record
+            WHERE instance_record.id = command_record.instance_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'PAUSE' AND instance_record.status &lt;&gt; 'RUNNING')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status &lt;&gt; 'PAUSED')
+            OR (command_record.command_type = 'RETRY' AND (
+                instance_record.status NOT IN ('FAILED', 'TIMED_OUT')
+                OR instance_record.parent_instance_id IS NOT NULL
+                OR instance_record.id &lt;&gt; instance_record.root_instance_id)))
+        ) source
+        ON (command_record.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = 'REJECTED',
+            result_message = 'Command is not valid for the current instance state',
+            processed_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="rejectInitiallyInvalid" databaseId="sqlserver">
+        UPDATE command_record
+        SET status = 'REJECTED',
+            result_message = 'Command is not valid for the current instance state',
+            processed_at = SYSUTCDATETIME(),
+            update_time = SYSUTCDATETIME()
+        FROM ifj_runtime_command AS command_record,
+             ifj_instance instance_record
+        WHERE instance_record.id = command_record.instance_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'PAUSE' AND instance_record.status &lt;&gt; 'RUNNING')
+            OR (command_record.command_type = 'RESUME' AND instance_record.status &lt;&gt; 'PAUSED')
+            OR (command_record.command_type = 'RETRY' AND (
+                instance_record.status NOT IN ('FAILED', 'TIMED_OUT')
+                OR instance_record.parent_instance_id IS NOT NULL
+                OR instance_record.id &lt;&gt; instance_record.root_instance_id)))
+    </update>
+<update id="activateTriggerForRetry" databaseId="postgresql">
+        UPDATE ifj_trigger trigger_record
+        SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_runtime_command command_record,
+             ifj_trigger_work_item work_item
+        WHERE command_record.trigger_id = trigger_record.id
+          AND work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'RETRY'
+          AND trigger_record.status IN ('FAILED', 'TIMED_OUT')
+          AND work_item.status IN ('COMPLETED', 'DEAD')
+    </update>
+
+<update id="activateTriggerForRetry" databaseId="sqlite">
+        UPDATE ifj_trigger AS trigger_record
+        SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_runtime_command command_record,
+             ifj_trigger_work_item work_item
+        WHERE command_record.trigger_id = trigger_record.id
+          AND work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'RETRY'
+          AND trigger_record.status IN ('FAILED', 'TIMED_OUT')
+          AND work_item.status IN ('COMPLETED', 'DEAD')
+    </update>
+
+<update id="activateTriggerForRetry" databaseId="oracle">
+        MERGE INTO ifj_trigger trigger_record
+        USING (
+            SELECT trigger_record.ROWID AS target_rowid
+            FROM ifj_trigger trigger_record, ifj_runtime_command command_record,
+             ifj_trigger_work_item work_item
+            WHERE command_record.trigger_id = trigger_record.id
+          AND work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'RETRY'
+          AND trigger_record.status IN ('FAILED', 'TIMED_OUT')
+          AND work_item.status IN ('COMPLETED', 'DEAD')
+        ) source
+        ON (trigger_record.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="activateTriggerForRetry" databaseId="sqlserver">
+        UPDATE trigger_record
+        SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            update_time = SYSUTCDATETIME()
+        FROM ifj_trigger AS trigger_record,
+             ifj_runtime_command command_record,
+             ifj_trigger_work_item work_item
+        WHERE command_record.trigger_id = trigger_record.id
+          AND work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'RETRY'
+          AND trigger_record.status IN ('FAILED', 'TIMED_OUT')
+          AND work_item.status IN ('COMPLETED', 'DEAD')
+    </update>
+<update id="requeueWorkForCommand" databaseId="postgresql">
+        UPDATE ifj_trigger_work_item work_item
+        SET status = 'READY',
+            available_at = CURRENT_TIMESTAMP(3),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE
+                WHEN command_record.command_type = 'RETRY' THEN 0
+                ELSE work_item.attempt_count
+            END,
+            last_error = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_runtime_command command_record
+        WHERE command_record.trigger_id = work_item.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'RETRY'
+                AND work_item.status IN ('COMPLETED', 'DEAD'))
+            OR (command_record.command_type = 'STOP'
+                AND work_item.status = 'SUSPENDED'))
+    </update>
+
+<update id="requeueWorkForCommand" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item AS work_item
+        SET status = 'READY',
+            available_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE
+                WHEN command_record.command_type = 'RETRY' THEN 0
+                ELSE work_item.attempt_count
+            END,
+            last_error = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_runtime_command command_record
+        WHERE command_record.trigger_id = work_item.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'RETRY'
+                AND work_item.status IN ('COMPLETED', 'DEAD'))
+            OR (command_record.command_type = 'STOP'
+                AND work_item.status = 'SUSPENDED'))
+    </update>
+
+<update id="requeueWorkForCommand" databaseId="oracle">
+        MERGE INTO ifj_trigger_work_item work_item
+        USING (
+            SELECT work_item.ROWID AS target_rowid, command_record.command_type AS source_value_0
+            FROM ifj_trigger_work_item work_item, ifj_runtime_command command_record
+            WHERE command_record.trigger_id = work_item.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'RETRY'
+                AND work_item.status IN ('COMPLETED', 'DEAD'))
+            OR (command_record.command_type = 'STOP'
+                AND work_item.status = 'SUSPENDED'))
+        ) source
+        ON (work_item.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = 'READY',
+            available_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE
+                WHEN source.source_value_0 = 'RETRY' THEN 0
+                ELSE work_item.attempt_count
+            END,
+            last_error = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="requeueWorkForCommand" databaseId="sqlserver">
+        UPDATE work_item
+        SET status = 'READY',
+            available_at = SYSUTCDATETIME(),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE
+                WHEN command_record.command_type = 'RETRY' THEN 0
+                ELSE work_item.attempt_count
+            END,
+            last_error = NULL,
+            update_time = SYSUTCDATETIME()
+        FROM ifj_trigger_work_item AS work_item,
+             ifj_runtime_command command_record
+        WHERE command_record.trigger_id = work_item.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PENDING'
+          AND ((command_record.command_type = 'RETRY'
+                AND work_item.status IN ('COMPLETED', 'DEAD'))
+            OR (command_record.command_type = 'STOP'
+                AND work_item.status = 'SUSPENDED'))
+    </update>
+<update id="claim" databaseId="postgresql">
+        UPDATE ifj_runtime_command command_record
+        SET status = 'PROCESSING',
+            processing_owner = #{leaseOwner},
+            processing_token = #{processingToken},
+            processing_fence = #{fenceToken},
+            result_message = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= CURRENT_TIMESTAMP(3)
+          AND command_record.expires_at &gt; CURRENT_TIMESTAMP(3)
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = #{leaseOwner}
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="claim" databaseId="sqlite">
+        UPDATE ifj_runtime_command AS command_record
+        SET status = 'PROCESSING',
+            processing_owner = #{leaseOwner},
+            processing_token = #{processingToken},
+            processing_fence = #{fenceToken},
+            result_message = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND command_record.expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = #{leaseOwner}
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="claim" databaseId="oracle">
+        MERGE INTO ifj_runtime_command command_record
+        USING (
+            SELECT command_record.ROWID AS target_rowid
+            FROM ifj_runtime_command command_record, ifj_trigger_work_item work_item
+            WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND command_record.expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = #{leaseOwner}
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        ) source
+        ON (command_record.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = 'PROCESSING',
+            processing_owner = #{leaseOwner},
+            processing_token = #{processingToken},
+            processing_fence = #{fenceToken},
+            result_message = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="claim" databaseId="sqlserver">
+        UPDATE command_record
+        SET status = 'PROCESSING',
+            processing_owner = #{leaseOwner},
+            processing_token = #{processingToken},
+            processing_fence = #{fenceToken},
+            result_message = NULL,
+            update_time = SYSUTCDATETIME()
+        FROM ifj_runtime_command AS command_record,
+             ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.trigger_id = #{triggerId}
+          AND command_record.available_at &lt;= SYSUTCDATETIME()
+          AND command_record.expires_at &gt; SYSUTCDATETIME()
+          AND (command_record.status = 'PENDING'
+            OR (command_record.status = 'PROCESSING'
+                AND command_record.processing_fence &lt;&gt; #{fenceToken}))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = #{leaseOwner}
+          AND work_item.fence_token = #{fenceToken}
+          AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+<update id="finish" databaseId="postgresql">
+        UPDATE ifj_runtime_command command_record
+        SET status = #{status},
+            result_message = #{resultMessage},
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = CURRENT_TIMESTAMP(3),
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.fence_token = command_record.processing_fence
+          AND (
+            (work_item.status = 'CLAIMED'
+              AND work_item.lease_owner = command_record.processing_owner
+              AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3))
+            <if test="status != null and status.name() == 'SUCCEEDED'">
+              OR (
+                command_record.command_type = 'STOP'
+                AND work_item.status = 'COMPLETED'
+                AND work_item.root_instance_id = command_record.root_instance_id
+                AND EXISTS (
+                  SELECT 1 FROM ifj_instance terminal_instance
+                  JOIN ifj_instance terminal_root ON terminal_root.id = command_record.root_instance_id
+                  WHERE terminal_instance.id = command_record.instance_id
+                    AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_instance.execution_fence = command_record.processing_fence
+                    AND terminal_root.execution_fence = command_record.processing_fence
+                )
+              )
+            </if>
+          )
+    </update>
+
+<update id="finish" databaseId="sqlite">
+        UPDATE ifj_runtime_command AS command_record
+        SET status = #{status},
+            result_message = #{resultMessage},
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.fence_token = command_record.processing_fence
+          AND (
+            (work_item.status = 'CLAIMED'
+              AND work_item.lease_owner = command_record.processing_owner
+              AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now'))
+            <if test="status != null and status.name() == 'SUCCEEDED'">
+              OR (
+                command_record.command_type = 'STOP'
+                AND work_item.status = 'COMPLETED'
+                AND work_item.root_instance_id = command_record.root_instance_id
+                AND EXISTS (
+                  SELECT 1 FROM ifj_instance terminal_instance
+                  JOIN ifj_instance terminal_root ON terminal_root.id = command_record.root_instance_id
+                  WHERE terminal_instance.id = command_record.instance_id
+                    AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_instance.execution_fence = command_record.processing_fence
+                    AND terminal_root.execution_fence = command_record.processing_fence
+                )
+              )
+            </if>
+          )
+    </update>
+
+<update id="finish" databaseId="oracle">
+        MERGE INTO ifj_runtime_command command_record
+        USING (
+            SELECT command_record.ROWID AS target_rowid
+            FROM ifj_runtime_command command_record, ifj_trigger_work_item work_item
+            WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.fence_token = command_record.processing_fence
+          AND (
+            (work_item.status = 'CLAIMED'
+              AND work_item.lease_owner = command_record.processing_owner
+              AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+            <if test="status != null and status.name() == 'SUCCEEDED'">
+              OR (
+                command_record.command_type = 'STOP'
+                AND work_item.status = 'COMPLETED'
+                AND work_item.root_instance_id = command_record.root_instance_id
+                AND EXISTS (
+                  SELECT 1 FROM ifj_instance terminal_instance
+                  CROSS JOIN ifj_instance terminal_root
+                  WHERE terminal_root.id = command_record.root_instance_id
+                    AND terminal_instance.id = command_record.instance_id
+                    AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_instance.execution_fence = command_record.processing_fence
+                    AND terminal_root.execution_fence = command_record.processing_fence
+                )
+              )
+            </if>
+          )
+        ) source
+        ON (command_record.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = #{status},
+            result_message = #{resultMessage},
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="finish" databaseId="sqlserver">
+        UPDATE command_record
+        SET status = #{status},
+            result_message = #{resultMessage},
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = SYSUTCDATETIME(),
+            update_time = SYSUTCDATETIME()
+        FROM ifj_runtime_command AS command_record,
+             ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.fence_token = command_record.processing_fence
+          AND (
+            (work_item.status = 'CLAIMED'
+              AND work_item.lease_owner = command_record.processing_owner
+              AND work_item.lease_deadline &gt; SYSUTCDATETIME())
+            <if test="status != null and status.name() == 'SUCCEEDED'">
+              OR (
+                command_record.command_type = 'STOP'
+                AND work_item.status = 'COMPLETED'
+                AND work_item.root_instance_id = command_record.root_instance_id
+                AND EXISTS (
+                  SELECT 1 FROM ifj_instance terminal_instance
+                  JOIN ifj_instance terminal_root ON terminal_root.id = command_record.root_instance_id
+                  WHERE terminal_instance.id = command_record.instance_id
+                    AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                    AND terminal_instance.execution_fence = command_record.processing_fence
+                    AND terminal_root.execution_fence = command_record.processing_fence
+                )
+              )
+            </if>
+          )
+    </update>
+<update id="defer" databaseId="postgresql">
+        UPDATE ifj_runtime_command command_record
+        SET status = 'PENDING',
+            result_message = #{resultMessage},
+            available_at = (CURRENT_TIMESTAMP(3) + (#{delayMicros} * INTERVAL '1 microsecond')),
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = command_record.processing_owner
+          AND work_item.fence_token = command_record.processing_fence
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="defer" databaseId="sqlite">
+        UPDATE ifj_runtime_command AS command_record
+        SET status = 'PENDING',
+            result_message = #{resultMessage},
+            available_at = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{delayMicros} / 1000000.0))),
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = command_record.processing_owner
+          AND work_item.fence_token = command_record.processing_fence
+          AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="defer" databaseId="oracle">
+        MERGE INTO ifj_runtime_command command_record
+        USING (
+            SELECT command_record.ROWID AS target_rowid
+            FROM ifj_runtime_command command_record, ifj_trigger_work_item work_item
+            WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = command_record.processing_owner
+          AND work_item.fence_token = command_record.processing_fence
+          AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        ) source
+        ON (command_record.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = 'PENDING',
+            result_message = #{resultMessage},
+            available_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{delayMicros} / 1000000, 'SECOND'),
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="defer" databaseId="sqlserver">
+        UPDATE command_record
+        SET status = 'PENDING',
+            result_message = #{resultMessage},
+            available_at = DATEADD(MILLISECOND, (#{delayMicros} / 1000), SYSUTCDATETIME()),
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            update_time = SYSUTCDATETIME()
+        FROM ifj_runtime_command AS command_record,
+             ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = command_record.trigger_id
+          AND command_record.request_id = #{requestId}
+          AND command_record.status = 'PROCESSING'
+          AND command_record.processing_token = #{processingToken}
+          AND command_record.processing_fence = #{fenceToken}
+          AND work_item.status = 'CLAIMED'
+          AND work_item.lease_owner = command_record.processing_owner
+          AND work_item.fence_token = command_record.processing_fence
+          AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+<update id="expirePending" databaseId="postgresql">
+        WITH expired AS (
+            SELECT request_id
+            FROM ifj_runtime_command
+            WHERE status IN ('PENDING', 'PROCESSING')
+              AND expires_at &lt;= CURRENT_TIMESTAMP(3)
+            ORDER BY expires_at, request_id
+            LIMIT #{limit}
+        )
+        UPDATE ifj_runtime_command command_record
+        SET status = 'EXPIRED',
+            result_message = 'Command processing deadline elapsed',
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = CURRENT_TIMESTAMP(3),
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM expired
+        WHERE command_record.request_id = expired.request_id
+    </update>
+
+<update id="expirePending" databaseId="sqlite">
+        WITH expired AS (
+            SELECT request_id
+            FROM ifj_runtime_command
+            WHERE status IN ('PENDING', 'PROCESSING')
+              AND expires_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+            ORDER BY expires_at, request_id
+            LIMIT #{limit}
+        )
+        UPDATE ifj_runtime_command AS command_record
+        SET status = 'EXPIRED',
+            result_message = 'Command processing deadline elapsed',
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM expired
+        WHERE command_record.request_id = expired.request_id
+    </update>
+
+<update id="expirePending" databaseId="oracle">
+        UPDATE ifj_runtime_command
+        SET status = 'EXPIRED',
+            result_message = 'Command processing deadline elapsed',
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE request_id IN (
+            SELECT request_id FROM (
+                SELECT request_id FROM ifj_runtime_command
+                WHERE status IN ('PENDING', 'PROCESSING') AND expires_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+                ORDER BY expires_at, request_id
+            ) WHERE ROWNUM &lt;= #{limit}
+        )</update>
+
+<update id="expirePending" databaseId="sqlserver">
+        WITH expired AS (
+            SELECT request_id
+            FROM ifj_runtime_command
+            WHERE status IN ('PENDING', 'PROCESSING')
+              AND expires_at &lt;= SYSUTCDATETIME()
+            ORDER BY expires_at, request_id
+            OFFSET 0 ROWS FETCH NEXT #{limit} ROWS ONLY
+        )
+        UPDATE command_record
+        SET status = 'EXPIRED',
+            result_message = 'Command processing deadline elapsed',
+            processing_owner = NULL,
+            processing_token = NULL,
+            processing_fence = NULL,
+            processed_at = SYSUTCDATETIME(),
+            update_time = SYSUTCDATETIME()
+        FROM ifj_runtime_command AS command_record,
+             expired
+        WHERE command_record.request_id = expired.request_id
+    </update>
+    <update id="succeedCompletedStops">
+        UPDATE ifj_runtime_command command_record JOIN (SELECT pending_command.request_id FROM ifj_runtime_command pending_command
+        WHERE pending_command.status = 'PENDING'
+          AND pending_command.command_type = 'STOP'
+          AND pending_command.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              JOIN ifj_instance terminal_instance ON terminal_instance.id = pending_command.instance_id
+              WHERE completed_work.trigger_id = pending_command.trigger_id
+                AND completed_work.root_instance_id = pending_command.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND pending_command.expires_at &gt; CURRENT_TIMESTAMP(3)
+        ORDER BY pending_command.expires_at, pending_command.request_id
+        LIMIT #{limit}) satisfied ON satisfied.request_id = command_record.request_id
+        SET command_record.status = 'SUCCEEDED', command_record.result_message = 'Requested stop already satisfied by terminal completion', command_record.processed_at = CURRENT_TIMESTAMP(3), command_record.update_time = CURRENT_TIMESTAMP(3)
+        WHERE command_record.status = 'PENDING'
+          AND command_record.command_type = 'STOP'
+          AND command_record.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              JOIN ifj_instance terminal_instance ON terminal_instance.id = command_record.instance_id
+              WHERE completed_work.trigger_id = command_record.trigger_id
+                AND completed_work.root_instance_id = command_record.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND command_record.expires_at &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="succeedCompletedStops" databaseId="postgresql">
+        WITH satisfied AS (SELECT pending_command.request_id FROM ifj_runtime_command pending_command
+        WHERE pending_command.status = 'PENDING'
+          AND pending_command.command_type = 'STOP'
+          AND pending_command.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              JOIN ifj_instance terminal_instance ON terminal_instance.id = pending_command.instance_id
+              WHERE completed_work.trigger_id = pending_command.trigger_id
+                AND completed_work.root_instance_id = pending_command.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND pending_command.expires_at &gt; CURRENT_TIMESTAMP(3)
+        ORDER BY pending_command.expires_at, pending_command.request_id
+        LIMIT #{limit})
+        UPDATE ifj_runtime_command command_record
+        SET status = 'SUCCEEDED', result_message = 'Requested stop already satisfied by terminal completion', processed_at = CURRENT_TIMESTAMP(3), update_time = CURRENT_TIMESTAMP(3)
+        FROM satisfied
+        WHERE command_record.request_id = satisfied.request_id AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'STOP'
+          AND command_record.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              JOIN ifj_instance terminal_instance ON terminal_instance.id = command_record.instance_id
+              WHERE completed_work.trigger_id = command_record.trigger_id
+                AND completed_work.root_instance_id = command_record.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND command_record.expires_at &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="succeedCompletedStops" databaseId="sqlite">
+        WITH satisfied AS (SELECT pending_command.request_id FROM ifj_runtime_command pending_command
+        WHERE pending_command.status = 'PENDING'
+          AND pending_command.command_type = 'STOP'
+          AND pending_command.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              JOIN ifj_instance terminal_instance ON terminal_instance.id = pending_command.instance_id
+              WHERE completed_work.trigger_id = pending_command.trigger_id
+                AND completed_work.root_instance_id = pending_command.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND pending_command.expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+        ORDER BY pending_command.expires_at, pending_command.request_id
+        LIMIT #{limit})
+        UPDATE ifj_runtime_command AS command_record
+        SET status = 'SUCCEEDED', result_message = 'Requested stop already satisfied by terminal completion', processed_at = strftime('%Y-%m-%d %H:%M:%f','now'), update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM satisfied
+        WHERE command_record.request_id = satisfied.request_id AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'STOP'
+          AND command_record.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              JOIN ifj_instance terminal_instance ON terminal_instance.id = command_record.instance_id
+              WHERE completed_work.trigger_id = command_record.trigger_id
+                AND completed_work.root_instance_id = command_record.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND command_record.expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+    <update id="succeedCompletedStops" databaseId="oracle">
+        UPDATE ifj_runtime_command command_record SET status = 'SUCCEEDED', result_message = 'Requested stop already satisfied by terminal completion', processed_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)), update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE command_record.request_id IN (SELECT request_id FROM (SELECT pending_command.request_id FROM ifj_runtime_command pending_command
+        WHERE pending_command.status = 'PENDING'
+          AND pending_command.command_type = 'STOP'
+          AND pending_command.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              CROSS JOIN ifj_instance terminal_instance
+              WHERE terminal_instance.id = pending_command.instance_id
+                AND completed_work.trigger_id = pending_command.trigger_id
+                AND completed_work.root_instance_id = pending_command.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND pending_command.expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        ORDER BY pending_command.expires_at, pending_command.request_id) WHERE ROWNUM &lt;= #{limit}) AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'STOP'
+          AND command_record.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              CROSS JOIN ifj_instance terminal_instance
+              WHERE terminal_instance.id = command_record.instance_id
+                AND completed_work.trigger_id = command_record.trigger_id
+                AND completed_work.root_instance_id = command_record.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND command_record.expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </update>
+
+    <update id="succeedCompletedStops" databaseId="sqlserver">
+        WITH satisfied AS (SELECT pending_command.request_id FROM ifj_runtime_command pending_command
+        WHERE pending_command.status = 'PENDING'
+          AND pending_command.command_type = 'STOP'
+          AND pending_command.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              JOIN ifj_instance terminal_instance ON terminal_instance.id = pending_command.instance_id
+              WHERE completed_work.trigger_id = pending_command.trigger_id
+                AND completed_work.root_instance_id = pending_command.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND pending_command.expires_at &gt; SYSUTCDATETIME()
+        ORDER BY pending_command.expires_at, pending_command.request_id
+        OFFSET 0 ROWS FETCH NEXT #{limit} ROWS ONLY)
+        UPDATE command_record
+        SET status = 'SUCCEEDED', result_message = 'Requested stop already satisfied by terminal completion', processed_at = SYSUTCDATETIME(), update_time = SYSUTCDATETIME()
+        FROM ifj_runtime_command AS command_record, satisfied
+        WHERE command_record.request_id = satisfied.request_id AND command_record.status = 'PENDING'
+          AND command_record.command_type = 'STOP'
+          AND command_record.processing_token IS NULL
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item completed_work
+              JOIN ifj_instance terminal_root ON terminal_root.id = completed_work.root_instance_id
+              JOIN ifj_instance terminal_instance ON terminal_instance.id = command_record.instance_id
+              WHERE completed_work.trigger_id = command_record.trigger_id
+                AND completed_work.root_instance_id = command_record.root_instance_id
+                AND completed_work.status = 'COMPLETED'
+                AND terminal_root.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_instance.status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+                AND terminal_root.execution_fence = completed_work.fence_token
+                AND terminal_instance.execution_fence = completed_work.fence_token
+          )
+          AND command_record.expires_at &gt; SYSUTCDATETIME()
+    </update>
+</mapper>

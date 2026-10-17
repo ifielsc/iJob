@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.schedule.ScheduleMisfireAuditMapper">
+    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.schedule.ScheduleMisfireAudit">
+        INSERT INTO ifj_schedule_misfire_audit (
+            id, schedule_id, fire_claim_token, policy, observed_at,
+            first_due_time, last_due_time, due_count, count_capped,
+            created_count, skipped_count, create_time
+        ) VALUES (
+            #{id}, #{scheduleId}, #{fireClaimToken}, #{policy}, #{observedAt},
+            #{firstDueTime}, #{lastDueTime}, #{dueCount}, #{countCapped},
+            #{createdCount}, #{skippedCount}, #{createTime}
+        )
+    </insert>
+</mapper>

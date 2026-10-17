@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.EtlCheckpointMapper">
+
+    <resultMap id="checkpointResultMap"
+               type="com.ifelio.ijob.infra.entity.runtime.EtlCheckpoint">
+        <id property="taskId" column="task_id"/>
+        <id property="checkpointKey" column="checkpoint_key"/>
+        <result property="sourceFingerprint" column="source_fingerprint"/>
+        <result property="watermarkType" column="watermark_type"/>
+        <result property="watermarkValue" column="watermark_value"/>
+        <result property="tieBreakerValue" column="tie_breaker_value"/>
+        <result property="lastInstanceId" column="last_instance_id"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="select" resultMap="checkpointResultMap">
+        SELECT task_id, checkpoint_key, source_fingerprint,
+               watermark_type, watermark_value, tie_breaker_value,
+               last_instance_id, version, create_time, update_time
+        FROM ifj_etl_checkpoint
+        WHERE task_id = #{taskId}
+          AND checkpoint_key = #{checkpointKey}
+    </select>
+
+    <insert id="insertIfAbsent">
+        INSERT IGNORE INTO ifj_etl_checkpoint (
+            task_id, checkpoint_key, source_fingerprint,
+            watermark_type, watermark_value, tie_breaker_value,
+            last_instance_id, version
+        )
+        SELECT #{checkpoint.taskId}, #{checkpoint.checkpointKey},
+               #{checkpoint.sourceFingerprint}, #{checkpoint.watermarkType},
+               #{checkpoint.watermarkValue}, #{checkpoint.tieBreakerValue},
+               #{checkpoint.lastInstanceId}, 0
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = #{checkpoint.lastInstanceId}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND instance_record.execution_fence = #{permit.fenceToken}
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+    </insert>
+
+    <update id="advance">
+        UPDATE ifj_etl_checkpoint
+        SET watermark_value = #{checkpoint.watermarkValue},
+            tie_breaker_value = #{checkpoint.tieBreakerValue},
+            last_instance_id = #{checkpoint.lastInstanceId},
+            version = version + 1,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE task_id = #{checkpoint.taskId}
+          AND checkpoint_key = #{checkpoint.checkpointKey}
+          AND source_fingerprint = #{checkpoint.sourceFingerprint}
+          AND watermark_type = #{checkpoint.watermarkType}
+          AND version = #{expectedVersion}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_instance instance_record
+                    JOIN ifj_trigger_work_item work_item
+                      ON work_item.trigger_id = instance_record.trigger_id
+                    WHERE instance_record.id = #{checkpoint.lastInstanceId}
+                      AND instance_record.execution_fence = #{permit.fenceToken}
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_instance instance_record
+                    JOIN ifj_trigger_work_item work_item
+                      ON work_item.trigger_id = instance_record.trigger_id
+                    WHERE instance_record.id = #{checkpoint.lastInstanceId}
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+    </update>
+
+<update id="advance" databaseId="sqlite">
+        UPDATE ifj_etl_checkpoint
+        SET watermark_value = #{checkpoint.watermarkValue},
+            tie_breaker_value = #{checkpoint.tieBreakerValue},
+            last_instance_id = #{checkpoint.lastInstanceId},
+            version = version + 1,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE task_id = #{checkpoint.taskId}
+          AND checkpoint_key = #{checkpoint.checkpointKey}
+          AND source_fingerprint = #{checkpoint.sourceFingerprint}
+          AND watermark_type = #{checkpoint.watermarkType}
+          AND version = #{expectedVersion}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_instance instance_record
+                    JOIN ifj_trigger_work_item work_item
+                      ON work_item.trigger_id = instance_record.trigger_id
+                    WHERE instance_record.id = #{checkpoint.lastInstanceId}
+                      AND instance_record.execution_fence = #{permit.fenceToken}
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_instance instance_record
+                    JOIN ifj_trigger_work_item work_item
+                      ON work_item.trigger_id = instance_record.trigger_id
+                    WHERE instance_record.id = #{checkpoint.lastInstanceId}
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+    </update>
+
+<update id="advance" databaseId="oracle">
+        UPDATE ifj_etl_checkpoint
+        SET watermark_value = #{checkpoint.watermarkValue},
+            tie_breaker_value = #{checkpoint.tieBreakerValue},
+            last_instance_id = #{checkpoint.lastInstanceId},
+            version = version + 1,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE task_id = #{checkpoint.taskId}
+          AND checkpoint_key = #{checkpoint.checkpointKey}
+          AND source_fingerprint = #{checkpoint.sourceFingerprint}
+          AND watermark_type = #{checkpoint.watermarkType}
+          AND version = #{expectedVersion}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_instance instance_record
+                    JOIN ifj_trigger_work_item work_item
+                      ON work_item.trigger_id = instance_record.trigger_id
+                    WHERE instance_record.id = #{checkpoint.lastInstanceId}
+                      AND instance_record.execution_fence = #{permit.fenceToken}
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_instance instance_record
+                    JOIN ifj_trigger_work_item work_item
+                      ON work_item.trigger_id = instance_record.trigger_id
+                    WHERE instance_record.id = #{checkpoint.lastInstanceId}
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+    </update>
+
+<update id="advance" databaseId="sqlserver">
+        UPDATE ifj_etl_checkpoint
+        SET watermark_value = #{checkpoint.watermarkValue},
+            tie_breaker_value = #{checkpoint.tieBreakerValue},
+            last_instance_id = #{checkpoint.lastInstanceId},
+            version = version + 1,
+            update_time = SYSUTCDATETIME()
+        WHERE task_id = #{checkpoint.taskId}
+          AND checkpoint_key = #{checkpoint.checkpointKey}
+          AND source_fingerprint = #{checkpoint.sourceFingerprint}
+          AND watermark_type = #{checkpoint.watermarkType}
+          AND version = #{expectedVersion}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_instance instance_record
+                    JOIN ifj_trigger_work_item work_item
+                      ON work_item.trigger_id = instance_record.trigger_id
+                    WHERE instance_record.id = #{checkpoint.lastInstanceId}
+                      AND instance_record.execution_fence = #{permit.fenceToken}
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_instance instance_record
+                    JOIN ifj_trigger_work_item work_item
+                      ON work_item.trigger_id = instance_record.trigger_id
+                    WHERE instance_record.id = #{checkpoint.lastInstanceId}
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+    </update>
+
+    <insert id="insertIfAbsent" databaseId="postgresql">
+        INSERT INTO ifj_etl_checkpoint (
+            task_id, checkpoint_key, source_fingerprint,
+            watermark_type, watermark_value, tie_breaker_value,
+            last_instance_id, version
+        )
+        SELECT #{checkpoint.taskId}, #{checkpoint.checkpointKey},
+               #{checkpoint.sourceFingerprint}, #{checkpoint.watermarkType},
+               #{checkpoint.watermarkValue}, #{checkpoint.tieBreakerValue},
+               #{checkpoint.lastInstanceId}, 0
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = #{checkpoint.lastInstanceId}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND instance_record.execution_fence = #{permit.fenceToken}
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+        ON CONFLICT (task_id, checkpoint_key) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="sqlite">
+        INSERT INTO ifj_etl_checkpoint (
+            task_id, checkpoint_key, source_fingerprint,
+            watermark_type, watermark_value, tie_breaker_value,
+            last_instance_id, version
+        )
+        SELECT #{checkpoint.taskId}, #{checkpoint.checkpointKey},
+               #{checkpoint.sourceFingerprint}, #{checkpoint.watermarkType},
+               #{checkpoint.watermarkValue}, #{checkpoint.tieBreakerValue},
+               #{checkpoint.lastInstanceId}, 0
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = #{checkpoint.lastInstanceId}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND instance_record.execution_fence = #{permit.fenceToken}
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+        ON CONFLICT (task_id, checkpoint_key) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="oracle">
+        MERGE INTO ifj_etl_checkpoint target
+        USING (
+            SELECT #{checkpoint.taskId} AS task_id,
+                   #{checkpoint.checkpointKey} AS checkpoint_key,
+                   #{checkpoint.sourceFingerprint} AS source_fingerprint,
+                   #{checkpoint.watermarkType} AS watermark_type,
+                   #{checkpoint.watermarkValue} AS watermark_value,
+                   #{checkpoint.tieBreakerValue} AS tie_breaker_value,
+                   #{checkpoint.lastInstanceId} AS last_instance_id
+            FROM ifj_instance instance_record
+            WHERE instance_record.id = #{checkpoint.lastInstanceId}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND instance_record.execution_fence = #{permit.fenceToken}
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+        ) source
+        ON (target.task_id = source.task_id AND target.checkpoint_key = source.checkpoint_key)
+        WHEN NOT MATCHED THEN INSERT (
+            task_id, checkpoint_key, source_fingerprint,
+            watermark_type, watermark_value, tie_breaker_value,
+            last_instance_id, version
+        ) VALUES (
+            source.task_id, source.checkpoint_key, source.source_fingerprint,
+            source.watermark_type, source.watermark_value, source.tie_breaker_value,
+            source.last_instance_id, 0
+        )</insert>
+
+<insert id="insertIfAbsent" databaseId="sqlserver">
+        IF NOT EXISTS (SELECT 1 FROM ifj_etl_checkpoint WITH (UPDLOCK, HOLDLOCK) WHERE task_id = #{checkpoint.taskId} AND checkpoint_key = #{checkpoint.checkpointKey})
+        BEGIN
+
+        INSERT INTO ifj_etl_checkpoint (
+            task_id, checkpoint_key, source_fingerprint,
+            watermark_type, watermark_value, tie_breaker_value,
+            last_instance_id, version
+        )
+        SELECT #{checkpoint.taskId}, #{checkpoint.checkpointKey},
+               #{checkpoint.sourceFingerprint}, #{checkpoint.watermarkType},
+               #{checkpoint.watermarkValue}, #{checkpoint.tieBreakerValue},
+               #{checkpoint.lastInstanceId}, 0
+        FROM ifj_instance instance_record
+        WHERE instance_record.id = #{checkpoint.lastInstanceId}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND instance_record.execution_fence = #{permit.fenceToken}
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = instance_record.trigger_id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = instance_record.execution_fence
+                )
+            </otherwise>
+        </choose>
+        END</insert>
+</mapper>

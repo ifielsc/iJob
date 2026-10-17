@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.notify.NotifyBindingMapper">
+
+    <resultMap id="NotifyBindingResultMap"
+               type="com.ifelio.ijob.infra.entity.notify.NotifyBinding">
+        <id property="id" column="id"/>
+        <result property="targetType" column="target_type"
+                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+        <result property="targetId" column="target_id"/>
+        <result property="notifyConfigId" column="notify_config_id"/>
+        <result property="notifyPolicy" column="notify_policy"
+                javaType="com.ifelio.ijob.contract.enums.NotifyPolicy"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="NotifyBindingDtoResultMap"
+               type="com.ifelio.ijob.contract.notify.NotifyBindingDTO">
+        <id property="id" column="id"/>
+        <result property="targetType" column="target_type"
+                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+        <result property="targetId" column="target_id"/>
+        <result property="notifyConfigId" column="notify_config_id"/>
+        <result property="notifyConfigName" column="notify_config_name"/>
+        <result property="notifyType" column="notify_type"
+                javaType="com.ifelio.ijob.contract.enums.NotifyType"/>
+        <result property="notifyConfigEnabled"
+                column="notify_config_enabled"/>
+        <result property="notifyPolicy" column="notify_policy"
+                javaType="com.ifelio.ijob.contract.enums.NotifyPolicy"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="NotifyBindingColumns">
+        id,
+        target_type,
+        target_id,
+        notify_config_id,
+        notify_policy,
+        create_time,
+        update_time
+    </sql>
+
+    <sql id="NotifyBindingDtoColumns">
+        nb.id,
+        nb.target_type,
+        nb.target_id,
+        nb.notify_config_id,
+        nc.name AS notify_config_name,
+        nc.type AS notify_type,
+        nc.enabled AS notify_config_enabled,
+        nb.notify_policy,
+        nb.create_time,
+        nb.update_time
+    </sql>
+
+    <select id="selectDtoListByTarget"
+            resultMap="NotifyBindingDtoResultMap">
+        SELECT
+        <include refid="NotifyBindingDtoColumns"/>
+        FROM ifj_notify_binding nb
+        JOIN ifj_notify_config nc ON nc.id = nb.notify_config_id
+        WHERE nb.target_type = #{targetType}
+          AND nb.target_id = #{targetId}
+        ORDER BY nb.id ASC
+    </select>
+
+    <select id="selectDtoById"
+            resultMap="NotifyBindingDtoResultMap">
+        SELECT
+        <include refid="NotifyBindingDtoColumns"/>
+        FROM ifj_notify_binding nb
+        JOIN ifj_notify_config nc ON nc.id = nb.notify_config_id
+        WHERE nb.id = #{id}
+    </select>
+
+    <select id="selectById" resultMap="NotifyBindingResultMap">
+        SELECT
+        <include refid="NotifyBindingColumns"/>
+        FROM ifj_notify_binding
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectIdsForUpdate" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_notify_binding
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+        FOR UPDATE
+    </select>
+
+<select id="selectIdsForUpdate" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_notify_binding
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+    </select>
+
+<select id="selectIdsForUpdate" databaseId="oracle" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_notify_binding
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+    </select>
+
+<select id="selectIdsForUpdate" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_notify_binding
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+        ORDER BY id
+    </select>
+
+    <select id="selectByTargetAndConfig"
+            resultMap="NotifyBindingResultMap">
+        SELECT
+        <include refid="NotifyBindingColumns"/>
+        FROM ifj_notify_binding
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+          AND notify_config_id = #{notifyConfigId}
+    </select>
+
+    <select id="selectListByTargetId"
+            resultMap="NotifyBindingResultMap">
+        SELECT
+        <include refid="NotifyBindingColumns"/>
+        FROM ifj_notify_binding
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+        ORDER BY id ASC
+    </select>
+
+    <insert id="insert"
+            parameterType="com.ifelio.ijob.infra.entity.notify.NotifyBinding">
+        INSERT INTO ifj_notify_binding (
+            id,
+            target_type,
+            target_id,
+            notify_config_id,
+            notify_policy,
+            create_time,
+            update_time
+        ) VALUES (
+            #{id},
+            #{targetType},
+            #{targetId},
+            #{notifyConfigId},
+            #{notifyPolicy},
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+    <update id="updatePolicyById"
+            parameterType="com.ifelio.ijob.infra.entity.notify.NotifyBinding">
+        UPDATE ifj_notify_binding
+        SET notify_policy = #{notifyPolicy},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM ifj_notify_binding
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByIds">
+        DELETE FROM ifj_notify_binding
+        <choose>
+            <when test="ids != null and !ids.isEmpty()">
+                WHERE id IN
+                <foreach collection="ids" item="id"
+                         open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+    </delete>
+
+    <select id="countByNotifyConfigIds" resultType="int">
+        SELECT COUNT(1)
+        FROM ifj_notify_binding
+        <choose>
+            <when test="notifyConfigIds != null
+                    and !notifyConfigIds.isEmpty()">
+                WHERE notify_config_id IN
+                <foreach collection="notifyConfigIds"
+                         item="notifyConfigId"
+                         open="(" separator="," close=")">
+                    #{notifyConfigId}
+                </foreach>
+            </when>
+            <otherwise>
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+    </select>
+
+    <delete id="deleteByTargetId">
+        DELETE FROM ifj_notify_binding
+        WHERE target_type = #{targetType}
+          AND target_id = #{targetId}
+    </delete>
+
+    <delete id="deleteByTargetIds">
+        DELETE FROM ifj_notify_binding
+        WHERE target_type = #{targetType}
+          AND target_id IN
+        <foreach collection="targetIds"
+                 item="targetId"
+                 open="("
+                 separator=","
+                 close=")">
+            #{targetId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.RuntimeDataRetentionMapper">
+
+    <sql id="terminalTriggerPredicate">
+        trigger_record.status IN ('SUCCESS', 'FAILED', 'STOPPED',
+            'TIMED_OUT', 'SKIPPED')
+        AND trigger_record.update_time &lt; #{cutoff}
+        AND NOT EXISTS (
+            SELECT 1 FROM ifj_instance active_instance
+            WHERE active_instance.trigger_id = trigger_record.id
+              AND active_instance.status NOT IN ('SUCCESS', 'FAILED', 'STOPPED',
+                  'TIMED_OUT', 'SKIPPED')
+        )
+    </sql>
+
+    <select id="countTerminalTriggersBefore" resultType="long">
+        SELECT COUNT(*) FROM ifj_trigger trigger_record
+        WHERE <include refid="terminalTriggerPredicate"/>
+    </select>
+
+    <select id="selectTerminalTriggerIdsBefore" resultType="long">
+        SELECT trigger_record.id FROM ifj_trigger trigger_record
+        WHERE <include refid="terminalTriggerPredicate"/>
+        ORDER BY trigger_record.update_time ASC, trigger_record.id ASC
+        LIMIT #{limit}
+    </select>
+
+<select id="selectTerminalTriggerIdsBefore" resultType="long" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT trigger_record.id FROM ifj_trigger trigger_record
+        WHERE <include refid="terminalTriggerPredicate"/>
+        ORDER BY trigger_record.update_time ASC, trigger_record.id ASC
+       
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+
+    <delete id="deleteGatewayDecisionsByTriggerIds">
+        DELETE FROM ifj_dag_gateway_decision
+        WHERE job_instance_id IN (
+            SELECT id FROM ifj_instance WHERE trigger_id IN
+            <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
+        )
+    </delete>
+
+    <delete id="deleteRootInstancesByTriggerIds">
+        DELETE FROM ifj_instance
+        WHERE parent_instance_id IS NULL
+          AND trigger_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTriggersByIds">
+        DELETE FROM ifj_trigger
+        WHERE status IN ('SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED')
+          AND id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="countTerminalNotificationLogsBefore" resultType="long">
+        SELECT COUNT(*) FROM ifj_notify_send_log
+        WHERE result &lt;&gt; 'STARTED' AND create_time &lt; #{cutoff}
+    </select>
+
+    <delete id="deleteTerminalNotificationLogsBefore">
+        DELETE FROM ifj_notify_send_log
+        WHERE result &lt;&gt; 'STARTED' AND create_time &lt; #{cutoff}
+        ORDER BY create_time ASC, id ASC
+        LIMIT #{limit}
+    </delete>
+
+    <sql id="deletableEventPredicate">
+        event_record.arrived_at &lt; #{cutoff}
+        AND NOT EXISTS (
+            SELECT 1 FROM ifj_trigger trigger_record
+            WHERE trigger_record.event_id = event_record.id
+        )
+        AND NOT EXISTS (
+            SELECT 1 FROM ifj_event_wait resolved_wait
+            WHERE resolved_wait.matched_event_id = event_record.id
+        )
+        AND NOT EXISTS (
+            SELECT 1 FROM ifj_event_wait waiting_record
+            WHERE waiting_record.status = 'WAITING'
+              AND waiting_record.wait_type = 'EVENT'
+              AND waiting_record.event_code = event_record.event_code
+              AND waiting_record.accept_after &lt;= event_record.arrived_at
+              AND (waiting_record.business_key IS NULL
+                OR waiting_record.business_key = event_record.business_key)
+              AND (waiting_record.correlation_key IS NULL
+                OR waiting_record.correlation_key = event_record.correlation_key)
+        )
+    </sql>
+
+    <select id="countDeletableEventsBefore" resultType="long">
+        SELECT COUNT(*) FROM ifj_event event_record
+        WHERE <include refid="deletableEventPredicate"/>
+    </select>
+
+    <select id="selectDeletableEventIdsBefore" resultType="long">
+        SELECT event_record.id FROM ifj_event event_record
+        WHERE <include refid="deletableEventPredicate"/>
+        ORDER BY event_record.arrived_at ASC, event_record.id ASC
+        LIMIT #{limit}
+    </select>
+
+<select id="selectDeletableEventIdsBefore" resultType="long" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT event_record.id FROM ifj_event event_record
+        WHERE <include refid="deletableEventPredicate"/>
+        ORDER BY event_record.arrived_at ASC, event_record.id ASC
+       
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+
+    <delete id="deleteEventsByIds">
+        DELETE FROM ifj_event WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="countTerminalAppRunsBefore" resultType="long">
+        SELECT COUNT(*) FROM ifj_app_run
+        WHERE status IN ('STOPPED', 'CRASHED')
+          AND heartbeat_at &lt; #{cutoff}
+    </select>
+
+    <delete id="deleteTerminalAppRunsBefore">
+        DELETE FROM ifj_app_run
+        WHERE status IN ('STOPPED', 'CRASHED')
+          AND heartbeat_at &lt; #{cutoff}
+        ORDER BY heartbeat_at ASC, run_id ASC
+        LIMIT #{limit}
+    </delete>
+
+    <delete id="deleteTerminalNotificationLogsBefore" databaseId="postgresql">
+        WITH candidates AS (
+            SELECT id FROM ifj_notify_send_log
+            WHERE result &lt;&gt; 'STARTED' AND create_time &lt; #{cutoff}
+            ORDER BY create_time ASC, id ASC
+            LIMIT #{limit}
+        )
+        DELETE FROM ifj_notify_send_log target
+        USING candidates
+        WHERE target.id = candidates.id
+    </delete>
+
+<delete id="deleteTerminalNotificationLogsBefore" databaseId="sqlite">
+        WITH candidates AS (
+            SELECT id FROM ifj_notify_send_log
+            WHERE result &lt;&gt; 'STARTED' AND create_time &lt; #{cutoff}
+            ORDER BY create_time ASC, id ASC
+            LIMIT #{limit}
+        )
+        DELETE FROM ifj_notify_send_log WHERE id IN (SELECT id FROM candidates)
+    </delete>
+
+<delete id="deleteTerminalNotificationLogsBefore" databaseId="oracle">
+        DELETE FROM ifj_notify_send_log
+        WHERE id IN (
+            SELECT id FROM (
+                SELECT id FROM ifj_notify_send_log
+                WHERE result &lt;&gt; 'STARTED' AND create_time &lt; #{cutoff}
+                ORDER BY create_time, id
+            ) WHERE ROWNUM &lt;= #{limit}
+        )</delete>
+
+<delete id="deleteTerminalNotificationLogsBefore" databaseId="sqlserver">
+        WITH candidates AS (
+            SELECT id FROM ifj_notify_send_log
+            WHERE result &lt;&gt; 'STARTED' AND create_time &lt; #{cutoff}
+            ORDER BY create_time ASC, id ASC
+            OFFSET 0 ROWS FETCH NEXT #{limit} ROWS ONLY
+        )
+        DELETE FROM ifj_notify_send_log WHERE id IN (SELECT id FROM candidates)
+    </delete>
+<delete id="deleteTerminalAppRunsBefore" databaseId="postgresql">
+        WITH candidates AS (
+            SELECT run_id FROM ifj_app_run
+            WHERE status IN ('STOPPED', 'CRASHED')
+              AND heartbeat_at &lt; #{cutoff}
+            ORDER BY heartbeat_at ASC, run_id ASC
+            LIMIT #{limit}
+        )
+        DELETE FROM ifj_app_run target
+        USING candidates
+        WHERE target.run_id = candidates.run_id
+    </delete>
+
+<delete id="deleteTerminalAppRunsBefore" databaseId="sqlite">
+        WITH candidates AS (
+            SELECT run_id FROM ifj_app_run
+            WHERE status IN ('STOPPED', 'CRASHED')
+              AND heartbeat_at &lt; #{cutoff}
+            ORDER BY heartbeat_at ASC, run_id ASC
+            LIMIT #{limit}
+        )
+        DELETE FROM ifj_app_run WHERE run_id IN (SELECT run_id FROM candidates)
+    </delete>
+
+<delete id="deleteTerminalAppRunsBefore" databaseId="oracle">
+        DELETE FROM ifj_app_run
+        WHERE run_id IN (
+            SELECT run_id FROM (
+                SELECT run_id FROM ifj_app_run
+                WHERE status IN ('STOPPED', 'CRASHED') AND heartbeat_at &lt; #{cutoff}
+                ORDER BY heartbeat_at, run_id
+            ) WHERE ROWNUM &lt;= #{limit}
+        )</delete>
+
+<delete id="deleteTerminalAppRunsBefore" databaseId="sqlserver">
+        WITH candidates AS (
+            SELECT run_id FROM ifj_app_run
+            WHERE status IN ('STOPPED', 'CRASHED')
+              AND heartbeat_at &lt; #{cutoff}
+            ORDER BY heartbeat_at ASC, run_id ASC
+            OFFSET 0 ROWS FETCH NEXT #{limit} ROWS ONLY
+        )
+        DELETE FROM ifj_app_run WHERE run_id IN (SELECT run_id FROM candidates)
+    </delete>
+    <select id="selectTerminalTriggerIdsBefore" resultType="long" databaseId="sqlserver">
+        SELECT TOP (#{limit}) trigger_record.id FROM ifj_trigger trigger_record
+        WHERE <include refid="terminalTriggerPredicate"/>
+        ORDER BY trigger_record.update_time ASC, trigger_record.id ASC
+    </select>
+    <select id="selectDeletableEventIdsBefore" resultType="long" databaseId="sqlserver">
+        SELECT TOP (#{limit}) event_record.id FROM ifj_event event_record
+        WHERE <include refid="deletableEventPredicate"/>
+        ORDER BY event_record.arrived_at ASC, event_record.id ASC
+    </select>
+    <!-- SQL Server's NO ACTION graph needs explicit dependency ordering, unlike CASCADE vendors. -->
+    <delete id="deleteRootInstancesByTriggerIds" databaseId="sqlserver">
+        SET NOCOUNT ON;
+        DECLARE @triggers TABLE (id bigint PRIMARY KEY);
+        INSERT INTO @triggers (id) VALUES
+        <foreach collection="ids" item="id" separator=",">(#{id})</foreach>;
+        DECLARE @instances TABLE (id bigint PRIMARY KEY);
+        INSERT INTO @instances (id) SELECT id FROM ifj_instance
+        WHERE trigger_id IN (SELECT id FROM @triggers);
+        DELETE FROM ifj_event_wait_operator WHERE wait_id IN (
+            SELECT id FROM ifj_event_wait WHERE instance_id IN (SELECT id FROM @instances)
+                OR root_instance_id IN (SELECT id FROM @instances));
+        DELETE FROM ifj_event_wait WHERE instance_id IN (SELECT id FROM @instances)
+            OR root_instance_id IN (SELECT id FROM @instances);
+        DELETE FROM ifj_instance_log WHERE instance_id IN (SELECT id FROM @instances);
+        DELETE FROM ifj_dag_gateway_decision WHERE job_instance_id IN (SELECT id FROM @instances);
+        DELETE FROM ifj_runtime_command WHERE trigger_id IN (SELECT id FROM @triggers)
+            OR instance_id IN (SELECT id FROM @instances) OR root_instance_id IN (SELECT id FROM @instances);
+        DELETE FROM ifj_trigger_work_item WHERE trigger_id IN (SELECT id FROM @triggers)
+            OR root_instance_id IN (SELECT id FROM @instances);
+        SET NOCOUNT OFF;
+        DELETE FROM ifj_instance WHERE id IN (SELECT id FROM @instances);
+    </delete>
+</mapper>

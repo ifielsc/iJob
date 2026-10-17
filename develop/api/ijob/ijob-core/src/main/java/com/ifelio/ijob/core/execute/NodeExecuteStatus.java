@@ -1,0 +1,10 @@
+package com.ifelio.ijob.core.execute;
+
+public enum NodeExecuteStatus {
+    SUCCESS,
+    FAILED,
+    TIMED_OUT,
+    STOPPED,
+    SKIPPED,
+    WAITING_EVENT
+}

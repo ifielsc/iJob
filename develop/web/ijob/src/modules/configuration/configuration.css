@@ -1,0 +1,848 @@
+/* Configuration pages share the compact user-management scale. */
+.ssh-host-trust {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.ssh-host-trust p {
+  margin: 8px 0;
+}
+.ssh-host-trust code,
+.ssh-trust-confirm code {
+  display: block;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  font-size: 12px;
+}
+.ssh-trust-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ssh-advanced-fields {
+  display: grid;
+  gap: 16px;
+  padding-top: 16px;
+}
+.n-collapse-item__content-inner > .ssh-advanced-fields {
+  padding-top: 0;
+}
+.ssh-fields-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
+}
+.configuration-editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .ssh-fields-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.configuration-filter {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.configuration-filter .filter-item {
+  flex: 0 1 180px;
+  min-width: 130px;
+}
+.configuration-filter .filter-item:first-child {
+  flex-basis: 240px;
+}
+.configuration-filter label {
+  display: block;
+  margin-bottom: 6px;
+}
+.configuration-table {
+  width: 100%;
+  min-width: 650px;
+  table-layout: fixed;
+}
+.configuration-table th:last-child {
+  width: 210px;
+}
+.configuration-table td {
+  overflow-wrap: anywhere;
+}
+.configuration-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.configuration-note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.configured-field {
+  width: 100%;
+}
+.preservation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 9px;
+}
+.preservation > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.field-undo {
+  margin-top: 6px;
+}
+.configuration-editor {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.configuration-editor form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.configuration-editor .configuration-note {
+  margin: 0;
+}
+.configuration-editor h3 {
+  font-size: 14px;
+  margin: 12px 0 0;
+}
+.configuration-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+.configuration-footer {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.configuration-editor .error-summary,
+.configuration-field-error {
+  color: var(--error);
+  font-size: 12px;
+}
+.calendar-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.calendar-sidebar {
+  min-width: 0;
+}
+.calendar-search {
+  margin: 14px 0 10px;
+}
+.calendar-choices {
+  display: grid;
+  gap: 6px;
+  margin: 14px -8px 0;
+}
+.calendar-choice {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 7px;
+  padding: 5px 10px;
+  min-height: 48px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.calendar-choice:hover {
+  background: var(--selected);
+}
+.calendar-choice.selected {
+  background: var(--selected);
+  border-left-color: var(--primary);
+  color: var(--primary);
+}
+.calendar-choice > span {
+  min-width: 0;
+  flex: 1;
+}
+.calendar-choice svg {
+  flex: none;
+}
+.calendar-choice strong {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+.calendar-choice small {
+  display: block;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.calendar-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.calendar-title h2 {
+  overflow-wrap: anywhere;
+}
+.calendar-detail-heading {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.calendar-detail h3 {
+  margin: 14px 0 10px;
+  font-size: 14px;
+}
+.calendar-week-rule {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0;
+}
+.calendar-week-rule h3 {
+  margin: 0;
+}
+.calendar-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.calendar-week-chip {
+  min-width: 46px;
+  padding: 7px 10px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--disabled);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.calendar-week-chip.active {
+  color: var(--primary);
+  background: var(--selected);
+}
+.calendar-exceptions {
+  max-height: 240px;
+  overflow: auto;
+}
+.calendar-exceptions table {
+  width: 100%;
+}
+.calendar-exceptions th,
+.calendar-exceptions td {
+  padding: 9px 14px;
+}
+.calendar-preview-section {
+  margin-top: 18px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+.calendar-preview-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.calendar-preview-start {
+  width: 180px;
+  min-width: 0;
+}
+.calendar-rest {
+  color: var(--muted);
+}
+.calendar-preview-days {
+  width: 110px;
+}
+.calendar-preview-hint {
+  flex-basis: 100%;
+  margin: 0;
+  text-align: left;
+}
+.calendar-grid-scroll {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.calendar-preview {
+  min-width: 560px;
+}
+.calendar-week-head,
+.calendar-week-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.calendar-week-head {
+  background: var(--selected);
+  font-size: 12px;
+  text-align: center;
+}
+.calendar-week-head > div {
+  padding: 8px 4px;
+}
+.calendar-day {
+  border-top: 1px solid var(--border);
+  min-height: 64px;
+  padding: 5px 8px;
+  line-height: 16px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 2px;
+}
+.calendar-day:not(:last-child),
+.calendar-week-head > div:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+.calendar-day.blank {
+  background: var(--disabled);
+}
+.calendar-exception-badge {
+  line-height: 14px;
+  border: 1px solid var(--border);
+  color: var(--primary);
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 11px;
+}
+@media (max-width: 1000px) {
+  .calendar-layout {
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+@media (max-width: 760px) {
+  .calendar-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .calendar-sidebar {
+    min-height: 0;
+  }
+  .calendar-choices {
+    max-height: 220px;
+    overflow: auto;
+  }
+}
+@media (max-width: 480px) {
+  .configuration-pair {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+}
+
+.calendar-choice strong,
+.calendar-choice small {
+  line-height: 18px;
+}
+.calendar-list-toolbar,
+.calendar-exception-heading,
+.calendar-batch-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.calendar-list-toolbar {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.calendar-create,
+.calendar-list-toolbar button,
+.calendar-preview-toolbar button,
+.calendar-exception-heading button,
+.calendar-batch-actions button {
+  height: 32px;
+}
+.calendar-editor-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+.calendar-editor-title h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.calendar-editor-close {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+.calendar-editor form {
+  gap: 16px;
+}
+.calendar-editor h3 {
+  margin: 0;
+  font-size: 13px;
+}
+.calendar-exception-scroll {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.calendar-exception-table {
+  min-width: 520px;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.calendar-exception-table th,
+.calendar-exception-table td {
+  padding: 7px 10px;
+  font-size: 13px;
+  vertical-align: top;
+}
+.calendar-exception-table th {
+  background: var(--selected);
+  text-align: left;
+}
+.calendar-exception-table th:first-child {
+  width: 50%;
+}
+.calendar-exception-table th:nth-child(2) {
+  width: 34%;
+}
+.calendar-exception-table .calendar-exception-action {
+  width: 16%;
+  position: sticky;
+  right: 0;
+  background: var(--panel);
+  z-index: 1;
+}
+.calendar-exception-table th.calendar-exception-action {
+  background: var(--selected);
+}
+.calendar-exception-table td {
+  border-top: 1px solid var(--border);
+}
+.calendar-exception-table tbody tr:hover td {
+  background: var(--selected);
+}
+.calendar-remove-date {
+  height: 32px;
+}
+.calendar-required {
+  color: var(--error);
+}
+.calendar-exception-table .configuration-field-error {
+  margin: 5px 0 0;
+}
+.calendar-batch-dates {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.calendar-batch-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 130px;
+  gap: 12px;
+}
+.calendar-batch-fields > * {
+  min-width: 0;
+}
+.calendar-batch-actions {
+  justify-content: flex-start;
+  margin-top: 12px;
+}
+@media (max-width: 564px) {
+  .calendar-exception-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -8px;
+    width: 8px;
+    pointer-events: none;
+    background: linear-gradient(to left, rgba(20, 40, 70, 0.08), transparent);
+  }
+  .calendar-batch-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.resource-filter .filter-item:first-child {
+  flex-basis: 210px;
+}
+.resource-filter .filter-item {
+  flex: 0 1 140px;
+}
+.resource-filter button,
+.resource-toolbar button,
+.resource-create {
+  height: 32px;
+}
+.resource-toolbar,
+.resource-toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.resource-toolbar {
+  justify-content: space-between;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+.resource-toolbar > div > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.compact-shell .resource-table {
+  min-width: 720px;
+}
+.compact-shell .resource-table th,
+.compact-shell .resource-table td {
+  padding: 10px 12px;
+  font-size: 13px;
+  height: 46px;
+}
+.compact-shell .resource-table .resource-check {
+  width: 44px;
+}
+.compact-shell .resource-table .resource-status {
+  width: 100px;
+}
+.compact-shell .resource-table .resource-actions-cell {
+  width: 238px;
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: var(--panel);
+}
+.compact-shell .resource-table th.resource-actions-cell {
+  background: var(--selected);
+  z-index: 2;
+}
+.resource-table-scroll.has-overflow .resource-actions-cell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -8px;
+  width: 8px;
+  pointer-events: none;
+  background: linear-gradient(to left, rgba(20, 40, 70, 0.08), transparent);
+}
+
+@media (max-width: 640px) {
+  .compact-shell .resource-table .resource-actions-cell {
+    position: static;
+  }
+  .resource-table-scroll.has-overflow .resource-actions-cell::before {
+    display: none;
+  }
+}
+.resource-table tbody tr:hover td,
+.resource-table tbody tr.is-selected td {
+  background: var(--selected);
+}
+.resource-table .configuration-actions {
+  flex-wrap: nowrap;
+  gap: 12px;
+  white-space: nowrap;
+}
+.resource-table .configuration-actions button {
+  height: 26px;
+  font-size: 13px;
+}
+.resource-table-scroll {
+  overscroll-behavior-x: contain;
+}
+.resource-editor-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+.resource-editor-title h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.resource-drawer .configuration-editor form {
+  gap: 16px;
+}
+.resource-drawer .configuration-editor h3 {
+  font-size: 13px;
+}
+.jdbc-format-hint {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.resource-delete-confirm,
+.resource-delete-failures {
+  overflow-wrap: anywhere;
+}
+.resource-delete-confirm {
+  max-height: 240px;
+  overflow: auto;
+}
+.resource-delete-failures ul {
+  max-height: 200px;
+  overflow: auto;
+  padding-left: 18px;
+}
+
+.resource-enabled {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+}
+
+.notification-filter .filter-item:first-child {
+  flex-basis: 210px;
+}
+.notification-filter .filter-item {
+  flex: 0 1 140px;
+}
+.notification-filter button,
+.notification-toolbar button,
+.notification-create {
+  height: 32px;
+}
+.notification-toolbar,
+.notification-toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.notification-toolbar {
+  justify-content: space-between;
+  margin: 14px 0;
+  flex-wrap: wrap;
+}
+.notification-toolbar > div > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.compact-shell .notification-table {
+  min-width: 720px;
+}
+.compact-shell .notification-table th,
+.compact-shell .notification-table td {
+  padding: 10px 12px;
+  font-size: 13px;
+  height: 46px;
+}
+.compact-shell .notification-table .notification-check {
+  width: 44px;
+}
+.compact-shell .notification-table .notification-status {
+  width: 100px;
+}
+.compact-shell .notification-table .notification-actions-cell {
+  width: 238px;
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: var(--panel);
+}
+.compact-shell .notification-table th.notification-actions-cell {
+  background: var(--selected);
+  z-index: 2;
+}
+.notification-table-scroll.has-overflow .notification-actions-cell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -8px;
+  width: 8px;
+  pointer-events: none;
+  background: linear-gradient(to left, rgba(20, 40, 70, 0.08), transparent);
+}
+.notification-table tbody tr:hover td,
+.notification-table tbody tr.is-selected td {
+  background: var(--selected);
+}
+.notification-table .configuration-actions {
+  flex-wrap: nowrap;
+  gap: 12px;
+  white-space: nowrap;
+}
+.notification-table .configuration-actions button {
+  height: 26px;
+  font-size: 13px;
+}
+.notification-table-scroll {
+  overscroll-behavior-x: contain;
+}
+.notification-editor-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+.notification-editor-title h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.notification-drawer .configuration-editor form {
+  gap: 16px;
+}
+.notification-drawer .configuration-editor h3 {
+  font-size: 13px;
+}
+.notification-delete-confirm,
+.notification-delete-failures {
+  overflow-wrap: anywhere;
+}
+.notification-delete-confirm {
+  max-height: 240px;
+  overflow: auto;
+}
+.notification-delete-failures ul {
+  max-height: 200px;
+  overflow: auto;
+  padding-left: 18px;
+}
+
+.notification-enabled,
+.notification-at-all {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+}
+.masked-webhook {
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  margin: 0 0 6px;
+}
+
+.service-drawer .configuration-editor form {
+  gap: 16px;
+}
+.service-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.service-fields-grid > * {
+  min-width: 0;
+}
+.service-fields-grid .n-input-number {
+  width: 100%;
+}
+.service-drawer .configuration-note {
+  margin: 0;
+}
+.service-drawer .configuration-note.field-hint {
+  margin-top: 6px;
+}
+.service-drawer .ssh-advanced-fields {
+  padding-top: 0;
+}
+@media (max-width: 480px) {
+  .service-fields-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* List query layout: labels and controls stay together. */
+.configuration-filter {
+  align-items: center;
+  gap: 12px 16px;
+}
+.configuration-filter .filter-item,
+.configuration-filter .filter-item:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.configuration-filter label {
+  flex: none;
+  margin: 0;
+  white-space: nowrap;
+}
+.configuration-filter .filter-item > :last-child {
+  width: 160px;
+  min-width: 0;
+}
+.configuration-filter .filter-item:first-child > :last-child {
+  width: 210px;
+}
+.configuration-filter .list-query-actions {
+  display: flex;
+  gap: 8px;
+}
+@media (max-width: 600px) {
+  .configuration-filter .filter-item,
+  .configuration-filter .filter-item:first-child {
+    width: 100%;
+  }
+  .configuration-filter .filter-item > :last-child {
+    flex: 1;
+    width: 0;
+  }
+}
+.resource-identity {
+  text-align: left;
+}
+.resource-identity > .identity-text {
+  display: flex;
+  margin-top: 4px;
+}
+.resource-identity > .n-button {
+  justify-content: flex-start;
+  text-align: left;
+}
+.resource-identity > .n-button .n-button__content {
+  display: block;
+  text-align: left;
+}
+
+.notification-protection {
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--selected);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+.notification-preview-action {
+  margin-right: auto;
+}
+
+.notification-toggle-field > .configuration-note {
+  margin: 6px 0 0;
+}

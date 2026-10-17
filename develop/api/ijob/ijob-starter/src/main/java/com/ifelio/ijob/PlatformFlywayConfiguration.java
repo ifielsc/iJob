@@ -1,0 +1,46 @@
+package com.ifelio.ijob;
+
+import com.ifelio.ijob.common.config.AppProperties;
+import com.ifelio.ijob.common.config.AppProperties.PlatformDatabaseVendor;
+import com.ifelio.ijob.common.config.AppProperties.RuntimeMode;
+import com.ifelio.ijob.framework.database.PlatformDatabaseResolver;
+import com.ifelio.ijob.framework.runtime.SingletonDatabaseLock;
+
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration(proxyBeanMethods = false)
+public class PlatformFlywayConfiguration {
+    @Bean
+    public FlywayMigrationStrategy platformFlywayMigrationStrategy(
+            PlatformDatabaseResolver databaseResolver,
+            AppProperties appProperties,
+            SingletonDatabaseLock singletonDatabaseLock) {
+        return flyway -> {
+            if (appProperties.getPlatformDatabase().getVendor() == PlatformDatabaseVendor.SQLITE) {
+                if (appProperties.getRuntime().getMode() != RuntimeMode.STANDALONE) {
+                    throw new IllegalStateException("SQLite does not support cluster runtime mode");
+                }
+                singletonDatabaseLock.acquire();
+            }
+            databaseResolver.verifyMigrationTarget(flyway.getConfiguration().getDataSource());
+            ReleaseSchemaBoundary.beforeMigration(
+                    flyway,
+                    appProperties
+                            .getPlatformDatabase()
+                            .getVendor()
+                            .name()
+                            .toLowerCase(java.util.Locale.ROOT));
+            if (appProperties.getPlatformDatabase().getVendor()
+                    == PlatformDatabaseVendor.SQLSERVER) {
+                new SqlServerPreMigrationGuard().verify(flyway.getConfiguration().getDataSource());
+            }
+            if (appProperties.getPlatformDatabase().getVendor() == PlatformDatabaseVendor.SQLITE) {
+                SqliteMigrationBoundary.migrate(flyway);
+            } else {
+                flyway.migrate();
+            }
+        };
+    }
+}

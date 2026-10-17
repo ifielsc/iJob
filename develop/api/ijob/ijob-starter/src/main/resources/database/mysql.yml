@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    hikari:
+      connection-init-sql: "SET time_zone = '+00:00'"
+
+pagehelper:
+  helper-dialect: mysql

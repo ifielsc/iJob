@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.TriggerMapper">
+
+    <resultMap id="triggerResultMap"
+               type="com.ifelio.ijob.infra.entity.runtime.Trigger">
+        <id property="id" column="id"/>
+        <result property="scheduleId" column="schedule_id"/>
+        <result property="targetType" column="target_type"/>
+        <result property="targetId" column="target_id"/>
+        <result property="triggerType" column="trigger_type"/>
+        <result property="idempotencyKey" column="idempotency_key"/>
+        <result property="eventCode" column="event_code"/>
+        <result property="status" column="status"/>
+        <result property="triggerTime" column="trigger_time"/>
+        <result property="businessDate" column="business_date"/>
+        <result property="businessTime" column="business_time"/>
+        <result property="businessZoneId" column="business_zone_id"/>
+        <result property="message" column="message"/>
+        <result property="errorCode" column="error_code"/>
+        <result property="messageKey" column="message_key"/>
+        <result property="messageArgs" column="message_args"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="taskDefinitionId" column="task_definition_id"/>
+        <result property="variables" column="variables"/>
+        <result property="eventId" column="event_id"/>
+        <result property="eventBindingId" column="event_binding_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="triggerDtoResultMap"
+               type="com.ifelio.ijob.contract.runtime.TriggerDTO">
+        <id property="id" column="id"/>
+        <result property="scheduleId" column="schedule_id"/>
+        <result property="targetType" column="target_type"/>
+        <result property="targetId" column="target_id"/>
+        <result property="triggerType" column="trigger_type"/>
+        <result property="eventCode" column="event_code"/>
+        <result property="status" column="status"/>
+        <result property="triggerTime" column="trigger_time"/>
+        <result property="businessDate" column="business_date"/>
+        <result property="businessTime" column="business_time"/>
+        <result property="businessZoneId" column="business_zone_id"/>
+        <result property="message" column="message"/>
+        <result property="errorCode" column="error_code"/>
+        <result property="messageKey" column="message_key"/>
+        <result property="messageArgs" column="message_args"/>
+        <result property="jobDefinitionId" column="definition_id"/>
+        <result property="taskDefinitionId" column="task_definition_id"/>
+        <result property="rootInstanceId" column="root_instance_id"/>
+        <result property="targetName" column="target_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="triggerColumns">
+        id, schedule_id, target_type, target_id, trigger_type,
+        idempotency_key, event_code, status, trigger_time, business_date, business_time, business_zone_id, message,
+        error_code, message_key, message_args,
+        definition_id, task_definition_id, variables,
+        event_id, event_binding_id,
+        create_time, update_time
+    </sql>
+
+    <select id="selectById" resultMap="triggerResultMap">
+        SELECT <include refid="triggerColumns"/>
+        FROM ifj_trigger
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByIdempotencyKey" resultMap="triggerResultMap">
+        SELECT <include refid="triggerColumns"/>
+        FROM ifj_trigger
+        WHERE idempotency_key = #{idempotencyKey}
+    </select>
+
+    <select id="selectDtoList" resultMap="triggerDtoResultMap">
+        SELECT trigger_record.*,
+               (SELECT MIN(instance_record.id)
+                FROM ifj_instance instance_record
+                WHERE instance_record.trigger_id = trigger_record.id
+                  AND instance_record.parent_instance_id IS NULL) AS root_instance_id,
+               CASE
+                   WHEN trigger_record.target_type = 'TASK' THEN
+                       (SELECT task_definition.name FROM ifj_task_definition task_definition
+                        WHERE task_definition.id = trigger_record.task_definition_id)
+                   WHEN trigger_record.target_type = 'JOB' THEN
+                       (SELECT job_definition.name FROM ifj_job_definition job_definition
+                        WHERE job_definition.id = trigger_record.definition_id)
+                   ELSE NULL
+               END AS target_name
+        FROM ifj_trigger trigger_record
+        <where>
+            <if test="targetType != null">AND trigger_record.target_type = #{targetType}</if>
+            <if test="targetId != null">AND trigger_record.target_id = #{targetId}</if>
+            <if test="triggerType != null">AND trigger_record.trigger_type = #{triggerType}</if>
+            <if test="status != null">AND trigger_record.status = #{status}</if>
+            <if test="scheduleId != null">AND trigger_record.schedule_id = #{scheduleId}</if>
+            <if test="from != null">AND trigger_record.trigger_time &gt;= #{from}</if>
+            <if test="to != null">AND trigger_record.trigger_time &lt;= #{to}</if>
+            <if test="name != null and name != ''">
+                AND (
+                    (trigger_record.target_type = 'TASK' AND EXISTS (
+                        SELECT 1 FROM ifj_task_definition task_definition
+                        WHERE task_definition.id = trigger_record.task_definition_id
+                          AND LOWER(task_definition.name) LIKE LOWER(#{name})
+                    )) OR
+                    (trigger_record.target_type = 'JOB' AND EXISTS (
+                        SELECT 1 FROM ifj_job_definition job_definition
+                        WHERE job_definition.id = trigger_record.definition_id
+                          AND LOWER(job_definition.name) LIKE LOWER(#{name})
+                    ))
+                )
+            </if>
+        </where>
+        ORDER BY trigger_record.trigger_time DESC, trigger_record.id DESC
+    </select>
+
+    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.Trigger">
+        INSERT INTO ifj_trigger (
+            id, schedule_id, target_type, target_id, trigger_type,
+            idempotency_key, event_code, status, trigger_time, business_date, business_time, business_zone_id, message,
+            error_code, message_key, message_args,
+            definition_id, task_definition_id, variables,
+            event_id, event_binding_id
+        ) VALUES (
+            #{id}, #{scheduleId}, #{targetType}, #{targetId}, #{triggerType},
+            #{idempotencyKey}, #{eventCode}, #{status}, #{triggerTime}, #{businessDate}, #{businessTime}, #{businessZoneId}, #{message},
+            #{errorCode}, #{messageKey}, #{messageArgs},
+            #{definitionId}, #{taskDefinitionId}, #{variables},
+            #{eventId}, #{eventBindingId}
+        )
+        ON DUPLICATE KEY UPDATE id = id
+    </insert>
+
+    <select id="selectWaitingIds" resultType="java.lang.Long">
+        SELECT id FROM ifj_trigger
+        WHERE status = 'WAITING'
+        ORDER BY trigger_time ASC, id ASC
+        LIMIT #{limit}
+    </select>
+
+<select id="selectWaitingIds" resultType="java.lang.Long" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT id FROM ifj_trigger
+        WHERE status = 'WAITING'
+        ORDER BY trigger_time ASC, id ASC
+       
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+
+    <update id="updateStatusIfCurrent">
+        UPDATE ifj_trigger
+        SET status = #{status},
+            message = #{message},
+            error_code = #{errorCode},
+            message_key = #{messageKey},
+            message_args = #{messageArgs},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = #{expectedStatus}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_trigger.id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_trigger.id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </update>
+
+<update id="updateStatusIfCurrent" databaseId="sqlite">
+        UPDATE ifj_trigger
+        SET status = #{status},
+            message = #{message},
+            error_code = #{errorCode},
+            message_key = #{messageKey},
+            message_args = #{messageArgs},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = #{expectedStatus}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_trigger.id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_trigger.id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </update>
+
+<update id="updateStatusIfCurrent" databaseId="oracle">
+        UPDATE ifj_trigger
+        SET status = #{status},
+            message = #{message},
+            error_code = #{errorCode},
+            message_key = #{messageKey},
+            message_args = #{messageArgs},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = #{expectedStatus}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_trigger.id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_trigger.id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </update>
+
+<update id="updateStatusIfCurrent" databaseId="sqlserver">
+        UPDATE ifj_trigger
+        SET status = #{status},
+            message = #{message},
+            error_code = #{errorCode},
+            message_key = #{messageKey},
+            message_args = #{messageArgs},
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = #{expectedStatus}
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_trigger.id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_trigger.id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </update>
+
+
+    <insert id="insert" databaseId="postgresql" parameterType="com.ifelio.ijob.infra.entity.runtime.Trigger">
+        INSERT INTO ifj_trigger (
+            id, schedule_id, target_type, target_id, trigger_type,
+            idempotency_key, event_code, status, trigger_time, business_date, business_time, business_zone_id, message,
+            error_code, message_key, message_args,
+            definition_id, task_definition_id, variables,
+            event_id, event_binding_id
+        ) VALUES (
+            #{id}, #{scheduleId}, #{targetType}, #{targetId}, #{triggerType},
+            #{idempotencyKey}, #{eventCode}, #{status}, #{triggerTime}, #{businessDate}, #{businessTime}, #{businessZoneId}, #{message},
+            #{errorCode}, #{messageKey}, #{messageArgs},
+            #{definitionId}, #{taskDefinitionId}, #{variables},
+            #{eventId}, #{eventBindingId}
+        )
+        ON CONFLICT DO NOTHING
+    </insert>
+
+<insert id="insert" databaseId="sqlite" parameterType="com.ifelio.ijob.infra.entity.runtime.Trigger">
+        INSERT INTO ifj_trigger (
+            id, schedule_id, target_type, target_id, trigger_type,
+            idempotency_key, event_code, status, trigger_time, business_date, business_time, business_zone_id, message,
+            error_code, message_key, message_args,
+            definition_id, task_definition_id, variables,
+            event_id, event_binding_id
+        ) VALUES (
+            #{id}, #{scheduleId}, #{targetType}, #{targetId}, #{triggerType},
+            #{idempotencyKey}, #{eventCode}, #{status}, #{triggerTime}, #{businessDate}, #{businessTime}, #{businessZoneId}, #{message},
+            #{errorCode}, #{messageKey}, #{messageArgs},
+            #{definitionId}, #{taskDefinitionId}, #{variables},
+            #{eventId}, #{eventBindingId}
+        )
+        ON CONFLICT DO NOTHING
+    </insert>
+
+<insert id="insert" databaseId="oracle" parameterType="com.ifelio.ijob.infra.entity.runtime.Trigger">
+        MERGE INTO ifj_trigger target
+        USING (SELECT 1 AS marker FROM dual) source
+        ON (target.id = #{id} OR target.idempotency_key = #{idempotencyKey})
+        WHEN NOT MATCHED THEN INSERT (
+            id, schedule_id, target_type, target_id, trigger_type,
+            idempotency_key, event_code, status, trigger_time, business_date, business_time, business_zone_id, message,
+            error_code, message_key, message_args,
+            definition_id, task_definition_id, variables,
+            event_id, event_binding_id
+        ) VALUES (
+            #{id}, #{scheduleId}, #{targetType}, #{targetId}, #{triggerType},
+            #{idempotencyKey}, #{eventCode}, #{status}, #{triggerTime}, #{businessDate}, #{businessTime}, #{businessZoneId}, #{message},
+            #{errorCode}, #{messageKey}, #{messageArgs},
+            #{definitionId}, #{taskDefinitionId}, #{variables},
+            #{eventId}, #{eventBindingId}
+        )</insert>
+
+<insert id="insert" databaseId="sqlserver" parameterType="com.ifelio.ijob.infra.entity.runtime.Trigger">
+        IF NOT EXISTS (SELECT 1 FROM ifj_trigger WITH (UPDLOCK, HOLDLOCK) WHERE id = #{id} OR idempotency_key = #{idempotencyKey})
+        BEGIN
+
+        INSERT INTO ifj_trigger (
+            id, schedule_id, target_type, target_id, trigger_type,
+            idempotency_key, event_code, status, trigger_time, business_date, business_time, business_zone_id, message,
+            error_code, message_key, message_args,
+            definition_id, task_definition_id, variables,
+            event_id, event_binding_id
+        ) VALUES (
+            #{id}, #{scheduleId}, #{targetType}, #{targetId}, #{triggerType},
+            #{idempotencyKey}, #{eventCode}, #{status}, #{triggerTime}, #{businessDate}, #{businessTime}, #{businessZoneId}, #{message},
+            #{errorCode}, #{messageKey}, #{messageArgs},
+            #{definitionId}, #{taskDefinitionId}, #{variables},
+            #{eventId}, #{eventBindingId}
+        )
+        END</insert>
+    <select id="selectWaitingIds" resultType="java.lang.Long" databaseId="sqlserver">
+        SELECT TOP (#{limit}) id FROM ifj_trigger
+        WHERE status = 'WAITING'
+        ORDER BY trigger_time ASC, id ASC
+    </select>
+</mapper>

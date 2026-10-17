@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.concurrency.TaskConcurrencyPolicyMapper">
+    <resultMap id="policyMap" type="com.ifelio.ijob.infra.entity.concurrency.TaskConcurrencyPolicy">
+        <id property="taskId" column="task_id"/>
+        <result property="taskMaxConcurrency" column="task_max_concurrency"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <resultMap id="resourceMap" type="com.ifelio.ijob.infra.entity.concurrency.ConcurrencyResource">
+        <id property="id" column="id"/>
+        <result property="version" column="version"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="maxConcurrency" column="max_concurrency"/>
+        <result property="enabled" column="enabled"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <select id="selectByTaskId" resultMap="policyMap">
+        SELECT task_id, task_max_concurrency, version, create_time, update_time
+        FROM ifj_task_concurrency_policy WHERE task_id=#{taskId}
+    </select>
+    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.concurrency.TaskConcurrencyPolicy">
+        INSERT INTO ifj_task_concurrency_policy
+            (task_id, task_max_concurrency, version, create_time, update_time)
+        VALUES (#{taskId}, #{taskMaxConcurrency}, #{version}, #{createTime}, #{updateTime})
+    </insert>
+    <update id="update">
+        UPDATE ifj_task_concurrency_policy
+        SET task_max_concurrency=#{taskMaxConcurrency}, version=version+1, update_time=#{updateTime}
+        WHERE task_id=#{taskId} AND version=#{expectedVersion}
+    </update>
+    <delete id="deleteBindings">DELETE FROM ifj_task_concurrency_resource WHERE task_id=#{taskId}</delete>
+    <insert id="insertBinding">
+        INSERT INTO ifj_task_concurrency_resource (task_id, resource_id, create_time)
+        VALUES (#{taskId}, #{resourceId}, #{createTime})
+    </insert>
+    <select id="selectResourcesByTaskId" resultMap="resourceMap">
+        SELECT r.id, r.version, r.code, r.name, r.max_concurrency, r.enabled, r.description, r.create_time, r.update_time
+        FROM ifj_task_concurrency_resource tr
+        JOIN ifj_concurrency_resource r ON r.id=tr.resource_id
+        WHERE tr.task_id=#{taskId}
+        ORDER BY r.id
+    </select>
+</mapper>

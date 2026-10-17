@@ -1,0 +1,1254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.InstanceMapper">
+
+    <resultMap id="instanceResultMap"
+               type="com.ifelio.ijob.infra.entity.runtime.Instance">
+        <id property="id" column="id"/>
+        <result property="nodeId" column="node_id"/>
+        <result property="parentInstanceId" column="parent_instance_id"/>
+        <result property="rootInstanceId" column="root_instance_id"/>
+        <result property="executionFence" column="execution_fence"/>
+        <result property="targetType" column="target_type"/>
+        <result property="targetId" column="target_id"/>
+        <result property="targetName" column="target_name"/>
+        <result property="triggerType" column="trigger_type"/>
+        <result property="triggerId" column="trigger_id"/>
+        <result property="status" column="status"/>
+        <result property="progress" column="progress"/>
+        <result property="retryCount" column="retry_count"/>
+        <result property="startTime" column="start_time"/>
+        <result property="timeoutAt" column="timeout_at"/>
+        <result property="waitReason" column="wait_reason"/>
+        <result property="permitWaitDeadline" column="permit_wait_deadline"/>
+        <result property="endTime" column="end_time"/>
+        <result property="message" column="message"/>
+        <result property="errorCode" column="error_code"/>
+        <result property="messageKey" column="message_key"/>
+        <result property="messageArgs" column="message_args"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="definitionNodeId" column="definition_node_id"/>
+        <result property="taskDefinitionId" column="task_definition_id"/>
+        <result property="inputVariables" column="input_variables"/>
+        <result property="outputVariables" column="output_variables"/>
+        <result property="variablesTruncated" column="variables_truncated"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="instanceDtoResultMap"
+               type="com.ifelio.ijob.contract.runtime.InstanceDTO">
+        <id property="id" column="id"/>
+        <result property="nodeId" column="node_id"/>
+        <result property="parentInstanceId" column="parent_instance_id"/>
+        <result property="rootInstanceId" column="root_instance_id"/>
+        <result property="targetType" column="target_type"/>
+        <result property="targetId" column="target_id"/>
+        <result property="targetName" column="target_name"/>
+        <result property="triggerType" column="trigger_type"/>
+        <result property="triggerId" column="trigger_id"/>
+        <result property="status" column="status"/>
+        <result property="progress" column="progress"/>
+        <result property="retryCount" column="retry_count"/>
+        <result property="startTime" column="start_time"/>
+        <result property="timeoutAt" column="timeout_at"/>
+        <result property="waitReason" column="wait_reason"/>
+        <result property="permitWaitDeadline" column="permit_wait_deadline"/>
+        <result property="endTime" column="end_time"/>
+        <result property="message" column="message"/>
+        <result property="errorCode" column="error_code"/>
+        <result property="messageKey" column="message_key"/>
+        <result property="messageArgs" column="message_args"/>
+        <result property="jobDefinitionId" column="definition_id"/>
+        <result property="definitionNodeId" column="definition_node_id"/>
+        <result property="taskDefinitionId" column="task_definition_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="instanceSummaryColumns">
+        CASE WHEN ifj_instance.target_type = 'TASK' THEN
+            (SELECT d.name FROM ifj_task_definition d WHERE d.id = ifj_instance.task_definition_id)
+        ELSE (SELECT d.name FROM ifj_job_definition d WHERE d.id = ifj_instance.definition_id)
+        END AS target_name,
+        id, node_id, parent_instance_id, root_instance_id, execution_fence,
+        target_type, target_id, trigger_type, trigger_id, status,
+        progress, retry_count, start_time, timeout_at, wait_reason, permit_wait_deadline,
+        end_time, message,
+        error_code, message_key, message_args,
+        definition_id, definition_node_id, task_definition_id,
+        create_time, update_time
+    </sql>
+
+    <sql id="instanceColumns">
+        id, node_id, parent_instance_id, root_instance_id, execution_fence,
+        target_type, target_id, trigger_type, trigger_id, status,
+        progress, retry_count, start_time, timeout_at, wait_reason, permit_wait_deadline,
+        end_time, message,
+        error_code, message_key, message_args,
+        definition_id, definition_node_id, task_definition_id,
+        input_variables, output_variables,
+        create_time, update_time
+    </sql>
+
+    <select id="selectSummaryById" resultMap="instanceResultMap">
+        SELECT <include refid="instanceSummaryColumns"/> FROM ifj_instance WHERE id = #{id}
+    </select>
+
+    <select id="selectSummaryTreeByRootId" resultMap="instanceResultMap">
+        SELECT <include refid="instanceSummaryColumns"/> FROM ifj_instance
+        WHERE root_instance_id = #{rootInstanceId} ORDER BY id ASC
+    </select>
+
+    <select id="selectRootIdByTriggerId" resultType="long">
+        SELECT MIN(id) FROM ifj_instance
+        WHERE trigger_id = #{triggerId} AND parent_instance_id IS NULL
+    </select>
+
+    <!-- A response preview, never a partial JSON string. Each whole variable value is
+         omitted when over budget; CASE executes in the database before LOB transport. -->
+    <sql id="boundedVariableColumns">
+        CASE WHEN <include refid="inputVariableLength"/> &lt;= 4096 THEN input_variables ELSE NULL END AS input_variables,
+        CASE WHEN <include refid="outputVariableLength"/> &lt;= 4096 THEN output_variables ELSE NULL END AS output_variables,
+        CASE WHEN <include refid="inputVariableLength"/> &gt; 4096 OR <include refid="outputVariableLength"/> &gt; 4096 THEN 1 ELSE 0 END AS variables_truncated
+    </sql>
+    <sql id="inputVariableLength">LENGTH(input_variables)</sql>
+    <sql id="outputVariableLength">LENGTH(output_variables)</sql>
+    <sql id="inputVariableLength" databaseId="sqlserver">DATALENGTH(input_variables)</sql>
+    <sql id="outputVariableLength" databaseId="sqlserver">DATALENGTH(output_variables)</sql>
+    <select id="selectBoundedVariableTreeByRootId" resultMap="instanceResultMap">
+        SELECT <include refid="instanceSummaryColumns"/>, <include refid="boundedVariableColumns"/>
+        FROM ifj_instance WHERE root_instance_id = #{rootInstanceId} ORDER BY id ASC
+    </select>
+
+    <sql id="executionPermit">
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                AND ifj_instance.execution_fence = #{permit.fenceToken}
+                AND EXISTS (
+                    SELECT 1
+                    FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_instance.trigger_id
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt;
+                      <choose>
+                          <when test="_databaseId == 'sqlite'">strftime('%Y-%m-%d %H:%M:%f','now')</when>
+                          <when test="_databaseId == 'oracle'">CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</when>
+                          <when test="_databaseId == 'sqlserver'">SYSUTCDATETIME()</when>
+                          <otherwise>CURRENT_TIMESTAMP(3)</otherwise>
+                      </choose>
+                )
+            </when>
+            <otherwise>
+                AND EXISTS (
+                    SELECT 1
+                    FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = ifj_instance.trigger_id
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = ifj_instance.execution_fence
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </sql>
+
+    <select id="selectByParentInstanceId" resultMap="instanceResultMap">
+        SELECT <include refid="instanceColumns"/>
+        FROM ifj_instance
+        WHERE parent_instance_id = #{parentInstanceId}
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectById" resultMap="instanceResultMap">
+        SELECT <include refid="instanceColumns"/>
+        FROM ifj_instance
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectCurrentById" resultMap="instanceResultMap">
+        SELECT <include refid="instanceColumns"/>
+        FROM ifj_instance
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectCurrentById" databaseId="mysql" resultMap="instanceResultMap">
+        SELECT <include refid="instanceColumns"/>
+        FROM ifj_instance
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
+
+    <select id="selectRootByTriggerId" resultMap="instanceResultMap">
+        SELECT <include refid="instanceColumns"/>
+        FROM ifj_instance
+        WHERE trigger_id = #{triggerId}
+          AND parent_instance_id IS NULL
+        ORDER BY id ASC
+        LIMIT 1
+    </select>
+
+    <select id="countActiveByTaskId" resultType="int">
+        SELECT COUNT(*)
+        FROM ifj_instance
+        WHERE target_type = 'TASK'
+          AND target_id = #{taskId}
+          AND status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+    </select>
+
+    <select id="countActiveByPluginType" resultType="int">
+        SELECT COUNT(*)
+        FROM ifj_instance instance_record
+        JOIN ifj_task_definition task_definition
+          ON task_definition.id = instance_record.task_definition_id
+        WHERE instance_record.target_type = 'TASK'
+          AND task_definition.plugin_type = #{pluginType}
+          AND instance_record.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+    </select>
+
+    <select id="countActiveByConcurrencyResourceId" resultType="int">
+        SELECT COUNT(*)
+        FROM ifj_instance instance_record
+        JOIN ifj_task_concurrency_resource binding
+          ON binding.task_id = instance_record.target_id
+        WHERE instance_record.target_type = 'TASK'
+          AND binding.resource_id = #{resourceId}
+          AND instance_record.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+    </select>
+
+<select id="selectRootByTriggerId" resultMap="instanceResultMap" databaseId="oracle">
+        SELECT * FROM (
+
+        SELECT <include refid="instanceColumns"/>
+        FROM ifj_instance
+        WHERE trigger_id = #{triggerId}
+          AND parent_instance_id IS NULL
+        ORDER BY id ASC
+       
+        ) WHERE ROWNUM &lt;= 1</select>
+
+    <select id="selectDtoList" resultMap="instanceDtoResultMap">
+        SELECT <include refid="instanceSummaryColumns"/>
+        FROM ifj_instance
+        <where>
+            <if test="targetType != null">
+                AND target_type = #{targetType}
+            </if>
+            <if test="targetId != null">
+                AND target_id = #{targetId}
+            </if>
+            <if test="triggerId != null">
+                AND trigger_id = #{triggerId}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="rootOnly != null and rootOnly">
+                AND parent_instance_id IS NULL
+            </if>
+            <if test="rootInstanceId != null">
+                AND root_instance_id = #{rootInstanceId}
+            </if>
+            <if test="from != null">
+                AND create_time &gt;= #{from}
+            </if>
+            <if test="to != null">
+                AND create_time &lt;= #{to}
+            </if>
+            <if test="name != null and name != ''">
+                AND (
+                    (target_type = 'TASK' AND EXISTS (
+                        SELECT 1 FROM ifj_task_definition task_definition
+                        WHERE task_definition.id = ifj_instance.task_definition_id
+                          AND LOWER(task_definition.name) LIKE LOWER(#{name})
+                    ))
+                    OR
+                    (target_type = 'JOB' AND EXISTS (
+                        SELECT 1 FROM ifj_job_definition job_definition
+                        WHERE job_definition.id = ifj_instance.definition_id
+                          AND LOWER(job_definition.name) LIKE LOWER(#{name})
+                    ))
+                )
+            </if>
+        </where>
+        ORDER BY create_time DESC, id DESC
+    </select>
+
+    <select id="selectTreeByRootId" resultMap="instanceResultMap">
+        SELECT <include refid="instanceColumns"/>
+        FROM ifj_instance
+        WHERE root_instance_id = #{rootInstanceId}
+        ORDER BY id ASC
+    </select>
+
+    <insert id="insert">
+        INSERT INTO ifj_instance (
+            id, node_id, parent_instance_id, root_instance_id, execution_fence,
+            target_type, target_id, trigger_type, trigger_id, status,
+            progress, retry_count, start_time, timeout_at, end_time, message,
+            error_code, message_key, message_args,
+            definition_id, definition_node_id, task_definition_id,
+            input_variables, output_variables
+        )
+        SELECT
+            #{instance.id}, #{instance.nodeId}, #{instance.parentInstanceId},
+            #{instance.rootInstanceId}, #{instance.executionFence},
+            #{instance.targetType}, #{instance.targetId}, #{instance.triggerType},
+            #{instance.triggerId}, #{instance.status},
+            #{instance.progress}, COALESCE(#{instance.retryCount,jdbcType=INTEGER}, 0),
+            #{instance.startTime,jdbcType=TIMESTAMP}, #{instance.timeoutAt,jdbcType=TIMESTAMP}, #{instance.endTime,jdbcType=TIMESTAMP}, #{instance.message},
+            #{instance.errorCode}, #{instance.messageKey}, #{instance.messageArgs},
+            #{instance.definitionId}, #{instance.definitionNodeId},
+            #{instance.taskDefinitionId}, #{instance.inputVariables},
+            #{instance.outputVariables}
+        FROM (SELECT 1) seed
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = #{instance.triggerId}
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+                )
+            </when>
+            <otherwise>
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = #{instance.triggerId}
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = #{instance.executionFence}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </insert>
+
+<insert id="insert" databaseId="sqlite">
+        INSERT INTO ifj_instance (
+            id, node_id, parent_instance_id, root_instance_id, execution_fence,
+            target_type, target_id, trigger_type, trigger_id, status,
+            progress, retry_count, start_time, timeout_at, end_time, message,
+            error_code, message_key, message_args,
+            definition_id, definition_node_id, task_definition_id,
+            input_variables, output_variables
+        )
+        SELECT
+            #{instance.id}, #{instance.nodeId}, #{instance.parentInstanceId},
+            #{instance.rootInstanceId}, #{instance.executionFence},
+            #{instance.targetType}, #{instance.targetId}, #{instance.triggerType},
+            #{instance.triggerId}, #{instance.status},
+            #{instance.progress}, COALESCE(#{instance.retryCount,jdbcType=INTEGER}, 0),
+            #{instance.startTime,jdbcType=TIMESTAMP}, #{instance.timeoutAt,jdbcType=TIMESTAMP}, #{instance.endTime,jdbcType=TIMESTAMP}, #{instance.message},
+            #{instance.errorCode}, #{instance.messageKey}, #{instance.messageArgs},
+            #{instance.definitionId}, #{instance.definitionNodeId},
+            #{instance.taskDefinitionId}, #{instance.inputVariables},
+            #{instance.outputVariables}
+        FROM (SELECT 1) seed
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = #{instance.triggerId}
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+                )
+            </when>
+            <otherwise>
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = #{instance.triggerId}
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = #{instance.executionFence}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </insert>
+
+<insert id="insert" databaseId="oracle">
+        INSERT INTO ifj_instance (
+            id, node_id, parent_instance_id, root_instance_id, execution_fence,
+            target_type, target_id, trigger_type, trigger_id, status,
+            progress, retry_count, start_time, timeout_at, end_time, message,
+            error_code, message_key, message_args,
+            definition_id, definition_node_id, task_definition_id,
+            input_variables, output_variables
+        )
+        SELECT
+            #{instance.id}, #{instance.nodeId}, #{instance.parentInstanceId},
+            #{instance.rootInstanceId}, #{instance.executionFence},
+            #{instance.targetType}, #{instance.targetId}, #{instance.triggerType},
+            #{instance.triggerId}, #{instance.status},
+            #{instance.progress}, COALESCE(#{instance.retryCount,jdbcType=INTEGER}, 0),
+            #{instance.startTime,jdbcType=TIMESTAMP}, #{instance.timeoutAt,jdbcType=TIMESTAMP}, #{instance.endTime,jdbcType=TIMESTAMP}, #{instance.message},
+            #{instance.errorCode}, #{instance.messageKey}, #{instance.messageArgs},
+            #{instance.definitionId}, #{instance.definitionNodeId},
+            #{instance.taskDefinitionId}, #{instance.inputVariables},
+            #{instance.outputVariables}
+        FROM (SELECT 1 FROM dual) seed
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = #{instance.triggerId}
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+                )
+            </when>
+            <otherwise>
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = #{instance.triggerId}
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = #{instance.executionFence}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </insert>
+
+<insert id="insert" databaseId="sqlserver">
+        INSERT INTO ifj_instance (
+            id, node_id, parent_instance_id, root_instance_id, execution_fence,
+            target_type, target_id, trigger_type, trigger_id, status,
+            progress, retry_count, start_time, timeout_at, end_time, message,
+            error_code, message_key, message_args,
+            definition_id, definition_node_id, task_definition_id,
+            input_variables, output_variables
+        )
+        SELECT
+            #{instance.id}, #{instance.nodeId}, #{instance.parentInstanceId},
+            #{instance.rootInstanceId}, #{instance.executionFence},
+            #{instance.targetType}, #{instance.targetId}, #{instance.triggerType},
+            #{instance.triggerId}, #{instance.status},
+            #{instance.progress}, COALESCE(#{instance.retryCount,jdbcType=INTEGER}, 0),
+            #{instance.startTime,jdbcType=TIMESTAMP}, #{instance.timeoutAt,jdbcType=TIMESTAMP}, #{instance.endTime,jdbcType=TIMESTAMP}, #{instance.message},
+            #{instance.errorCode}, #{instance.messageKey}, #{instance.messageArgs},
+            #{instance.definitionId}, #{instance.definitionNodeId},
+            #{instance.taskDefinitionId}, #{instance.inputVariables},
+            #{instance.outputVariables}
+        FROM (SELECT 1 AS value) seed
+        <choose>
+            <when test="permit.mode.name() == 'UNFENCED'"/>
+            <when test="permit.mode.name() == 'CLAIMED'">
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = #{instance.triggerId}
+                      AND work_item.status = 'CLAIMED'
+                      AND work_item.claim_token = #{permit.claimToken}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                      AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+                )
+            </when>
+            <otherwise>
+                WHERE EXISTS (
+                    SELECT 1 FROM ifj_trigger_work_item work_item
+                    WHERE work_item.trigger_id = #{instance.triggerId}
+                      AND work_item.status = 'SUSPENDED'
+                      AND work_item.fence_token = #{instance.executionFence}
+                      AND work_item.fence_token = #{permit.fenceToken}
+                )
+            </otherwise>
+        </choose>
+    </insert>
+
+    <update id="updateById">
+        UPDATE ifj_instance
+        SET node_id = #{instance.nodeId},
+            parent_instance_id = #{instance.parentInstanceId},
+            root_instance_id = #{instance.rootInstanceId},
+            execution_fence = #{instance.executionFence},
+            target_type = #{instance.targetType},
+            target_id = #{instance.targetId},
+            trigger_type = #{instance.triggerType},
+            trigger_id = #{instance.triggerId},
+            status = #{instance.status},
+            progress = #{instance.progress},
+            retry_count = COALESCE(#{instance.retryCount,jdbcType=INTEGER}, 0),
+            start_time = #{instance.startTime,jdbcType=TIMESTAMP},
+            end_time = #{instance.endTime,jdbcType=TIMESTAMP},
+            message = #{instance.message},
+            error_code = #{instance.errorCode},
+            message_key = #{instance.messageKey},
+            message_args = #{instance.messageArgs},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{instance.id}
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateById" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET node_id = #{instance.nodeId},
+            parent_instance_id = #{instance.parentInstanceId},
+            root_instance_id = #{instance.rootInstanceId},
+            execution_fence = #{instance.executionFence},
+            target_type = #{instance.targetType},
+            target_id = #{instance.targetId},
+            trigger_type = #{instance.triggerType},
+            trigger_id = #{instance.triggerId},
+            status = #{instance.status},
+            progress = #{instance.progress},
+            retry_count = COALESCE(#{instance.retryCount,jdbcType=INTEGER}, 0),
+            start_time = #{instance.startTime,jdbcType=TIMESTAMP},
+            end_time = #{instance.endTime,jdbcType=TIMESTAMP},
+            message = #{instance.message},
+            error_code = #{instance.errorCode},
+            message_key = #{instance.messageKey},
+            message_args = #{instance.messageArgs},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{instance.id}
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateById" databaseId="oracle">
+        UPDATE ifj_instance
+        SET node_id = #{instance.nodeId},
+            parent_instance_id = #{instance.parentInstanceId},
+            root_instance_id = #{instance.rootInstanceId},
+            execution_fence = #{instance.executionFence},
+            target_type = #{instance.targetType},
+            target_id = #{instance.targetId},
+            trigger_type = #{instance.triggerType},
+            trigger_id = #{instance.triggerId},
+            status = #{instance.status},
+            progress = #{instance.progress},
+            retry_count = COALESCE(#{instance.retryCount,jdbcType=INTEGER}, 0),
+            start_time = #{instance.startTime,jdbcType=TIMESTAMP},
+            end_time = #{instance.endTime,jdbcType=TIMESTAMP},
+            message = #{instance.message},
+            error_code = #{instance.errorCode},
+            message_key = #{instance.messageKey},
+            message_args = #{instance.messageArgs},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{instance.id}
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateById" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET node_id = #{instance.nodeId},
+            parent_instance_id = #{instance.parentInstanceId},
+            root_instance_id = #{instance.rootInstanceId},
+            execution_fence = #{instance.executionFence},
+            target_type = #{instance.targetType},
+            target_id = #{instance.targetId},
+            trigger_type = #{instance.triggerType},
+            trigger_id = #{instance.triggerId},
+            status = #{instance.status},
+            progress = #{instance.progress},
+            retry_count = COALESCE(#{instance.retryCount,jdbcType=INTEGER}, 0),
+            start_time = #{instance.startTime,jdbcType=TIMESTAMP},
+            end_time = #{instance.endTime,jdbcType=TIMESTAMP},
+            message = #{instance.message},
+            error_code = #{instance.errorCode},
+            message_key = #{instance.messageKey},
+            message_args = #{instance.messageArgs},
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{instance.id}
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="markRunningIfWaiting">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL, message_key = NULL, message_args = NULL,
+            wait_reason = NULL,
+            permit_wait_deadline = NULL,
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            timeout_at = CASE
+                WHEN parent_instance_id IS NOT NULL THEN timeout_at
+                WHEN timeout_at IS NOT NULL THEN timeout_at
+                WHEN target_type = 'TASK' THEN TIMESTAMPADD(
+                    SECOND,
+                    (SELECT task_definition.timeout
+                     FROM ifj_task_definition task_definition
+                     WHERE task_definition.id = ifj_instance.task_definition_id),
+                    CURRENT_TIMESTAMP(3))
+                WHEN target_type = 'JOB' THEN TIMESTAMPADD(
+                    SECOND,
+                    (SELECT job_definition.timeout
+                     FROM ifj_job_definition job_definition
+                     WHERE job_definition.id = ifj_instance.definition_id),
+                    CURRENT_TIMESTAMP(3))
+                ELSE NULL
+            END,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="markPausedIfRunning">
+        UPDATE ifj_instance
+        SET status = 'PAUSED',
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markPausedIfRunning" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET status = 'PAUSED',
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markPausedIfRunning" databaseId="oracle">
+        UPDATE ifj_instance
+        SET status = 'PAUSED',
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markPausedIfRunning" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET status = 'PAUSED',
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="markRunningIfPaused">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'PAUSED'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markRunningIfPaused" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'PAUSED'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markRunningIfPaused" databaseId="oracle">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'PAUSED'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markRunningIfPaused" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'PAUSED'
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="updateProgressIfRunning">
+        UPDATE ifj_instance
+        SET progress = #{progress},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateProgressIfRunning" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET progress = #{progress},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateProgressIfRunning" databaseId="oracle">
+        UPDATE ifj_instance
+        SET progress = #{progress},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateProgressIfRunning" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET progress = #{progress},
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="markWaitingEventIfRunning">
+        UPDATE ifj_instance
+        SET status = 'WAITING_EVENT',
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markWaitingEventIfRunning" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET status = 'WAITING_EVENT',
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markWaitingEventIfRunning" databaseId="oracle">
+        UPDATE ifj_instance
+        SET status = 'WAITING_EVENT',
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markWaitingEventIfRunning" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET status = 'WAITING_EVENT',
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'RUNNING'
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="resetWaitingEventForContinuation">
+        UPDATE ifj_instance
+        SET status = 'WAITING',
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'WAITING_EVENT'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="resetWaitingEventForContinuation" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET status = 'WAITING',
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'WAITING_EVENT'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="resetWaitingEventForContinuation" databaseId="oracle">
+        UPDATE ifj_instance
+        SET status = 'WAITING',
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'WAITING_EVENT'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="resetWaitingEventForContinuation" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET status = 'WAITING',
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'WAITING_EVENT'
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="updateInputVariablesIfWaiting">
+        UPDATE ifj_instance
+        SET input_variables = #{inputVariables},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="markWaitingPermitIfWaiting">
+        UPDATE ifj_instance
+        SET wait_reason = 'PERMIT',
+              permit_wait_deadline = #{deadline},
+              message = #{message},
+              error_code = 'IJOB-CONCURRENCY-0001',
+              message_key = 'error.detail.waiting-permit',
+              message_args = NULL
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateInputVariablesIfWaiting" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET input_variables = #{inputVariables},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateInputVariablesIfWaiting" databaseId="oracle">
+        UPDATE ifj_instance
+        SET input_variables = #{inputVariables},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateInputVariablesIfWaiting" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET input_variables = #{inputVariables},
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="updateOutputVariablesIfRunning">
+        UPDATE ifj_instance
+        SET output_variables = #{outputVariables},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status IN ('RUNNING', 'PAUSED')
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateOutputVariablesIfRunning" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET output_variables = #{outputVariables},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status IN ('RUNNING', 'PAUSED')
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateOutputVariablesIfRunning" databaseId="oracle">
+        UPDATE ifj_instance
+        SET output_variables = #{outputVariables},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status IN ('RUNNING', 'PAUSED')
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="updateOutputVariablesIfRunning" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET output_variables = #{outputVariables},
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status IN ('RUNNING', 'PAUSED')
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="completeIfCurrent">
+        UPDATE ifj_instance
+        SET status = #{instance.status},
+            progress = 100,
+            end_time = #{instance.endTime,jdbcType=TIMESTAMP},
+            message = #{instance.message},
+            error_code = #{instance.errorCode},
+            message_key = #{instance.messageKey},
+            message_args = #{instance.messageArgs},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{instance.id}
+          AND (status = #{expectedStatus}
+               OR (#{expectedStatus} IN ('RUNNING', 'PAUSED') AND status IN ('RUNNING', 'PAUSED')))
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="completeIfCurrent" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET status = #{instance.status},
+            progress = 100,
+            end_time = #{instance.endTime,jdbcType=TIMESTAMP},
+            message = #{instance.message},
+            error_code = #{instance.errorCode},
+            message_key = #{instance.messageKey},
+            message_args = #{instance.messageArgs},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{instance.id}
+          AND (status = #{expectedStatus}
+               OR (#{expectedStatus} IN ('RUNNING', 'PAUSED') AND status IN ('RUNNING', 'PAUSED')))
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="completeIfCurrent" databaseId="oracle">
+        UPDATE ifj_instance
+        SET status = #{instance.status},
+            progress = 100,
+            end_time = #{instance.endTime,jdbcType=TIMESTAMP},
+            message = #{instance.message},
+            error_code = #{instance.errorCode},
+            message_key = #{instance.messageKey},
+            message_args = #{instance.messageArgs},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{instance.id}
+          AND (status = #{expectedStatus}
+               OR (#{expectedStatus} IN ('RUNNING', 'PAUSED') AND status IN ('RUNNING', 'PAUSED')))
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="completeIfCurrent" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET status = #{instance.status},
+            progress = 100,
+            end_time = #{instance.endTime,jdbcType=TIMESTAMP},
+            message = #{instance.message},
+            error_code = #{instance.errorCode},
+            message_key = #{instance.messageKey},
+            message_args = #{instance.messageArgs},
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{instance.id}
+          AND (status = #{expectedStatus}
+               OR (#{expectedStatus} IN ('RUNNING', 'PAUSED') AND status IN ('RUNNING', 'PAUSED')))
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="resetForRetry">
+        UPDATE ifj_instance
+        SET status = 'WAITING',
+            progress = 0,
+            retry_count = retry_count + 1,
+            start_time = NULL,
+            timeout_at = NULL,
+            end_time = NULL,
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            output_variables = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = #{expectedStatus}
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="resetForRetry" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET status = 'WAITING',
+            progress = 0,
+            retry_count = retry_count + 1,
+            start_time = NULL,
+            timeout_at = NULL,
+            end_time = NULL,
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            output_variables = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = #{expectedStatus}
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="resetForRetry" databaseId="oracle">
+        UPDATE ifj_instance
+        SET status = 'WAITING',
+            progress = 0,
+            retry_count = retry_count + 1,
+            start_time = NULL,
+            timeout_at = NULL,
+            end_time = NULL,
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            output_variables = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = #{expectedStatus}
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="resetForRetry" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET status = 'WAITING',
+            progress = 0,
+            retry_count = retry_count + 1,
+            start_time = NULL,
+            timeout_at = NULL,
+            end_time = NULL,
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            output_variables = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = #{expectedStatus}
+        <include refid="executionPermit"/>
+    </update>
+
+    <update id="adoptActiveTree">
+        UPDATE ifj_instance
+        SET execution_fence = #{fenceToken},
+            start_time = CASE WHEN status IN ('RUNNING', 'PAUSED') THEN NULL ELSE start_time END,
+            status = CASE WHEN status IN ('RUNNING', 'PAUSED') THEN 'WAITING' ELSE status END,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE root_instance_id = #{rootInstanceId}
+          AND status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item work_item
+              WHERE work_item.root_instance_id = #{rootInstanceId}
+                AND work_item.status = 'CLAIMED'
+                AND work_item.claim_token = #{claimToken}
+                AND work_item.fence_token = #{fenceToken}
+                AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+          )
+    </update>
+
+<update id="adoptActiveTree" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET execution_fence = #{fenceToken},
+            start_time = CASE WHEN status IN ('RUNNING', 'PAUSED') THEN NULL ELSE start_time END,
+            status = CASE WHEN status IN ('RUNNING', 'PAUSED') THEN 'WAITING' ELSE status END,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE root_instance_id = #{rootInstanceId}
+          AND status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item work_item
+              WHERE work_item.root_instance_id = #{rootInstanceId}
+                AND work_item.status = 'CLAIMED'
+                AND work_item.claim_token = #{claimToken}
+                AND work_item.fence_token = #{fenceToken}
+                AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+          )
+    </update>
+
+<update id="adoptActiveTree" databaseId="oracle">
+        UPDATE ifj_instance
+        SET execution_fence = #{fenceToken},
+            start_time = CASE WHEN status IN ('RUNNING', 'PAUSED') THEN NULL ELSE start_time END,
+            status = CASE WHEN status IN ('RUNNING', 'PAUSED') THEN 'WAITING' ELSE status END,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE root_instance_id = #{rootInstanceId}
+          AND status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item work_item
+              WHERE work_item.root_instance_id = #{rootInstanceId}
+                AND work_item.status = 'CLAIMED'
+                AND work_item.claim_token = #{claimToken}
+                AND work_item.fence_token = #{fenceToken}
+                AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          )
+    </update>
+
+<update id="adoptActiveTree" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET execution_fence = #{fenceToken},
+            start_time = CASE WHEN status IN ('RUNNING', 'PAUSED') THEN NULL ELSE start_time END,
+            status = CASE WHEN status IN ('RUNNING', 'PAUSED') THEN 'WAITING' ELSE status END,
+            update_time = SYSUTCDATETIME()
+        WHERE root_instance_id = #{rootInstanceId}
+          AND status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item work_item
+              WHERE work_item.root_instance_id = #{rootInstanceId}
+                AND work_item.status = 'CLAIMED'
+                AND work_item.claim_token = #{claimToken}
+                AND work_item.fence_token = #{fenceToken}
+                AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+          )
+    </update>
+
+    <update id="adoptTreeForRetry">
+        UPDATE ifj_instance
+        SET execution_fence = #{fenceToken},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE root_instance_id = #{rootInstanceId}
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item work_item
+              WHERE work_item.root_instance_id = #{rootInstanceId}
+                AND work_item.status = 'CLAIMED'
+                AND work_item.claim_token = #{claimToken}
+                AND work_item.fence_token = #{fenceToken}
+                AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+          )
+    </update>
+
+<update id="adoptTreeForRetry" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET execution_fence = #{fenceToken},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE root_instance_id = #{rootInstanceId}
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item work_item
+              WHERE work_item.root_instance_id = #{rootInstanceId}
+                AND work_item.status = 'CLAIMED'
+                AND work_item.claim_token = #{claimToken}
+                AND work_item.fence_token = #{fenceToken}
+                AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+          )
+    </update>
+
+<update id="adoptTreeForRetry" databaseId="oracle">
+        UPDATE ifj_instance
+        SET execution_fence = #{fenceToken},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE root_instance_id = #{rootInstanceId}
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item work_item
+              WHERE work_item.root_instance_id = #{rootInstanceId}
+                AND work_item.status = 'CLAIMED'
+                AND work_item.claim_token = #{claimToken}
+                AND work_item.fence_token = #{fenceToken}
+                AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          )
+    </update>
+
+<update id="adoptTreeForRetry" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET execution_fence = #{fenceToken},
+            update_time = SYSUTCDATETIME()
+        WHERE root_instance_id = #{rootInstanceId}
+          AND EXISTS (
+              SELECT 1 FROM ifj_trigger_work_item work_item
+              WHERE work_item.root_instance_id = #{rootInstanceId}
+                AND work_item.status = 'CLAIMED'
+                AND work_item.claim_token = #{claimToken}
+                AND work_item.fence_token = #{fenceToken}
+                AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+          )
+    </update>
+
+    <update id="markRunningIfWaiting" databaseId="postgresql">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            wait_reason = NULL,
+            permit_wait_deadline = NULL,
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            timeout_at = CASE
+                WHEN parent_instance_id IS NOT NULL THEN timeout_at
+                WHEN timeout_at IS NOT NULL THEN timeout_at
+                WHEN target_type = 'TASK' THEN CURRENT_TIMESTAMP(3) +
+                    ((SELECT task_definition.timeout
+                      FROM ifj_task_definition task_definition
+                      WHERE task_definition.id = ifj_instance.task_definition_id) * INTERVAL '1 second')
+                WHEN target_type = 'JOB' THEN CURRENT_TIMESTAMP(3) +
+                    ((SELECT job_definition.timeout
+                      FROM ifj_job_definition job_definition
+                      WHERE job_definition.id = ifj_instance.definition_id) * INTERVAL '1 second')
+                ELSE NULL
+            END,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markRunningIfWaiting" databaseId="sqlite">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            wait_reason = NULL,
+            permit_wait_deadline = NULL,
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            timeout_at = CASE
+                WHEN parent_instance_id IS NOT NULL THEN timeout_at
+                WHEN timeout_at IS NOT NULL THEN timeout_at
+                WHEN target_type = 'TASK' THEN strftime('%Y-%m-%d %H:%M:%f','now', '+' || (
+                    SELECT task_definition.timeout
+                      FROM ifj_task_definition task_definition
+                      WHERE task_definition.id = ifj_instance.task_definition_id) || ' seconds')
+                WHEN target_type = 'JOB' THEN strftime('%Y-%m-%d %H:%M:%f','now', '+' || (
+                    SELECT job_definition.timeout
+                      FROM ifj_job_definition job_definition
+                      WHERE job_definition.id = ifj_instance.definition_id) || ' seconds')
+                ELSE NULL
+            END,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markRunningIfWaiting" databaseId="oracle">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            wait_reason = NULL,
+            permit_wait_deadline = NULL,
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            timeout_at = CASE
+                WHEN parent_instance_id IS NOT NULL THEN timeout_at
+                WHEN timeout_at IS NOT NULL THEN timeout_at
+                WHEN target_type = 'TASK' THEN CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL((
+                    SELECT task_definition.timeout
+                      FROM ifj_task_definition task_definition
+                      WHERE task_definition.id = ifj_instance.task_definition_id), 'SECOND')
+                WHEN target_type = 'JOB' THEN CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL((
+                    SELECT job_definition.timeout
+                      FROM ifj_job_definition job_definition
+                      WHERE job_definition.id = ifj_instance.definition_id), 'SECOND')
+                ELSE NULL
+            END,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+
+<update id="markRunningIfWaiting" databaseId="sqlserver">
+        UPDATE ifj_instance
+        SET status = 'RUNNING',
+            message = NULL,
+            error_code = NULL,
+            message_key = NULL,
+            message_args = NULL,
+            wait_reason = NULL,
+            permit_wait_deadline = NULL,
+            start_time = #{startTime,jdbcType=TIMESTAMP},
+            timeout_at = CASE
+                WHEN parent_instance_id IS NOT NULL THEN timeout_at
+                WHEN timeout_at IS NOT NULL THEN timeout_at
+                WHEN target_type = 'TASK' THEN DATEADD(SECOND, (
+                    SELECT task_definition.timeout
+                      FROM ifj_task_definition task_definition
+                      WHERE task_definition.id = ifj_instance.task_definition_id), SYSUTCDATETIME())
+                WHEN target_type = 'JOB' THEN DATEADD(SECOND, (
+                    SELECT job_definition.timeout
+                      FROM ifj_job_definition job_definition
+                      WHERE job_definition.id = ifj_instance.definition_id), SYSUTCDATETIME())
+                ELSE NULL
+            END,
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'WAITING'
+        <include refid="executionPermit"/>
+    </update>
+    <select id="selectRootByTriggerId" resultMap="instanceResultMap" databaseId="sqlserver">
+        SELECT TOP (1) <include refid="instanceColumns"/>
+        FROM ifj_instance
+        WHERE trigger_id = #{triggerId}
+          AND parent_instance_id IS NULL
+        ORDER BY id ASC
+    </select>
+</mapper>

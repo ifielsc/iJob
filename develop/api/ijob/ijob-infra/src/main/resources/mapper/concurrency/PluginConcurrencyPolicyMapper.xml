@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.concurrency.PluginConcurrencyPolicyMapper">
+    <resultMap id="policyMap" type="com.ifelio.ijob.infra.entity.concurrency.PluginConcurrencyPolicy">
+        <id property="pluginType" column="plugin_type" javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+        <result property="maxConcurrency" column="max_concurrency"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <sql id="columns">plugin_type, max_concurrency, version, create_time, update_time</sql>
+    <select id="selectAll" resultMap="policyMap">
+        SELECT <include refid="columns"/> FROM ifj_plugin_concurrency_policy ORDER BY plugin_type
+    </select>
+    <select id="selectByPluginType" resultMap="policyMap">
+        SELECT <include refid="columns"/> FROM ifj_plugin_concurrency_policy WHERE plugin_type=#{pluginType}
+    </select>
+    <select id="selectByPluginTypeForUpdate" resultMap="policyMap">
+        SELECT <include refid="columns"/> FROM ifj_plugin_concurrency_policy WHERE plugin_type=#{pluginType} FOR UPDATE
+    </select>
+    <select id="selectByPluginTypeForUpdate" databaseId="sqlite" resultMap="policyMap">
+        SELECT <include refid="columns"/> FROM ifj_plugin_concurrency_policy WHERE plugin_type=#{pluginType}
+    </select>
+    <select id="selectByPluginTypeForUpdate" databaseId="oracle" resultMap="policyMap">
+        SELECT <include refid="columns"/> FROM ifj_plugin_concurrency_policy WHERE plugin_type=#{pluginType} FOR UPDATE
+    </select>
+    <select id="selectByPluginTypeForUpdate" databaseId="sqlserver" resultMap="policyMap">
+        SELECT <include refid="columns"/> FROM ifj_plugin_concurrency_policy WITH (UPDLOCK, HOLDLOCK) WHERE plugin_type=#{pluginType}
+    </select>
+    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.concurrency.PluginConcurrencyPolicy">
+        INSERT INTO ifj_plugin_concurrency_policy
+            (plugin_type, max_concurrency, version, create_time, update_time)
+        VALUES (#{pluginType}, #{maxConcurrency}, #{version}, #{createTime}, #{updateTime})
+    </insert>
+    <update id="update">
+        UPDATE ifj_plugin_concurrency_policy
+        SET max_concurrency=#{maxConcurrency}, version=#{newVersion}, update_time=#{updateTime}
+        WHERE plugin_type=#{pluginType} AND version=#{expectedVersion}
+    </update>
+    <delete id="delete">
+        DELETE FROM ifj_plugin_concurrency_policy WHERE plugin_type=#{pluginType} AND version=#{version}
+    </delete>
+</mapper>

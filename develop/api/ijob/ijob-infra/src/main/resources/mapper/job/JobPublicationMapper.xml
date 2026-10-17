@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobPublicationMapper">
+
+    <resultMap id="PublicationIdentityResultMap"
+               type="com.ifelio.ijob.infra.mapper.job.JobPublicationIdentityRow">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="currentDefinitionId"
+                column="current_definition_id"/>
+        <result property="currentRevision" column="current_revision"/>
+        <result property="retired" column="retired"/>
+        <result property="retiredTime" column="retired_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="lockAllJobIdsForPublication"
+            resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_job
+        ORDER BY id ASC
+        FOR UPDATE
+    </select>
+
+<select id="lockAllJobIdsForPublication" databaseId="sqlite"
+            resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_job
+        ORDER BY id ASC
+    </select>
+
+<select id="lockAllJobIdsForPublication" databaseId="oracle"
+            resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_job
+        ORDER BY id ASC
+        FOR UPDATE
+    </select>
+
+<select id="lockAllJobIdsForPublication" databaseId="sqlserver"
+            resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_job WITH (UPDLOCK, HOLDLOCK)
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectIdentityForUpdate"
+            resultMap="PublicationIdentityResultMap">
+        SELECT id,
+               name,
+               current_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_job
+        WHERE id = #{jobId}
+        FOR UPDATE
+    </select>
+
+<select id="selectIdentityForUpdate" databaseId="sqlite"
+            resultMap="PublicationIdentityResultMap">
+        SELECT id,
+               name,
+               current_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_job
+        WHERE id = #{jobId}
+    </select>
+
+<select id="selectIdentityForUpdate" databaseId="oracle"
+            resultMap="PublicationIdentityResultMap">
+        SELECT id,
+               name,
+               current_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_job
+        WHERE id = #{jobId}
+        FOR UPDATE
+    </select>
+
+<select id="selectIdentityForUpdate" databaseId="sqlserver"
+            resultMap="PublicationIdentityResultMap">
+        SELECT id,
+               name,
+               current_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_job WITH (UPDLOCK, HOLDLOCK)
+        WHERE id = #{jobId}
+    </select>
+
+    <insert id="insertIdentity"
+            parameterType="com.ifelio.ijob.infra.entity.job.Job">
+        INSERT INTO ifj_job (
+            id,
+            name,
+            timeout,
+            enabled,
+            description,
+            current_definition_id,
+            current_revision,
+            retired,
+            retired_time,
+            create_time,
+            update_time
+        ) VALUES (
+            #{id},
+            #{name},
+            #{timeout},
+            #{enabled},
+            #{description},
+            NULL,
+            NULL,
+            <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>,
+            NULL,
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+<insert id="insertIdentity"
+            parameterType="com.ifelio.ijob.infra.entity.job.Job" databaseId="oracle">
+        INSERT INTO ifj_job (
+            id,
+            name,
+            timeout,
+            enabled,
+            description,
+            current_definition_id,
+            current_revision,
+            retired,
+            retired_time,
+            create_time,
+            update_time
+        ) VALUES (
+            #{id},
+            #{name},
+            #{timeout},
+            #{enabled},
+            #{description},
+            NULL,
+            NULL,
+            0,
+            NULL,
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+    <update id="initializeCurrentDefinition">
+        UPDATE ifj_job
+        SET current_definition_id = #{definitionId},
+            current_revision = 1,
+            update_time = #{updateTime}
+        WHERE id = #{jobId}
+          AND current_definition_id IS NULL
+          AND current_revision IS NULL
+          AND retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+          AND retired_time IS NULL
+    </update>
+
+<update id="initializeCurrentDefinition" databaseId="oracle">
+        UPDATE ifj_job
+        SET current_definition_id = #{definitionId},
+            current_revision = 1,
+            update_time = #{updateTime}
+        WHERE id = #{jobId}
+          AND current_definition_id IS NULL
+          AND current_revision IS NULL
+          AND retired = 0
+          AND retired_time IS NULL
+    </update>
+
+    <update id="advanceCurrentDefinition"
+            parameterType="com.ifelio.ijob.infra.mapper.job.JobCurrentDefinitionAdvance">
+        UPDATE ifj_job
+        SET current_definition_id = #{definitionId},
+            current_revision = #{nextRevision},
+            name = #{name},
+            timeout = #{timeout},
+            enabled = #{enabled},
+            description = #{description},
+            update_time = #{updateTime}
+        WHERE id = #{jobId}
+          AND current_definition_id = #{expectedDefinitionId}
+          AND current_revision = #{expectedRevision}
+          AND retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+          AND retired_time IS NULL
+    </update>
+
+<update id="advanceCurrentDefinition"
+            parameterType="com.ifelio.ijob.infra.mapper.job.JobCurrentDefinitionAdvance" databaseId="oracle">
+        UPDATE ifj_job
+        SET current_definition_id = #{definitionId},
+            current_revision = #{nextRevision},
+            name = #{name},
+            timeout = #{timeout},
+            enabled = #{enabled},
+            description = #{description},
+            update_time = #{updateTime}
+        WHERE id = #{jobId}
+          AND current_definition_id = #{expectedDefinitionId}
+          AND current_revision = #{expectedRevision}
+          AND retired = 0
+          AND retired_time IS NULL
+    </update>
+
+    <update id="retireIdentity"
+            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+        UPDATE ifj_job
+        SET retired = TRUE,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{jobId}
+          AND retired = FALSE
+          AND retired_time IS NULL
+          AND current_definition_id &lt;=&gt; #{expectedDefinitionId}
+          AND current_revision &lt;=&gt; #{expectedRevision}
+    </update>
+
+
+    <update id="retireIdentity" databaseId="postgresql"
+            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+        UPDATE ifj_job
+        SET retired = TRUE,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{jobId}
+          AND retired = FALSE
+          AND retired_time IS NULL
+          AND current_definition_id IS NOT DISTINCT FROM #{expectedDefinitionId}
+          AND current_revision IS NOT DISTINCT FROM #{expectedRevision}
+    </update>
+
+<update id="retireIdentity" databaseId="sqlite"
+            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+        UPDATE ifj_job
+        SET retired = TRUE,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{jobId}
+          AND retired = FALSE
+          AND retired_time IS NULL
+          AND current_definition_id IS #{expectedDefinitionId}
+          AND current_revision IS #{expectedRevision}
+    </update>
+
+<update id="retireIdentity" databaseId="oracle"
+            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+        UPDATE ifj_job
+        SET retired = 1,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{jobId}
+          AND retired = 0
+          AND retired_time IS NULL
+          AND (current_definition_id = #{expectedDefinitionId} OR (current_definition_id IS NULL AND #{expectedDefinitionId} IS NULL))
+          AND (current_revision = #{expectedRevision} OR (current_revision IS NULL AND #{expectedRevision} IS NULL))
+    </update>
+
+<update id="retireIdentity" databaseId="sqlserver"
+            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+        UPDATE ifj_job
+        SET retired = 1,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{jobId}
+          AND retired = 0
+          AND retired_time IS NULL
+          AND (current_definition_id = #{expectedDefinitionId} OR (current_definition_id IS NULL AND #{expectedDefinitionId} IS NULL))
+          AND (current_revision = #{expectedRevision} OR (current_revision IS NULL AND #{expectedRevision} IS NULL))
+    </update>
+</mapper>

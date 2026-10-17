@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.CoordinationSnapshotMapper">
+    <resultMap id="oracleSnapshotResultMap"
+               type="com.ifelio.ijob.infra.coordination.maintenance.CoordinationSnapshot"
+               autoMapping="true">
+        <result property="clusterStateOldestExpiredMillis" column="cluster_state_oldest_ms"/>
+    </resultMap>
+
+    <select id="selectSnapshot"
+            resultType="com.ifelio.ijob.infra.coordination.maintenance.CoordinationSnapshot">
+        SELECT
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= CURRENT_TIMESTAMP(3)) AS work_ready,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; CURRENT_TIMESTAMP(3)) AS work_claimed,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)) AS work_expired,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'DEAD') AS work_dead,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PENDING' AND available_at &lt;= CURRENT_TIMESTAMP(3)
+             AND expires_at &gt; CURRENT_TIMESTAMP(3)) AS command_pending,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PROCESSING') AS command_processing,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status IN ('PENDING', 'PROCESSING')
+             AND expires_at &lt;= CURRENT_TIMESTAMP(3)) AS command_expired,
+          COALESCE((SELECT GREATEST(0,
+              TIMESTAMPDIFF(MICROSECOND, MIN(create_time), CURRENT_TIMESTAMP(3)) DIV 1000)
+            FROM ifj_runtime_command
+            WHERE status = 'PENDING' AND available_at &lt;= CURRENT_TIMESTAMP(3)
+              AND expires_at &gt; CURRENT_TIMESTAMP(3)), 0) AS command_oldest_delay_millis,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= CURRENT_TIMESTAMP(3)) AS outbox_ready,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; CURRENT_TIMESTAMP(3)) AS outbox_claimed,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)) AS outbox_expired,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'DEAD') AS outbox_dead,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &gt; CURRENT_TIMESTAMP(3)) AS permit_active,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)) AS permit_expired,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+             AND heartbeat_at &lt;= TIMESTAMPADD(
+                MICROSECOND, -#{staleRunMicros}, CURRENT_TIMESTAMP(3))) AS stale_runs,
+          (SELECT COUNT(*) FROM ifj_maintenance_lease
+           WHERE lease_name = #{maintenanceLeaseName}
+             AND lease_deadline &gt; CURRENT_TIMESTAMP(3)) AS maintenance_leader_active,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; TIMESTAMPADD(
+                MICROSECOND, -#{staleRunMicros}, CURRENT_TIMESTAMP(3))
+             AND FIND_IN_SET('WORKER', roles) &gt; 0) AS active_worker_runs,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; TIMESTAMPADD(
+                MICROSECOND, -#{staleRunMicros}, CURRENT_TIMESTAMP(3))
+             AND FIND_IN_SET('SCHEDULER', roles) &gt; 0) AS active_scheduler_runs,
+          (SELECT COUNT(*) FROM ifj_cluster_state) AS cluster_state_total,
+          (SELECT COUNT(*) FROM ifj_cluster_state
+           WHERE expires_at IS NOT NULL
+             AND expires_at &lt;= CURRENT_TIMESTAMP(3)) AS cluster_state_expired,
+          COALESCE((SELECT GREATEST(0,
+              TIMESTAMPDIFF(MICROSECOND, MIN(expires_at), CURRENT_TIMESTAMP(3)) DIV 1000)
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= CURRENT_TIMESTAMP(3)), 0) AS cluster_state_oldest_expired_millis
+    </select>
+
+    <select id="selectSnapshot" databaseId="postgresql"
+            resultType="com.ifelio.ijob.infra.coordination.maintenance.CoordinationSnapshot">
+        SELECT
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= CURRENT_TIMESTAMP(3)) AS work_ready,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; CURRENT_TIMESTAMP(3)) AS work_claimed,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)) AS work_expired,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'DEAD') AS work_dead,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PENDING' AND available_at &lt;= CURRENT_TIMESTAMP(3)
+             AND expires_at &gt; CURRENT_TIMESTAMP(3)) AS command_pending,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PROCESSING') AS command_processing,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status IN ('PENDING', 'PROCESSING')
+             AND expires_at &lt;= CURRENT_TIMESTAMP(3)) AS command_expired,
+          COALESCE((SELECT GREATEST(0,
+              FLOOR(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP(3) - MIN(create_time))) * 1000))
+            FROM ifj_runtime_command
+            WHERE status = 'PENDING' AND available_at &lt;= CURRENT_TIMESTAMP(3)
+              AND expires_at &gt; CURRENT_TIMESTAMP(3)), 0) AS command_oldest_delay_millis,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= CURRENT_TIMESTAMP(3)) AS outbox_ready,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; CURRENT_TIMESTAMP(3)) AS outbox_claimed,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)) AS outbox_expired,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'DEAD') AS outbox_dead,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &gt; CURRENT_TIMESTAMP(3)) AS permit_active,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)) AS permit_expired,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+             AND heartbeat_at &lt;= (CURRENT_TIMESTAMP(3) - (#{staleRunMicros} * INTERVAL '1 microsecond'))) AS stale_runs,
+          (SELECT COUNT(*) FROM ifj_maintenance_lease
+           WHERE lease_name = #{maintenanceLeaseName}
+             AND lease_deadline &gt; CURRENT_TIMESTAMP(3)) AS maintenance_leader_active,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; (CURRENT_TIMESTAMP(3) - (#{staleRunMicros} * INTERVAL '1 microsecond'))
+             AND POSITION(',WORKER,' IN ',' || roles || ',') &gt; 0) AS active_worker_runs,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; (CURRENT_TIMESTAMP(3) - (#{staleRunMicros} * INTERVAL '1 microsecond'))
+             AND POSITION(',SCHEDULER,' IN ',' || roles || ',') &gt; 0) AS active_scheduler_runs,
+          (SELECT COUNT(*) FROM ifj_cluster_state) AS cluster_state_total,
+          (SELECT COUNT(*) FROM ifj_cluster_state
+           WHERE expires_at IS NOT NULL
+             AND expires_at &lt;= CURRENT_TIMESTAMP(3)) AS cluster_state_expired,
+          COALESCE((SELECT GREATEST(0,
+              FLOOR(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP(3) - MIN(expires_at))) * 1000))
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= CURRENT_TIMESTAMP(3)), 0) AS cluster_state_oldest_expired_millis
+    </select>
+
+<select id="selectSnapshot" databaseId="sqlite"
+            resultType="com.ifelio.ijob.infra.coordination.maintenance.CoordinationSnapshot">
+        SELECT
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')) AS work_ready,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')) AS work_claimed,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now')) AS work_expired,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'DEAD') AS work_dead,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PENDING' AND available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+             AND expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now')) AS command_pending,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PROCESSING') AS command_processing,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status IN ('PENDING', 'PROCESSING')
+             AND expires_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')) AS command_expired,
+          COALESCE((SELECT MAX(0,
+              CAST(MAX(0, (julianday(strftime('%Y-%m-%d %H:%M:%f','now')) - julianday(MIN(create_time))) * 86400000) AS INTEGER))
+            FROM ifj_runtime_command
+            WHERE status = 'PENDING' AND available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+              AND expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now')), 0) AS command_oldest_delay_millis,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')) AS outbox_ready,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')) AS outbox_claimed,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now')) AS outbox_expired,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'DEAD') AS outbox_dead,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')) AS permit_active,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now')) AS permit_expired,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+             AND heartbeat_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now', printf('-%.6f seconds', (#{staleRunMicros} / 1000000.0)))) AS stale_runs,
+          (SELECT COUNT(*) FROM ifj_maintenance_lease
+           WHERE lease_name = #{maintenanceLeaseName}
+             AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')) AS maintenance_leader_active,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; strftime('%Y-%m-%d %H:%M:%f','now', printf('-%.6f seconds', (#{staleRunMicros} / 1000000.0)))
+             AND instr(',' || roles || ',', ',WORKER,') &gt; 0) AS active_worker_runs,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; strftime('%Y-%m-%d %H:%M:%f','now', printf('-%.6f seconds', (#{staleRunMicros} / 1000000.0)))
+             AND instr(',' || roles || ',', ',SCHEDULER,') &gt; 0) AS active_scheduler_runs,
+          (SELECT COUNT(*) FROM ifj_cluster_state) AS cluster_state_total,
+          (SELECT COUNT(*) FROM ifj_cluster_state
+           WHERE expires_at IS NOT NULL
+             AND expires_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')) AS cluster_state_expired,
+          COALESCE((SELECT MAX(0,
+              CAST(MAX(0, (julianday(strftime('%Y-%m-%d %H:%M:%f','now')) - julianday(MIN(expires_at))) * 86400000) AS INTEGER))
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')), 0) AS cluster_state_oldest_expired_millis
+    </select>
+
+<select id="selectSnapshot" databaseId="oracle"
+            resultMap="oracleSnapshotResultMap">
+        SELECT
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS work_ready,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS work_claimed,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS work_expired,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'DEAD') AS work_dead,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PENDING' AND available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+             AND expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS command_pending,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PROCESSING') AS command_processing,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status IN ('PENDING', 'PROCESSING')
+             AND expires_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS command_expired,
+          COALESCE((SELECT GREATEST(0,
+              TRUNC(GREATEST((CAST(CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) AS DATE) - CAST(MIN(create_time) AS DATE)) * 86400000, 0)))
+            FROM ifj_runtime_command
+            WHERE status = 'PENDING' AND available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+              AND expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))), 0) AS command_oldest_delay_millis,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS outbox_ready,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS outbox_claimed,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS outbox_expired,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'DEAD') AS outbox_dead,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS permit_active,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS permit_expired,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+             AND heartbeat_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) - NUMTODSINTERVAL(#{staleRunMicros} / 1000000, 'SECOND')) AS stale_runs,
+          (SELECT COUNT(*) FROM ifj_maintenance_lease
+           WHERE lease_name = #{maintenanceLeaseName}
+             AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS maintenance_leader_active,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) - NUMTODSINTERVAL(#{staleRunMicros} / 1000000, 'SECOND')
+             AND instr(',' || roles || ',', ',WORKER,') &gt; 0) AS active_worker_runs,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) - NUMTODSINTERVAL(#{staleRunMicros} / 1000000, 'SECOND')
+             AND instr(',' || roles || ',', ',SCHEDULER,') &gt; 0) AS active_scheduler_runs,
+          (SELECT COUNT(*) FROM ifj_cluster_state) AS cluster_state_total,
+          (SELECT COUNT(*) FROM ifj_cluster_state
+           WHERE expires_at IS NOT NULL
+             AND expires_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))) AS cluster_state_expired,
+          COALESCE((SELECT GREATEST(0,
+              TRUNC(GREATEST((CAST(CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) AS DATE) - CAST(MIN(expires_at) AS DATE)) * 86400000, 0)))
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))), 0) AS cluster_state_oldest_ms
+        FROM dual
+    </select>
+
+<select id="selectSnapshot" databaseId="sqlserver"
+            resultType="com.ifelio.ijob.infra.coordination.maintenance.CoordinationSnapshot">
+        SELECT
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= SYSUTCDATETIME()) AS work_ready,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; SYSUTCDATETIME()) AS work_claimed,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= SYSUTCDATETIME()) AS work_expired,
+          (SELECT COUNT(*) FROM ifj_trigger_work_item
+           WHERE status = 'DEAD') AS work_dead,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PENDING' AND available_at &lt;= SYSUTCDATETIME()
+             AND expires_at &gt; SYSUTCDATETIME()) AS command_pending,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status = 'PROCESSING') AS command_processing,
+          (SELECT COUNT(*) FROM ifj_runtime_command
+           WHERE status IN ('PENDING', 'PROCESSING')
+             AND expires_at &lt;= SYSUTCDATETIME()) AS command_expired,
+          COALESCE((SELECT CASE WHEN DATEDIFF_BIG(MILLISECOND, MIN(create_time), SYSUTCDATETIME()) > 0 THEN DATEDIFF_BIG(MILLISECOND, MIN(create_time), SYSUTCDATETIME()) ELSE 0 END
+            FROM ifj_runtime_command
+            WHERE status = 'PENDING' AND available_at &lt;= SYSUTCDATETIME()
+              AND expires_at &gt; SYSUTCDATETIME()), 0) AS command_oldest_delay_millis,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status IN ('READY', 'RETRY_WAIT')
+             AND available_at &lt;= SYSUTCDATETIME()) AS outbox_ready,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &gt; SYSUTCDATETIME()) AS outbox_claimed,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'CLAIMED' AND lease_deadline &lt;= SYSUTCDATETIME()) AS outbox_expired,
+          (SELECT COUNT(*) FROM ifj_notification_outbox
+           WHERE status = 'DEAD') AS outbox_dead,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &gt; SYSUTCDATETIME()) AS permit_active,
+          (SELECT COUNT(*) FROM ifj_concurrency_permit
+           WHERE owner_instance_id IS NOT NULL
+             AND lease_deadline &lt;= SYSUTCDATETIME()) AS permit_expired,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
+             AND heartbeat_at &lt;= DATEADD(MILLISECOND, -(#{staleRunMicros} / 1000), SYSUTCDATETIME())) AS stale_runs,
+          (SELECT COUNT(*) FROM ifj_maintenance_lease
+           WHERE lease_name = #{maintenanceLeaseName}
+             AND lease_deadline &gt; SYSUTCDATETIME()) AS maintenance_leader_active,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; DATEADD(MILLISECOND, -(#{staleRunMicros} / 1000), SYSUTCDATETIME())
+             AND CHARINDEX(',WORKER,', CONCAT(',', roles, ',')) &gt; 0) AS active_worker_runs,
+          (SELECT COUNT(*) FROM ifj_app_run
+           WHERE status = 'RUNNING'
+             AND heartbeat_at &gt; DATEADD(MILLISECOND, -(#{staleRunMicros} / 1000), SYSUTCDATETIME())
+             AND CHARINDEX(',SCHEDULER,', CONCAT(',', roles, ',')) &gt; 0) AS active_scheduler_runs,
+          (SELECT COUNT(*) FROM ifj_cluster_state) AS cluster_state_total,
+          (SELECT COUNT(*) FROM ifj_cluster_state
+           WHERE expires_at IS NOT NULL
+             AND expires_at &lt;= SYSUTCDATETIME()) AS cluster_state_expired,
+          COALESCE((SELECT CASE WHEN DATEDIFF_BIG(MILLISECOND, MIN(expires_at), SYSUTCDATETIME()) > 0 THEN DATEDIFF_BIG(MILLISECOND, MIN(expires_at), SYSUTCDATETIME()) ELSE 0 END
+            FROM ifj_cluster_state
+            WHERE expires_at IS NOT NULL
+              AND expires_at &lt;= SYSUTCDATETIME()), 0) AS cluster_state_oldest_expired_millis
+    </select>
+</mapper>

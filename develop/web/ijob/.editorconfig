@@ -1,0 +1,5 @@
+root = false
+
+[*.{vue,ts,js,mjs,css,html}]
+indent_style = space
+indent_size = 2

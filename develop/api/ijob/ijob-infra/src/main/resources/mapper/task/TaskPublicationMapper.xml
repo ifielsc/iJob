@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskPublicationMapper">
+
+    <resultMap id="PublicationIdentityResultMap"
+               type="com.ifelio.ijob.infra.mapper.task.TaskPublicationIdentityRow">
+        <id property="id" column="id"/>
+        <result property="currentTaskDefinitionId"
+                column="current_task_definition_id"/>
+        <result property="currentRevision" column="current_revision"/>
+        <result property="retired" column="retired"/>
+        <result property="retiredTime" column="retired_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectIdentityForUpdate"
+            resultMap="PublicationIdentityResultMap">
+        SELECT id,
+               current_task_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_task
+        WHERE id = #{taskId}
+        FOR UPDATE
+    </select>
+
+<select id="selectIdentityForUpdate" databaseId="sqlite"
+            resultMap="PublicationIdentityResultMap">
+        SELECT id,
+               current_task_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_task
+        WHERE id = #{taskId}
+    </select>
+
+<select id="selectIdentityForUpdate" databaseId="oracle"
+            resultMap="PublicationIdentityResultMap">
+        SELECT id,
+               current_task_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_task
+        WHERE id = #{taskId}
+        FOR UPDATE
+    </select>
+
+<select id="selectIdentityForUpdate" databaseId="sqlserver"
+            resultMap="PublicationIdentityResultMap">
+        SELECT id,
+               current_task_definition_id,
+               current_revision,
+               retired,
+               retired_time,
+               create_time,
+               update_time
+        FROM ifj_task WITH (UPDLOCK, HOLDLOCK)
+        WHERE id = #{taskId}
+    </select>
+
+    <insert id="insertIdentity"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskPublicationIdentityInsert">
+        INSERT INTO ifj_task (
+            id,
+            name,
+            plugin_type,
+            plugin_config,
+            retry_times,
+            retry_interval,
+            timeout,
+            enabled,
+            description,
+            current_task_definition_id,
+            current_revision,
+            retired,
+            retired_time,
+            create_time,
+            update_time
+        ) VALUES (
+            #{id},
+            #{name},
+            #{pluginType},
+            #{pluginConfig},
+            #{retryTimes},
+            #{retryInterval},
+            #{timeout},
+            #{enabled},
+            #{description},
+            NULL,
+            NULL,
+            <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>,
+            NULL,
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+<insert id="insertIdentity"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskPublicationIdentityInsert" databaseId="oracle">
+        INSERT INTO ifj_task (
+            id,
+            name,
+            plugin_type,
+            plugin_config,
+            retry_times,
+            retry_interval,
+            timeout,
+            enabled,
+            description,
+            current_task_definition_id,
+            current_revision,
+            retired,
+            retired_time,
+            create_time,
+            update_time
+        ) VALUES (
+            #{id},
+            #{name},
+            #{pluginType},
+            #{pluginConfig},
+            #{retryTimes},
+            #{retryInterval},
+            #{timeout},
+            #{enabled},
+            #{description},
+            NULL,
+            NULL,
+            0,
+            NULL,
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+    <update id="initializeCurrentDefinition"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskCurrentDefinitionInitialization">
+        UPDATE ifj_task
+        SET current_task_definition_id = #{definitionId},
+            current_revision = 1,
+            update_time = #{updateTime}
+        WHERE id = #{taskId}
+          AND current_task_definition_id IS NULL
+          AND current_revision IS NULL
+          AND retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+          AND retired_time IS NULL
+    </update>
+
+<update id="initializeCurrentDefinition"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskCurrentDefinitionInitialization" databaseId="oracle">
+        UPDATE ifj_task
+        SET current_task_definition_id = #{definitionId},
+            current_revision = 1,
+            update_time = #{updateTime}
+        WHERE id = #{taskId}
+          AND current_task_definition_id IS NULL
+          AND current_revision IS NULL
+          AND retired = 0
+          AND retired_time IS NULL
+    </update>
+
+    <update id="advanceCurrentDefinition"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskCurrentDefinitionAdvance">
+        UPDATE ifj_task
+        SET current_task_definition_id = #{definitionId},
+            current_revision = #{nextRevision},
+            name = #{name},
+            plugin_type = #{pluginType},
+            plugin_config = #{pluginConfig},
+            retry_times = #{retryTimes},
+            retry_interval = #{retryInterval},
+            timeout = #{timeout},
+            enabled = #{enabled},
+            description = #{description},
+            update_time = #{updateTime}
+        WHERE id = #{taskId}
+          AND current_task_definition_id = #{expectedDefinitionId}
+          AND current_revision = #{expectedRevision}
+          AND retired = <choose><when test="_databaseId == 'sqlserver'">0</when><otherwise>FALSE</otherwise></choose>
+          AND retired_time IS NULL
+    </update>
+
+<update id="advanceCurrentDefinition"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskCurrentDefinitionAdvance" databaseId="oracle">
+        UPDATE ifj_task
+        SET current_task_definition_id = #{definitionId},
+            current_revision = #{nextRevision},
+            name = #{name},
+            plugin_type = #{pluginType},
+            plugin_config = #{pluginConfig},
+            retry_times = #{retryTimes},
+            retry_interval = #{retryInterval},
+            timeout = #{timeout},
+            enabled = #{enabled},
+            description = #{description},
+            update_time = #{updateTime}
+        WHERE id = #{taskId}
+          AND current_task_definition_id = #{expectedDefinitionId}
+          AND current_revision = #{expectedRevision}
+          AND retired = 0
+          AND retired_time IS NULL
+    </update>
+
+    <update id="retireIdentity"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+        UPDATE ifj_task
+        SET retired = TRUE,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{taskId}
+          AND retired = FALSE
+          AND retired_time IS NULL
+          AND current_task_definition_id &lt;=> #{expectedDefinitionId}
+          AND current_revision &lt;=> #{expectedRevision}
+    </update>
+
+    <update id="retireIdentity" databaseId="postgresql"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+        UPDATE ifj_task
+        SET retired = TRUE,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{taskId}
+          AND retired = FALSE
+          AND retired_time IS NULL
+          AND current_task_definition_id IS NOT DISTINCT FROM #{expectedDefinitionId}
+          AND current_revision IS NOT DISTINCT FROM #{expectedRevision}
+    </update>
+
+<update id="retireIdentity" databaseId="sqlite"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+        UPDATE ifj_task
+        SET retired = TRUE,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{taskId}
+          AND retired = FALSE
+          AND retired_time IS NULL
+          AND current_task_definition_id IS #{expectedDefinitionId}
+          AND current_revision IS #{expectedRevision}
+    </update>
+
+<update id="retireIdentity" databaseId="oracle"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+        UPDATE ifj_task
+        SET retired = 1,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{taskId}
+          AND retired = 0
+          AND retired_time IS NULL
+          AND (current_task_definition_id = #{expectedDefinitionId} OR (current_task_definition_id IS NULL AND #{expectedDefinitionId} IS NULL))
+          AND (current_revision = #{expectedRevision} OR (current_revision IS NULL AND #{expectedRevision} IS NULL))
+    </update>
+
+<update id="retireIdentity" databaseId="sqlserver"
+            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+        UPDATE ifj_task
+        SET retired = 1,
+            retired_time = #{retiredTime},
+            update_time = #{retiredTime}
+        WHERE id = #{taskId}
+          AND retired = 0
+          AND retired_time IS NULL
+          AND (current_task_definition_id = #{expectedDefinitionId} OR (current_task_definition_id IS NULL AND #{expectedDefinitionId} IS NULL))
+          AND (current_revision = #{expectedRevision} OR (current_revision IS NULL AND #{expectedRevision} IS NULL))
+    </update>
+
+</mapper>

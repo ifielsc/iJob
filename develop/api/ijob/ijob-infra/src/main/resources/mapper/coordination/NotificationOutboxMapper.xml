@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.NotificationOutboxMapper">
+
+    <resultMap id="notificationOutboxResultMap"
+               type="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+        <id property="id" column="id"/>
+        <result property="deduplicationKey" column="deduplication_key"/>
+        <result property="notifyConfigId" column="notify_config_id"/>
+        <result property="notifyType" column="notify_type"/>
+        <result property="configSnapshot" column="config_snapshot"/>
+        <result property="configEnabled" column="config_enabled"/>
+        <result property="title" column="title"/>
+        <result property="subject" column="subject"/>
+        <result property="content" column="content"/>
+        <result property="contentVersion" column="content_version"/>
+        <result property="httpStatus" column="http_status"/>
+        <result property="sourceType" column="source_type"/>
+        <result property="correlationId" column="correlation_id"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="targetType" column="target_type"/>
+        <result property="targetId" column="target_id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="notifyBindingId" column="notify_binding_id"/>
+        <result property="status" column="status"/>
+        <result property="availableAt" column="available_at"/>
+        <result property="leaseOwner" column="lease_owner"/>
+        <result property="claimToken" column="claim_token"/>
+        <result property="leaseDeadline" column="lease_deadline"/>
+        <result property="attemptCount" column="attempt_count"/>
+        <result property="maxAttempts" column="max_attempts"/>
+        <result property="lastFailureCode" column="last_failure_code"/>
+        <result property="lastFailureSummary" column="last_failure_summary"/>
+        <result property="deliveredAt" column="delivered_at"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="outboxColumns">
+        id, deduplication_key, notify_config_id, notify_type, config_snapshot,
+        config_enabled, title, subject, content, content_version,
+        source_type, correlation_id, operator_id, target_type, target_id,
+        instance_id, notify_binding_id, status, available_at, lease_owner,
+        claim_token, lease_deadline, attempt_count, max_attempts,
+        last_failure_code, last_failure_summary, delivered_at, create_time, update_time, http_status
+    </sql>
+
+    <insert id="insertIfAbsent"
+            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+        INSERT INTO ifj_notification_outbox (
+            id, deduplication_key, notify_config_id, notify_type, config_snapshot,
+            config_enabled, title, subject, content, content_version,
+            source_type, correlation_id, operator_id, target_type, target_id,
+            instance_id, notify_binding_id, status, available_at,
+            attempt_count, max_attempts
+        ) VALUES (
+            #{id}, #{deduplicationKey}, #{notifyConfigId}, #{notifyType}, #{configSnapshot},
+            #{configEnabled}, #{title}, #{subject}, #{content}, #{contentVersion},
+            #{sourceType}, #{correlationId}, #{operatorId}, #{targetType}, #{targetId},
+            #{instanceId}, #{notifyBindingId}, 'READY', CURRENT_TIMESTAMP(3),
+            0, #{maxAttempts}
+        )
+        ON DUPLICATE KEY UPDATE id = id
+    </insert>
+
+    <select id="selectByDeduplicationKey" resultMap="notificationOutboxResultMap">
+        SELECT <include refid="outboxColumns"/>
+        FROM ifj_notification_outbox
+        WHERE deduplication_key = #{deduplicationKey}
+    </select>
+
+    <select id="selectByClaimToken" resultMap="notificationOutboxResultMap">
+        SELECT <include refid="outboxColumns"/>
+        FROM ifj_notification_outbox
+        WHERE claim_token = #{claimToken}
+    </select>
+
+    <select id="selectDispatchableIds" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_notification_outbox
+        WHERE attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= CURRENT_TIMESTAMP(3))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+        ORDER BY available_at, id
+        LIMIT #{limit}
+    </select>
+
+<select id="selectDispatchableIds" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT id
+        FROM ifj_notification_outbox
+        WHERE attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          )
+        ORDER BY available_at, id
+        LIMIT #{limit}
+    </select>
+
+<select id="selectDispatchableIds" databaseId="oracle" resultType="java.lang.Long">
+
+        SELECT id
+        FROM ifj_notification_outbox
+        WHERE attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          )
+        AND ROWNUM &lt;= #{limit}
+        FOR UPDATE SKIP LOCKED
+    </select>
+
+<select id="selectDispatchableIds" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT TOP (#{limit}) id
+        FROM ifj_notification_outbox WITH (UPDLOCK, READPAST, ROWLOCK)
+        WHERE attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= SYSUTCDATETIME())
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= SYSUTCDATETIME())
+          )
+        ORDER BY available_at, id
+        
+    </select>
+
+    <update id="claim">
+        UPDATE ifj_notification_outbox
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            attempt_count = attempt_count + 1,
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= CURRENT_TIMESTAMP(3))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+    </update>
+
+    <update id="renew">
+        UPDATE ifj_notification_outbox
+        SET lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="complete">
+        UPDATE ifj_notification_outbox
+        SET status = 'DELIVERED',
+            http_status = NULL,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            delivered_at = CURRENT_TIMESTAMP(3),
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="complete" databaseId="sqlite">
+        UPDATE ifj_notification_outbox
+        SET status = 'DELIVERED',
+            http_status = NULL,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            delivered_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="complete" databaseId="oracle">
+        UPDATE ifj_notification_outbox
+        SET status = 'DELIVERED',
+            http_status = NULL,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            delivered_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </update>
+
+<update id="complete" databaseId="sqlserver">
+        UPDATE ifj_notification_outbox
+        SET status = 'DELIVERED',
+            http_status = NULL,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            delivered_at = SYSUTCDATETIME(),
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+
+    <update id="retryOrDead">
+        UPDATE ifj_notification_outbox
+        SET status = CASE WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN 'DEAD' ELSE 'RETRY_WAIT' END,
+            available_at = CASE
+                WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN available_at
+                ELSE TIMESTAMPADD(MICROSECOND, #{retryDelayMicros}, CURRENT_TIMESTAMP(3))
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = #{failureCode},
+            last_failure_summary = #{failureSummary},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="markExpiredExhaustedDead">
+        UPDATE ifj_notification_outbox
+        SET status = 'DEAD',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = 'LEASE_EXHAUSTED',
+            last_failure_summary = 'Notification lease expired after maximum attempts',
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE status = 'CLAIMED'
+          AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)
+          AND attempt_count &gt;= max_attempts
+    </update>
+
+<update id="markExpiredExhaustedDead" databaseId="sqlite">
+        UPDATE ifj_notification_outbox
+        SET status = 'DEAD',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = 'LEASE_EXHAUSTED',
+            last_failure_summary = 'Notification lease expired after maximum attempts',
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE status = 'CLAIMED'
+          AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND attempt_count &gt;= max_attempts
+    </update>
+
+<update id="markExpiredExhaustedDead" databaseId="oracle">
+        UPDATE ifj_notification_outbox
+        SET status = 'DEAD',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = 'LEASE_EXHAUSTED',
+            last_failure_summary = 'Notification lease expired after maximum attempts',
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE status = 'CLAIMED'
+          AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND attempt_count &gt;= max_attempts
+    </update>
+
+<update id="markExpiredExhaustedDead" databaseId="sqlserver">
+        UPDATE ifj_notification_outbox
+        SET status = 'DEAD',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = 'LEASE_EXHAUSTED',
+            last_failure_summary = 'Notification lease expired after maximum attempts',
+            update_time = SYSUTCDATETIME()
+        WHERE status = 'CLAIMED'
+          AND lease_deadline &lt;= SYSUTCDATETIME()
+          AND attempt_count &gt;= max_attempts
+    </update>
+
+    <insert id="insertIfAbsent" databaseId="postgresql"
+            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+        INSERT INTO ifj_notification_outbox (
+            id, deduplication_key, notify_config_id, notify_type, config_snapshot,
+            config_enabled, title, subject, content, content_version,
+            source_type, correlation_id, operator_id, target_type, target_id,
+            instance_id, notify_binding_id, status, available_at,
+            attempt_count, max_attempts
+        ) VALUES (
+            #{id}, #{deduplicationKey}, #{notifyConfigId}, #{notifyType}, #{configSnapshot},
+            #{configEnabled}, #{title}, #{subject}, #{content}, #{contentVersion},
+            #{sourceType}, #{correlationId}, #{operatorId}, #{targetType}, #{targetId},
+            #{instanceId}, #{notifyBindingId}, 'READY', CURRENT_TIMESTAMP(3),
+            0, #{maxAttempts}
+        )
+        ON CONFLICT (deduplication_key) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="sqlite"
+            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+        INSERT INTO ifj_notification_outbox (
+            id, deduplication_key, notify_config_id, notify_type, config_snapshot,
+            config_enabled, title, subject, content, content_version,
+            source_type, correlation_id, operator_id, target_type, target_id,
+            instance_id, notify_binding_id, status, available_at,
+            attempt_count, max_attempts
+        ) VALUES (
+            #{id}, #{deduplicationKey}, #{notifyConfigId}, #{notifyType}, #{configSnapshot},
+            #{configEnabled}, #{title}, #{subject}, #{content}, #{contentVersion},
+            #{sourceType}, #{correlationId}, #{operatorId}, #{targetType}, #{targetId},
+            #{instanceId}, #{notifyBindingId}, 'READY', strftime('%Y-%m-%d %H:%M:%f','now'),
+            0, #{maxAttempts}
+        )
+        ON CONFLICT (deduplication_key) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="oracle"
+            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+        MERGE INTO ifj_notification_outbox target
+        USING (SELECT 1 AS marker FROM dual) source
+        ON (target.deduplication_key = #{deduplicationKey})
+        WHEN NOT MATCHED THEN INSERT (
+            id, deduplication_key, notify_config_id, notify_type, config_snapshot,
+            config_enabled, title, subject, content, content_version,
+            source_type, correlation_id, operator_id, target_type, target_id,
+            instance_id, notify_binding_id, status, available_at,
+            attempt_count, max_attempts
+        ) VALUES (
+            #{id}, #{deduplicationKey}, #{notifyConfigId}, #{notifyType}, #{configSnapshot},
+            #{configEnabled}, #{title}, #{subject}, #{content}, #{contentVersion},
+            #{sourceType}, #{correlationId}, #{operatorId}, #{targetType}, #{targetId},
+            #{instanceId}, #{notifyBindingId}, 'READY', CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            0, #{maxAttempts}
+        )</insert>
+
+<insert id="insertIfAbsent" databaseId="sqlserver"
+            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+        IF NOT EXISTS (SELECT 1 FROM ifj_notification_outbox WITH (UPDLOCK, HOLDLOCK) WHERE deduplication_key = #{deduplicationKey})
+        BEGIN
+
+        INSERT INTO ifj_notification_outbox (
+            id, deduplication_key, notify_config_id, notify_type, config_snapshot,
+            config_enabled, title, subject, content, content_version,
+            source_type, correlation_id, operator_id, target_type, target_id,
+            instance_id, notify_binding_id, status, available_at,
+            attempt_count, max_attempts
+        ) VALUES (
+            #{id}, #{deduplicationKey}, #{notifyConfigId}, #{notifyType}, #{configSnapshot},
+            #{configEnabled}, #{title}, #{subject}, #{content}, #{contentVersion},
+            #{sourceType}, #{correlationId}, #{operatorId}, #{targetType}, #{targetId},
+            #{instanceId}, #{notifyBindingId}, 'READY', SYSUTCDATETIME(),
+            0, #{maxAttempts}
+        )
+        END</insert>
+<update id="claim" databaseId="postgresql">
+        UPDATE ifj_notification_outbox
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            attempt_count = attempt_count + 1,
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= CURRENT_TIMESTAMP(3))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+    </update>
+
+<update id="claim" databaseId="sqlite">
+        UPDATE ifj_notification_outbox
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            attempt_count = attempt_count + 1,
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          )
+    </update>
+
+<update id="claim" databaseId="oracle">
+        UPDATE ifj_notification_outbox
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            attempt_count = attempt_count + 1,
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          )
+    </update>
+
+<update id="claim" databaseId="sqlserver">
+        UPDATE ifj_notification_outbox
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            attempt_count = attempt_count + 1,
+            last_failure_code = NULL,
+            last_failure_summary = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND attempt_count &lt; max_attempts
+          AND (
+            (status IN ('READY', 'RETRY_WAIT') AND available_at &lt;= SYSUTCDATETIME())
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= SYSUTCDATETIME())
+          )
+    </update>
+<update id="renew" databaseId="postgresql">
+        UPDATE ifj_notification_outbox
+        SET lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="renew" databaseId="sqlite">
+        UPDATE ifj_notification_outbox
+        SET lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="renew" databaseId="oracle">
+        UPDATE ifj_notification_outbox
+        SET lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </update>
+
+<update id="renew" databaseId="sqlserver">
+        UPDATE ifj_notification_outbox
+        SET lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+<update id="retryOrDead" databaseId="postgresql">
+        UPDATE ifj_notification_outbox
+        SET status = CASE WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN 'DEAD' ELSE 'RETRY_WAIT' END,
+            available_at = CASE
+                WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN available_at
+                ELSE (CURRENT_TIMESTAMP(3) + (#{retryDelayMicros} * INTERVAL '1 microsecond'))
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = #{failureCode},
+            last_failure_summary = #{failureSummary},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="retryOrDead" databaseId="sqlite">
+        UPDATE ifj_notification_outbox
+        SET status = CASE WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN 'DEAD' ELSE 'RETRY_WAIT' END,
+            available_at = CASE
+                WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN available_at
+                ELSE strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{retryDelayMicros} / 1000000.0)))
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = #{failureCode},
+            last_failure_summary = #{failureSummary},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="retryOrDead" databaseId="oracle">
+        UPDATE ifj_notification_outbox
+        SET status = CASE WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN 'DEAD' ELSE 'RETRY_WAIT' END,
+            available_at = CASE
+                WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN available_at
+                ELSE CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{retryDelayMicros} / 1000000, 'SECOND')
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = #{failureCode},
+            last_failure_summary = #{failureSummary},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </update>
+
+<update id="retryOrDead" databaseId="sqlserver">
+        UPDATE ifj_notification_outbox
+        SET status = CASE WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN 'DEAD' ELSE 'RETRY_WAIT' END,
+            available_at = CASE
+                WHEN #{terminal} = 1 OR attempt_count &gt;= max_attempts THEN available_at
+                ELSE DATEADD(MILLISECOND, (#{retryDelayMicros} / 1000), SYSUTCDATETIME())
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_failure_code = #{failureCode},
+            last_failure_summary = #{failureSummary},
+            update_time = SYSUTCDATETIME()
+        WHERE id = #{id}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+    <update id="recordResponse">UPDATE ifj_notification_outbox SET http_status = #{httpStatus,jdbcType=INTEGER} WHERE id = #{id} AND status = 'CLAIMED' AND lease_owner = #{leaseOwner} AND claim_token = #{claimToken}</update>
+    <update id="defer">
+        UPDATE ifj_notification_outbox SET status = 'RETRY_WAIT', available_at = TIMESTAMPADD(MICROSECOND, #{retryDelayMicros}, CURRENT_TIMESTAMP(3)),
+            attempt_count = attempt_count - 1, lease_owner = NULL, claim_token = NULL, lease_deadline = NULL,
+            last_failure_code = 'RATE_WAIT', last_failure_summary = 'waiting for shared notification budget', update_time = CURRENT_TIMESTAMP(3)
+        WHERE id = #{id} AND status = 'CLAIMED' AND lease_owner = #{leaseOwner} AND claim_token = #{claimToken} AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+    <update id="defer" databaseId="postgresql">
+        UPDATE ifj_notification_outbox SET status = 'RETRY_WAIT', available_at = CURRENT_TIMESTAMP + (#{retryDelayMicros} * INTERVAL '1 microsecond'),
+            attempt_count = attempt_count - 1, lease_owner = NULL, claim_token = NULL, lease_deadline = NULL,
+            last_failure_code = 'RATE_WAIT', last_failure_summary = 'waiting for shared notification budget', update_time = CURRENT_TIMESTAMP
+        WHERE id = #{id} AND status = 'CLAIMED' AND lease_owner = #{leaseOwner} AND claim_token = #{claimToken} AND lease_deadline &gt; CURRENT_TIMESTAMP
+    </update>
+    <update id="defer" databaseId="sqlite">
+        UPDATE ifj_notification_outbox SET status = 'RETRY_WAIT', available_at = strftime('%Y-%m-%d %H:%M:%f','now', (#{retryDelayMicros} / 1000000.0) || ' seconds'),
+            attempt_count = attempt_count - 1, lease_owner = NULL, claim_token = NULL, lease_deadline = NULL,
+            last_failure_code = 'RATE_WAIT', last_failure_summary = 'waiting for shared notification budget', update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE id = #{id} AND status = 'CLAIMED' AND lease_owner = #{leaseOwner} AND claim_token = #{claimToken} AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+    <update id="defer" databaseId="sqlserver">
+        UPDATE ifj_notification_outbox SET status = 'RETRY_WAIT', available_at = DATEADD(MILLISECOND, CAST(#{retryDelayMicros} / 1000 AS BIGINT), SYSUTCDATETIME()),
+            attempt_count = attempt_count - 1, lease_owner = NULL, claim_token = NULL, lease_deadline = NULL,
+            last_failure_code = 'RATE_WAIT', last_failure_summary = 'waiting for shared notification budget', update_time = SYSUTCDATETIME()
+        WHERE id = #{id} AND status = 'CLAIMED' AND lease_owner = #{leaseOwner} AND claim_token = #{claimToken} AND lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+    <update id="defer" databaseId="oracle">
+        UPDATE ifj_notification_outbox SET status = 'RETRY_WAIT', available_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{retryDelayMicros} / 1000000, 'SECOND'),
+            attempt_count = attempt_count - 1, lease_owner = NULL, claim_token = NULL, lease_deadline = NULL,
+            last_failure_code = 'RATE_WAIT', last_failure_summary = 'waiting for shared notification budget', update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE id = #{id} AND status = 'CLAIMED' AND lease_owner = #{leaseOwner} AND claim_token = #{claimToken} AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </update>
+</mapper>

@@ -1,0 +1,7 @@
+services:
+  backend-b:
+    environment:
+      IJOB_PLUGIN_ETL_ENABLED: 'true'
+      IJOB_PLUGIN_BATCH_ETL_ENABLED: 'true'
+      IJOB_PLUGIN_LOCAL_JAR_ENABLED: 'false'
+      IJOB_EVENT_INGRESS_ENABLED: 'false'

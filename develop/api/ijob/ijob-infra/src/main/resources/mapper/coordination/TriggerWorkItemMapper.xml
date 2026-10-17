@@ -1,0 +1,1400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.TriggerWorkItemMapper">
+
+    <resultMap id="triggerWorkItemResultMap"
+               type="com.ifelio.ijob.infra.coordination.work.TriggerWorkItem">
+        <id property="triggerId" column="trigger_id"/>
+        <result property="rootInstanceId" column="root_instance_id"/>
+        <result property="status" column="status"/>
+        <result property="availableAt" column="available_at"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="leaseOwner" column="lease_owner"/>
+        <result property="claimToken" column="claim_token"/>
+        <result property="leaseDeadline" column="lease_deadline"/>
+        <result property="fenceToken" column="fence_token"/>
+        <result property="attemptCount" column="attempt_count"/>
+        <result property="maxAttempts" column="max_attempts"/>
+        <result property="lastError" column="last_error"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="workItemColumns">
+        trigger_id, root_instance_id, status, available_at, expires_at, lease_owner, claim_token,
+        lease_deadline, fence_token, attempt_count, max_attempts, last_error,
+        create_time, update_time
+    </sql>
+
+    <sql id="executionGroupEligibility">
+        AND (
+          (trigger_record.task_definition_id IS NOT NULL AND (
+            NOT EXISTS (
+              SELECT 1 FROM ifj_task_definition_group task_group
+              WHERE task_group.definition_id = trigger_record.task_definition_id
+            )
+            <if test="instanceGroups != null and !instanceGroups.isEmpty()">
+              OR EXISTS (
+                SELECT 1 FROM ifj_task_definition_group task_group
+                WHERE task_group.definition_id = trigger_record.task_definition_id
+                  AND task_group.group_code IN
+                  <foreach collection="instanceGroups" item="group" open="(" separator="," close=")">
+                    #{group}
+                  </foreach>
+              )
+            </if>
+          ))
+          OR
+          (trigger_record.definition_id IS NOT NULL AND (
+            NOT EXISTS (
+              SELECT 1 FROM ifj_job_definition_group job_group
+              WHERE job_group.definition_id = trigger_record.definition_id
+            )
+            <if test="instanceGroups != null and !instanceGroups.isEmpty()">
+              OR EXISTS (
+                SELECT 1 FROM ifj_job_definition_group job_group
+                WHERE job_group.definition_id = trigger_record.definition_id
+                  AND job_group.group_code IN
+                  <foreach collection="instanceGroups" item="group" open="(" separator="," close=")">
+                    #{group}
+                  </foreach>
+              )
+            </if>
+          ))
+        )
+    </sql>
+
+    <sql id="executionTargetEligibility">
+        <if test="(allowedTaskIds != null and !allowedTaskIds.isEmpty()) or (allowedJobIds != null and !allowedJobIds.isEmpty())">
+          AND (
+            1 = 0
+            <if test="allowedTaskIds != null and !allowedTaskIds.isEmpty()">
+              OR (trigger_record.target_type = 'TASK' AND trigger_record.target_id IN
+                <foreach collection="allowedTaskIds" item="targetId" open="(" separator="," close=")">
+                  #{targetId}
+                </foreach>
+              )
+            </if>
+            <if test="allowedJobIds != null and !allowedJobIds.isEmpty()">
+              OR (trigger_record.target_type = 'JOB' AND trigger_record.target_id IN
+                <foreach collection="allowedJobIds" item="targetId" open="(" separator="," close=")">
+                  #{targetId}
+                </foreach>
+              )
+            </if>
+          )
+        </if>
+    </sql>
+
+    <insert id="insertIfAbsent">
+        INSERT INTO ifj_trigger_work_item (
+            trigger_id, status, available_at, expires_at, attempt_count, max_attempts
+        ) VALUES (
+            #{triggerId}, 'READY', CURRENT_TIMESTAMP(3), #{expiresAt,jdbcType=TIMESTAMP}, 0, #{maxAttempts}
+        )
+        ON DUPLICATE KEY UPDATE trigger_id = VALUES(trigger_id)
+    </insert>
+
+    <select id="selectByTriggerId" resultMap="triggerWorkItemResultMap">
+        SELECT <include refid="workItemColumns"/>
+        FROM ifj_trigger_work_item
+        WHERE trigger_id = #{triggerId}
+    </select>
+
+    <select id="selectDispatchableTriggerIds" resultType="java.lang.Long">
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_trigger trigger_record ON trigger_record.id = work_item.trigger_id
+        WHERE work_item.attempt_count &lt; work_item.max_attempts
+          AND (work_item.expires_at IS NULL OR work_item.expires_at &gt; CURRENT_TIMESTAMP(3))
+          AND (
+            (work_item.status IN ('READY', 'RETRY_WAIT')
+                AND work_item.available_at &lt;= CURRENT_TIMESTAMP(3))
+            OR
+            (work_item.status = 'CLAIMED' AND work_item.lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+        <include refid="executionGroupEligibility"/>
+        <include refid="executionTargetEligibility"/>
+        ORDER BY work_item.available_at, work_item.trigger_id
+        LIMIT #{limit}
+    </select>
+
+<select id="selectDispatchableTriggerIds" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_trigger trigger_record ON trigger_record.id = work_item.trigger_id
+        WHERE work_item.attempt_count &lt; work_item.max_attempts
+          AND (work_item.expires_at IS NULL OR work_item.expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now'))
+          AND (
+            (work_item.status IN ('READY', 'RETRY_WAIT')
+                AND work_item.available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+            OR
+            (work_item.status = 'CLAIMED' AND work_item.lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          )
+        <include refid="executionGroupEligibility"/>
+        <include refid="executionTargetEligibility"/>
+        ORDER BY work_item.available_at, work_item.trigger_id
+        LIMIT #{limit}
+    </select>
+
+<select id="selectDispatchableTriggerIds" databaseId="oracle" resultType="java.lang.Long">
+
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_trigger trigger_record ON trigger_record.id = work_item.trigger_id
+        WHERE work_item.attempt_count &lt; work_item.max_attempts
+          AND (work_item.expires_at IS NULL OR work_item.expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          AND (
+            (work_item.status IN ('READY', 'RETRY_WAIT')
+                AND work_item.available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+            OR
+            (work_item.status = 'CLAIMED' AND work_item.lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          )
+        <include refid="executionGroupEligibility"/>
+        <include refid="executionTargetEligibility"/>
+        AND ROWNUM &lt;= #{limit}
+        FOR UPDATE SKIP LOCKED
+    </select>
+
+<select id="selectDispatchableTriggerIds" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT TOP (#{limit}) work_item.trigger_id
+        FROM ifj_trigger_work_item work_item WITH (UPDLOCK, READPAST, ROWLOCK)
+        JOIN ifj_trigger trigger_record ON trigger_record.id = work_item.trigger_id
+        WHERE work_item.attempt_count &lt; work_item.max_attempts
+          AND (work_item.expires_at IS NULL OR work_item.expires_at &gt; SYSUTCDATETIME())
+          AND (
+            (work_item.status IN ('READY', 'RETRY_WAIT')
+                AND work_item.available_at &lt;= SYSUTCDATETIME())
+            OR
+            (work_item.status = 'CLAIMED' AND work_item.lease_deadline &lt;= SYSUTCDATETIME())
+          )
+        <include refid="executionGroupEligibility"/>
+        <include refid="executionTargetEligibility"/>
+        ORDER BY work_item.available_at, work_item.trigger_id
+        
+    </select>
+
+    <select id="selectTimedOutTriggerIds" resultType="java.lang.Long">
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= CURRENT_TIMESTAMP(3)
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+        ORDER BY root_instance.timeout_at ASC, work_item.trigger_id ASC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectExpiredTriggerIds" resultType="java.lang.Long">
+        SELECT trigger_id
+        FROM ifj_trigger_work_item
+        WHERE root_instance_id IS NULL
+          AND expires_at IS NOT NULL
+          AND expires_at &lt;= CURRENT_TIMESTAMP(3)
+          AND (status IN ('READY', 'RETRY_WAIT')
+            OR (status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)))
+        ORDER BY expires_at, trigger_id
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectExpiredTriggerIds" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT trigger_id
+        FROM ifj_trigger_work_item
+        WHERE root_instance_id IS NULL
+          AND expires_at IS NOT NULL
+          AND expires_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (status IN ('READY', 'RETRY_WAIT')
+            OR (status = 'CLAIMED' AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now')))
+        ORDER BY expires_at, trigger_id
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectExpiredTriggerIds" databaseId="oracle" resultType="java.lang.Long">
+        SELECT * FROM (
+          SELECT trigger_id
+          FROM ifj_trigger_work_item
+          WHERE root_instance_id IS NULL
+            AND expires_at IS NOT NULL
+            AND expires_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+            AND (status IN ('READY', 'RETRY_WAIT')
+              OR (status = 'CLAIMED' AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))))
+          ORDER BY expires_at, trigger_id
+        ) WHERE ROWNUM &lt;= #{limit}
+    </select>
+
+    <select id="selectExpiredTriggerIds" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT TOP (#{limit}) trigger_id
+        FROM ifj_trigger_work_item
+        WHERE root_instance_id IS NULL
+          AND expires_at IS NOT NULL
+          AND expires_at &lt;= SYSUTCDATETIME()
+          AND (status IN ('READY', 'RETRY_WAIT')
+            OR (status = 'CLAIMED' AND lease_deadline &lt;= SYSUTCDATETIME()))
+        ORDER BY expires_at, trigger_id
+    </select>
+
+<select id="selectTimedOutTriggerIds" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          )
+        ORDER BY root_instance.timeout_at ASC, work_item.trigger_id ASC
+        LIMIT #{limit}
+    </select>
+
+<select id="selectTimedOutTriggerIds" databaseId="oracle" resultType="java.lang.Long">
+        SELECT * FROM (
+
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          )
+        ORDER BY root_instance.timeout_at ASC, work_item.trigger_id ASC
+       
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+
+<select id="selectTimedOutTriggerIds" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT TOP (#{limit}) work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= SYSUTCDATETIME()
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= SYSUTCDATETIME())
+          )
+        ORDER BY root_instance.timeout_at ASC, work_item.trigger_id ASC
+        
+    </select>
+
+    <select id="selectDeadOrphanTriggerIds" resultType="java.lang.Long">
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE work_item.status = 'DEAD'
+          AND work_item.update_time &lt;= TIMESTAMPADD(
+              MICROSECOND, -#{orphanGraceMicros}, CURRENT_TIMESTAMP(3))
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+        ORDER BY work_item.update_time ASC, work_item.trigger_id ASC
+        LIMIT #{limit}
+    </select>
+
+    <update id="claimByTriggerId">
+        UPDATE ifj_trigger_work_item work_item
+        JOIN ifj_trigger trigger_record ON trigger_record.id = work_item.trigger_id
+        SET work_item.status = 'CLAIMED',
+            work_item.lease_owner = #{leaseOwner},
+            work_item.claim_token = #{claimToken},
+            work_item.lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            work_item.attempt_count = work_item.attempt_count + 1,
+            work_item.fence_token = work_item.fence_token + 1,
+            work_item.last_error = NULL,
+            work_item.update_time = CURRENT_TIMESTAMP(3)
+        WHERE work_item.trigger_id = #{triggerId}
+          AND work_item.attempt_count &lt; work_item.max_attempts
+          AND (work_item.expires_at IS NULL OR work_item.expires_at &gt; CURRENT_TIMESTAMP(3))
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND (
+            (work_item.status IN ('READY', 'RETRY_WAIT')
+                AND work_item.available_at &lt;= CURRENT_TIMESTAMP(3))
+            OR
+            (work_item.status = 'CLAIMED' AND work_item.lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+          <include refid="executionGroupEligibility"/>
+          <include refid="executionTargetEligibility"/>
+    </update>
+
+    <update id="claimExpired">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            fence_token = fence_token + 1,
+            last_error = 'Queued work expired',
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND root_instance_id IS NULL
+          AND expires_at IS NOT NULL
+          AND expires_at &lt;= CURRENT_TIMESTAMP(3)
+          AND fence_token &lt; 9223372036854775807
+          AND (status IN ('READY', 'RETRY_WAIT')
+            OR (status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)))
+    </update>
+
+    <update id="claimTimedOut">
+        UPDATE ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        SET work_item.status = 'CLAIMED',
+            work_item.lease_owner = #{leaseOwner},
+            work_item.claim_token = #{claimToken},
+            work_item.lease_deadline = TIMESTAMPADD(
+                MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            work_item.fence_token = work_item.fence_token + 1,
+            work_item.last_error = 'Runtime deadline exceeded',
+            work_item.update_time = CURRENT_TIMESTAMP(3)
+        WHERE work_item.trigger_id = #{triggerId}
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= CURRENT_TIMESTAMP(3)
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+    </update>
+
+    <update id="claimDeadOrphan">
+        UPDATE ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        SET work_item.status = 'CLAIMED',
+            work_item.lease_owner = #{leaseOwner},
+            work_item.claim_token = #{claimToken},
+            work_item.lease_deadline = TIMESTAMPADD(
+                MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            work_item.fence_token = work_item.fence_token + 1,
+            work_item.last_error = 'Dead work item recovery',
+            work_item.update_time = CURRENT_TIMESTAMP(3)
+        WHERE work_item.trigger_id = #{triggerId}
+          AND work_item.status = 'DEAD'
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND work_item.update_time &lt;= TIMESTAMPADD(
+              MICROSECOND, -#{orphanGraceMicros}, CURRENT_TIMESTAMP(3))
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+    </update>
+
+    <update id="bindRoot">
+        UPDATE ifj_trigger_work_item
+        SET root_instance_id = #{rootInstanceId},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+          AND (root_instance_id IS NULL OR root_instance_id = #{rootInstanceId})
+    </update>
+
+<update id="bindRoot" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET root_instance_id = #{rootInstanceId},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (root_instance_id IS NULL OR root_instance_id = #{rootInstanceId})
+    </update>
+
+<update id="bindRoot" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET root_instance_id = #{rootInstanceId},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND (root_instance_id IS NULL OR root_instance_id = #{rootInstanceId})
+    </update>
+
+<update id="bindRoot" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET root_instance_id = #{rootInstanceId},
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; SYSUTCDATETIME()
+          AND (root_instance_id IS NULL OR root_instance_id = #{rootInstanceId})
+    </update>
+
+    <update id="suspend">
+        UPDATE ifj_trigger_work_item
+        SET status = 'SUSPENDED',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="suspend" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = 'SUSPENDED',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="suspend" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = 'SUSPENDED',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="suspend" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = 'SUSPENDED',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+    <update id="resumeSuspended">
+        UPDATE ifj_trigger_work_item
+        SET status = 'READY',
+            available_at = CURRENT_TIMESTAMP(3),
+            last_error = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'SUSPENDED'
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="resumeSuspended" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = 'READY',
+            available_at = strftime('%Y-%m-%d %H:%M:%f','now'),
+            last_error = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND status = 'SUSPENDED'
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="resumeSuspended" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = 'READY',
+            available_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)),
+            last_error = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND status = 'SUSPENDED'
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="resumeSuspended" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = 'READY',
+            available_at = SYSUTCDATETIME(),
+            last_error = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND status = 'SUSPENDED'
+          AND fence_token = #{fenceToken}
+    </update>
+
+    <update id="completeSuspended">
+        UPDATE ifj_trigger_work_item
+        SET status = 'COMPLETED',
+            last_error = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'SUSPENDED'
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="completeSuspended" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = 'COMPLETED',
+            last_error = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND status = 'SUSPENDED'
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="completeSuspended" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = 'COMPLETED',
+            last_error = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND status = 'SUSPENDED'
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="completeSuspended" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = 'COMPLETED',
+            last_error = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND status = 'SUSPENDED'
+          AND fence_token = #{fenceToken}
+    </update>
+
+    <select id="selectByClaimToken" resultMap="triggerWorkItemResultMap">
+        SELECT <include refid="workItemColumns"/>
+        FROM ifj_trigger_work_item
+        WHERE claim_token = #{claimToken}
+    </select>
+
+    <update id="renew">
+        UPDATE ifj_trigger_work_item
+        SET lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="complete">
+        UPDATE ifj_trigger_work_item
+        SET status = 'COMPLETED',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="complete" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = 'COMPLETED',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="complete" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = 'COMPLETED',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="complete" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = 'COMPLETED',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+    <update id="retryOrDead">
+        UPDATE ifj_trigger_work_item
+        SET status = CASE
+                WHEN attempt_count &gt;= max_attempts THEN 'DEAD'
+                ELSE 'RETRY_WAIT'
+            END,
+            available_at = CASE
+                WHEN attempt_count &gt;= max_attempts THEN available_at
+                ELSE TIMESTAMPADD(MICROSECOND, #{delayMicros}, CURRENT_TIMESTAMP(3))
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = #{lastError},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+    <update id="deferUnstarted">
+        UPDATE ifj_trigger_work_item
+        SET status = 'RETRY_WAIT',
+            available_at = TIMESTAMPADD(MICROSECOND, #{delayMicros}, CURRENT_TIMESTAMP(3)),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE WHEN attempt_count > 0 THEN attempt_count - 1 ELSE 0 END,
+            last_error = #{lastError},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+    <update id="markExpiredExhaustedDead">
+        UPDATE ifj_trigger_work_item
+        SET status = 'DEAD',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = COALESCE(last_error, 'Lease expired after maximum attempts'),
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE status = 'CLAIMED'
+          AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)
+          AND attempt_count &gt;= max_attempts
+    </update>
+
+<update id="markExpiredExhaustedDead" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = 'DEAD',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = COALESCE(last_error, 'Lease expired after maximum attempts'),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE status = 'CLAIMED'
+          AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND attempt_count &gt;= max_attempts
+    </update>
+
+<update id="markExpiredExhaustedDead" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = 'DEAD',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = COALESCE(last_error, 'Lease expired after maximum attempts'),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE status = 'CLAIMED'
+          AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND attempt_count &gt;= max_attempts
+    </update>
+
+<update id="markExpiredExhaustedDead" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = 'DEAD',
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = COALESCE(last_error, 'Lease expired after maximum attempts'),
+            update_time = SYSUTCDATETIME()
+        WHERE status = 'CLAIMED'
+          AND lease_deadline &lt;= SYSUTCDATETIME()
+          AND attempt_count &gt;= max_attempts
+    </update>
+
+    <insert id="insertIfAbsent" databaseId="postgresql">
+        INSERT INTO ifj_trigger_work_item (
+            trigger_id, status, available_at, expires_at, attempt_count, max_attempts
+        ) VALUES (
+            #{triggerId}, 'READY', CURRENT_TIMESTAMP(3), #{expiresAt,jdbcType=TIMESTAMP}, 0, #{maxAttempts}
+        )
+        ON CONFLICT (trigger_id) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="sqlite">
+        INSERT INTO ifj_trigger_work_item (
+            trigger_id, status, available_at, expires_at, attempt_count, max_attempts
+        ) VALUES (
+            #{triggerId}, 'READY', strftime('%Y-%m-%d %H:%M:%f','now'), #{expiresAt,jdbcType=TIMESTAMP}, 0, #{maxAttempts}
+        )
+        ON CONFLICT (trigger_id) DO NOTHING
+    </insert>
+
+<insert id="insertIfAbsent" databaseId="oracle">
+        MERGE INTO ifj_trigger_work_item target
+        USING (SELECT 1 AS marker FROM dual) source
+        ON (target.trigger_id = #{triggerId})
+        WHEN NOT MATCHED THEN INSERT (
+            trigger_id, status, available_at, expires_at, attempt_count, max_attempts
+        ) VALUES (
+            #{triggerId}, 'READY', CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)), #{expiresAt,jdbcType=TIMESTAMP}, 0, #{maxAttempts}
+        )</insert>
+
+<insert id="insertIfAbsent" databaseId="sqlserver">
+        IF NOT EXISTS (SELECT 1 FROM ifj_trigger_work_item WITH (UPDLOCK, HOLDLOCK) WHERE trigger_id = #{triggerId})
+        BEGIN
+
+        INSERT INTO ifj_trigger_work_item (
+            trigger_id, status, available_at, expires_at, attempt_count, max_attempts
+        ) VALUES (
+            #{triggerId}, 'READY', SYSUTCDATETIME(), #{expiresAt,jdbcType=TIMESTAMP}, 0, #{maxAttempts}
+        )
+        END</insert>
+<select id="selectDeadOrphanTriggerIds" databaseId="postgresql" resultType="java.lang.Long">
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE work_item.status = 'DEAD'
+          AND work_item.update_time &lt;= (CURRENT_TIMESTAMP(3) - (#{orphanGraceMicros} * INTERVAL '1 microsecond'))
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+        ORDER BY work_item.update_time ASC, work_item.trigger_id ASC
+        LIMIT #{limit}
+    </select>
+
+<select id="selectDeadOrphanTriggerIds" databaseId="sqlite" resultType="java.lang.Long">
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE work_item.status = 'DEAD'
+          AND work_item.update_time &lt;= strftime('%Y-%m-%d %H:%M:%f','now', printf('-%.6f seconds', (#{orphanGraceMicros} / 1000000.0)))
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+        ORDER BY work_item.update_time ASC, work_item.trigger_id ASC
+        LIMIT #{limit}
+    </select>
+
+<select id="selectDeadOrphanTriggerIds" databaseId="oracle" resultType="java.lang.Long">
+        SELECT * FROM (
+
+        SELECT work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE work_item.status = 'DEAD'
+          AND work_item.update_time &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) - NUMTODSINTERVAL(#{orphanGraceMicros} / 1000000, 'SECOND')
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+        ORDER BY work_item.update_time ASC, work_item.trigger_id ASC
+       
+        ) WHERE ROWNUM &lt;= #{limit}</select>
+
+<select id="selectDeadOrphanTriggerIds" databaseId="sqlserver" resultType="java.lang.Long">
+        SELECT TOP (#{limit}) work_item.trigger_id
+        FROM ifj_trigger_work_item work_item
+        JOIN ifj_instance root_instance
+          ON root_instance.id = work_item.root_instance_id
+         AND root_instance.parent_instance_id IS NULL
+        WHERE work_item.status = 'DEAD'
+          AND work_item.update_time &lt;= DATEADD(MILLISECOND, -(#{orphanGraceMicros} / 1000), SYSUTCDATETIME())
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+        ORDER BY work_item.update_time ASC, work_item.trigger_id ASC
+        
+    </select>
+<update id="claimByTriggerId" databaseId="postgresql">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            attempt_count = attempt_count + 1,
+            fence_token = fence_token + 1,
+            last_error = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND attempt_count &lt; max_attempts
+          AND (expires_at IS NULL OR expires_at &gt; CURRENT_TIMESTAMP(3))
+          AND fence_token &lt; 9223372036854775807
+          AND (
+            (status IN ('READY', 'RETRY_WAIT')
+                AND available_at &lt;= CURRENT_TIMESTAMP(3))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+          AND EXISTS (
+            SELECT 1 FROM ifj_trigger trigger_record
+            WHERE trigger_record.id = ifj_trigger_work_item.trigger_id
+            <include refid="executionGroupEligibility"/>
+            <include refid="executionTargetEligibility"/>
+          )
+    </update>
+
+<update id="claimExpired" databaseId="postgresql">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED', lease_owner = #{leaseOwner}, claim_token = #{claimToken},
+            lease_deadline = CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond'),
+            fence_token = fence_token + 1, last_error = 'Queued work expired',
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId} AND root_instance_id IS NULL
+          AND expires_at IS NOT NULL AND expires_at &lt;= CURRENT_TIMESTAMP(3)
+          AND fence_token &lt; 9223372036854775807
+          AND (status IN ('READY', 'RETRY_WAIT')
+            OR (status = 'CLAIMED' AND lease_deadline &lt;= CURRENT_TIMESTAMP(3)))
+    </update>
+
+<update id="claimByTriggerId" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            attempt_count = attempt_count + 1,
+            fence_token = fence_token + 1,
+            last_error = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND attempt_count &lt; max_attempts
+          AND (expires_at IS NULL OR expires_at &gt; strftime('%Y-%m-%d %H:%M:%f','now'))
+          AND fence_token &lt; 9223372036854775807
+          AND (
+            (status IN ('READY', 'RETRY_WAIT')
+                AND available_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          )
+          AND EXISTS (
+            SELECT 1 FROM ifj_trigger trigger_record
+            WHERE trigger_record.id = ifj_trigger_work_item.trigger_id
+            <include refid="executionGroupEligibility"/>
+            <include refid="executionTargetEligibility"/>
+          )
+    </update>
+
+<update id="claimExpired" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED', lease_owner = #{leaseOwner}, claim_token = #{claimToken},
+            lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            fence_token = fence_token + 1, last_error = 'Queued work expired',
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId} AND root_instance_id IS NULL
+          AND expires_at IS NOT NULL AND expires_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND fence_token &lt; 9223372036854775807
+          AND (status IN ('READY', 'RETRY_WAIT')
+            OR (status = 'CLAIMED' AND lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now')))
+    </update>
+
+<update id="claimByTriggerId" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            attempt_count = attempt_count + 1,
+            fence_token = fence_token + 1,
+            last_error = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND attempt_count &lt; max_attempts
+          AND (expires_at IS NULL OR expires_at &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          AND fence_token &lt; 9223372036854775807
+          AND (
+            (status IN ('READY', 'RETRY_WAIT')
+                AND available_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          )
+          AND EXISTS (
+            SELECT 1 FROM ifj_trigger trigger_record
+            WHERE trigger_record.id = ifj_trigger_work_item.trigger_id
+            <include refid="executionGroupEligibility"/>
+            <include refid="executionTargetEligibility"/>
+          )
+    </update>
+
+<update id="claimExpired" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED', lease_owner = #{leaseOwner}, claim_token = #{claimToken},
+            lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            fence_token = fence_token + 1, last_error = 'Queued work expired',
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId} AND root_instance_id IS NULL
+          AND expires_at IS NOT NULL
+          AND expires_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND fence_token &lt; 9223372036854775807
+          AND (status IN ('READY', 'RETRY_WAIT')
+            OR (status = 'CLAIMED' AND lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))))
+    </update>
+
+<update id="claimByTriggerId" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            attempt_count = attempt_count + 1,
+            fence_token = fence_token + 1,
+            last_error = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND attempt_count &lt; max_attempts
+          AND (expires_at IS NULL OR expires_at &gt; SYSUTCDATETIME())
+          AND fence_token &lt; 9223372036854775807
+          AND (
+            (status IN ('READY', 'RETRY_WAIT')
+                AND available_at &lt;= SYSUTCDATETIME())
+            OR
+            (status = 'CLAIMED' AND lease_deadline &lt;= SYSUTCDATETIME())
+          )
+          AND EXISTS (
+            SELECT 1 FROM ifj_trigger trigger_record
+            WHERE trigger_record.id = ifj_trigger_work_item.trigger_id
+            <include refid="executionGroupEligibility"/>
+            <include refid="executionTargetEligibility"/>
+          )
+    </update>
+
+<update id="claimExpired" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = 'CLAIMED', lease_owner = #{leaseOwner}, claim_token = #{claimToken},
+            lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            fence_token = fence_token + 1, last_error = 'Queued work expired',
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId} AND root_instance_id IS NULL
+          AND expires_at IS NOT NULL AND expires_at &lt;= SYSUTCDATETIME()
+          AND fence_token &lt; 9223372036854775807
+          AND (status IN ('READY', 'RETRY_WAIT')
+            OR (status = 'CLAIMED' AND lease_deadline &lt;= SYSUTCDATETIME()))
+    </update>
+<update id="claimTimedOut" databaseId="postgresql">
+        UPDATE ifj_trigger_work_item work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            fence_token = work_item.fence_token + 1,
+            last_error = 'Runtime deadline exceeded',
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_instance root_instance
+        WHERE root_instance.id = work_item.root_instance_id
+          AND root_instance.parent_instance_id IS NULL
+          AND work_item.trigger_id = #{triggerId}
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= CURRENT_TIMESTAMP(3)
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          )
+    </update>
+
+<update id="claimTimedOut" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item AS work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            fence_token = work_item.fence_token + 1,
+            last_error = 'Runtime deadline exceeded',
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_instance root_instance
+        WHERE root_instance.id = work_item.root_instance_id
+          AND root_instance.parent_instance_id IS NULL
+          AND work_item.trigger_id = #{triggerId}
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= strftime('%Y-%m-%d %H:%M:%f','now')
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          )
+    </update>
+
+<update id="claimTimedOut" databaseId="oracle">
+        MERGE INTO ifj_trigger_work_item work_item
+        USING (
+            SELECT work_item.ROWID AS target_rowid
+            FROM ifj_trigger_work_item work_item, ifj_instance root_instance
+            WHERE root_instance.id = work_item.root_instance_id
+          AND root_instance.parent_instance_id IS NULL
+          AND work_item.trigger_id = #{triggerId}
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          )
+        ) source
+        ON (work_item.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            fence_token = work_item.fence_token + 1,
+            last_error = 'Runtime deadline exceeded',
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="claimTimedOut" databaseId="sqlserver">
+        UPDATE work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            fence_token = work_item.fence_token + 1,
+            last_error = 'Runtime deadline exceeded',
+            update_time = SYSUTCDATETIME()
+        FROM ifj_trigger_work_item AS work_item,
+             ifj_instance root_instance
+        WHERE root_instance.id = work_item.root_instance_id
+          AND root_instance.parent_instance_id IS NULL
+          AND work_item.trigger_id = #{triggerId}
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+          AND root_instance.timeout_at IS NOT NULL
+          AND root_instance.timeout_at &lt;= SYSUTCDATETIME()
+          AND (
+            work_item.status IN ('READY', 'RETRY_WAIT', 'SUSPENDED', 'DEAD')
+            OR (work_item.status = 'CLAIMED'
+                AND work_item.lease_deadline &lt;= SYSUTCDATETIME())
+          )
+    </update>
+<update id="claimDeadOrphan" databaseId="postgresql">
+        UPDATE ifj_trigger_work_item work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            fence_token = work_item.fence_token + 1,
+            last_error = 'Dead work item recovery',
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_instance root_instance
+        WHERE root_instance.id = work_item.root_instance_id
+          AND root_instance.parent_instance_id IS NULL
+          AND work_item.trigger_id = #{triggerId}
+          AND work_item.status = 'DEAD'
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND work_item.update_time &lt;= (CURRENT_TIMESTAMP(3) - (#{orphanGraceMicros} * INTERVAL '1 microsecond'))
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+    </update>
+
+<update id="claimDeadOrphan" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item AS work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            fence_token = work_item.fence_token + 1,
+            last_error = 'Dead work item recovery',
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_instance root_instance
+        WHERE root_instance.id = work_item.root_instance_id
+          AND root_instance.parent_instance_id IS NULL
+          AND work_item.trigger_id = #{triggerId}
+          AND work_item.status = 'DEAD'
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND work_item.update_time &lt;= strftime('%Y-%m-%d %H:%M:%f','now', printf('-%.6f seconds', (#{orphanGraceMicros} / 1000000.0)))
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+    </update>
+
+<update id="claimDeadOrphan" databaseId="oracle">
+        MERGE INTO ifj_trigger_work_item work_item
+        USING (
+            SELECT work_item.ROWID AS target_rowid
+            FROM ifj_trigger_work_item work_item, ifj_instance root_instance
+            WHERE root_instance.id = work_item.root_instance_id
+          AND root_instance.parent_instance_id IS NULL
+          AND work_item.trigger_id = #{triggerId}
+          AND work_item.status = 'DEAD'
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND work_item.update_time &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) - NUMTODSINTERVAL(#{orphanGraceMicros} / 1000000, 'SECOND')
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+        ) source
+        ON (work_item.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            fence_token = work_item.fence_token + 1,
+            last_error = 'Dead work item recovery',
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="claimDeadOrphan" databaseId="sqlserver">
+        UPDATE work_item
+        SET status = 'CLAIMED',
+            lease_owner = #{leaseOwner},
+            claim_token = #{claimToken},
+            lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            fence_token = work_item.fence_token + 1,
+            last_error = 'Dead work item recovery',
+            update_time = SYSUTCDATETIME()
+        FROM ifj_trigger_work_item AS work_item,
+             ifj_instance root_instance
+        WHERE root_instance.id = work_item.root_instance_id
+          AND root_instance.parent_instance_id IS NULL
+          AND work_item.trigger_id = #{triggerId}
+          AND work_item.status = 'DEAD'
+          AND work_item.fence_token &lt; 9223372036854775807
+          AND work_item.update_time &lt;= DATEADD(MILLISECOND, -(#{orphanGraceMicros} / 1000), SYSUTCDATETIME())
+          AND root_instance.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
+    </update>
+<update id="renew" databaseId="postgresql">
+        UPDATE ifj_trigger_work_item
+        SET lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="renew" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="renew" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </update>
+
+<update id="renew" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+          AND lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+<update id="retryOrDead" databaseId="postgresql">
+        UPDATE ifj_trigger_work_item
+        SET status = CASE
+                WHEN attempt_count &gt;= max_attempts THEN 'DEAD'
+                ELSE 'RETRY_WAIT'
+            END,
+            available_at = CASE
+                WHEN attempt_count &gt;= max_attempts THEN available_at
+                ELSE (CURRENT_TIMESTAMP(3) + (#{delayMicros} * INTERVAL '1 microsecond'))
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = #{lastError},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="deferUnstarted" databaseId="postgresql">
+        UPDATE ifj_trigger_work_item
+        SET status = 'RETRY_WAIT',
+            available_at = CURRENT_TIMESTAMP(3) + (#{delayMicros} * INTERVAL '1 microsecond'),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE WHEN attempt_count > 0 THEN attempt_count - 1 ELSE 0 END,
+            last_error = #{lastError},
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="retryOrDead" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = CASE
+                WHEN attempt_count &gt;= max_attempts THEN 'DEAD'
+                ELSE 'RETRY_WAIT'
+            END,
+            available_at = CASE
+                WHEN attempt_count &gt;= max_attempts THEN available_at
+                ELSE strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{delayMicros} / 1000000.0)))
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = #{lastError},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="deferUnstarted" databaseId="sqlite">
+        UPDATE ifj_trigger_work_item
+        SET status = 'RETRY_WAIT',
+            available_at = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{delayMicros} / 1000000.0))),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE WHEN attempt_count > 0 THEN attempt_count - 1 ELSE 0 END,
+            last_error = #{lastError},
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="retryOrDead" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = CASE
+                WHEN attempt_count &gt;= max_attempts THEN 'DEAD'
+                ELSE 'RETRY_WAIT'
+            END,
+            available_at = CASE
+                WHEN attempt_count &gt;= max_attempts THEN available_at
+                ELSE CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{delayMicros} / 1000000, 'SECOND')
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = #{lastError},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="deferUnstarted" databaseId="oracle">
+        UPDATE ifj_trigger_work_item
+        SET status = 'RETRY_WAIT',
+            available_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{delayMicros} / 1000000, 'SECOND'),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE WHEN attempt_count > 0 THEN attempt_count - 1 ELSE 0 END,
+            last_error = #{lastError},
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="retryOrDead" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = CASE
+                WHEN attempt_count &gt;= max_attempts THEN 'DEAD'
+                ELSE 'RETRY_WAIT'
+            END,
+            available_at = CASE
+                WHEN attempt_count &gt;= max_attempts THEN available_at
+                ELSE DATEADD(MILLISECOND, (#{delayMicros} / 1000), SYSUTCDATETIME())
+            END,
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            last_error = #{lastError},
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+
+<update id="deferUnstarted" databaseId="sqlserver">
+        UPDATE ifj_trigger_work_item
+        SET status = 'RETRY_WAIT',
+            available_at = DATEADD(MILLISECOND, (#{delayMicros} / 1000), SYSUTCDATETIME()),
+            lease_owner = NULL,
+            claim_token = NULL,
+            lease_deadline = NULL,
+            attempt_count = CASE WHEN attempt_count > 0 THEN attempt_count - 1 ELSE 0 END,
+            last_error = #{lastError},
+            update_time = SYSUTCDATETIME()
+        WHERE trigger_id = #{triggerId}
+          AND status = 'CLAIMED'
+          AND lease_owner = #{leaseOwner}
+          AND claim_token = #{claimToken}
+          AND fence_token = #{fenceToken}
+    </update>
+</mapper>

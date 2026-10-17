@@ -1,0 +1,29 @@
+package com.ifelio.ijob.contract.event;
+
+import com.ifelio.ijob.contract.common.BasePageQuery;
+import com.ifelio.ijob.contract.enums.EventWaitStatus;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class EventWaitPageQuery extends BasePageQuery {
+    private String taskName;
+
+    public String getTaskNamePattern() {
+        if (taskName == null || taskName.isEmpty()) return null;
+        return "%"
+                + taskName.replace("!", "!!")
+                        .replace("%", "!%")
+                        .replace("_", "!_")
+                        .replace("[", "![")
+                + "%";
+    }
+
+    private Long instanceId;
+    private Long rootInstanceId;
+    private EventWaitStatus status = EventWaitStatus.WAITING;
+}

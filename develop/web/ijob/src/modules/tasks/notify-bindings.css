@@ -1,0 +1,100 @@
+.binding-content {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.binding-content p {
+  margin: 0;
+}
+.binding-context {
+  display: grid;
+  gap: 6px;
+  overflow-wrap: anywhere;
+}
+.binding-context > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.binding-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.binding-content .editable-table {
+  min-width: 460px;
+}
+.binding-content .editable-col-config {
+  width: 42%;
+}
+.binding-content .editable-col-policy {
+  width: 32%;
+}
+.binding-content .editable-col-actions {
+  width: 120px;
+}
+.binding-row-actions {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+}
+.binding-config-name {
+  overflow-wrap: anywhere;
+  margin-bottom: 4px;
+}
+.binding-notes {
+  display: grid;
+  gap: 6px;
+}
+.binding-footer {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+.binding-footer > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.binding-footer .task-footer {
+  flex: none;
+}
+.binding-field-error {
+  color: var(--error);
+  font-size: 12px;
+  padding-top: 6px;
+}
+.binding-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.binding-pagination > span {
+  margin-right: auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+.binding-option {
+  display: grid;
+  gap: 4px;
+  padding: 4px 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.binding-option small {
+  color: var(--muted);
+}
+.binding-candidate-footer {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+}
+.binding-candidate-footer > div:last-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}

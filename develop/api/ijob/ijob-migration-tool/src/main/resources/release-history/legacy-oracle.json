@@ -1,0 +1,82 @@
+{
+  "19": {
+    "script": "V19__platform_baseline.sql",
+    "checksum": -431382394
+  },
+  "20": {
+    "script": "V20__execution_group_routing.sql",
+    "checksum": -1281881484
+  },
+  "21": {
+    "script": "V21__conditional_dag.sql",
+    "checksum": -1880784285
+  },
+  "22": {
+    "script": "V22__execution_target_routing.sql",
+    "checksum": -1203564435
+  },
+  "23": {
+    "script": "V23__composite_task_concurrency.sql",
+    "checksum": -694877474
+  },
+  "24": {
+    "script": "V24__schedule_misfire_and_queue_expiry.sql",
+    "checksum": -339063365
+  },
+  "25": {
+    "script": "V25__runtime_history_and_permit_wait.sql",
+    "checksum": -248504864
+  },
+  "26": {
+    "script": "V26__runtime_mutation_guards.sql",
+    "checksum": 112353513
+  },
+  "27": {
+    "script": "V27__security_foundation.sql",
+    "checksum": 2123457574
+  },
+  "28": {
+    "script": "V28__job_canvas_layout.sql",
+    "checksum": -245350348
+  },
+  "29": {
+    "script": "V29__concurrency_resource_revision.sql",
+    "checksum": 1411133778
+  },
+  "30": {
+    "script": "V30__etl_file_incremental.sql",
+    "checksum": -1146632119
+  },
+  "31": {
+    "script": "V31__gateway_snapshot_constraint.sql",
+    "checksum": -1134464871
+  },
+  "32": {
+    "script": "V32__mail_channels.sql",
+    "checksum": 2019714072
+  },
+  "33": {
+    "script": "V33__nullable_instance_node_uniqueness.sql",
+    "checksum": -1891543951
+  },
+  "34": {
+    "script": "V34__table_primary_id_namespaces.sql",
+    "checksum": -1959210077
+  },
+  "35": {
+    "script": "V35__remove_legacy_job_graph.sql",
+    "checksum": 1237807158
+  },
+  "36": {
+    "script": "V36__parameter_templates.sql",
+    "checksum": -757459054
+  },
+  "37": {
+    "script": "V37__trigger_business_time.sql",
+    "checksum": -1155932446
+  },
+  "38": {
+    "script": "V38__notification_channels.sql",
+    "checksum": 775138275
+  }
+}

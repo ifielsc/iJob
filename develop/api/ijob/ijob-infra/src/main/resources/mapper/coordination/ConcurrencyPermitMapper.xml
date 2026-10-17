@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.ConcurrencyPermitMapper">
+
+    <resultMap id="distributedPermitResultMap"
+               type="com.ifelio.ijob.infra.coordination.permit.DistributedPermit">
+        <constructor>
+            <arg column="scope_key" javaType="java.lang.String"/>
+            <arg column="slot_no" javaType="_int"/>
+            <arg column="owner_instance_id" javaType="java.lang.Long"/>
+            <arg column="owner_root_instance_id" javaType="java.lang.Long"/>
+            <arg column="owner_trigger_id" javaType="java.lang.Long"/>
+            <arg column="lease_owner" javaType="java.lang.String"/>
+            <arg column="permit_token" javaType="java.lang.String"/>
+            <arg column="permit_fence" javaType="_long"/>
+            <arg column="execution_fence" javaType="_long"/>
+            <arg column="lease_deadline" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insertSlotIfAbsent">
+        INSERT INTO ifj_concurrency_permit (scope_key, slot_no)
+        VALUES (#{scopeKey}, #{slotNo})
+        ON DUPLICATE KEY UPDATE scope_key = VALUES(scope_key)
+    </insert>
+
+    <update id="claimSlot">
+        UPDATE ifj_concurrency_permit permit
+        JOIN ifj_instance instance_record ON instance_record.id = #{instanceId}
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = instance_record.trigger_id
+        SET permit.owner_instance_id = instance_record.id,
+            permit.owner_root_instance_id = instance_record.root_instance_id,
+            permit.owner_trigger_id = instance_record.trigger_id,
+            permit.lease_owner = #{leaseOwner},
+            permit.permit_token = #{permitToken},
+            permit.permit_fence = permit.permit_fence + 1,
+            permit.execution_fence = #{executionFence},
+            permit.lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            permit.update_time = CURRENT_TIMESTAMP(3)
+        WHERE permit.scope_key = #{scopeKey}
+          AND permit.slot_no = #{slotNo}
+          AND permit.permit_fence &lt; 9223372036854775807
+          AND (permit.owner_instance_id IS NULL
+            OR permit.lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <select id="selectByToken" resultMap="distributedPermitResultMap">
+        SELECT scope_key, slot_no, owner_instance_id, owner_root_instance_id,
+               owner_trigger_id, lease_owner, permit_token, permit_fence,
+               execution_fence, lease_deadline
+        FROM ifj_concurrency_permit
+        WHERE permit_token = #{permitToken}
+    </select>
+
+    <select id="countActiveByScope" resultType="int">
+        SELECT COUNT(*) FROM ifj_concurrency_permit
+        WHERE scope_key=#{scopeKey} AND owner_instance_id IS NOT NULL
+          AND lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </select>
+    <select id="countActiveByScope" databaseId="sqlite" resultType="int">
+        SELECT COUNT(*) FROM ifj_concurrency_permit
+        WHERE scope_key=#{scopeKey} AND owner_instance_id IS NOT NULL
+          AND lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </select>
+    <select id="countActiveByScope" databaseId="oracle" resultType="int">
+        SELECT COUNT(*) FROM ifj_concurrency_permit
+        WHERE scope_key=#{scopeKey} AND owner_instance_id IS NOT NULL
+          AND lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </select>
+    <select id="countActiveByScope" databaseId="sqlserver" resultType="int">
+        SELECT COUNT(*) FROM ifj_concurrency_permit
+        WHERE scope_key=#{scopeKey} AND owner_instance_id IS NOT NULL
+          AND lease_deadline &gt; SYSUTCDATETIME()
+    </select>
+
+    <update id="renew">
+        UPDATE ifj_concurrency_permit permit
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = permit.owner_trigger_id
+        SET permit.lease_deadline = TIMESTAMPADD(MICROSECOND, #{leaseMicros}, CURRENT_TIMESTAMP(3)),
+            permit.update_time = CURRENT_TIMESTAMP(3)
+        WHERE permit.permit_token = #{permitToken}
+          AND permit.lease_owner = #{leaseOwner}
+          AND permit.permit_fence = #{permitFence}
+          AND permit.execution_fence = #{executionFence}
+          AND permit.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+    <update id="release">
+        UPDATE ifj_concurrency_permit
+        SET owner_instance_id = NULL,
+            owner_root_instance_id = NULL,
+            owner_trigger_id = NULL,
+            lease_owner = NULL,
+            permit_token = NULL,
+            execution_fence = NULL,
+            lease_deadline = NULL,
+            update_time = CURRENT_TIMESTAMP(3)
+        WHERE permit_token = #{permitToken}
+          AND lease_owner = #{leaseOwner}
+          AND permit_fence = #{permitFence}
+          AND execution_fence = #{executionFence}
+    </update>
+
+<update id="release" databaseId="sqlite">
+        UPDATE ifj_concurrency_permit
+        SET owner_instance_id = NULL,
+            owner_root_instance_id = NULL,
+            owner_trigger_id = NULL,
+            lease_owner = NULL,
+            permit_token = NULL,
+            execution_fence = NULL,
+            lease_deadline = NULL,
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        WHERE permit_token = #{permitToken}
+          AND lease_owner = #{leaseOwner}
+          AND permit_fence = #{permitFence}
+          AND execution_fence = #{executionFence}
+    </update>
+
+<update id="release" databaseId="oracle">
+        UPDATE ifj_concurrency_permit
+        SET owner_instance_id = NULL,
+            owner_root_instance_id = NULL,
+            owner_trigger_id = NULL,
+            lease_owner = NULL,
+            permit_token = NULL,
+            execution_fence = NULL,
+            lease_deadline = NULL,
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        WHERE permit_token = #{permitToken}
+          AND lease_owner = #{leaseOwner}
+          AND permit_fence = #{permitFence}
+          AND execution_fence = #{executionFence}
+    </update>
+
+<update id="release" databaseId="sqlserver">
+        UPDATE ifj_concurrency_permit
+        SET owner_instance_id = NULL,
+            owner_root_instance_id = NULL,
+            owner_trigger_id = NULL,
+            lease_owner = NULL,
+            permit_token = NULL,
+            execution_fence = NULL,
+            lease_deadline = NULL,
+            update_time = SYSUTCDATETIME()
+        WHERE permit_token = #{permitToken}
+          AND lease_owner = #{leaseOwner}
+          AND permit_fence = #{permitFence}
+          AND execution_fence = #{executionFence}
+    </update>
+
+    <select id="isInstanceAdmissible" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) = 1 THEN TRUE ELSE FALSE END
+        FROM ifj_instance instance_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = instance_record.trigger_id
+        WHERE instance_record.id = #{instanceId}
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </select>
+
+<select id="isInstanceAdmissible" databaseId="sqlite" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) = 1 THEN TRUE ELSE FALSE END
+        FROM ifj_instance instance_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = instance_record.trigger_id
+        WHERE instance_record.id = #{instanceId}
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </select>
+
+<select id="isInstanceAdmissible" databaseId="oracle" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) = 1 THEN 1 ELSE 0 END
+        FROM ifj_instance instance_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = instance_record.trigger_id
+        WHERE instance_record.id = #{instanceId}
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+    </select>
+
+<select id="isInstanceAdmissible" databaseId="sqlserver" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) = 1 THEN 1 ELSE 0 END
+        FROM ifj_instance instance_record
+        JOIN ifj_trigger_work_item work_item
+          ON work_item.trigger_id = instance_record.trigger_id
+        WHERE instance_record.id = #{instanceId}
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+    </select>
+
+    <insert id="insertSlotIfAbsent" databaseId="postgresql">
+        INSERT INTO ifj_concurrency_permit (scope_key, slot_no)
+        VALUES (#{scopeKey}, #{slotNo})
+        ON CONFLICT (scope_key, slot_no) DO NOTHING
+    </insert>
+
+<insert id="insertSlotIfAbsent" databaseId="sqlite">
+        INSERT INTO ifj_concurrency_permit (scope_key, slot_no)
+        VALUES (#{scopeKey}, #{slotNo})
+        ON CONFLICT (scope_key, slot_no) DO NOTHING
+    </insert>
+
+<insert id="insertSlotIfAbsent" databaseId="oracle">
+        MERGE INTO ifj_concurrency_permit target
+        USING (SELECT 1 AS marker FROM dual) source
+        ON (target.scope_key = #{scopeKey} AND target.slot_no = #{slotNo})
+        WHEN NOT MATCHED THEN INSERT (scope_key, slot_no)
+        VALUES (#{scopeKey}, #{slotNo})</insert>
+
+<insert id="insertSlotIfAbsent" databaseId="sqlserver">
+        IF NOT EXISTS (SELECT 1 FROM ifj_concurrency_permit WITH (UPDLOCK, HOLDLOCK) WHERE scope_key = #{scopeKey} AND slot_no = #{slotNo})
+        BEGIN
+
+        INSERT INTO ifj_concurrency_permit (scope_key, slot_no)
+        VALUES (#{scopeKey}, #{slotNo})
+        END</insert>
+<update id="claimSlot" databaseId="postgresql">
+        UPDATE ifj_concurrency_permit permit
+        SET owner_instance_id = instance_record.id,
+            owner_root_instance_id = instance_record.root_instance_id,
+            owner_trigger_id = instance_record.trigger_id,
+            lease_owner = #{leaseOwner},
+            permit_token = #{permitToken},
+            permit_fence = permit.permit_fence + 1,
+            execution_fence = #{executionFence},
+            lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_instance instance_record,
+             ifj_trigger_work_item work_item
+        WHERE instance_record.id = #{instanceId}
+          AND work_item.trigger_id = instance_record.trigger_id
+          AND permit.scope_key = #{scopeKey}
+          AND permit.slot_no = #{slotNo}
+          AND permit.permit_fence &lt; 9223372036854775807
+          AND (permit.owner_instance_id IS NULL
+            OR permit.lease_deadline &lt;= CURRENT_TIMESTAMP(3))
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="claimSlot" databaseId="sqlite">
+        UPDATE ifj_concurrency_permit AS permit
+        SET owner_instance_id = instance_record.id,
+            owner_root_instance_id = instance_record.root_instance_id,
+            owner_trigger_id = instance_record.trigger_id,
+            lease_owner = #{leaseOwner},
+            permit_token = #{permitToken},
+            permit_fence = permit.permit_fence + 1,
+            execution_fence = #{executionFence},
+            lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_instance instance_record,
+             ifj_trigger_work_item work_item
+        WHERE instance_record.id = #{instanceId}
+          AND work_item.trigger_id = instance_record.trigger_id
+          AND permit.scope_key = #{scopeKey}
+          AND permit.slot_no = #{slotNo}
+          AND permit.permit_fence &lt; 9223372036854775807
+          AND (permit.owner_instance_id IS NULL
+            OR permit.lease_deadline &lt;= strftime('%Y-%m-%d %H:%M:%f','now'))
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="claimSlot" databaseId="oracle">
+        MERGE INTO ifj_concurrency_permit permit
+        USING (
+            SELECT permit.ROWID AS target_rowid, instance_record.id AS source_value_0, instance_record.root_instance_id AS source_value_1, instance_record.trigger_id AS source_value_2
+            FROM ifj_concurrency_permit permit, ifj_instance instance_record,
+             ifj_trigger_work_item work_item
+            WHERE instance_record.id = #{instanceId}
+          AND work_item.trigger_id = instance_record.trigger_id
+          AND permit.scope_key = #{scopeKey}
+          AND permit.slot_no = #{slotNo}
+          AND permit.permit_fence &lt; 9223372036854775807
+          AND (permit.owner_instance_id IS NULL
+            OR permit.lease_deadline &lt;= CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)))
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        ) source
+        ON (permit.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET owner_instance_id = source.source_value_0,
+            owner_root_instance_id = source.source_value_1,
+            owner_trigger_id = source.source_value_2,
+            lease_owner = #{leaseOwner},
+            permit_token = #{permitToken},
+            permit_fence = permit.permit_fence + 1,
+            execution_fence = #{executionFence},
+            lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="claimSlot" databaseId="sqlserver">
+        UPDATE permit
+        SET owner_instance_id = instance_record.id,
+            owner_root_instance_id = instance_record.root_instance_id,
+            owner_trigger_id = instance_record.trigger_id,
+            lease_owner = #{leaseOwner},
+            permit_token = #{permitToken},
+            permit_fence = permit.permit_fence + 1,
+            execution_fence = #{executionFence},
+            lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            update_time = SYSUTCDATETIME()
+        FROM ifj_concurrency_permit AS permit,
+             ifj_instance instance_record,
+             ifj_trigger_work_item work_item
+        WHERE instance_record.id = #{instanceId}
+          AND work_item.trigger_id = instance_record.trigger_id
+          AND permit.scope_key = #{scopeKey}
+          AND permit.slot_no = #{slotNo}
+          AND permit.permit_fence &lt; 9223372036854775807
+          AND (permit.owner_instance_id IS NULL
+            OR permit.lease_deadline &lt;= SYSUTCDATETIME())
+          AND instance_record.root_instance_id IS NOT NULL
+          AND instance_record.execution_fence = #{executionFence}
+          AND instance_record.status IN ('WAITING', 'RUNNING')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.claim_token = #{claimToken}
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+<update id="renew" databaseId="postgresql">
+        UPDATE ifj_concurrency_permit permit
+        SET lease_deadline = (CURRENT_TIMESTAMP(3) + (#{leaseMicros} * INTERVAL '1 microsecond')),
+            update_time = CURRENT_TIMESTAMP(3)
+        FROM ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = permit.owner_trigger_id
+          AND permit.permit_token = #{permitToken}
+          AND permit.lease_owner = #{leaseOwner}
+          AND permit.permit_fence = #{permitFence}
+          AND permit.execution_fence = #{executionFence}
+          AND permit.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; CURRENT_TIMESTAMP(3)
+    </update>
+
+<update id="renew" databaseId="sqlite">
+        UPDATE ifj_concurrency_permit AS permit
+        SET lease_deadline = strftime('%Y-%m-%d %H:%M:%f','now', printf('+%.6f seconds', (#{leaseMicros} / 1000000.0))),
+            update_time = strftime('%Y-%m-%d %H:%M:%f','now')
+        FROM ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = permit.owner_trigger_id
+          AND permit.permit_token = #{permitToken}
+          AND permit.lease_owner = #{leaseOwner}
+          AND permit.permit_fence = #{permitFence}
+          AND permit.execution_fence = #{executionFence}
+          AND permit.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; strftime('%Y-%m-%d %H:%M:%f','now')
+    </update>
+
+<update id="renew" databaseId="oracle">
+        MERGE INTO ifj_concurrency_permit permit
+        USING (
+            SELECT permit.ROWID AS target_rowid
+            FROM ifj_concurrency_permit permit, ifj_trigger_work_item work_item
+            WHERE work_item.trigger_id = permit.owner_trigger_id
+          AND permit.permit_token = #{permitToken}
+          AND permit.lease_owner = #{leaseOwner}
+          AND permit.permit_fence = #{permitFence}
+          AND permit.execution_fence = #{executionFence}
+          AND permit.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        ) source
+        ON (permit.ROWID = source.target_rowid)
+        WHEN MATCHED THEN UPDATE SET lease_deadline = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)) + NUMTODSINTERVAL(#{leaseMicros} / 1000000, 'SECOND'),
+            update_time = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))</update>
+
+<update id="renew" databaseId="sqlserver">
+        UPDATE permit
+        SET lease_deadline = DATEADD(MILLISECOND, (#{leaseMicros} / 1000), SYSUTCDATETIME()),
+            update_time = SYSUTCDATETIME()
+        FROM ifj_concurrency_permit AS permit,
+             ifj_trigger_work_item work_item
+        WHERE work_item.trigger_id = permit.owner_trigger_id
+          AND permit.permit_token = #{permitToken}
+          AND permit.lease_owner = #{leaseOwner}
+          AND permit.permit_fence = #{permitFence}
+          AND permit.execution_fence = #{executionFence}
+          AND permit.lease_deadline &gt; SYSUTCDATETIME()
+          AND work_item.status = 'CLAIMED'
+          AND work_item.fence_token = #{executionFence}
+          AND work_item.lease_deadline &gt; SYSUTCDATETIME()
+    </update>
+</mapper>
