@@ -10,7 +10,7 @@
 
 用 `git rev-parse --show-toplevel`、`git remote -v` 确认位置和远程。旧外层 develop 树是导入前保留副本，不能与本仓库同时作为编辑入口，也不能整目录复制覆盖本仓库。历史报告和机器专用路径留在外层工作区索引。
 
-当前冻结交付名为 `release-1.0.0-20261017-setup-guide`，位于维护工作区 outputs。源码仓库不含 outputs、用户数据或发布二进制，也没有创建 GitHub Release。提交/推送不会更新已交付 JAR 或部署应用。
+当前冻结交付名为 `release-1.0.0-20261017-setup-guide`，位于原工作区 outputs，由新工作区归档索引记录。源码仓库不含 outputs、用户数据或发布二进制，也没有创建 GitHub Release。提交/推送不会更新已交付 JAR 或部署应用。
 
 ## 日常同步 GitHub
 
@@ -22,10 +22,10 @@ git switch main
 git pull --ff-only origin main
 ```
 
-修改、执行与改动相关的检查后，运行敏感信息扫描。将 RUN_ID 替换为每次唯一的证据目录名：
+修改、执行与改动相关的检查后，运行敏感信息扫描。先按环境规范登记 ENV_ID，将 RUN_ID 替换为每次唯一的证据目录名；以下命令从源码仓库根目录执行：
 
 ```sh
-python tools/repository/prepare.py scan --report test/reports/RUN_ID/scan.json
+python tools/repository/prepare.py scan --report ../runtime/ENV_ID/runs/RUN_ID/reports/scan.json
 ```
 
 新增文件须先加入逐文件白名单并重新生成忽略规则，见下文。扫描通过后，仅暂存本次要交付的文件；下面以文档修改为例，其他修改请替换路径和提交说明：
@@ -46,16 +46,16 @@ git status --short
 
 ## 白名单
 
-机器可读清单为 [allowlist.json](../../.repository/allowlist.json)，每个文件明确列出。包含主后端所有模块源码/测试/迁移 SQL、Agent、前端源码/测试/资源/锁文件/补丁、构建描述、受维护工具和脱敏部署模板。保留 Java 源码中名为 `target` 的业务包；只排除构建输出，不能用无例外的 `**/target/**` 过滤源码。
+机器可读清单为 [allowlist.json](../../.repository/allowlist.json)，每个文件明确列出。包含主后端所有模块源码/测试/正式 V1 SQL、Agent、前端源码/测试/资源/锁文件/补丁、构建描述、当前规范、受维护工具和脱敏部署模板。历史 SQL 以固定提交和哈希清单恢复到仓库外，不进入当前源码树。保留 Java 源码中名为 `target` 的业务包；只排除构建输出，不能用无例外的 `**/target/**` 过滤源码。
 
 | 不入库的内容 | 保留方式 |
 | --- | --- |
 | 本机账户文件、local-secrets、真实 application-local 配置、密钥/数据库 | 原地受限保存，不复制到候选目录 |
 | outputs / output、backup、QA/cluster、test/environments | 原地保留，既有备份和证据索引继续有效 |
-| 历史报告/截图/trace/日志、test/builds、历史验收脚本 | 原地保留；初始仓库不承载环境历史 |
+| 历史报告/截图/trace/日志、test/builds、历史验收脚本 | 原工作区资料保留；仓库原有报告已完整移入外层 maintenance/historical-evidence，旧候选移入 archives |
 | Maven/Node 缓存、target 构建产物、dist、IDE 设置 | 不复制，按锁定工具链重建 |
 | 旧审计/数据库维护及历史制品采集脚本 | 原件保留；依赖本机账户文件、旧版本或旧证据链的脚本不进入初始白名单 |
-| 历史设计与过程文档 | 原地保留；入库只收当前自洽入口和必要配置示例 |
+| 历史设计与过程文档 | 原件保留；选定参考副本进入 maintenance/references；当前规范进入 document/standards 和 document/operations |
 
 排除项不是删除清单。此轮不迁移或清理任何运行数据、QA/cluster 或旧备份。`test/tools/verify-frontend.ps1` 是根 test 树唯一入库文件，其生成的报告继续被排除。
 
@@ -64,8 +64,8 @@ git status --short
 工具只依赖 Python 3.10+ 标准库，无网络操作、无 Git 调用。进入仓库根目录，用新的报告路径和候选目录执行：
 
 ```sh
-python tools/repository/prepare.py scan --report test/reports/private-prep-new/scan.json
-python tools/repository/prepare.py export --destination test/repository-candidates/private-prep-new --report test/reports/private-prep-new/export.json
+python tools/repository/prepare.py scan --report ../runtime/ENV_ID/runs/private-prep-new/reports/scan.json
+python tools/repository/prepare.py export --destination ../runtime/ENV_ID/runs/private-prep-new/source --report ../runtime/ENV_ID/runs/private-prep-new/reports/export.json
 ```
 
 工具拒绝覆盖已有报告/候选目录。导出前后扫描、逐文件 SHA-256 校验，清单与报告保存在候选目录外。当前工作区额外执行了 `--local-input` 与被排除本地凭据的内存比较；只记录命中位置和规则，不输出秘密值。独立克隆者不需要原维护者的本地凭据。

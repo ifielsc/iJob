@@ -68,6 +68,6 @@ Provisioner 会重建符合命名约束的专用目标。某些专项会读取 I
 
 Docker 等待后端/Agent 和前端通过后执行。校验 images.env 与 images.lock.json 一致，使用独立 Compose 项目名和 CI 镜像标签；临时空文件仅满足 Compose secret 路径检查，没有真实认证材料。模板校验不验证数据库连接，构建也不验证健康探针、实际 nginx 代理或 Agent 鉴权。上述运行验收及五库集成属于后续阶段。
 
-证据位于 `test/reports/<RunId>`，包括命令日志、JUnit 和前端报告/哈希、Docker 构建日志与镜像 ID。后端在 Maven 失败时仍收集已生成的 JUnit；工作流 always 上传已存在报告，保留 14 天。工具安装失败发生在检查入口之前时，以 Actions 步骤日志为准。报告不包含 .m2、node_modules、临时数据库、配置目录、密码文件或整个工作区。取消/runner 丢失时报告可能不完整，不能据此签收。
+CI runner 的证据位于 `test/reports/<RunId>`，包括命令日志、JUnit 和前端报告/哈希、Docker 构建日志与镜像 ID。本地后端、专项和前端入口使用 `-ReportRoot`、`-TemporaryRoot` 指向仓库外 `runtime/<env-id>/runs/<run-id>/`，详见[工作区规范](../operations/workspace-and-environments.md)。后端在 Maven 失败时仍收集已生成的 JUnit；工作流 always 上传已存在报告，保留 14 天。工具安装失败发生在检查入口之前时，以 Actions 步骤日志为准。报告不包含 .m2、node_modules、临时数据库、配置目录、密码文件或整个工作区。取消/runner 丢失时报告可能不完整，不能据此签收。
 
 后续依次接入真实后端浏览器集成、容器运行冒烟、五库和双节点、SBOM/漏洞扫描及发布基线。本次基础 CI 不替代这些验收，也不改变冻结交付包。
