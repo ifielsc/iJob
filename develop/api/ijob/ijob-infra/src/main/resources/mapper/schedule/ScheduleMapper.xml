@@ -2,18 +2,18 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.schedule.ScheduleMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.schedule.ScheduleMapper">
 
     <resultMap id="ScheduleResultMap"
-               type="com.ifelio.ijob.infra.entity.schedule.Schedule">
+               type="com.ifielsc.ijob.infra.entity.schedule.Schedule">
         <id property="id" column="id"/>
         <result property="revision" column="revision"/>
         <result property="targetType" column="target_type"
-                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+                javaType="com.ifielsc.ijob.contract.enums.TargetType"/>
         <result property="targetId" column="target_id"/>
         <result property="targetName" column="target_name"/>
         <result property="scheduleType" column="schedule_type"
-                javaType="com.ifelio.ijob.contract.enums.ScheduleType"/>
+                javaType="com.ifielsc.ijob.contract.enums.ScheduleType"/>
         <result property="cronExpr" column="cron_expr"/>
         <result property="intervalSec" column="interval_sec"/>
         <result property="calendarId" column="calendar_id"/>
@@ -23,7 +23,7 @@
         <result property="lastFireTime" column="last_fire_time"/>
         <result property="nextFireTime" column="next_fire_time"/>
         <result property="misfirePolicy" column="misfire_policy"
-                javaType="com.ifelio.ijob.contract.enums.ScheduleMisfirePolicy"/>
+                javaType="com.ifielsc.ijob.contract.enums.ScheduleMisfirePolicy"/>
         <result property="misfireGraceSec" column="misfire_grace_sec"/>
         <result property="maxCatchupCount" column="max_catchup_count"/>
         <result property="maxQueueDelaySec" column="max_queue_delay_sec"/>
@@ -335,7 +335,7 @@
     </update>
 
     <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.schedule.Schedule">
+            parameterType="com.ifielsc.ijob.infra.entity.schedule.Schedule">
         INSERT INTO ifj_schedule (
             id,
             target_type,
@@ -382,7 +382,7 @@
     </insert>
 
     <update id="updateById"
-            parameterType="com.ifelio.ijob.infra.entity.schedule.Schedule">
+            parameterType="com.ifielsc.ijob.infra.entity.schedule.Schedule">
         UPDATE ifj_schedule
         SET target_type = #{targetType},
             target_id = #{targetId},
@@ -408,7 +408,7 @@
     </update>
 
     <update id="updateEnabledById"
-            parameterType="com.ifelio.ijob.infra.entity.schedule.Schedule">
+            parameterType="com.ifielsc.ijob.infra.entity.schedule.Schedule">
         UPDATE ifj_schedule
         SET enabled = #{enabled},
             next_fire_time = #{nextFireTime,jdbcType=TIMESTAMP},

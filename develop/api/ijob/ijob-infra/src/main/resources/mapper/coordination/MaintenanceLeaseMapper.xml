@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.MaintenanceLeaseMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.coordination.MaintenanceLeaseMapper">
     <resultMap id="maintenanceLeaseResultMap"
-               type="com.ifelio.ijob.infra.coordination.maintenance.MaintenanceLease">
+               type="com.ifielsc.ijob.infra.coordination.maintenance.MaintenanceLease">
         <id property="leaseName" column="lease_name"/>
         <result property="leaseOwner" column="lease_owner"/>
         <result property="leaseToken" column="lease_token"/>

@@ -2,15 +2,15 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.calendar.CalendarExceptionMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.calendar.CalendarExceptionMapper">
 
     <resultMap id="CalendarExceptionResultMap"
-               type="com.ifelio.ijob.infra.entity.calendar.CalendarException">
+               type="com.ifielsc.ijob.infra.entity.calendar.CalendarException">
         <id property="id" column="id"/>
         <result property="calendarId" column="calendar_id"/>
         <result property="date" column="date"/>
         <result property="type" column="type"
-                javaType="com.ifelio.ijob.contract.enums.CalendarDateType"/>
+                javaType="com.ifielsc.ijob.contract.enums.CalendarDateType"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
@@ -44,7 +44,7 @@
     </select>
 
     <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.calendar.CalendarException">
+            parameterType="com.ifielsc.ijob.infra.entity.calendar.CalendarException">
         INSERT INTO ifj_calendar_exception (
             id,
             calendar_id,
@@ -63,7 +63,7 @@
     </insert>
 
 <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.calendar.CalendarException" databaseId="oracle">
+            parameterType="com.ifielsc.ijob.infra.entity.calendar.CalendarException" databaseId="oracle">
         INSERT INTO ifj_calendar_exception (
             id,
             calendar_id,

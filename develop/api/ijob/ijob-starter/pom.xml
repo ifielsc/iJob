@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.ifelio</groupId>
+        <groupId>com.ifielsc</groupId>
         <artifactId>ijob</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -17,23 +17,23 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ifelio</groupId>
+            <groupId>com.ifielsc</groupId>
             <artifactId>ijob-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ifelio</groupId>
+            <groupId>com.ifielsc</groupId>
             <artifactId>ijob-framework</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ifelio</groupId>
+            <groupId>com.ifielsc</groupId>
             <artifactId>ijob-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ifelio</groupId>
+            <groupId>com.ifielsc</groupId>
             <artifactId>ijob-infra</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ifelio</groupId>
+            <groupId>com.ifielsc</groupId>
             <artifactId>ijob-plugin</artifactId>
         </dependency>
 
@@ -125,10 +125,22 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.ifelio.ijob.IJobApplication</mainClass>
+                    <mainClass>com.ifielsc.ijob.IJobApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>legacy-db</id>
+            <activation><property><name>ijob.legacy.resources</name></property></activation>
+            <build>
+                <testResources>
+                    <testResource><directory>src/test/resources</directory></testResource>
+                    <testResource><directory>${ijob.legacy.resources}</directory><includes><include>db/migration/**</include></includes></testResource>
+                </testResources>
+            </build>
+        </profile>
+    </profiles>
 </project>

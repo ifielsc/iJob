@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.DagGatewayDecisionMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.runtime.DagGatewayDecisionMapper">
 
     <resultMap id="decisionResultMap"
-               type="com.ifelio.ijob.infra.entity.runtime.DagGatewayDecision">
+               type="com.ifielsc.ijob.infra.entity.runtime.DagGatewayDecision">
         <id property="id" column="id"/>
         <result property="jobInstanceId" column="job_instance_id"/>
         <result property="definitionNodeId" column="definition_node_id"/>
@@ -14,7 +14,7 @@
         <result property="contextDigest" column="context_digest"/>
         <result property="evaluatorVersion" column="evaluator_version"/>
         <result property="status" column="status"
-                javaType="com.ifelio.ijob.contract.enums.GatewayDecisionStatus"/>
+                javaType="com.ifielsc.ijob.contract.enums.GatewayDecisionStatus"/>
         <result property="errorCode" column="error_code"/>
         <result property="executionFence" column="execution_fence"/>
         <result property="createTime" column="create_time"/>

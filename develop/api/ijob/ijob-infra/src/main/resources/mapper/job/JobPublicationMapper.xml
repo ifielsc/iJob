@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobPublicationMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.job.JobPublicationMapper">
 
     <resultMap id="PublicationIdentityResultMap"
-               type="com.ifelio.ijob.infra.mapper.job.JobPublicationIdentityRow">
+               type="com.ifielsc.ijob.infra.mapper.job.JobPublicationIdentityRow">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="currentDefinitionId"
@@ -106,7 +106,7 @@
     </select>
 
     <insert id="insertIdentity"
-            parameterType="com.ifelio.ijob.infra.entity.job.Job">
+            parameterType="com.ifielsc.ijob.infra.entity.job.Job">
         INSERT INTO ifj_job (
             id,
             name,
@@ -135,7 +135,7 @@
     </insert>
 
 <insert id="insertIdentity"
-            parameterType="com.ifelio.ijob.infra.entity.job.Job" databaseId="oracle">
+            parameterType="com.ifielsc.ijob.infra.entity.job.Job" databaseId="oracle">
         INSERT INTO ifj_job (
             id,
             name,
@@ -188,7 +188,7 @@
     </update>
 
     <update id="advanceCurrentDefinition"
-            parameterType="com.ifelio.ijob.infra.mapper.job.JobCurrentDefinitionAdvance">
+            parameterType="com.ifielsc.ijob.infra.mapper.job.JobCurrentDefinitionAdvance">
         UPDATE ifj_job
         SET current_definition_id = #{definitionId},
             current_revision = #{nextRevision},
@@ -205,7 +205,7 @@
     </update>
 
 <update id="advanceCurrentDefinition"
-            parameterType="com.ifelio.ijob.infra.mapper.job.JobCurrentDefinitionAdvance" databaseId="oracle">
+            parameterType="com.ifielsc.ijob.infra.mapper.job.JobCurrentDefinitionAdvance" databaseId="oracle">
         UPDATE ifj_job
         SET current_definition_id = #{definitionId},
             current_revision = #{nextRevision},
@@ -222,7 +222,7 @@
     </update>
 
     <update id="retireIdentity"
-            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.job.JobIdentityRetirement">
         UPDATE ifj_job
         SET retired = TRUE,
             retired_time = #{retiredTime},
@@ -236,7 +236,7 @@
 
 
     <update id="retireIdentity" databaseId="postgresql"
-            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.job.JobIdentityRetirement">
         UPDATE ifj_job
         SET retired = TRUE,
             retired_time = #{retiredTime},
@@ -249,7 +249,7 @@
     </update>
 
 <update id="retireIdentity" databaseId="sqlite"
-            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.job.JobIdentityRetirement">
         UPDATE ifj_job
         SET retired = TRUE,
             retired_time = #{retiredTime},
@@ -262,7 +262,7 @@
     </update>
 
 <update id="retireIdentity" databaseId="oracle"
-            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.job.JobIdentityRetirement">
         UPDATE ifj_job
         SET retired = 1,
             retired_time = #{retiredTime},
@@ -275,7 +275,7 @@
     </update>
 
 <update id="retireIdentity" databaseId="sqlserver"
-            parameterType="com.ifelio.ijob.infra.mapper.job.JobIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.job.JobIdentityRetirement">
         UPDATE ifj_job
         SET retired = 1,
             retired_time = #{retiredTime},

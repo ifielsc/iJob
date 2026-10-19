@@ -14,7 +14,7 @@ RULES = {
     "private-key": r"-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----",
     "provider-token": r"(?<![A-Za-z0-9_])(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|AKIA[A-Z0-9]{16}|xox[baprs]-[A-Za-z0-9-]{20,}|sk-(?:proj-)?[A-Za-z0-9_-]{40,})",
     "local-address": r"\b(?:192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(?:1[6-9]|2\d|3[01])\.\d+\.\d+)\b",
-    "personal-path": r"(?i)(?:[A-Z]:[/\\](?:Users|iFeel|Java|Program Files|Software)[/\\]|账户\.txt)",
+    "personal-path": r"(?i)(?:[A-Z]:[/\\](?:Users|iFeel|iFielsc|Java|Program Files|Software)[/\\]|账户\.txt)",
     "credential-literal": r'''(?i)(?:password|passwd|pwd|secret|api[_-]?key|access[_-]?key|token|aes[_-]?key)[\w-]*["']?\s*[:=]\s*["'][^"'\r\n]{4,}["']''',
     "credential-setter": r'''(?i)\bset(?:Password|Secret|Token|ApiKey|AccessKey|PasswordHash)\(\s*["'][^"'\r\n]{4,}["']''',
     "credential-scalar": r'''(?i)^\s*(?:[\w.-]*password(?:-hash)?|[\w.-]*secret|[\w.-]*token|[\w.-]*aes\.key)\s*[:=]\s*[^\s#$"'{][^\r\n]{3,}''',

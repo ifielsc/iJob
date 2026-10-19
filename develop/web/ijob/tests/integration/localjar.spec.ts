@@ -67,7 +67,7 @@ test('isolated Local JAR publication, exact parameters, snapshots, validation an
   expect(config).toMatchObject({
     jarSize: fixture.jarSize,
     implementationVersion: 'editor-fixture-1.0',
-    spiVersion: '2',
+    spiVersion: '1',
     userConfig: { regions: ['cn'] },
   })
   await page.getByRole('button', { name: '编辑 Isolated local JAR', exact: true }).click()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.concurrency.ConcurrencyContextMapper">
-  <select id="selectResourceContexts" resultType="com.ifelio.ijob.contract.concurrency.ConcurrencyResourceDTO">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.concurrency.ConcurrencyContextMapper">
+  <select id="selectResourceContexts" resultType="com.ifielsc.ijob.contract.concurrency.ConcurrencyResourceDTO">
     SELECT r.id,
         (SELECT COUNT(*) FROM ifj_task_concurrency_resource refs WHERE refs.resource_id=r.id) AS reference_count,
         (SELECT COUNT(*) FROM ifj_task_concurrency_resource binding
@@ -17,7 +17,7 @@
     </choose>
     ORDER BY r.id
   </select>
-  <select id="selectPluginActivity" resultType="com.ifelio.ijob.contract.concurrency.PluginActivityDTO">
+  <select id="selectPluginActivity" resultType="com.ifielsc.ijob.contract.concurrency.PluginActivityDTO">
     SELECT definition.plugin_type AS type, COUNT(*) AS active_instance_count
     FROM ifj_instance inst JOIN ifj_task_definition definition ON definition.id=inst.task_definition_id
     WHERE inst.target_type='TASK' AND inst.status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')

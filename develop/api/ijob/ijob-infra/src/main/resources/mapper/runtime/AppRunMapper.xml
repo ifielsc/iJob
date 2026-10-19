@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.AppRunMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.runtime.AppRunMapper">
     <update id="markStaleActiveRunsCrashed">
         UPDATE ifj_app_run
         SET status = 'CRASHED', stopped_at = CURRENT_TIMESTAMP(3),

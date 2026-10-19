@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.RuntimeCommandMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.coordination.RuntimeCommandMapper">
 
     <resultMap id="runtimeCommandResultMap"
-               type="com.ifelio.ijob.infra.coordination.command.RuntimeCommand">
+               type="com.ifielsc.ijob.infra.coordination.command.RuntimeCommand">
         <id property="requestId" column="request_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="rootInstanceId" column="root_instance_id"/>
@@ -25,7 +25,7 @@
     </resultMap>
 
     <resultMap id="runtimeCommandDtoResultMap"
-               type="com.ifelio.ijob.contract.runtime.RuntimeCommandDTO">
+               type="com.ifielsc.ijob.contract.runtime.RuntimeCommandDTO">
         <id property="requestId" column="request_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="rootInstanceId" column="root_instance_id"/>
@@ -167,7 +167,7 @@
     </select>
 
     <select id="selectDispatchableOwned"
-            resultType="com.ifelio.ijob.infra.coordination.command.RuntimeCommandCandidate">
+            resultType="com.ifielsc.ijob.infra.coordination.command.RuntimeCommandCandidate">
         SELECT command_record.request_id AS requestId,
                command_record.trigger_id AS triggerId,
                work_item.fence_token AS fenceToken
@@ -187,7 +187,7 @@
     </select>
 
     <select id="selectDispatchableOwned" databaseId="sqlite"
-            resultType="com.ifelio.ijob.infra.coordination.command.RuntimeCommandCandidate">
+            resultType="com.ifielsc.ijob.infra.coordination.command.RuntimeCommandCandidate">
         SELECT command_record.request_id AS requestId,
                command_record.trigger_id AS triggerId,
                work_item.fence_token AS fenceToken
@@ -207,7 +207,7 @@
     </select>
 
     <select id="selectDispatchableOwned" databaseId="oracle"
-            resultType="com.ifelio.ijob.infra.coordination.command.RuntimeCommandCandidate">
+            resultType="com.ifielsc.ijob.infra.coordination.command.RuntimeCommandCandidate">
         SELECT * FROM (
           SELECT command_record.request_id AS requestId,
                  command_record.trigger_id AS triggerId,
@@ -228,7 +228,7 @@
     </select>
 
     <select id="selectDispatchableOwned" databaseId="sqlserver"
-            resultType="com.ifelio.ijob.infra.coordination.command.RuntimeCommandCandidate">
+            resultType="com.ifielsc.ijob.infra.coordination.command.RuntimeCommandCandidate">
         SELECT TOP (#{limit}) command_record.request_id AS requestId,
                command_record.trigger_id AS triggerId,
                work_item.fence_token AS fenceToken

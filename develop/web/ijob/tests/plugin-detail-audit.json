@@ -2,7 +2,7 @@
   {
     "plugin": "SQL",
     "scope": "tasks",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/sql/SqlTaskConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/sql/SqlTaskConfig.java",
     "fields": [
       "resourceId",
       "script",
@@ -18,7 +18,7 @@
   {
     "plugin": "SCRIPT",
     "scope": "tasks",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/script/ScriptTaskConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/script/ScriptTaskConfig.java",
     "fields": [
       "executionMode",
       "sshResourceId",
@@ -35,7 +35,7 @@
   {
     "plugin": "EVENT",
     "scope": "eventTask",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/event/EventTaskConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/event/EventTaskConfig.java",
     "fields": [
       "action",
       "eventCode",
@@ -64,7 +64,7 @@
   {
     "plugin": "API_CALL",
     "scope": "apiCall",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/apicall/ApiCallConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/apicall/ApiCallConfig.java",
     "fields": [
       "remoteStop",
       "resourceId",
@@ -81,7 +81,7 @@
   {
     "plugin": "ETL",
     "scope": "etl",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/etl/config/EtlTaskConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/etl/config/EtlTaskConfig.java",
     "fields": [
       "version",
       "execution",
@@ -96,7 +96,7 @@
   {
     "plugin": "BATCH_ETL",
     "scope": "batchEtl",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/batchetl/config/BatchEtlTaskConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/batchetl/config/BatchEtlTaskConfig.java",
     "fields": [
       "version",
       "sourceResourceId",
@@ -121,13 +121,13 @@
   {
     "plugin": "SERVER_MONITOR",
     "scope": "monitor",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/servermonitor/config/MonitorConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/servermonitor/config/MonitorConfig.java",
     "fields": ["resourceId", "collect", "rules", "notify"]
   },
   {
     "plugin": "LOCAL_JAR",
     "scope": "localJar",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/localjar/LocalJarTaskConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/localjar/LocalJarTaskConfig.java",
     "fields": [
       "formatVersion",
       "jarFile",
@@ -142,7 +142,7 @@
   {
     "plugin": "FILE_TRANSFER",
     "scope": "files",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/filetransfer/FileTransferConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/filetransfer/FileTransferConfig.java",
     "fields": [
       "mode",
       "sourceResourceId",
@@ -172,7 +172,7 @@
   {
     "plugin": "PUSH",
     "scope": "push",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/push/PushTaskConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/push/PushTaskConfig.java",
     "fields": [
       "sourceResourceId",
       "sql",
@@ -192,7 +192,7 @@
   {
     "plugin": "DATA_CHECK",
     "scope": "dataCheck",
-    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifelio/ijob/plugin/datacheck/config/DataCheckConfig.java",
+    "source": "develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/datacheck/config/DataCheckConfig.java",
     "fields": ["resourceId", "checks", "queryTimeoutSeconds", "handlers"]
   }
 ]

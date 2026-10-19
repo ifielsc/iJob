@@ -37,7 +37,7 @@ def main():
         for component in bom["components"]:
             filename = f"{component['name']}-{component['version']}.jar"
             bom_filenames.setdefault(filename, set()).add(component.get("purl", component["name"]))
-            if component.get("group") == "com.ifelio":
+            if component.get("group") == "com.ifielsc":
                 continue
             records.append({
                 "scope": label,

@@ -1,6 +1,6 @@
 # iJob 1.0.0
 
-任务调度与执行平台，包含 Java 后端、Vue 前端、监控 Agent、首次初始化和离线迁移工具。私有仓库 [ifelio/iJob](https://github.com/ifelio/iJob) 已建立，默认分支 `main`，目前仅所有者使用。2026-10-18 首次推送提交 `92eed059e605`，2,190 个文件已核对；日常开发与同步步骤见[维护说明](document/repository/private-repository.md)。
+任务调度与执行平台，包含 Java 后端、Vue 前端、监控 Agent、首次初始化和离线迁移工具。私有仓库 [ifielsc/iJob](https://github.com/ifielsc/iJob)，默认分支 `main`。开发前阅读[规范入口](document/standards/README.md)与[工作区和环境规则](document/operations/workspace-and-environments.md)；日常同步见[维护说明](document/repository/private-repository.md)。
 
 ## 源码与工具链
 
@@ -30,7 +30,7 @@
 
 默认认证保持 STATIC，`app.auth.bootstrap-enabled=false`。真实配置由初始化器生成到源码树外，或由部署者按模板在受限目录准备；源码中的 `application-local.yml` 明确排除，没有随仓库分发的默认账户/密码。生产连接、AES 密钥和 Agent token 不进入源码或镜像构建上下文。
 
-首次安装使用冻结 V1；旧迁移链仍随源码保留，不能通过改写历史 SQL 或随意 baseline 绕过版本边界。服务器数据库可按文档配置 CLUSTER，SQLite 仅单实例；同宿主双进程不等于物理高可用。
+首次安装使用冻结 V1；旧迁移链已归档，通过固定提交与哈希清单恢复到仓库外供专项测试和离线迁移工具使用，具体构建方式见[数据库规范](document/standards/database.md)。不能通过改写历史 SQL 或随意 baseline 绕过版本边界。服务器数据库可按文档配置 CLUSTER，SQLite 仅单实例；同宿主双进程不等于物理高可用。
 
 ## 入库边界
 

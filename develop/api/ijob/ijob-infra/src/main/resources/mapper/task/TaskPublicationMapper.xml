@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskPublicationMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.task.TaskPublicationMapper">
 
     <resultMap id="PublicationIdentityResultMap"
-               type="com.ifelio.ijob.infra.mapper.task.TaskPublicationIdentityRow">
+               type="com.ifielsc.ijob.infra.mapper.task.TaskPublicationIdentityRow">
         <id property="id" column="id"/>
         <result property="currentTaskDefinitionId"
                 column="current_task_definition_id"/>
@@ -71,7 +71,7 @@
     </select>
 
     <insert id="insertIdentity"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskPublicationIdentityInsert">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskPublicationIdentityInsert">
         INSERT INTO ifj_task (
             id,
             name,
@@ -108,7 +108,7 @@
     </insert>
 
 <insert id="insertIdentity"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskPublicationIdentityInsert" databaseId="oracle">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskPublicationIdentityInsert" databaseId="oracle">
         INSERT INTO ifj_task (
             id,
             name,
@@ -145,7 +145,7 @@
     </insert>
 
     <update id="initializeCurrentDefinition"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskCurrentDefinitionInitialization">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskCurrentDefinitionInitialization">
         UPDATE ifj_task
         SET current_task_definition_id = #{definitionId},
             current_revision = 1,
@@ -158,7 +158,7 @@
     </update>
 
 <update id="initializeCurrentDefinition"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskCurrentDefinitionInitialization" databaseId="oracle">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskCurrentDefinitionInitialization" databaseId="oracle">
         UPDATE ifj_task
         SET current_task_definition_id = #{definitionId},
             current_revision = 1,
@@ -171,7 +171,7 @@
     </update>
 
     <update id="advanceCurrentDefinition"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskCurrentDefinitionAdvance">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskCurrentDefinitionAdvance">
         UPDATE ifj_task
         SET current_task_definition_id = #{definitionId},
             current_revision = #{nextRevision},
@@ -192,7 +192,7 @@
     </update>
 
 <update id="advanceCurrentDefinition"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskCurrentDefinitionAdvance" databaseId="oracle">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskCurrentDefinitionAdvance" databaseId="oracle">
         UPDATE ifj_task
         SET current_task_definition_id = #{definitionId},
             current_revision = #{nextRevision},
@@ -213,7 +213,7 @@
     </update>
 
     <update id="retireIdentity"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskIdentityRetirement">
         UPDATE ifj_task
         SET retired = TRUE,
             retired_time = #{retiredTime},
@@ -226,7 +226,7 @@
     </update>
 
     <update id="retireIdentity" databaseId="postgresql"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskIdentityRetirement">
         UPDATE ifj_task
         SET retired = TRUE,
             retired_time = #{retiredTime},
@@ -239,7 +239,7 @@
     </update>
 
 <update id="retireIdentity" databaseId="sqlite"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskIdentityRetirement">
         UPDATE ifj_task
         SET retired = TRUE,
             retired_time = #{retiredTime},
@@ -252,7 +252,7 @@
     </update>
 
 <update id="retireIdentity" databaseId="oracle"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskIdentityRetirement">
         UPDATE ifj_task
         SET retired = 1,
             retired_time = #{retiredTime},
@@ -265,7 +265,7 @@
     </update>
 
 <update id="retireIdentity" databaseId="sqlserver"
-            parameterType="com.ifelio.ijob.infra.mapper.task.TaskIdentityRetirement">
+            parameterType="com.ifielsc.ijob.infra.mapper.task.TaskIdentityRetirement">
         UPDATE ifj_task
         SET retired = 1,
             retired_time = #{retiredTime},

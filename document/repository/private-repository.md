@@ -1,12 +1,12 @@
 # 私有仓库维护与同步
 
-2026-10-18 已创建 [ifelio/iJob](https://github.com/ifelio/iJob)，状态为 Private，默认分支 main，只有所有者 ifelio，无其他协作者或待接受邀请。首个提交为 `92eed059e605833fcd6f98a1a1c512297c7973c9`，首次导入 2,190 个文件；远程路径、模式及 blob 哈希与审核后的本地提交一致。
+私有仓库为 [ifielsc/iJob](https://github.com/ifielsc/iJob)，默认分支 main。2026-10-19 所有者账号从 ifelio 更名为 ifielsc，仓库名不变，保留原 Git 历史。首个提交为 `92eed059e605833fcd6f98a1a1c512297c7973c9`，首次导入 2,190 个文件。
 
-本机使用 HTTPS + GCM 浏览器授权，提交身份为 ifelio 与 GitHub 隐私邮箱，仅在当前仓库设置。认证秘密不写入仓库。GitHub 仓库是源码库，完整交付包和历史验收资料继续保存在维护工作区。
+本机使用 HTTPS + GCM 浏览器授权，提交身份与 GitHub 隐私邮箱仅在当前仓库设置。认证秘密不写入仓库。GitHub 仓库是源码库，完整交付包和历史验收资料继续保存在原维护工作区，位置由新工作区归档索引记录。
 
 ## 在哪里继续开发
 
-在已连接 `https://github.com/ifelio/iJob.git` 的 Git 根目录下继续维护 `develop/api/ijob`、`develop/api/ijob-monitor-agent`、`develop/web/ijob` 和文档。维护电脑已将整个仓库（含 .git 和未提交文档）迁移到独立的正式源码目录，不再使用 test 下的候选目录；具体本机路径见外层工作区入口。此目录不能按临时测试产物清理或重新导出覆盖。
+在已连接 `https://github.com/ifielsc/iJob.git` 的 Git 根目录下继续维护 `develop/api/ijob`、`develop/api/ijob-monitor-agent`、`develop/web/ijob` 和文档。维护电脑已将整个仓库（含 .git 和未提交文档）迁移到独立的正式源码目录，不再使用 test 下的候选目录；具体本机路径见外层工作区入口。此目录不能按临时测试产物清理或重新导出覆盖。
 
 用 `git rev-parse --show-toplevel`、`git remote -v` 确认位置和远程。旧外层 develop 树是导入前保留副本，不能与本仓库同时作为编辑入口，也不能整目录复制覆盖本仓库。历史报告和机器专用路径留在外层工作区索引。
 

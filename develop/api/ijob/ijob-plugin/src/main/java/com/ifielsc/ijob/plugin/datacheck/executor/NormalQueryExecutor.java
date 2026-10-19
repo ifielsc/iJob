@@ -1,0 +1,19 @@
+package com.ifielsc.ijob.plugin.datacheck.executor;
+
+import com.ifielsc.ijob.core.execute.task.TaskContext;
+import com.ifielsc.ijob.plugin.datacheck.config.DataCheckItemConfig;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class NormalQueryExecutor {
+    private final JdbcExecutor jdbcExecutor;
+
+    public Object execute(
+            Long resourceId, DataCheckItemConfig config, int timeoutSeconds, TaskContext context) {
+        return jdbcExecutor.queryForObject(resourceId, config.getSql(), timeoutSeconds, context);
+    }
+}

@@ -1,8 +1,8 @@
-param([Parameter(Mandatory=$true)][ValidatePattern('^[A-Za-z0-9-]+$')][string]$RunId)
+param([Parameter(Mandatory=$true)][ValidatePattern('^[A-Za-z0-9-]+$')][string]$RunId, [string]$ReportRoot, [string]$TemporaryRoot)
 $ErrorActionPreference = 'Stop'
 $workspace = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $project = Join-Path $workspace 'develop/api/ijob'
-$evidence = Join-Path $workspace "test/reports/$RunId"
+$evidence = if ($ReportRoot) { [IO.Path]::GetFullPath($ReportRoot) } else { Join-Path $workspace "test/reports/$RunId" }
 if (Test-Path -LiteralPath $evidence) { throw 'Use a new evidence RunId.' }
 # Fail before Maven can inherit a database target or application configuration.
 $allowed = @('IJOB_TEST_JAVA_HOME', 'IJOB_TEST_PYTHON', 'IJOB_TEST_SH', 'IJOB_TEST_PG_BIN')
@@ -22,7 +22,8 @@ $required = @(
 )
 New-Item -ItemType Directory -Path $evidence | Out-Null
 $version | Set-Content -LiteralPath (Join-Path $evidence 'toolchain.log')
-$temporary = Join-Path ([IO.Path]::GetTempPath()) ('ijob-local-it-' + [guid]::NewGuid().ToString('N'))
+$temporary = if ($TemporaryRoot) { [IO.Path]::GetFullPath($TemporaryRoot) } else { Join-Path ([IO.Path]::GetTempPath()) ('ijob-local-it-' + [guid]::NewGuid().ToString('N')) }
+if (Test-Path -LiteralPath $temporary) { throw 'Use a new temporary directory.' }
 New-Item -ItemType Directory -Path $temporary | Out-Null
 $oldTemp = $env:TEMP; $oldTmp = $env:TMP; $oldTmpDir = $env:TMPDIR
 $summaries = @()
@@ -32,6 +33,9 @@ $exitCode = $null
     ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $evidence 'selection.json')
 try {
     $env:TEMP = $temporary; $env:TMP = $temporary; $env:TMPDIR = $temporary
+    $legacy = Join-Path $temporary 'legacy-resources'
+    & python (Join-Path $workspace 'tools/ci/prepare-legacy-db.py') --destination $legacy *> (Join-Path $evidence 'legacy-resources.json')
+    if ($LASTEXITCODE -ne 0) { throw 'Frozen historical SQL preparation failed.' }
     $env:IJOB_AUDIT_VENDOR = 'sqlite'
     $env:IJOB_AUDIT_RUN_ID = [datetime]::UtcNow.ToString('yyMMddHHmmss')
     $env:SPRING_PROFILES_ACTIVE = 'isolated-integration'
@@ -39,7 +43,7 @@ try {
     Push-Location $project
     try {
         & mvn -B -ntp -Pquality -pl ijob-starter -am "-Dtest=$($required -join ',')" `
-            '-Dsurefire.failIfNoSpecifiedTests=false' "-Djava.io.tmpdir=$temporary" test `
+            '-Dsurefire.failIfNoSpecifiedTests=false' "-Djava.io.tmpdir=$temporary" "-Dijob.legacy.resources=$legacy" test `
             *> (Join-Path $evidence 'maven.log')
         $exitCode = $LASTEXITCODE
     } finally { Pop-Location }
@@ -49,7 +53,7 @@ try {
     $destination = Join-Path $evidence 'junit'
     New-Item -ItemType Directory -Path $destination | Out-Null
     foreach ($name in $required) {
-        $path = Join-Path $project "ijob-starter/target/surefire-reports/TEST-com.ifelio.ijob.$name.xml"
+        $path = Join-Path $project "ijob-starter/target/surefire-reports/TEST-com.ifielsc.ijob.$name.xml"
         if (-not (Test-Path -LiteralPath $path) -or (Get-Item -LiteralPath $path).LastWriteTimeUtc -lt $started) {
             $summaries += [pscustomobject]@{suite=$name; missingOrStale=$true; tests=0; failures=0; errors=0; skipped=0}
             continue

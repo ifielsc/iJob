@@ -2,14 +2,14 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.notify.NotifyConfigMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.notify.NotifyConfigMapper">
 
     <resultMap id="NotifyConfigResultMap"
-               type="com.ifelio.ijob.infra.entity.notify.NotifyConfig">
+               type="com.ifielsc.ijob.infra.entity.notify.NotifyConfig">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="type" column="type"
-                javaType="com.ifelio.ijob.contract.enums.NotifyType"/>
+                javaType="com.ifielsc.ijob.contract.enums.NotifyType"/>
         <result property="config" column="config"/>
         <result property="enabled" column="enabled"/>
         <result property="createTime" column="create_time"/>
@@ -17,11 +17,11 @@
     </resultMap>
 
     <resultMap id="NotifyConfigListResultMap"
-               type="com.ifelio.ijob.contract.notify.NotifyConfigListDTO">
+               type="com.ifielsc.ijob.contract.notify.NotifyConfigListDTO">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="type" column="type"
-                javaType="com.ifelio.ijob.contract.enums.NotifyType"/>
+                javaType="com.ifielsc.ijob.contract.enums.NotifyType"/>
         <result property="enabled" column="enabled"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
@@ -37,7 +37,7 @@
     </sql>
 
     <select id="selectDtoList"
-            parameterType="com.ifelio.ijob.contract.notify.NotifyConfigPageQuery"
+            parameterType="com.ifielsc.ijob.contract.notify.NotifyConfigPageQuery"
             resultMap="NotifyConfigListResultMap">
         SELECT
             id,
@@ -61,7 +61,7 @@
     </select>
 
     <select id="selectDtoList" databaseId="postgresql"
-            parameterType="com.ifelio.ijob.contract.notify.NotifyConfigPageQuery"
+            parameterType="com.ifielsc.ijob.contract.notify.NotifyConfigPageQuery"
             resultMap="NotifyConfigListResultMap">
         SELECT id, name, type, enabled, update_time
         FROM ifj_notify_config
@@ -80,7 +80,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="sqlite"
-            parameterType="com.ifelio.ijob.contract.notify.NotifyConfigPageQuery"
+            parameterType="com.ifielsc.ijob.contract.notify.NotifyConfigPageQuery"
             resultMap="NotifyConfigListResultMap">
         SELECT id, name, type, enabled, update_time
         FROM ifj_notify_config
@@ -99,7 +99,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="oracle"
-            parameterType="com.ifelio.ijob.contract.notify.NotifyConfigPageQuery"
+            parameterType="com.ifielsc.ijob.contract.notify.NotifyConfigPageQuery"
             resultMap="NotifyConfigListResultMap">
         SELECT id, name, type, enabled, update_time
         FROM ifj_notify_config
@@ -118,7 +118,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="sqlserver"
-            parameterType="com.ifelio.ijob.contract.notify.NotifyConfigPageQuery"
+            parameterType="com.ifielsc.ijob.contract.notify.NotifyConfigPageQuery"
             resultMap="NotifyConfigListResultMap">
         SELECT id, name, type, enabled, update_time
         FROM ifj_notify_config
@@ -224,7 +224,7 @@
     </select>
 
     <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.notify.NotifyConfig">
+            parameterType="com.ifielsc.ijob.infra.entity.notify.NotifyConfig">
         INSERT INTO ifj_notify_config (
             id,
             name,
@@ -245,7 +245,7 @@
     </insert>
 
     <update id="updateById"
-            parameterType="com.ifelio.ijob.infra.entity.notify.NotifyConfig">
+            parameterType="com.ifielsc.ijob.infra.entity.notify.NotifyConfig">
         UPDATE ifj_notify_config
         SET name = #{name},
             type = #{type},
@@ -276,7 +276,7 @@
         </choose>
     </delete>
 
-<select id="selectSummariesByIds" resultType="com.ifelio.ijob.contract.notify.NotifyConfigListDTO">
+<select id="selectSummariesByIds" resultType="com.ifielsc.ijob.contract.notify.NotifyConfigListDTO">
         SELECT id, name, type, enabled FROM ifj_notify_config
         WHERE id IN <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
     </select>

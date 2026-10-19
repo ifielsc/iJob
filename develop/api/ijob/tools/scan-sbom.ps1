@@ -9,7 +9,7 @@ New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
 Copy-Item -LiteralPath $bomPath -Destination (Join-Path $OutputDirectory 'bom.json')
 $document = Get-Content -Raw -LiteralPath $bomPath | ConvertFrom-Json
 # Only public third-party coordinates are sent. No application names, code, hashes, or credentials.
-$components = @($document.components | Where-Object { $_.purl -like 'pkg:maven/*' -and $_.group -ne 'com.ifelio' })
+$components = @($document.components | Where-Object { $_.purl -like 'pkg:maven/*' -and $_.group -ne 'com.ifielsc' })
 $findings = [Collections.Generic.List[object]]::new()
 for ($offset = 0; $offset -lt $components.Count; $offset += 50) {
     $batch = @($components[$offset..([Math]::Min($offset + 49, $components.Count - 1))])

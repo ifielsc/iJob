@@ -2,11 +2,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.event.EventBindingMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.event.EventBindingMapper">
     <sql id="columns">id, target_type, target_id, event_code, enabled,
         create_time, update_time</sql>
     <select id="selectListByEventCode"
-            resultType="com.ifelio.ijob.infra.entity.event.EventBinding">
+            resultType="com.ifielsc.ijob.infra.entity.event.EventBinding">
         SELECT <include refid="columns"/>
         FROM ifj_event_binding
         WHERE event_code = #{eventCode}
@@ -15,7 +15,7 @@
     </select>
 
 <select id="selectListByEventCode"
-            resultType="com.ifelio.ijob.infra.entity.event.EventBinding" databaseId="oracle">
+            resultType="com.ifielsc.ijob.infra.entity.event.EventBinding" databaseId="oracle">
         SELECT <include refid="columns"/>
         FROM ifj_event_binding
         WHERE event_code = #{eventCode}
@@ -23,14 +23,14 @@
         ORDER BY id ASC
     </select>
     <select id="selectListByTarget"
-            resultType="com.ifelio.ijob.infra.entity.event.EventBinding">
+            resultType="com.ifielsc.ijob.infra.entity.event.EventBinding">
         SELECT <include refid="columns"/>
         FROM ifj_event_binding
         WHERE target_type = #{targetType} AND target_id = #{targetId}
         ORDER BY id ASC
     </select>
     <select id="selectById"
-            resultType="com.ifelio.ijob.infra.entity.event.EventBinding">
+            resultType="com.ifielsc.ijob.infra.entity.event.EventBinding">
         SELECT <include refid="columns"/>
         FROM ifj_event_binding WHERE id = #{id}
     </select>
@@ -107,14 +107,14 @@
         ORDER BY id
     </select>
     <select id="selectByTargetAndEvent"
-            resultType="com.ifelio.ijob.infra.entity.event.EventBinding">
+            resultType="com.ifielsc.ijob.infra.entity.event.EventBinding">
         SELECT <include refid="columns"/>
         FROM ifj_event_binding
         WHERE target_type = #{targetType} AND target_id = #{targetId}
           AND event_code = #{eventCode}
     </select>
     <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.event.EventBinding">
+            parameterType="com.ifielsc.ijob.infra.entity.event.EventBinding">
         INSERT INTO ifj_event_binding
             (id, target_type, target_id, event_code, enabled,
              create_time, update_time)
@@ -149,7 +149,7 @@
         </choose>
     </delete>
     <select id="selectListByEventCode" databaseId="sqlserver"
-            resultType="com.ifelio.ijob.infra.entity.event.EventBinding">
+            resultType="com.ifielsc.ijob.infra.entity.event.EventBinding">
         SELECT <include refid="columns"/> FROM ifj_event_binding
         WHERE event_code = #{eventCode} AND enabled = 1
         ORDER BY id ASC

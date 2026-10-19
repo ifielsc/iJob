@@ -2,14 +2,14 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskDefinitionResourceReferenceMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.task.TaskDefinitionResourceReferenceMapper">
 
     <resultMap id="ResourceReferenceResultMap"
-               type="com.ifelio.ijob.infra.entity.task.TaskDefinition">
+               type="com.ifielsc.ijob.infra.entity.task.TaskDefinition">
         <id property="id" column="id"/>
         <result property="taskId" column="task_id"/>
         <result property="pluginType" column="plugin_type"
-                javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+                javaType="com.ifielsc.ijob.contract.enums.PluginType"/>
         <result property="pluginConfig" column="plugin_config"/>
     </resultMap>
 

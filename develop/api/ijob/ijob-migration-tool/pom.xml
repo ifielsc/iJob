@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.ifelio</groupId>
+        <groupId>com.ifielsc</groupId>
         <artifactId>ijob</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -62,16 +62,29 @@
     <build>
         <resources>
             <resource><directory>src/main/resources</directory></resource>
-            <resource><directory>../ijob-starter/src/main/resources</directory><includes><include>db/release/**</include><include>db/migration/**</include></includes></resource>
+            <resource><directory>../ijob-starter/src/main/resources</directory><includes><include>db/release/**</include></includes></resource>
         </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.ifelio.ijob.migration.IJobMigrationTool</mainClass>
+                    <mainClass>com.ifielsc.ijob.migration.IJobMigrationTool</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>legacy-db</id>
+            <activation><property><name>ijob.legacy.resources</name></property></activation>
+            <build>
+                <resources>
+                    <resource><directory>src/main/resources</directory></resource>
+                    <resource><directory>../ijob-starter/src/main/resources</directory><includes><include>db/release/**</include></includes></resource>
+                    <resource><directory>${ijob.legacy.resources}</directory><includes><include>db/migration/**</include></includes></resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
 </project>

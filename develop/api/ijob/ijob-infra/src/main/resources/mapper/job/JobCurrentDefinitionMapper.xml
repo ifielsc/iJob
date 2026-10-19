@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobCurrentDefinitionMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.job.JobCurrentDefinitionMapper">
 
     <resultMap id="CurrentDefinitionRowResultMap"
-               type="com.ifelio.ijob.infra.mapper.job.JobCurrentDefinitionRow">
+               type="com.ifielsc.ijob.infra.mapper.job.JobCurrentDefinitionRow">
         <id property="id" column="id"/>
         <result property="currentDefinitionId"
                 column="current_definition_id"/>
@@ -17,7 +17,7 @@
     </resultMap>
 
     <resultMap id="JobListResultMap"
-               type="com.ifelio.ijob.contract.job.JobListDTO">
+               type="com.ifielsc.ijob.contract.job.JobListDTO">
         <id property="id" column="id"/>
         <result property="nodeCount" column="node_count"/>
         <result property="name" column="name"/>
@@ -31,7 +31,7 @@
     </resultMap>
 
     <select id="selectDtoList"
-            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            parameterType="com.ifielsc.ijob.contract.job.JobPageQuery"
             resultMap="JobListResultMap">
         SELECT identity.id,
                definition.name,
@@ -69,7 +69,7 @@
     </select>
 
     <select id="selectDtoList" databaseId="postgresql"
-            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            parameterType="com.ifielsc.ijob.contract.job.JobPageQuery"
             resultMap="JobListResultMap">
         SELECT identity.id,
                definition.name,
@@ -107,7 +107,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="sqlite"
-            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            parameterType="com.ifielsc.ijob.contract.job.JobPageQuery"
             resultMap="JobListResultMap">
         SELECT identity.id,
                definition.name,
@@ -145,7 +145,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="oracle"
-            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            parameterType="com.ifielsc.ijob.contract.job.JobPageQuery"
             resultMap="JobListResultMap">
         SELECT identity.id,
                definition.name,
@@ -183,7 +183,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="sqlserver"
-            parameterType="com.ifelio.ijob.contract.job.JobPageQuery"
+            parameterType="com.ifielsc.ijob.contract.job.JobPageQuery"
             resultMap="JobListResultMap">
         SELECT job_identity.id,
                definition.name,

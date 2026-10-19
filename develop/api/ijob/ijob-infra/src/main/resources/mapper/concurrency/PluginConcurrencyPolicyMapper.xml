@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.concurrency.PluginConcurrencyPolicyMapper">
-    <resultMap id="policyMap" type="com.ifelio.ijob.infra.entity.concurrency.PluginConcurrencyPolicy">
-        <id property="pluginType" column="plugin_type" javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+<mapper namespace="com.ifielsc.ijob.infra.mapper.concurrency.PluginConcurrencyPolicyMapper">
+    <resultMap id="policyMap" type="com.ifielsc.ijob.infra.entity.concurrency.PluginConcurrencyPolicy">
+        <id property="pluginType" column="plugin_type" javaType="com.ifielsc.ijob.contract.enums.PluginType"/>
         <result property="maxConcurrency" column="max_concurrency"/>
         <result property="version" column="version"/>
         <result property="createTime" column="create_time"/>
@@ -27,7 +27,7 @@
     <select id="selectByPluginTypeForUpdate" databaseId="sqlserver" resultMap="policyMap">
         SELECT <include refid="columns"/> FROM ifj_plugin_concurrency_policy WITH (UPDLOCK, HOLDLOCK) WHERE plugin_type=#{pluginType}
     </select>
-    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.concurrency.PluginConcurrencyPolicy">
+    <insert id="insert" parameterType="com.ifielsc.ijob.infra.entity.concurrency.PluginConcurrencyPolicy">
         INSERT INTO ifj_plugin_concurrency_policy
             (plugin_type, max_concurrency, version, create_time, update_time)
         VALUES (#{pluginType}, #{maxConcurrency}, #{version}, #{createTime}, #{updateTime})

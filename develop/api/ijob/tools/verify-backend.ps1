@@ -1,15 +1,30 @@
-param([Parameter(Mandatory=$true)][ValidatePattern('^[A-Za-z0-9_-]+$')][string]$RunId, [switch]$Offline, [switch]$ScanDependencies)
+param([Parameter(Mandatory=$true)][ValidatePattern('^[A-Za-z0-9_-]+$')][string]$RunId, [switch]$Offline, [switch]$ScanDependencies, [string]$ReportRoot, [string]$TemporaryRoot)
 $ErrorActionPreference = 'Stop'
 if ($Offline -and $ScanDependencies) { throw 'Dependency scanning requires network access' }
 $workspace = (Resolve-Path (Join-Path $PSScriptRoot '../../../..')).Path
-$evidence = Join-Path $workspace "test/reports/$RunId"
+$evidence = if ($ReportRoot) { [IO.Path]::GetFullPath($ReportRoot) } else { Join-Path $workspace "test/reports/$RunId" }
 if (Test-Path -LiteralPath $evidence) { throw 'Use a new evidence run ID' }
 New-Item -ItemType Directory -Path $evidence | Out-Null
 $main = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $agent = (Resolve-Path (Join-Path $main '../ijob-monitor-agent')).Path
 $network = @(); if ($Offline) { $network += '-o' }
 $summaries = @()
+$allowed = @('IJOB_TEST_JAVA_HOME', 'IJOB_TEST_PYTHON', 'IJOB_TEST_SH', 'IJOB_TEST_PG_BIN')
+$unsafe = @(Get-ChildItem Env: | Where-Object {
+    ($_.Name -like 'IJOB_*' -and $_.Name -notin $allowed) -or
+    $_.Name -match '^(SPRING_|JAVA_TOOL_OPTIONS$|JDK_JAVA_OPTIONS$|_JAVA_OPTIONS$|MAVEN_OPTS$|MAVEN_ARGS$)'
+})
+if ($unsafe.Count) { throw "Remove inherited configuration variables: $($unsafe.Name -join ', ')" }
+$temporary = if ($TemporaryRoot) { [IO.Path]::GetFullPath($TemporaryRoot) } else { Join-Path ([IO.Path]::GetTempPath()) ('ijob-backend-' + [guid]::NewGuid().ToString('N')) }
+if (Test-Path -LiteralPath $temporary) { throw 'Use a new temporary directory.' }
+New-Item -ItemType Directory -Path $temporary | Out-Null
+$legacy = Join-Path $temporary 'legacy-resources'
+$oldTemp = $env:TEMP; $oldTmp = $env:TMP; $oldTmpDir = $env:TMPDIR
 try {
+    $env:TEMP = $temporary; $env:TMP = $temporary; $env:TMPDIR = $temporary
+    & python (Join-Path $workspace 'tools/ci/prepare-legacy-db.py') --destination $legacy *> (Join-Path $evidence 'legacy-resources.json')
+    if ($LASTEXITCODE -ne 0) { throw 'Frozen historical SQL preparation failed; use a clone containing the pinned commit.' }
+    @{ temporaryRoot=$temporary; legacyResources=$legacy; retained=$true } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $evidence 'isolation.json')
     $version = & mvn --version 2>&1
     $version | Set-Content -LiteralPath (Join-Path $evidence 'toolchain.log')
     if ($LASTEXITCODE -ne 0 -or ($version -join "`n") -notmatch 'Apache Maven 3\.9\.11\b' -or ($version -join "`n") -notmatch 'Java version: 21[.,]') {
@@ -31,7 +46,7 @@ try {
             $selection = @()
             if ($project -eq $main) { $selection = @('-Dtest=*Test,RealSqliteMigrationIT,SqliteOfflineMigrationIT,SecurityHttpIT', '-Dsurefire.failIfNoSpecifiedTests=false') }
             try {
-                & mvn @network -B -ntp -Pquality @selection clean install *> (Join-Path $evidence "$name-build.log")
+                & mvn @network -B -ntp -Pquality @selection "-Dijob.legacy.resources=$legacy" "-Djava.io.tmpdir=$temporary" clean install *> (Join-Path $evidence "$name-build.log")
                 if ($LASTEXITCODE -ne 0) { throw "Build/tests failed: $name; inspect evidence log" }
             } finally {
                 # Preserve JUnit evidence even when Maven fails.
@@ -65,5 +80,6 @@ try {
     }
     Write-Output "Backend and Agent quality gate passed; evidence=$evidence"
 } finally {
+    $env:TEMP = $oldTemp; $env:TMP = $oldTmp; $env:TMPDIR = $oldTmpDir
     ConvertTo-Json -InputObject @($summaries) -Depth 4 | Set-Content -LiteralPath (Join-Path $evidence 'junit-summary.json')
 }

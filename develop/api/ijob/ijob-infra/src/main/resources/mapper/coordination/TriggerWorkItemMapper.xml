@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.TriggerWorkItemMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.coordination.TriggerWorkItemMapper">
 
     <resultMap id="triggerWorkItemResultMap"
-               type="com.ifelio.ijob.infra.coordination.work.TriggerWorkItem">
+               type="com.ifielsc.ijob.infra.coordination.work.TriggerWorkItem">
         <id property="triggerId" column="trigger_id"/>
         <result property="rootInstanceId" column="root_instance_id"/>
         <result property="status" column="status"/>

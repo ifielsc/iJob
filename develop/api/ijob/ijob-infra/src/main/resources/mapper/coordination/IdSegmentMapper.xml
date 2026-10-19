@@ -2,12 +2,12 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.IdSegmentMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.coordination.IdSegmentMapper">
     <update id="lockExisting">
         UPDATE ifj_id_segment SET next_value = next_value WHERE segment_key = #{segmentKey}
     </update>
     <select id="selectForUpdate"
-            resultType="com.ifelio.ijob.infra.coordination.id.IdSegmentState">
+            resultType="com.ifielsc.ijob.infra.coordination.id.IdSegmentState">
         SELECT segment_key, next_value, segment_size
         FROM ifj_id_segment
         WHERE segment_key = #{segmentKey}
@@ -15,14 +15,14 @@
     </select>
 
 <select id="selectForUpdate" databaseId="sqlite"
-            resultType="com.ifelio.ijob.infra.coordination.id.IdSegmentState">
+            resultType="com.ifielsc.ijob.infra.coordination.id.IdSegmentState">
         SELECT segment_key, next_value, segment_size
         FROM ifj_id_segment
         WHERE segment_key = #{segmentKey}
     </select>
 
 <select id="selectForUpdate" databaseId="oracle"
-            resultType="com.ifelio.ijob.infra.coordination.id.IdSegmentState">
+            resultType="com.ifielsc.ijob.infra.coordination.id.IdSegmentState">
         SELECT segment_key, next_value, segment_size
         FROM ifj_id_segment
         WHERE segment_key = #{segmentKey}
@@ -30,7 +30,7 @@
     </select>
 
 <select id="selectForUpdate" databaseId="sqlserver"
-            resultType="com.ifelio.ijob.infra.coordination.id.IdSegmentState">
+            resultType="com.ifielsc.ijob.infra.coordination.id.IdSegmentState">
         SELECT segment_key, next_value, segment_size
         FROM ifj_id_segment
         WHERE segment_key = #{segmentKey}

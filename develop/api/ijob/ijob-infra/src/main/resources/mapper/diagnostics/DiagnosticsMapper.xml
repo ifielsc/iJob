@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.diagnostics.DiagnosticsMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.diagnostics.DiagnosticsMapper">
     <!-- The service applies LIMIT+1 without a count query. Only explicit safe fields are read. -->
     <select id="selectItems" timeout="5"
-            resultType="com.ifelio.ijob.contract.diagnostics.DiagnosticItemDTO">
+            resultType="com.ifielsc.ijob.contract.diagnostics.DiagnosticItemDTO">
         <choose>
             <when test="category.name() == 'ROOT_DEADLINE_EXCEEDED'">
                 SELECT execution.id, execution.id AS root_instance_id,

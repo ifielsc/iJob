@@ -213,7 +213,7 @@ logging:
     level: "%5p [traceId=%X{traceId:-} trigger=%X{triggerId:-} root=%X{rootInstanceId:-} instance=%X{instanceId:-} command=%X{commandId:-} outbox=%X{outboxId:-} attempt=%X{attempt:-} taskAttempt=%X{taskAttempt:-} fence=%X{fence:-}]"
   level:
     root: INFO
-    com.ifelio.ijob: INFO
+    com.ifielsc.ijob: INFO
 
 management:
   metrics:

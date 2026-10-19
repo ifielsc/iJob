@@ -6,6 +6,8 @@
 
 先执行 `develop/api/ijob/tools/verify-backend.ps1`，用同一源码状态构建后端、SPI 和 Agent。再从仓库根目录执行以下两个入口，每次使用新 RunId：
 
+本地三种验证入口均应设置 `-ReportRoot <workspace>/runtime/<env-id>/runs/<run-id>/reports` 与 `-TemporaryRoot <workspace>/runtime/<env-id>/runs/<run-id>/temp`。环境和资源先按[工作区规范](../operations/workspace-and-environments.md)登记。后端与专项入口自动从固定历史提交恢复 117 份 SQL 到本轮临时目录，并校验哈希；必须具有该提交的 Git 历史（CI backend 使用完整 checkout）。不需要旧数据库或旧工作区文件。
+
 ```powershell
 pwsh -File tools/ci/verify-local-integration.ps1 -RunId local-integration-001
 pwsh -File test/tools/verify-frontend.ps1 -RunId frontend-full-001 -Suite Full -BrowserWorkers 1

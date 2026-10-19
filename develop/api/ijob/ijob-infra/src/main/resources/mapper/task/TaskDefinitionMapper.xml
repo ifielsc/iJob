@@ -2,16 +2,16 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskDefinitionMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.task.TaskDefinitionMapper">
 
     <resultMap id="TaskDefinitionResultMap"
-               type="com.ifelio.ijob.infra.entity.task.TaskDefinition">
+               type="com.ifielsc.ijob.infra.entity.task.TaskDefinition">
         <id property="id" column="id"/>
         <result property="taskId" column="task_id"/>
         <result property="revision" column="revision"/>
         <result property="name" column="name"/>
         <result property="pluginType" column="plugin_type"
-                javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+                javaType="com.ifielsc.ijob.contract.enums.PluginType"/>
         <result property="pluginConfig" column="plugin_config"/>
         <result property="retryTimes" column="retry_times"/>
         <result property="retryInterval" column="retry_interval"/>
@@ -53,7 +53,7 @@
     </select>
 
     <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.task.TaskDefinition">
+            parameterType="com.ifielsc.ijob.infra.entity.task.TaskDefinition">
         INSERT INTO ifj_task_definition (
             id,
             task_id,

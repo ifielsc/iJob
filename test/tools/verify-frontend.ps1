@@ -2,12 +2,14 @@ param(
     [Parameter(Mandatory = $true)][ValidatePattern('^[a-zA-Z0-9-]+$')][string]$RunId,
     [ValidateSet('Basic', 'Full')][string]$Suite = 'Basic',
     [ValidatePattern('^[1-9][0-9]*/[1-9][0-9]*$')][string]$Shard,
-    [ValidateRange(0, 64)][int]$BrowserWorkers = 0
+    [ValidateRange(0, 64)][int]$BrowserWorkers = 0,
+    [string]$ReportRoot,
+    [string]$TemporaryRoot
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $webRoot = Join-Path $projectRoot 'develop/web/ijob'
-$reportRoot = Join-Path $projectRoot "test/reports/$RunId"
+$reportRoot = if ($ReportRoot) { [IO.Path]::GetFullPath($ReportRoot) } else { Join-Path $projectRoot "test/reports/$RunId" }
 if (Test-Path -LiteralPath $reportRoot) { throw 'Evidence directory already exists; choose a new RunId.' }
 if ($Suite -eq 'Full' -and [IO.Path]::DirectorySeparatorChar -ne '\') { throw 'Full includes Windows BAT/PowerShell integration; use a Windows worker.' }
 if ($Suite -eq 'Full') {
@@ -40,7 +42,8 @@ $oldJunit = $env:PLAYWRIGHT_JUNIT_OUTPUT_FILE
 $oldTemp = $env:TEMP; $oldTmp = $env:TMP; $oldTmpDir = $env:TMPDIR
 try {
     if ($Suite -eq 'Full') {
-        $temporary = Join-Path ([IO.Path]::GetTempPath()) ('ijob-frontend-full-' + [guid]::NewGuid().ToString('N'))
+        $temporary = if ($TemporaryRoot) { [IO.Path]::GetFullPath($TemporaryRoot) } else { Join-Path ([IO.Path]::GetTempPath()) ('ijob-frontend-full-' + [guid]::NewGuid().ToString('N')) }
+        if (Test-Path -LiteralPath $temporary) { throw 'Use a new temporary directory.' }
         New-Item -ItemType Directory -Path $temporary | Out-Null
         # Python prefers TMPDIR, while Node on Windows prefers TEMP. Keep the guards aligned.
         $env:TEMP = $temporary; $env:TMP = $temporary; $env:TMPDIR = $temporary

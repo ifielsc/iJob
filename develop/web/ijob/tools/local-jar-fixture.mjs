@@ -13,11 +13,11 @@ export function prepareLocalJar(directory, javaHome) {
   // Publication validates this class without initializing it or executing run().
   writeFileSync(
     source,
-    'package sample.localjar; import com.ifelio.ijob.spi.localjar.*; public final class EditorFixture implements LocalJarTask { public EditorFixture() {} public LocalJarResult run(LocalJarExecution execution, LocalJarContext context) { throw new AssertionError("Publication must never execute this fixture"); } }',
+    'package sample.localjar; import com.ifielsc.ijob.spi.localjar.*; public final class EditorFixture implements LocalJarTask { public EditorFixture() {} public LocalJarResult run(LocalJarExecution execution, LocalJarContext context) { throw new AssertionError("Publication must never execute this fixture"); } }',
   )
   writeFileSync(
     manifest,
-    'Manifest-Version: 1.0\nIJob-Plugin-Api-Version: 2\nImplementation-Version: editor-fixture-1.0\nIJob-Plugin-Class: sample.localjar.EditorFixture\n\n',
+    'Manifest-Version: 1.0\nIJob-Plugin-Api-Version: 1\nImplementation-Version: editor-fixture-1.0\nIJob-Plugin-Class: sample.localjar.EditorFixture\n\n',
   )
   const run = (command, args) => {
     const result = spawnSync(

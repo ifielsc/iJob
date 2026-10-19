@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.EventRecordMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.runtime.EventRecordMapper">
     <resultMap id="eventRecordResultMap"
-               type="com.ifelio.ijob.infra.entity.runtime.EventRecord">
+               type="com.ifielsc.ijob.infra.entity.runtime.EventRecord">
         <id property="id" column="id"/>
         <result property="eventCode" column="event_code"/>
         <result property="sourceType" column="source_type"/>
@@ -23,7 +23,7 @@
         business_key, correlation_key, idempotency_key, occurred_at,
         arrived_at, summary, payload, payload_digest, payload_bytes,
         create_time</sql>
-    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.EventRecord">
+    <insert id="insert" parameterType="com.ifielsc.ijob.infra.entity.runtime.EventRecord">
         INSERT INTO ifj_event (id, event_code, source_type, source_key,
             business_key, correlation_key, idempotency_key, occurred_at,
             arrived_at, summary, payload, payload_digest, payload_bytes)
@@ -32,7 +32,7 @@
             #{occurredAt}, #{arrivedAt}, #{summary}, #{payload},
             #{payloadDigest}, #{payloadBytes})
     </insert>
-    <insert id="insert" databaseId="postgresql" parameterType="com.ifelio.ijob.infra.entity.runtime.EventRecord">
+    <insert id="insert" databaseId="postgresql" parameterType="com.ifielsc.ijob.infra.entity.runtime.EventRecord">
         INSERT INTO ifj_event (id, event_code, source_type, source_key,
             business_key, correlation_key, idempotency_key, occurred_at,
             arrived_at, summary, payload, payload_digest, payload_bytes)

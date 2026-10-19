@@ -2,20 +2,20 @@
   "reviews": [
     {
       "path": ".gitignore",
-      "line": 3009,
+      "line": 2885,
       "rule": "email-address",
       "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
       "reason": "pnpm patch filename/version, not an email address."
     },
     {
       "path": ".repository/allowlist.json",
-      "line": 1738,
+      "line": 1622,
       "rule": "email-address",
       "line_sha256": "19f0e34d2de24909f3f9e4c329ff30ec56cb62c17e0373c97150ed36a4685fd4",
       "reason": "pnpm patch filename/version, not an email address."
     },
     {
-      "path": "develop/api/ijob/ijob-api/src/test/java/com/ifelio/ijob/api/security/SafeReadProjectionTest.java",
+      "path": "develop/api/ijob/ijob-api/src/test/java/com/ifielsc/ijob/api/security/SafeReadProjectionTest.java",
       "line": 33,
       "rule": "credential-literal",
       "line_sha256": "ee0c9d22c8153ae78cfb6bcac827ddd5902e1f6dd471e5dc373afaf6280debe2",
@@ -36,595 +36,595 @@
       "reason": "Reviewed user-interface validation/translation text, not a configured secret."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/auth/AccountRolePolicyTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/auth/AccountRolePolicyTest.java",
       "line": 73,
       "rule": "credential-setter",
       "line_sha256": "de23b2b51cdac37178de66b27293c74baf640d045484f4ed935b46888a609ff8",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/auth/AuthServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/auth/AuthServiceTest.java",
       "line": 56,
       "rule": "credential-literal",
       "line_sha256": "ad1a52a4b0b5f49db0b0206066a73b3e751d735af640420c65989e7050384f13",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigServiceTest.java",
       "line": 53,
       "rule": "email-address",
       "line_sha256": "2dea6549b71f4ac523aac950606bf70450cd9a3cfb0941f081a2283722e2062c",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigServiceTest.java",
       "line": 73,
       "rule": "email-address",
       "line_sha256": "0250ab296dcf40f9d9d00b45b5422c39e8128710134efdc4fe30b5c5f439607d",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigServiceTest.java",
       "line": 90,
       "rule": "email-address",
       "line_sha256": "59c51d2871d94ee39e95c969e6bf3336733c9eca9b7986748baa79777b691cff",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigServiceTest.java",
       "line": 174,
       "rule": "email-address",
       "line_sha256": "ebc043783f1fcd39bfa7d8657dc305caf8ff58a68040ee44e2c397d6ec2ae6dd",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigServiceTest.java",
       "line": 180,
       "rule": "email-address",
       "line_sha256": "ff1c2d59dc83ceb00b53850a5fc165f97e80b90779c3d86f690e4ecb409e3ac8",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigServiceTest.java",
       "line": 181,
       "rule": "email-address",
       "line_sha256": "7efd95115996e68faba9544d4ef73c84a61d47247cfe13339305655cc231e12b",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigServiceTest.java",
       "line": 182,
       "rule": "email-address",
       "line_sha256": "56847005ffc37815cc4e41697e8b2ba85566a33628f974ac3375b506aec2fcb9",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 34,
       "rule": "email-address",
       "line_sha256": "d80068a43d4b53bc468fc5beb7187c932f1d800548dd76f58107d89217e6e227",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 35,
       "rule": "email-address",
       "line_sha256": "de599b7ed9689cc8b24b228927d12fa5d6fa7da2ab40dfc792e74aaf71c52d45",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 36,
       "rule": "email-address",
       "line_sha256": "b11af762267c4ff26c00760935726bca703feb2f24388bd43f4fe631dc31cf72",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 41,
       "rule": "email-address",
       "line_sha256": "84cdde07afa92cd9c6db00f6b0d3dd0330bd6735a54d7342d1b03aa0b5758ae1",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 42,
       "rule": "email-address",
       "line_sha256": "b111063c1e1f58f38d8efa27b8b52321b630bf5364f815d8e3be5f21311e6c4b",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 43,
       "rule": "email-address",
       "line_sha256": "bd2ce09a1440b6f32ee04f6189c2bf525748f45d9f07ce7b46ae26794e87665f",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 53,
       "rule": "email-address",
       "line_sha256": "4c824dd4a6419a359ab9746b719a5756eef50a6dc04319331e557f07f4829855",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 54,
       "rule": "email-address",
       "line_sha256": "cf4a2366b434c71afe61c41c11962dd31e41a621bf03bcdf6a52a47ff9e0d488",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 143,
       "rule": "email-address",
       "line_sha256": "ff1c2d59dc83ceb00b53850a5fc165f97e80b90779c3d86f690e4ecb409e3ac8",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 144,
       "rule": "email-address",
       "line_sha256": "c16ef741e54f3a7d72b362e33d5baefd21ab9543b0deb733f9b348575ad79dc6",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 145,
       "rule": "email-address",
       "line_sha256": "e4044f1f19d9d80300a23b8911d34ec4a936024180648bfebdd3d27917c42f75",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifyConfigValueServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifyConfigValueServiceTest.java",
       "line": 225,
       "rule": "email-address",
       "line_sha256": "4e29eb29998324cf0ab1cdbfd7b1c1bccb49c1779b8ab95473e84fb35c5cd723",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifySensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifySensitiveToStringTest.java",
       "line": 21,
       "rule": "email-address",
       "line_sha256": "585f2892d1045d0b6a06711df395ef8a19dedd637e8d47d1768a98472d871485",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifySensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifySensitiveToStringTest.java",
       "line": 22,
       "rule": "email-address",
       "line_sha256": "976ec637da583a1746d1f2766602f55a9656772624b3f493dfd7da48e21da89f",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifySensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifySensitiveToStringTest.java",
       "line": 23,
       "rule": "email-address",
       "line_sha256": "d4d4b69c43a442c46b7324c113969661cbb3b1c4f3a37067ce234edab71c9a3d",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifySensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifySensitiveToStringTest.java",
       "line": 27,
       "rule": "credential-setter",
       "line_sha256": "010436143db07295769094c69146d1e2cb3350e9b36ec8cab9a1e458507f520e",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifySensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifySensitiveToStringTest.java",
       "line": 35,
       "rule": "email-address",
       "line_sha256": "0c0cac86d5e8b683908995a705c2ecdb9d030b161d585b15a50353c699174844",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifySensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifySensitiveToStringTest.java",
       "line": 36,
       "rule": "email-address",
       "line_sha256": "a5e0cb0f9246fe8ba2933b3e8d416779bbbee987ad932cb428c418c5de414350",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/NotifySensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/NotifySensitiveToStringTest.java",
       "line": 37,
       "rule": "email-address",
       "line_sha256": "3d53f368410e4dce79950b767c2322783647c024a00b7a4bdfa0005eb5cb121d",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/EmailNotifyChannelConditionTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/EmailNotifyChannelConditionTest.java",
       "line": 56,
       "rule": "email-address",
       "line_sha256": "a2834421f568fd3114a400b719df186361ac093c27dca4cb0d09190cf43e756f",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/EmailNotifyFailureTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/EmailNotifyFailureTest.java",
       "line": 20,
       "rule": "email-address",
       "line_sha256": "efff84c36baa0cfd6b84b1ac22e9c137ad13ea5f450bf7aa22fdc1b99855fabc",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/EmailNotifyFailureTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/EmailNotifyFailureTest.java",
       "line": 61,
       "rule": "email-address",
       "line_sha256": "295caca118bd296df49e3e5e156c816ce373bb55258e6b16f89e0b30bcaf47ef",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/EmailNotifyFailureTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/EmailNotifyFailureTest.java",
       "line": 64,
       "rule": "email-address",
       "line_sha256": "779731fcf3e51cc68c0cc31e9fb28d4421b138f5be58a2337ddaa1f23e20da8f",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelDeletionTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelDeletionTest.java",
       "line": 63,
       "rule": "email-address",
       "line_sha256": "b73aa34e84aea5789fab6a571154291ab2895177bd1938fec6d9b091d7d25d27",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 70,
       "rule": "email-address",
       "line_sha256": "78339aba28bceb73f9b5d63a98f625380e13e2f075b1084dee4f7208145bfb40",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 72,
       "rule": "credential-setter",
       "line_sha256": "e97a40dae8bc783e26986a48f2877465657f229c4a2cd13ef82f4c1a11aaa409",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 105,
       "rule": "email-address",
       "line_sha256": "66ae1428260ff7d096ea847fe35180ad71c12d305fcab8860b6695bc80bfc634",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 107,
       "rule": "email-address",
       "line_sha256": "87c19e8abf9581579d81def790916d2f57f310a1babe1ca81af41e3d9668d011",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 121,
       "rule": "email-address",
       "line_sha256": "e4fe91db2a5019cac7fe005f62417db2bc9f4bd0cd86aee3e17a4322788136b3",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 122,
       "rule": "email-address",
       "line_sha256": "bef3ad2ff0539f76d8caebc360105671e65a7390d7c90bec8ffc6747fb40c93a",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 128,
       "rule": "email-address",
       "line_sha256": "a461847dde42638eae34cc64b09a0875f89b6c50d51d5e960987cfc3a1a97d6e",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 132,
       "rule": "email-address",
       "line_sha256": "5bf44ec2e3d0e7ccc779a5d8880340b71401608b3966c502e60facf63e82bb41",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 135,
       "rule": "email-address",
       "line_sha256": "8f2a25a8e6b29006dd4b6f94431b46fa45b00811b19795be071844781a6aa07c",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 151,
       "rule": "email-address",
       "line_sha256": "9005b63e0f17c51a7125d7813106d7ad44f111ba681ebef0f61f193fdd4d9fae",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 172,
       "rule": "email-address",
       "line_sha256": "f79901fe0e256b0e97d658098b800ec96f6667159b1bdab1bc15c7bc831ddd61",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 180,
       "rule": "email-address",
       "line_sha256": "3358e0c5f6dcf45c4694b95e625b358ac7be2efee6d06e5ce495893a315df0f2",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 182,
       "rule": "email-address",
       "line_sha256": "d1e65872a761d8d7d0bb3199dd53e24e0f4b54fc06c16260d251a59e4f8f8ff1",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 186,
       "rule": "email-address",
       "line_sha256": "e768559318b2d77b041085bcd8d42965cfdf9c2643bd1a9b3815ee02c3350abc",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 187,
       "rule": "email-address",
       "line_sha256": "3560b7d297d711aee0b00003ee6ed195a0b4c721dbe2d470126ebc40a55cc920",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 193,
       "rule": "email-address",
       "line_sha256": "6b0564f757b53eae24c11567929d7170b7801796d7607f447600e9e5c11c6145",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 213,
       "rule": "email-address",
       "line_sha256": "ca894e780421b0c1f11ec6946277ce3b0d6966e87199efa4b8ff1bae678f92c0",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 214,
       "rule": "credential-setter",
       "line_sha256": "b12420321dc7acbf311dc9e5a94a22321eb19bf2db02fc3bd7d1b02ebae48891",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/email/MailChannelServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/email/MailChannelServiceTest.java",
       "line": 215,
       "rule": "email-address",
       "line_sha256": "84d44478d431b7da6413f63f425eb7523ba2918bc8c817e554629392ba926861",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
       "line": 43,
       "rule": "email-address",
       "line_sha256": "10f37d876e9d6b0a3ea9b573d445c9c6eb6c078aeb8221a76ded5d4954ccea5a",
       "reason": "Negative URL validation fixture with synthetic userinfo; not a configured notification endpoint."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
       "line": 70,
       "rule": "credential-setter",
       "line_sha256": "965f0db6a5dd5d2e070d8b66389b23feb645c6bba8125c1e6848cb66ef584969",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
       "line": 77,
       "rule": "credential-setter",
       "line_sha256": "884dc654f0404fea40a76ed3aa0254b5085a58246365cdcc5ccfa903b5521200",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
       "line": 184,
       "rule": "credential-setter",
       "line_sha256": "f859dd03a95bc2fa8875f44d0a9c08648e8e249a089cfcb04834a9a8de959b27",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/channel/webhook/WebhookChannelsTest.java",
       "line": 213,
       "rule": "credential-setter",
       "line_sha256": "740d77a84e92e37bbbb8751d64837467acd8b598f98613a043d7c353281d4cf4",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/security/NotifyConfigCipherTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/security/NotifyConfigCipherTest.java",
       "line": 21,
       "rule": "credential-literal",
       "line_sha256": "bc08f6b2e76db49b2175d2f6222b728933278df36836d59941d36c32fe6ca780",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/security/NotifyConfigCipherTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/security/NotifyConfigCipherTest.java",
       "line": 22,
       "rule": "email-address",
       "line_sha256": "351fb43b5bee9f6f7dffc0ae64fc11b5194f96c493a8287018781b2dfbe34ca6",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/notify/security/NotifyConfigCipherTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/security/NotifyConfigCipherTest.java",
       "line": 35,
       "rule": "email-address",
       "line_sha256": "d3d5052fdb425dfecc74d91337ed8049a8049c887c30f780a0e9bdf4a05b1144",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/FileResourceConfigTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/FileResourceConfigTest.java",
       "line": 74,
       "rule": "credential-setter",
       "line_sha256": "1f88f50c67e9222dfc33a3a6ec4fdc25516a61f4d0bc4d7e20811c0533ea7dec",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/FileResourceConfigTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/FileResourceConfigTest.java",
       "line": 121,
       "rule": "credential-setter",
       "line_sha256": "d237a1aa8d6853ff6585a817662a5deff5249dfe330602c3596b2727652f75e1",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/MqResourceConfigTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/MqResourceConfigTest.java",
       "line": 48,
       "rule": "credential-setter",
       "line_sha256": "43e0d2a2c9e6933e48dbc0ac8afef6229400265b2286c47f134e6f6f6d2f54a7",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceConfigServiceTest.java",
       "line": 83,
       "rule": "credential-literal",
       "line_sha256": "9665dd33e8d582b74b61720727deeb553fbde37aa03ca2f4d9b07666cb6c8fc7",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceConfigServiceTest.java",
       "line": 198,
       "rule": "credential-setter",
       "line_sha256": "94add7909ae6972e55732910710834c70a6a663543d3be9cd0cae28f76a32443",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceConfigServiceTest.java",
       "line": 402,
       "rule": "credential-setter",
       "line_sha256": "a5c3fd85e458c90789a799fbfaed40c24bcbab0dcfb264c67a506d5bf83bf2cd",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceConfigServiceTest.java",
       "line": 511,
       "rule": "credential-setter",
       "line_sha256": "e6f27ad0fedc4abc17c51bbe95bb896f7a5ef49ffd376ea22ca374ba57cdc14a",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceConfigServiceTest.java",
       "line": 538,
       "rule": "credential-setter",
       "line_sha256": "a5c3fd85e458c90789a799fbfaed40c24bcbab0dcfb264c67a506d5bf83bf2cd",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceConfigServiceTest.java",
       "line": 565,
       "rule": "credential-setter",
       "line_sha256": "4e6852b9e109a8d229908bb5a612a7ba88596c8f89b268a529818db101c26cfa",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceConfigServiceTest.java",
       "line": 587,
       "rule": "credential-setter",
       "line_sha256": "857bf3e16284eb7ba80a9104f7eeb77e09ae0111ce24bfa9463a1149224ce65b",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceConfigServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceConfigServiceTest.java",
       "line": 605,
       "rule": "credential-setter",
       "line_sha256": "cf157b1c11aa9e9ebdd9f8fdb6a11ef80bbe994fa339f2759cccc51bd65855c1",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceRuntimeServiceTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceRuntimeServiceTest.java",
       "line": 274,
       "rule": "credential-setter",
       "line_sha256": "ee02be1f1f2d957c51942190f6d7d179498d6577636b5220bb98838e62398a2d",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceSensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceSensitiveToStringTest.java",
       "line": 41,
       "rule": "credential-setter",
       "line_sha256": "c9a0790223f0e44d310c0f8e539b215299898b47aecfdd5c3ba316b3c7d4251d",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceSensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceSensitiveToStringTest.java",
       "line": 47,
       "rule": "credential-setter",
       "line_sha256": "ccbd79a3604ff344f9809d07fd590cc37761922c15dcf8f49b5a4d3e85fc15c1",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceSensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceSensitiveToStringTest.java",
       "line": 60,
       "rule": "credential-setter",
       "line_sha256": "6e12ba21857f7a6c3d7844d04dca79299a22a07a893ce413c33089caf4389d38",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceSensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceSensitiveToStringTest.java",
       "line": 70,
       "rule": "credential-setter",
       "line_sha256": "62c478c1b949e4a9cff7b1050efaecb302b1a934553793d6408fcf25bf9d0b9d",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceSensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceSensitiveToStringTest.java",
       "line": 115,
       "rule": "credential-setter",
       "line_sha256": "7e26ed40b2e826688e160d5b2635cef78c579e95f0df7ad10f4e2901973f34c0",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceSensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceSensitiveToStringTest.java",
       "line": 125,
       "rule": "credential-setter",
       "line_sha256": "d96d459d10275ddd33b2cf7ad4afb6565bbc9935764ad9209f8f7e7e4e71eb35",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceSensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceSensitiveToStringTest.java",
       "line": 138,
       "rule": "credential-setter",
       "line_sha256": "1a8b4e5eb7aac2322eba829d0ea21df3bd51baeb461d741e9a998e23af859337",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/ResourceSensitiveToStringTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/ResourceSensitiveToStringTest.java",
       "line": 145,
       "rule": "credential-setter",
       "line_sha256": "e08208fafbebfe29a84a948f348eb5beaa521b1e033acbe524502d5b0a3e2f10",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/factory/file/client/RemotePublicationWireTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/factory/file/client/RemotePublicationWireTest.java",
       "line": 49,
       "rule": "credential-setter",
       "line_sha256": "0ad23bebb36021d270ded5a891fc783f877bb291e6e7fec8f2cc7574ca3ef7e0",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/factory/file/client/SftpManagedTrustTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/factory/file/client/SftpManagedTrustTest.java",
       "line": 63,
       "rule": "credential-setter",
       "line_sha256": "0ad23bebb36021d270ded5a891fc783f877bb291e6e7fec8f2cc7574ca3ef7e0",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/factory/file/client/SftpManagedTrustTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/factory/file/client/SftpManagedTrustTest.java",
       "line": 96,
       "rule": "credential-setter",
       "line_sha256": "3bb70bc75a1930582b49cad8a54bb621d17d10ae650c4ec678f478173704e333",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifelio/ijob/core/resource/factory/monitor/client/HttpMonitorClientTest.java",
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/factory/monitor/client/HttpMonitorClientTest.java",
       "line": 69,
       "rule": "credential-setter",
       "line_sha256": "fccc749e21e57396a1c83a0f793a551ddbd0ee3f602dc2fbe046ddee04bf3fe0",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-framework/src/test/java/com/ifelio/ijob/framework/runtime/StartupConfigurationValidatorTest.java",
+      "path": "develop/api/ijob/ijob-framework/src/test/java/com/ifielsc/ijob/framework/runtime/StartupConfigurationValidatorTest.java",
       "line": 16,
       "rule": "bcrypt-literal",
       "line_sha256": "068e340cfa8ea5f82d7fb142274fb384f00e580b1f3f5a15400da2087bcac58f",
@@ -638,112 +638,112 @@
       "reason": "Environment variable reference with empty default, no credential value."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/DiagnosticsHttpIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/DiagnosticsHttpIT.java",
       "line": 32,
       "rule": "credential-literal",
       "line_sha256": "badc4895989e1219435b38ef985de62066635be7cdaa1c68a3e57ceb3a8e5c0b",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/RealOracleMigrationIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/RealOracleMigrationIT.java",
       "line": 43,
       "rule": "bcrypt-literal",
       "line_sha256": "2b06c04515a1d0fa671c267ccc894692c78cc75428044bfe5facb92816074a11",
       "reason": "Reviewed BCrypt-format validation/migration test fixture; absent from runtime configuration and local credential comparisons."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/RealPostgresqlMigrationIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/RealPostgresqlMigrationIT.java",
       "line": 44,
       "rule": "bcrypt-literal",
       "line_sha256": "2b06c04515a1d0fa671c267ccc894692c78cc75428044bfe5facb92816074a11",
       "reason": "Reviewed BCrypt-format validation/migration test fixture; absent from runtime configuration and local credential comparisons."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/RealSqlServerMigrationIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/RealSqlServerMigrationIT.java",
       "line": 42,
       "rule": "bcrypt-literal",
       "line_sha256": "2b06c04515a1d0fa671c267ccc894692c78cc75428044bfe5facb92816074a11",
       "reason": "Reviewed BCrypt-format validation/migration test fixture; absent from runtime configuration and local credential comparisons."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/RealSqliteMigrationIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/RealSqliteMigrationIT.java",
       "line": 53,
       "rule": "bcrypt-literal",
       "line_sha256": "2b06c04515a1d0fa671c267ccc894692c78cc75428044bfe5facb92816074a11",
       "reason": "Reviewed BCrypt-format validation/migration test fixture; absent from runtime configuration and local credential comparisons."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/SecurityCompletionIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/SecurityCompletionIT.java",
       "line": 55,
       "rule": "credential-literal",
       "line_sha256": "ed46b85cbf09929e216a5df5153d1f0af6b50b4993c4a3c4019e75e914b1456c",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/SecurityFoundationV27IT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/SecurityFoundationV27IT.java",
       "line": 353,
       "rule": "credential-setter",
       "line_sha256": "f7560241dd192623e310031cf272bfc65057a36aff0cbfa5a12b4b293a13a696",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/SecurityFoundationV27IT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/SecurityFoundationV27IT.java",
       "line": 374,
       "rule": "credential-setter",
       "line_sha256": "06b28f0e11978f497ac6430944072efb8a45c14f005bb4b96d7aef03cd7f024b",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/SecurityFoundationV27IT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/SecurityFoundationV27IT.java",
       "line": 519,
       "rule": "credential-setter",
       "line_sha256": "f52ebde84d986858b94da21c3b501f809c78cca69f3f01f2dd8618b4b836ac9e",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/Stage9cLifecycleHttpIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/Stage9cLifecycleHttpIT.java",
       "line": 150,
       "rule": "credential-literal",
       "line_sha256": "17d3d645e6f79578b40a28f1dd0a0a2f8e15eb7cdeb1f8531cf54e2318c0230e",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/Stage9cLifecycleHttpIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/Stage9cLifecycleHttpIT.java",
       "line": 297,
       "rule": "email-address",
       "line_sha256": "a1fca7a42fa1a842d00092f723836177a4a620dacf1335d7f773602af28104bc",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/Stage9cLifecycleHttpIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/Stage9cLifecycleHttpIT.java",
       "line": 316,
       "rule": "email-address",
       "line_sha256": "4b222ea30adc7dd3f8342c1f9bfe729e03c323b95d51c8ff4f309b1f956eb00f",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/Stage9cLifecycleHttpIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/Stage9cLifecycleHttpIT.java",
       "line": 572,
       "rule": "email-address",
       "line_sha256": "5fa5b4cf9799a4be694ca3f6154850eff9fce57802d06a0506060b792bfb03c4",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/Stage9cLifecycleHttpIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/Stage9cLifecycleHttpIT.java",
       "line": 591,
       "rule": "email-address",
       "line_sha256": "c79b30bc86525baaf6c7bd44330d23d85e44f244b4eaf7460a854527b8e72869",
       "reason": "Reviewed dummy mail addresses on example domains in fixtures or labels; no personal mailbox."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/UnifiedExperienceHttpIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/UnifiedExperienceHttpIT.java",
       "line": 32,
       "rule": "credential-literal",
       "line_sha256": "badc4895989e1219435b38ef985de62066635be7cdaa1c68a3e57ceb3a8e5c0b",
       "reason": "Reviewed synthetic test credential, redaction assertion or UI label; used only by mock/isolated fixtures."
     },
     {
-      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifelio/ijob/WorkbenchHttpIT.java",
+      "path": "develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/WorkbenchHttpIT.java",
       "line": 32,
       "rule": "credential-literal",
       "line_sha256": "e7eb1031c21a8b518df260b9e81bcfbaeb3ad76b6203564f6e1e3360f1ece905",
@@ -1893,7 +1893,7 @@
   ],
   "binary_reviews": [
     {
-      "path": "develop/web/ijob/src/assets/brand/ifelio-icon.png",
+      "path": "develop/web/ijob/src/assets/brand/ifielsc-icon.png",
       "sha256": "624cd7d59c3bd1347c0713a0340e4f308fe4e21892dfeb718624a3c5b040927c",
       "reason": "Visually reviewed product icon or abstract login background; no user screenshot, document, credentials or environment details. Public redistribution rights remain a separate review."
     },

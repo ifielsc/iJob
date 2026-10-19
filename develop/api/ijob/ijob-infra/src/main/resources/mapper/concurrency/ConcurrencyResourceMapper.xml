@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.concurrency.ConcurrencyResourceMapper">
-    <resultMap id="resourceMap" type="com.ifelio.ijob.infra.entity.concurrency.ConcurrencyResource">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.concurrency.ConcurrencyResourceMapper">
+    <resultMap id="resourceMap" type="com.ifielsc.ijob.infra.entity.concurrency.ConcurrencyResource">
         <id property="id" column="id"/>
         <result property="version" column="version"/>
         <result property="code" column="code"/>
@@ -39,13 +39,13 @@
         </choose>
         ORDER BY id
     </select>
-    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.concurrency.ConcurrencyResource">
+    <insert id="insert" parameterType="com.ifielsc.ijob.infra.entity.concurrency.ConcurrencyResource">
         INSERT INTO ifj_concurrency_resource
             (id, version, code, name, max_concurrency, enabled, description, create_time, update_time)
         VALUES
             (#{id}, #{version}, #{code}, #{name}, #{maxConcurrency}, #{enabled}, #{description}, #{createTime}, #{updateTime})
     </insert>
-    <update id="update" parameterType="com.ifelio.ijob.infra.entity.concurrency.ConcurrencyResource">
+    <update id="update" parameterType="com.ifielsc.ijob.infra.entity.concurrency.ConcurrencyResource">
         UPDATE ifj_concurrency_resource
         SET version=version+1, code=#{code}, name=#{name}, max_concurrency=#{maxConcurrency}, enabled=#{enabled},
             description=#{description}, update_time=#{updateTime}

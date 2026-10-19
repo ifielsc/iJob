@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.concurrency.TaskConcurrencyPolicyMapper">
-    <resultMap id="policyMap" type="com.ifelio.ijob.infra.entity.concurrency.TaskConcurrencyPolicy">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.concurrency.TaskConcurrencyPolicyMapper">
+    <resultMap id="policyMap" type="com.ifielsc.ijob.infra.entity.concurrency.TaskConcurrencyPolicy">
         <id property="taskId" column="task_id"/>
         <result property="taskMaxConcurrency" column="task_max_concurrency"/>
         <result property="version" column="version"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
-    <resultMap id="resourceMap" type="com.ifelio.ijob.infra.entity.concurrency.ConcurrencyResource">
+    <resultMap id="resourceMap" type="com.ifielsc.ijob.infra.entity.concurrency.ConcurrencyResource">
         <id property="id" column="id"/>
         <result property="version" column="version"/>
         <result property="code" column="code"/>
@@ -23,7 +23,7 @@
         SELECT task_id, task_max_concurrency, version, create_time, update_time
         FROM ifj_task_concurrency_policy WHERE task_id=#{taskId}
     </select>
-    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.concurrency.TaskConcurrencyPolicy">
+    <insert id="insert" parameterType="com.ifielsc.ijob.infra.entity.concurrency.TaskConcurrencyPolicy">
         INSERT INTO ifj_task_concurrency_policy
             (task_id, task_max_concurrency, version, create_time, update_time)
         VALUES (#{taskId}, #{taskMaxConcurrency}, #{version}, #{createTime}, #{updateTime})

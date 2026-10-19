@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.task.TaskMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.task.TaskMapper">
 
     <select id="selectGroupCodes" resultType="java.lang.String">
         SELECT DISTINCT dg.group_code
@@ -19,11 +19,11 @@
     </select>
 
     <resultMap id="TaskResultMap"
-               type="com.ifelio.ijob.infra.entity.task.Task">
+               type="com.ifielsc.ijob.infra.entity.task.Task">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="pluginType" column="plugin_type"
-                javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+                javaType="com.ifielsc.ijob.contract.enums.PluginType"/>
         <result property="pluginConfig" column="plugin_config"/>
         <result property="retryTimes" column="retry_times"/>
         <result property="retryInterval" column="retry_interval"/>
@@ -40,11 +40,11 @@
     </resultMap>
 
     <resultMap id="TaskListResultMap"
-               type="com.ifelio.ijob.contract.task.TaskListDTO">
+               type="com.ifielsc.ijob.contract.task.TaskListDTO">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="pluginType" column="plugin_type"
-                javaType="com.ifelio.ijob.contract.enums.PluginType"/>
+                javaType="com.ifielsc.ijob.contract.enums.PluginType"/>
         <result property="retryTimes" column="retry_times"/>
         <result property="retryInterval" column="retry_interval"/>
         <result property="timeout" column="timeout"/>
@@ -75,7 +75,7 @@
     </sql>
 
     <select id="selectDtoList"
-            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            parameterType="com.ifielsc.ijob.contract.task.TaskPageQuery"
             resultMap="TaskListResultMap">
         SELECT
             id,
@@ -116,7 +116,7 @@
     </select>
 
     <select id="selectDtoList" databaseId="postgresql"
-            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            parameterType="com.ifielsc.ijob.contract.task.TaskPageQuery"
             resultMap="TaskListResultMap">
         SELECT
             id, name, plugin_type, retry_times, retry_interval, timeout,
@@ -149,7 +149,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="sqlite"
-            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            parameterType="com.ifielsc.ijob.contract.task.TaskPageQuery"
             resultMap="TaskListResultMap">
         SELECT
             id, name, plugin_type, retry_times, retry_interval, timeout,
@@ -182,7 +182,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="oracle"
-            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            parameterType="com.ifielsc.ijob.contract.task.TaskPageQuery"
             resultMap="TaskListResultMap">
         SELECT
             id, name, plugin_type, retry_times, retry_interval, timeout,
@@ -215,7 +215,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="sqlserver"
-            parameterType="com.ifelio.ijob.contract.task.TaskPageQuery"
+            parameterType="com.ifielsc.ijob.contract.task.TaskPageQuery"
             resultMap="TaskListResultMap">
         SELECT
             id, name, plugin_type, retry_times, retry_interval, timeout,

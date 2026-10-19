@@ -2,25 +2,25 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.notify.NotifySendLogMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.notify.NotifySendLogMapper">
 
     <resultMap id="NotifySendLogDtoResultMap"
-               type="com.ifelio.ijob.contract.notify.NotifySendLogDTO">
+               type="com.ifielsc.ijob.contract.notify.NotifySendLogDTO">
         <id property="id" column="id"/>
         <result property="sourceType" column="source_type"
-                javaType="com.ifelio.ijob.contract.enums.NotifySendSource"/>
+                javaType="com.ifielsc.ijob.contract.enums.NotifySendSource"/>
         <result property="correlationId" column="correlation_id"/>
         <result property="operatorId" column="operator_id"/>
         <result property="targetType" column="target_type"
-                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+                javaType="com.ifielsc.ijob.contract.enums.TargetType"/>
         <result property="targetId" column="target_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="notifyBindingId" column="notify_binding_id"/>
         <result property="notifyConfigId" column="notify_config_id"/>
         <result property="notifyType" column="notify_type"
-                javaType="com.ifelio.ijob.contract.enums.NotifyType"/>
+                javaType="com.ifielsc.ijob.contract.enums.NotifyType"/>
         <result property="result" column="result"
-                javaType="com.ifelio.ijob.contract.enums.NotifySendResult"/>
+                javaType="com.ifielsc.ijob.contract.enums.NotifySendResult"/>
         <result property="failureCode" column="failure_code"/>
         <result property="failureSummary" column="failure_summary"/>
         <result property="durationMs" column="duration_ms"/>
@@ -29,7 +29,7 @@
     </resultMap>
 
     <insert id="insertStarted"
-            parameterType="com.ifelio.ijob.infra.entity.notify.NotifySendLog">
+            parameterType="com.ifielsc.ijob.infra.entity.notify.NotifySendLog">
         INSERT INTO ifj_notify_send_log (
             id,
             source_type,
@@ -60,7 +60,7 @@
     </insert>
 
     <update id="completeIfStarted"
-            parameterType="com.ifelio.ijob.infra.entity.notify.NotifySendLog">
+            parameterType="com.ifielsc.ijob.infra.entity.notify.NotifySendLog">
         UPDATE ifj_notify_send_log
         SET notify_type = #{notifyType},
             result = #{result},
@@ -73,7 +73,7 @@
     </update>
 
     <select id="selectDtoList"
-            parameterType="com.ifelio.ijob.contract.notify.NotifySendLogPageQuery"
+            parameterType="com.ifielsc.ijob.contract.notify.NotifySendLogPageQuery"
             resultMap="NotifySendLogDtoResultMap">
         SELECT
             id,

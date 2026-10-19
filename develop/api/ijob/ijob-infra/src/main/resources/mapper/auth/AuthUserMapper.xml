@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.auth.AuthUserMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.auth.AuthUserMapper">
     <sql id="columns">
         id, login_id, username, display_name, password_hash, role_code, enabled,
         must_change_password, security_version, revision, created_by, create_time, update_time
     </sql>
-    <select id="selectById" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectById" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT <include refid="columns"/> FROM ifj_auth_user WHERE id = #{id}
     </select>
-    <select id="selectByLoginId" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectByLoginId" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT <include refid="columns"/> FROM ifj_auth_user WHERE login_id = #{loginId}
     </select>
-    <select id="selectByUsername" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectByUsername" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT <include refid="columns"/> FROM ifj_auth_user WHERE username = #{username}
     </select>
     <select id="countAll" resultType="long">
         SELECT COUNT(*) FROM ifj_auth_user
     </select>
-    <select id="selectPage" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectPage" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT <include refid="columns"/> FROM ifj_auth_user ORDER BY id
     </select>
-    <select id="selectFiltered" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectFiltered" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT <include refid="columns"/> FROM ifj_auth_user
         <where>
             <if test="namePattern != null">
@@ -81,7 +81,7 @@
             update_time = #{user.updateTime}
         WHERE id = #{user.id} AND revision = #{expectedRevision} AND revision &lt; 9223372036854775807
     </update>
-    <select id="selectApprovers" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectApprovers" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT login_id, username, display_name FROM ifj_auth_user
         WHERE enabled = TRUE AND role_code IN ('ADMIN', 'OPERATOR')
         <if test="namePattern != null">
@@ -90,7 +90,7 @@
         </if>
         ORDER BY username, login_id
     </select>
-    <select id="selectApprovers" databaseId="oracle" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectApprovers" databaseId="oracle" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT login_id, username, display_name FROM ifj_auth_user
         WHERE enabled = 1 AND role_code IN ('ADMIN', 'OPERATOR')
         <if test="namePattern != null">
@@ -99,7 +99,7 @@
         </if>
         ORDER BY username, login_id
     </select>
-    <select id="selectApprovers" databaseId="sqlserver" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectApprovers" databaseId="sqlserver" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT login_id, username, display_name FROM ifj_auth_user
         WHERE enabled = 1 AND role_code IN ('ADMIN', 'OPERATOR')
         <if test="namePattern != null">
@@ -108,7 +108,7 @@
         </if>
         ORDER BY username, login_id
     </select>
-    <select id="selectApprovalAccounts" resultType="com.ifelio.ijob.infra.entity.auth.AuthUser">
+    <select id="selectApprovalAccounts" resultType="com.ifielsc.ijob.infra.entity.auth.AuthUser">
         SELECT login_id, username, display_name, enabled, role_code FROM ifj_auth_user
         WHERE login_id IN
         <foreach collection="loginIds" item="loginId" open="(" separator="," close=")">#{loginId}</foreach>

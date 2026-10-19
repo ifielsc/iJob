@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ifelio</groupId>
+    <groupId>com.ifielsc</groupId>
     <artifactId>ijob</artifactId>
     <version>1.0.0</version>
 
@@ -75,47 +75,47 @@
 
             <!-- 自己模块 -->
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-contract</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-plugin-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-infra</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-framework</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ifelio</groupId>
+                <groupId>com.ifielsc</groupId>
                 <artifactId>ijob-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>

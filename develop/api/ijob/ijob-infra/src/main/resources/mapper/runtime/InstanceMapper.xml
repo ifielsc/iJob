@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.InstanceMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.runtime.InstanceMapper">
 
     <resultMap id="instanceResultMap"
-               type="com.ifelio.ijob.infra.entity.runtime.Instance">
+               type="com.ifielsc.ijob.infra.entity.runtime.Instance">
         <id property="id" column="id"/>
         <result property="nodeId" column="node_id"/>
         <result property="parentInstanceId" column="parent_instance_id"/>
@@ -39,7 +39,7 @@
     </resultMap>
 
     <resultMap id="instanceDtoResultMap"
-               type="com.ifelio.ijob.contract.runtime.InstanceDTO">
+               type="com.ifielsc.ijob.contract.runtime.InstanceDTO">
         <id property="id" column="id"/>
         <result property="nodeId" column="node_id"/>
         <result property="parentInstanceId" column="parent_instance_id"/>

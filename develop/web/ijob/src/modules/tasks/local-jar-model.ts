@@ -147,7 +147,7 @@ export function localJarDraft(json?: string) {
         !/^[1-9]\d*$/.test(c.jarSize.value) ||
         BigInt(c.jarSize.value) > 9223372036854775807n ||
         typeof c.implementationVersion !== 'string' ||
-        c.spiVersion !== '2'
+        c.spiVersion !== '1'
       )
         throw Error()
       draft.snapshot = {
@@ -190,6 +190,7 @@ export function localJarIssues(d: LocalJarDraft) {
   if (
     d.entryClass.length > 255 ||
     !/^[A-Za-z_$][A-Za-z0-9_$]*(\.[A-Za-z_$][A-Za-z0-9_$]*)+$/.test(d.entryClass) ||
+    d.entryClass.startsWith('com.ifielsc.ijob.') ||
     d.entryClass.startsWith('com.ifelio.ijob.') ||
     d.entryClass.startsWith('com.ifeel.ijob.')
   )

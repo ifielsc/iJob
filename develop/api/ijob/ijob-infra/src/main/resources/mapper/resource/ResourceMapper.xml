@@ -2,15 +2,15 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.resource.ResourceMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.resource.ResourceMapper">
 
     <resultMap id="ResourceResultMap"
-               type="com.ifelio.ijob.infra.entity.resource.Resource">
+               type="com.ifielsc.ijob.infra.entity.resource.Resource">
         <id property="id" column="id"/>
         <result property="code" column="code"/>
         <result property="name" column="name"/>
         <result property="type" column="type"
-                javaType="com.ifelio.ijob.contract.enums.ResourceType"/>
+                javaType="com.ifielsc.ijob.contract.enums.ResourceType"/>
         <result property="config" column="config"/>
         <result property="enabled" column="enabled"/>
         <result property="description" column="description"/>
@@ -19,12 +19,12 @@
     </resultMap>
 
     <resultMap id="ResourceListResultMap"
-               type="com.ifelio.ijob.contract.resource.ResourceListDTO">
+               type="com.ifielsc.ijob.contract.resource.ResourceListDTO">
         <id property="id" column="id"/>
         <result property="code" column="code"/>
         <result property="name" column="name"/>
         <result property="type" column="type"
-                javaType="com.ifelio.ijob.contract.enums.ResourceType"/>
+                javaType="com.ifielsc.ijob.contract.enums.ResourceType"/>
         <result property="enabled" column="enabled"/>
         <result property="description" column="description"/>
         <result property="updateTime" column="update_time"/>
@@ -43,7 +43,7 @@
     </sql>
 
     <select id="selectDtoList"
-            parameterType="com.ifelio.ijob.contract.resource.ResourcePageQuery"
+            parameterType="com.ifielsc.ijob.contract.resource.ResourcePageQuery"
             resultMap="ResourceListResultMap">
         SELECT
             id,
@@ -72,7 +72,7 @@
     </select>
 
     <select id="selectDtoList" databaseId="postgresql"
-            parameterType="com.ifelio.ijob.contract.resource.ResourcePageQuery"
+            parameterType="com.ifielsc.ijob.contract.resource.ResourcePageQuery"
             resultMap="ResourceListResultMap">
         SELECT id, code, name, type, enabled, description, update_time
         FROM ifj_resource
@@ -94,7 +94,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="sqlite"
-            parameterType="com.ifelio.ijob.contract.resource.ResourcePageQuery"
+            parameterType="com.ifielsc.ijob.contract.resource.ResourcePageQuery"
             resultMap="ResourceListResultMap">
         SELECT id, code, name, type, enabled, description, update_time
         FROM ifj_resource
@@ -116,7 +116,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="oracle"
-            parameterType="com.ifelio.ijob.contract.resource.ResourcePageQuery"
+            parameterType="com.ifielsc.ijob.contract.resource.ResourcePageQuery"
             resultMap="ResourceListResultMap">
         SELECT id, code, name, type, enabled, description, update_time
         FROM ifj_resource
@@ -138,7 +138,7 @@
     </select>
 
 <select id="selectDtoList" databaseId="sqlserver"
-            parameterType="com.ifelio.ijob.contract.resource.ResourcePageQuery"
+            parameterType="com.ifielsc.ijob.contract.resource.ResourcePageQuery"
             resultMap="ResourceListResultMap">
         SELECT id, code, name, type, enabled, description, update_time
         FROM ifj_resource
@@ -248,7 +248,7 @@
     </select>
 
     <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.resource.Resource">
+            parameterType="com.ifielsc.ijob.infra.entity.resource.Resource">
         INSERT INTO ifj_resource (
             id,
             code,
@@ -273,7 +273,7 @@
     </insert>
 
     <update id="updateById"
-            parameterType="com.ifelio.ijob.infra.entity.resource.Resource">
+            parameterType="com.ifielsc.ijob.infra.entity.resource.Resource">
         UPDATE ifj_resource
         SET code = #{code},
             name = #{name},
@@ -306,7 +306,7 @@
         </choose>
     </delete>
 
-<select id="selectSummariesByIds" resultType="com.ifelio.ijob.contract.resource.ResourceListDTO">
+<select id="selectSummariesByIds" resultType="com.ifielsc.ijob.contract.resource.ResourceListDTO">
         SELECT id, name, type, enabled FROM ifj_resource
         WHERE id IN <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
     </select>

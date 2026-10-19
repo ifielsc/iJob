@@ -53,7 +53,7 @@ describe('Local JAR typed configuration', () => {
     const d = localJarDraft(
       config('{}').replace(
         '"userConfig"',
-        '"jarSize":9007199254740993,"implementationVersion":"2.0","spiVersion":"2","userConfig"',
+        '"jarSize":9007199254740993,"implementationVersion":"2.0","spiVersion":"1","userConfig"',
       ),
     )
     expect(d.snapshot?.jarSize).toBe('9007199254740993')
@@ -62,10 +62,10 @@ describe('Local JAR typed configuration', () => {
   it('rejects legacy SPI snapshots and both platform namespaces', () => {
     const legacy = config('{}').replace(
       '"userConfig"',
-      '"jarSize":4096,"implementationVersion":"1.0","spiVersion":"1","userConfig"',
+      '"jarSize":4096,"implementationVersion":"1.0","spiVersion":"2","userConfig"',
     )
     expect(localJarDraft(legacy).blocked).toBe(true)
-    for (const entryClass of ['com.ifeel.ijob.Extension', 'com.ifelio.ijob.Extension']) {
+    for (const entryClass of ['com.ifeel.ijob.Extension', 'com.ifielsc.ijob.Extension']) {
       const d = localJarDraft(config('{}'))
       d.entryClass = entryClass
       expect(localJarIssues(d)['localJar.entryClass']).toBe('entryInvalid')

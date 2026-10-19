@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.InstanceLogMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.runtime.InstanceLogMapper">
 
     <resultMap id="instanceLogResultMap"
-               type="com.ifelio.ijob.infra.entity.runtime.InstanceLog">
+               type="com.ifielsc.ijob.infra.entity.runtime.InstanceLog">
         <id property="id" column="id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="logTime" column="log_time"/>
@@ -13,7 +13,7 @@
         <result property="content" column="content"/>
     </resultMap>
 
-    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.InstanceLog">
+    <insert id="insert" parameterType="com.ifielsc.ijob.infra.entity.runtime.InstanceLog">
         INSERT INTO ifj_instance_log (
             id, instance_id, log_time, level, content
         ) VALUES (
@@ -21,7 +21,7 @@
         )
     </insert>
 
-<insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.InstanceLog" databaseId="oracle">
+<insert id="insert" parameterType="com.ifielsc.ijob.infra.entity.runtime.InstanceLog" databaseId="oracle">
         INSERT INTO ifj_instance_log (
             id, instance_id, log_time, log_level, content
         ) VALUES (

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.workbench.WorkbenchMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.workbench.WorkbenchMapper">
     <sql id="count">COUNT(*)</sql>
     <sql id="count" databaseId="sqlserver">COUNT_BIG(*)</sql>
     <sql id="window">
@@ -10,13 +10,13 @@
         AND execution.create_time &lt;= #{to}
     </sql>
     <select id="selectWindowStatuses" timeout="5"
-            resultType="com.ifelio.ijob.infra.mapper.workbench.WorkbenchStatusCount">
+            resultType="com.ifielsc.ijob.infra.mapper.workbench.WorkbenchStatusCount">
         SELECT execution.status, <include refid="count"/> AS count
         FROM ifj_instance execution WHERE <include refid="window"/>
         GROUP BY execution.status
     </select>
     <select id="selectCurrentActiveRoots" timeout="5"
-            resultType="com.ifelio.ijob.infra.mapper.workbench.WorkbenchStatusCount">
+            resultType="com.ifielsc.ijob.infra.mapper.workbench.WorkbenchStatusCount">
         SELECT status, <include refid="count"/> AS count FROM ifj_instance
         WHERE parent_instance_id IS NULL
           AND status IN ('WAITING', 'RUNNING', 'PAUSED', 'WAITING_EVENT')
@@ -33,7 +33,7 @@
     </select>
     <!-- The service applies a database LIMIT of five, with no count query. -->
     <select id="selectRecentFailures" timeout="5"
-            resultType="com.ifelio.ijob.contract.workbench.WorkbenchFailureDTO">
+            resultType="com.ifielsc.ijob.contract.workbench.WorkbenchFailureDTO">
         SELECT execution.id, execution.target_id, execution.target_type,
             CASE WHEN execution.target_type = 'TASK' THEN task_snapshot.name
                  WHEN execution.target_type = 'JOB' THEN job_snapshot.name ELSE NULL END AS name,

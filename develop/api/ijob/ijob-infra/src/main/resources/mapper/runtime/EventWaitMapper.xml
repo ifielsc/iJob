@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.EventWaitMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.runtime.EventWaitMapper">
     <resultMap id="eventWaitResultMap"
-               type="com.ifelio.ijob.infra.entity.runtime.EventWait">
+               type="com.ifielsc.ijob.infra.entity.runtime.EventWait">
         <id property="id" column="id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="rootInstanceId" column="root_instance_id"/>
@@ -27,7 +27,7 @@
         wait_type, status, event_code, business_key, correlation_key,
         accept_after, timeout_at, matched_event_id, allowed_operator_ids,
         decision_by, decision_comment, resolved_at, create_time, update_time</sql>
-    <insert id="insert" parameterType="com.ifelio.ijob.infra.entity.runtime.EventWait">
+    <insert id="insert" parameterType="com.ifielsc.ijob.infra.entity.runtime.EventWait">
         INSERT INTO ifj_event_wait (id, instance_id, root_instance_id,
             attempt_no, wait_type, status, event_code, business_key,
             correlation_key, accept_after, timeout_at, matched_event_id,
@@ -82,7 +82,7 @@
         WHERE wait_id = #{waitId}
         ORDER BY operator_id ASC
     </select>
-    <resultMap id="eventWaitDtoMap" type="com.ifelio.ijob.contract.event.EventWaitDTO">
+    <resultMap id="eventWaitDtoMap" type="com.ifielsc.ijob.contract.event.EventWaitDTO">
         <result property="id" column="id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="rootInstanceId" column="root_instance_id"/>

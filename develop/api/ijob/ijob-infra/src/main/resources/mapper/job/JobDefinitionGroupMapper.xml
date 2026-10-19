@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobDefinitionGroupMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.job.JobDefinitionGroupMapper">
     <insert id="insert">
         INSERT INTO ifj_job_definition_group (definition_id, group_code, create_time)
         VALUES (#{definitionId}, #{groupCode}, #{createTime})
     </insert>
-    <select id="selectByDefinitionIds" resultType="com.ifelio.ijob.infra.mapper.group.DefinitionGroupRow">
+    <select id="selectByDefinitionIds" resultType="com.ifielsc.ijob.infra.mapper.group.DefinitionGroupRow">
         SELECT definition_id, group_code
         FROM ifj_job_definition_group
         WHERE definition_id IN

@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.coordination.NotificationOutboxMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.coordination.NotificationOutboxMapper">
 
     <resultMap id="notificationOutboxResultMap"
-               type="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+               type="com.ifielsc.ijob.infra.coordination.notification.NotificationOutboxItem">
         <id property="id" column="id"/>
         <result property="deduplicationKey" column="deduplication_key"/>
         <result property="notifyConfigId" column="notify_config_id"/>
@@ -48,7 +48,7 @@
     </sql>
 
     <insert id="insertIfAbsent"
-            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+            parameterType="com.ifielsc.ijob.infra.coordination.notification.NotificationOutboxItem">
         INSERT INTO ifj_notification_outbox (
             id, deduplication_key, notify_config_id, notify_type, config_snapshot,
             config_enabled, title, subject, content, content_version,
@@ -309,7 +309,7 @@
     </update>
 
     <insert id="insertIfAbsent" databaseId="postgresql"
-            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+            parameterType="com.ifielsc.ijob.infra.coordination.notification.NotificationOutboxItem">
         INSERT INTO ifj_notification_outbox (
             id, deduplication_key, notify_config_id, notify_type, config_snapshot,
             config_enabled, title, subject, content, content_version,
@@ -327,7 +327,7 @@
     </insert>
 
 <insert id="insertIfAbsent" databaseId="sqlite"
-            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+            parameterType="com.ifielsc.ijob.infra.coordination.notification.NotificationOutboxItem">
         INSERT INTO ifj_notification_outbox (
             id, deduplication_key, notify_config_id, notify_type, config_snapshot,
             config_enabled, title, subject, content, content_version,
@@ -345,7 +345,7 @@
     </insert>
 
 <insert id="insertIfAbsent" databaseId="oracle"
-            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+            parameterType="com.ifielsc.ijob.infra.coordination.notification.NotificationOutboxItem">
         MERGE INTO ifj_notification_outbox target
         USING (SELECT 1 AS marker FROM dual) source
         ON (target.deduplication_key = #{deduplicationKey})
@@ -364,7 +364,7 @@
         )</insert>
 
 <insert id="insertIfAbsent" databaseId="sqlserver"
-            parameterType="com.ifelio.ijob.infra.coordination.notification.NotificationOutboxItem">
+            parameterType="com.ifielsc.ijob.infra.coordination.notification.NotificationOutboxItem">
         IF NOT EXISTS (SELECT 1 FROM ifj_notification_outbox WITH (UPDLOCK, HOLDLOCK) WHERE deduplication_key = #{deduplicationKey})
         BEGIN
 

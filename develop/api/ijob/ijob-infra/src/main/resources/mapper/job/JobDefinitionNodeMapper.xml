@@ -2,20 +2,20 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.job.JobDefinitionNodeMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.job.JobDefinitionNodeMapper">
 
     <resultMap id="JobDefinitionNodeResultMap"
-               type="com.ifelio.ijob.infra.entity.job.JobDefinitionNode">
+               type="com.ifielsc.ijob.infra.entity.job.JobDefinitionNode">
         <id property="id" column="id"/>
         <result property="definitionId" column="definition_id"/>
         <result property="nodeKey" column="node_key"/>
         <result property="name" column="name"/>
         <result property="nodeKind" column="node_kind"
-                javaType="com.ifelio.ijob.contract.enums.JobNodeKind"/>
+                javaType="com.ifielsc.ijob.contract.enums.JobNodeKind"/>
         <result property="gatewayMode" column="gateway_mode"
-                javaType="com.ifelio.ijob.contract.enums.GatewayMode"/>
+                javaType="com.ifielsc.ijob.contract.enums.GatewayMode"/>
         <result property="nodeType" column="node_type"
-                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+                javaType="com.ifielsc.ijob.contract.enums.TargetType"/>
         <result property="refId" column="ref_id"/>
         <result property="refDefinitionId" column="ref_definition_id"/>
         <result property="refTaskDefinitionId"
@@ -47,7 +47,7 @@
     </select>
 
     <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.job.JobDefinitionNode">
+            parameterType="com.ifielsc.ijob.infra.entity.job.JobDefinitionNode">
         INSERT INTO ifj_job_definition_node (
             id,
             definition_id,

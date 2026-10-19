@@ -2,35 +2,35 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.notify.NotifyBindingMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.notify.NotifyBindingMapper">
 
     <resultMap id="NotifyBindingResultMap"
-               type="com.ifelio.ijob.infra.entity.notify.NotifyBinding">
+               type="com.ifielsc.ijob.infra.entity.notify.NotifyBinding">
         <id property="id" column="id"/>
         <result property="targetType" column="target_type"
-                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+                javaType="com.ifielsc.ijob.contract.enums.TargetType"/>
         <result property="targetId" column="target_id"/>
         <result property="notifyConfigId" column="notify_config_id"/>
         <result property="notifyPolicy" column="notify_policy"
-                javaType="com.ifelio.ijob.contract.enums.NotifyPolicy"/>
+                javaType="com.ifielsc.ijob.contract.enums.NotifyPolicy"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <resultMap id="NotifyBindingDtoResultMap"
-               type="com.ifelio.ijob.contract.notify.NotifyBindingDTO">
+               type="com.ifielsc.ijob.contract.notify.NotifyBindingDTO">
         <id property="id" column="id"/>
         <result property="targetType" column="target_type"
-                javaType="com.ifelio.ijob.contract.enums.TargetType"/>
+                javaType="com.ifielsc.ijob.contract.enums.TargetType"/>
         <result property="targetId" column="target_id"/>
         <result property="notifyConfigId" column="notify_config_id"/>
         <result property="notifyConfigName" column="notify_config_name"/>
         <result property="notifyType" column="notify_type"
-                javaType="com.ifelio.ijob.contract.enums.NotifyType"/>
+                javaType="com.ifielsc.ijob.contract.enums.NotifyType"/>
         <result property="notifyConfigEnabled"
                 column="notify_config_enabled"/>
         <result property="notifyPolicy" column="notify_policy"
-                javaType="com.ifelio.ijob.contract.enums.NotifyPolicy"/>
+                javaType="com.ifielsc.ijob.contract.enums.NotifyPolicy"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
@@ -179,7 +179,7 @@
     </select>
 
     <insert id="insert"
-            parameterType="com.ifelio.ijob.infra.entity.notify.NotifyBinding">
+            parameterType="com.ifielsc.ijob.infra.entity.notify.NotifyBinding">
         INSERT INTO ifj_notify_binding (
             id,
             target_type,
@@ -200,7 +200,7 @@
     </insert>
 
     <update id="updatePolicyById"
-            parameterType="com.ifelio.ijob.infra.entity.notify.NotifyBinding">
+            parameterType="com.ifielsc.ijob.infra.entity.notify.NotifyBinding">
         UPDATE ifj_notify_binding
         SET notify_policy = #{notifyPolicy},
             update_time = #{updateTime}

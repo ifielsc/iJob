@@ -1,9 +1,9 @@
 package sample.localjar;
 
-import com.ifelio.ijob.spi.localjar.LocalJarContext;
-import com.ifelio.ijob.spi.localjar.LocalJarExecution;
-import com.ifelio.ijob.spi.localjar.LocalJarResult;
-import com.ifelio.ijob.spi.localjar.LocalJarTask;
+import com.ifielsc.ijob.spi.localjar.LocalJarContext;
+import com.ifielsc.ijob.spi.localjar.LocalJarExecution;
+import com.ifielsc.ijob.spi.localjar.LocalJarResult;
+import com.ifielsc.ijob.spi.localjar.LocalJarTask;
 
 public final class GoodLocalJarTask implements LocalJarTask {
     private volatile boolean stopped;

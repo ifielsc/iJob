@@ -1,0 +1,16 @@
+package com.ifielsc.ijob.plugin.servermonitor.rule;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemoryMonitorRule extends AbstractMonitorRule {
+    private Threshold usage;
+}

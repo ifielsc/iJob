@@ -106,7 +106,7 @@ app.http.read-timeout=60s
 
 这两个键在当前源码中存在，内置值分别为 5s 和 30s。示例是按需覆盖，不改变当前交付的默认配置。它们作用于使用平台统一 HTTP 客户端配置的调用，不代表所有插件或外部系统的全部超时。
 
-确认支持的键、类型与单位时，查阅对应发布版本的 [application.yml](../../api/ijob/ijob-starter/src/main/resources/application.yml)、其导入的 database 配置及 [AppProperties](../../api/ijob/ijob-common/src/main/java/com/ifelio/ijob/common/config/AppProperties.java)。其他配置类、Spring Boot/组件配置、日志 XML 也可能提供配置入口，不能只按生成文件判断是否支持。完整二进制交付中可查随包源码归档；不要用未来分支新增的键配置旧 JAR。任意自造键不会自动增加功能，拼写错误可能被忽略。
+确认支持的键、类型与单位时，查阅对应发布版本的 [application.yml](../../api/ijob/ijob-starter/src/main/resources/application.yml)、其导入的 database 配置及 [AppProperties](../../api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/config/AppProperties.java)。其他配置类、Spring Boot/组件配置、日志 XML 也可能提供配置入口，不能只按生成文件判断是否支持。完整二进制交付中可查随包源码归档；不要用未来分支新增的键配置旧 JAR。任意自造键不会自动增加功能，拼写错误可能被忽略。
 
 操作步骤：确认当前安装的 IJOB_HOME → 停机并保留配置/数据/原密钥的备份 → 添加或修改已支持的键 → 按原方式启动 → 核对日志、实际功能与预期值。普通外部文件修改不支持自动热加载；不要为检查配置把包含秘密的完整配置或 env 端点公开。
 

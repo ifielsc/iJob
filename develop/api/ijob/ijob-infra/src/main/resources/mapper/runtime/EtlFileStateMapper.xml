@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ifelio.ijob.infra.mapper.runtime.EtlFileStateMapper">
+<mapper namespace="com.ifielsc.ijob.infra.mapper.runtime.EtlFileStateMapper">
   <update id="acquire">
     UPDATE ifj_etl_checkpoint SET owner_instance_id=#{instanceId}, owner_token=#{token}
     WHERE task_id=#{taskId} AND checkpoint_key=#{key}
