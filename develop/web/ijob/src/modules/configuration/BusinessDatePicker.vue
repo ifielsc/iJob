@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { NButton, NDatePicker, NInput, NPopover } from 'naive-ui'

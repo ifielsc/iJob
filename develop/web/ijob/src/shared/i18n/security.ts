@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const securityZh = {
   common: {
     refresh: '刷新',

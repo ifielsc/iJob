@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public final class PasswordHash {

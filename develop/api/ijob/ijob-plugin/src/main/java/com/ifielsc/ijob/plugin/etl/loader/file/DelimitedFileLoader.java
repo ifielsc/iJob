@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.plugin.etl.loader.file;
 
 import com.ifielsc.ijob.core.resource.ResourceClientLease;

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 // Integration fixture only. Password enters through the environment, never command arguments.

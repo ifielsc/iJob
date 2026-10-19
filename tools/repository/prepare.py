@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 """Review/export an exact source allowlist. Never invokes Git or contacts a network."""
 import argparse
 import hashlib

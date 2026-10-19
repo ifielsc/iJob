@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const jobsZh = {
   removeMany: '删除选中的 {count} 个节点及 {edges} 条关联连线？',
   bidirectionalPort: '输入／输出端点：从这里拖出为输出，拖入这里为输入；箭头指向下游',

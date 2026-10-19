@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 import { setupLocalJar } from '../local-jar-fixture'
 test.use({ viewport: { width: 1440, height: 1100 } })

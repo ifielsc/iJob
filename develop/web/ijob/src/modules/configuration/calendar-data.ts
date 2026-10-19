@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { ApiError } from '../../shared/api/errors'
 import { parsePage } from '../security-contracts'
 import { parseCalendar, record, validDate } from './contracts'

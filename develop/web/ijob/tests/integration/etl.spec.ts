@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 import { fileConfig } from '../etl-fixture'
 test('real isolated SQLite: ETL publish, edit, exact markers, revision conflict and source reference protection', async ({

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 import { createServer } from 'node:http'
 import { monitorConfig } from '../monitor-fixture'

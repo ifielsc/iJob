@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { ApiError } from '../api/errors'
 import { record } from '../api/values'
 import { logRows } from './contracts'

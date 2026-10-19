@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.contract.job;
 
 import com.ifielsc.ijob.contract.enums.ExecuteCondition;

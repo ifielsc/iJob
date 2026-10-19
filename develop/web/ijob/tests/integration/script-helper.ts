@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect } from '@playwright/test'
 import type { Page, APIRequestContext } from '@playwright/test'
 import { spawn } from 'node:child_process'

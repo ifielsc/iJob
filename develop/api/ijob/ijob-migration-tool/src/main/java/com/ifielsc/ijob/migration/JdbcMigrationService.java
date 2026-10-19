@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.migration;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -809,16 +812,21 @@ final class JdbcMigrationService {
             throws SQLException {
         for (BundleManifest.Table table : manifest.tables()) {
             TableShape shape = inspectShape(connection, schema.tables().get(table.name()));
-            List<String> actualColumns = shape.columns().stream().map(ColumnMeta::name).toList();
+            Map<String, ColumnMeta> actualColumns = new LinkedHashMap<>();
+            for (ColumnMeta column : shape.columns()) {
+                actualColumns.put(column.name(), column);
+            }
             List<String> expectedColumns =
                     table.columns().stream().map(BundleManifest.Column::name).toList();
-            if (!actualColumns.equals(expectedColumns)
+            if (actualColumns.size() != expectedColumns.size()
+                    || !actualColumns.keySet().equals(new HashSet<>(expectedColumns))
                     || !shape.primaryKey().equals(table.primaryKey())) {
                 throw new IllegalStateException("Target shape mismatch: " + table.name());
             }
-            for (int index = 0; index < shape.columns().size(); index++) {
-                ColumnMeta actual = shape.columns().get(index);
-                BundleManifest.Column expected = table.columns().get(index);
+            // Frozen vendor migrations may add/rebuild columns in different physical orders.
+            // Import bindings and digest verification already follow manifest column names.
+            for (BundleManifest.Column expected : table.columns()) {
+                ColumnMeta actual = actualColumns.get(expected.name());
                 // Oracle deliberately leaves selected CLOB columns nullable because empty
                 // VARCHAR/CLOB
                 // values collapse to NULL. Logical type identity is portable; physical nullability

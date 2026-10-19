@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { computed, h, nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import { NButton, NDrawer, NDrawerContent, useMessage } from 'naive-ui'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import EventFields from '../../src/modules/tasks/EventFields.vue'
 import { eventDraft } from '../../src/modules/tasks/event-model'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

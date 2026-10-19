@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from 'vitest'
 import { addExceptionRange } from '../../src/modules/configuration/calendar-exceptions'
 import type { CalendarException } from '../../src/modules/configuration/contracts'

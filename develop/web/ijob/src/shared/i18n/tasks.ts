@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const tasksZh = {
   title: '任务管理',
   subtitle: '管理任务配置与发布版本',

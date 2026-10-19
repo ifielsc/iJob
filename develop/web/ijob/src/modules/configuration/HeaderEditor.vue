@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { NButton, NInput } from 'naive-ui'
 import { useI18n } from 'vue-i18n'

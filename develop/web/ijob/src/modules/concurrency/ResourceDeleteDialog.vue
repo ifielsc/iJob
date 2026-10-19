@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { defineConfig } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
 import { mkdtempSync } from 'node:fs'

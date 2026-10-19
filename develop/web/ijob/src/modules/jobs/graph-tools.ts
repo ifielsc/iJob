@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { JobEdge } from './model'
 
 export function connectionProblem(edges: JobEdge[], from: string, to: string) {

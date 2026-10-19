@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 test('production EVENT editor preserves JSON and publishes exact task identity', async ({
   page,

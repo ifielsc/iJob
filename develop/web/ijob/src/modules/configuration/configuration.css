@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 ifielsc
+ * SPDX-License-Identifier: MIT
+ */
+
 /* Configuration pages share the compact user-management scale. */
 .ssh-host-trust {
   padding: 12px;

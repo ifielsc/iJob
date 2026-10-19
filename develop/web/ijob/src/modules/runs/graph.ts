@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import dagre from '@dagrejs/dagre'
 import { exactId, record } from '../../shared/api/values'
 import type { JobNode, JobEdge } from '../jobs/public/contracts'

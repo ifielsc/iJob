@@ -1,11 +1,18 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 ARG MAVEN_IMAGE
 ARG JRE_IMAGE
 FROM ${MAVEN_IMAGE} AS build
 WORKDIR /build
 COPY ijob ./ijob
-RUN --mount=type=cache,id=ijob-maven-v1,target=/root/.m2/repository mvn -B -ntp -f ijob/pom.xml -pl ijob-common,ijob-contract -am -DskipTests install
+RUN --mount=type=cache,id=ijob-maven-v1,target=/root/.m2/repository \
+    --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
+    mvn -B -ntp -f ijob/pom.xml -pl ijob-common,ijob-contract -am -DskipTests install
 COPY ijob-monitor-agent ./agent
-RUN --mount=type=cache,id=ijob-maven-v1,target=/root/.m2/repository mvn -B -ntp -f agent/pom.xml -Pquality -DskipTests package \
+RUN --mount=type=cache,id=ijob-maven-v1,target=/root/.m2/repository \
+    --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
+    mvn -B -ntp -f agent/pom.xml -Pquality -DskipTests package \
     && javac -d /health agent/tools/docker/AgentHealthProbe.java
 
 FROM ${JRE_IMAGE} AS runtime

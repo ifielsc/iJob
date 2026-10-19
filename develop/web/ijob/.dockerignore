@@ -12,5 +12,8 @@
 !public/
 !public/**
 !tools/
+!tools/bundle-licenses.ts
+!tools/third-party/
+!tools/third-party/**
 !tools/docker/
 !tools/docker/**

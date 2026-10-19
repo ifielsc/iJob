@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { Copy } from '@lucide/vue'
 import { NButton, useMessage } from 'naive-ui'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 // Normalize only fields whose submission contract trims whitespace. Never trim code or secrets.
 export function draftFingerprint(value: unknown): string {
   return JSON.stringify(value, (key, item) => {

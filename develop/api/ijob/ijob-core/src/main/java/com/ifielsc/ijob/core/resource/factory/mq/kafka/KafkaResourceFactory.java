@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.core.resource.factory.mq.kafka;
 
 import cn.hutool.json.JSONUtil;

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const workspaceZH = {
   workspaceIntro: '了解功能、选择插件，从这里开始配置与使用。',
   openWorkbench: '打开工作台',

@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 param(
     [Parameter(Mandatory=$true)][string]$Bom,
     [Parameter(Mandatory=$true)][string]$OutputDirectory

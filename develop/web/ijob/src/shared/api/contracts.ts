@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export interface ApiResponse<T> {
   success: boolean
   code: number

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 import { setupWorkbench } from '../workbench-fixture'
 test.use({ viewport: { width: 1512, height: 1100 } })

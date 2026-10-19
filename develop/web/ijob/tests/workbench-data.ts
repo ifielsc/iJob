@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export function workbenchData() {
   return {
     from: '2026-09-27T10:00:00',

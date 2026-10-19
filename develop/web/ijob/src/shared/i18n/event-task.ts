@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const eventTaskZh = {
   PROBE_FILE: '文件探测',
   removePerson: '移除失效人员',

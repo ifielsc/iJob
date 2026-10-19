@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, it } from 'vitest'
 import { stringify } from 'lossless-json'
 import { apiDraft, apiConfig, apiIssues } from '../../src/modules/tasks/api-call-model'

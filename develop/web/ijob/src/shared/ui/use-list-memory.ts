@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { nextTick, onBeforeUnmount, onMounted, watch, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useRuntime } from '../../app/runtime'

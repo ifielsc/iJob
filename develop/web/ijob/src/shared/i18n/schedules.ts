@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const schedulesZh = {
   title: '调度管理',
   subtitle: '配置触发规则与日历，预览候选触发时间',

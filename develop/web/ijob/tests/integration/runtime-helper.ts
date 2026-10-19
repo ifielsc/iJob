@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, type APIRequestContext, type Page } from '@playwright/test'
 export async function verifyRuntime(
   page: Page,

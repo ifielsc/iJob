@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, test } from '@playwright/test'
 test('production runtime and notification record chunks load with exact identifiers', async ({
   page,

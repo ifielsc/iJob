@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import EmptyState from './EmptyState.vue'
 import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue'

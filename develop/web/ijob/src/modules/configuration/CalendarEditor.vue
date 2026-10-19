@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import EmptyState from '../../shared/ui/EmptyState.vue'
 import { randomUuid } from '../../shared/runtime/uuid'

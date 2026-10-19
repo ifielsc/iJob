@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const apiCallZh = {
   remoteStop: '远端停止（可选）',
   remoteStopPath: '停止请求路径',

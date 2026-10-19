@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, vi } from 'vitest'
 import { validUsername, validPassword, validDisplayName } from '../../src/shared/auth/account-rules'
 import {

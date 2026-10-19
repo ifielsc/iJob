@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { parse, stringify, isSafeNumber, LosslessNumber } from 'lossless-json'
 import type { AppLocale } from '../preferences/preferences'
 import type { ApiResponse, Token } from './contracts'

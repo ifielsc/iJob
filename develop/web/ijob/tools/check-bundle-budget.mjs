@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import process from 'node:process'
 import { readFileSync } from 'node:fs'
 import { gzipSync } from 'node:zlib'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect } from 'vitest'
 import { runGraph } from '../../src/modules/runs/graph'
 const sample = () => ({

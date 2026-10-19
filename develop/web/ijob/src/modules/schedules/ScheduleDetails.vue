@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { NDrawer, NDrawerContent, NButton } from 'naive-ui'
 import { useI18n } from 'vue-i18n'

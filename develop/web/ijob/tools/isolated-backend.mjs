@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { prepareLocalJar } from './local-jar-fixture.mjs'
 import { spawn, spawnSync } from 'node:child_process'
 import { randomBytes } from 'node:crypto'

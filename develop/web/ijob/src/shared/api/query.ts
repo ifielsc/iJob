@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { QueryClient } from '@tanstack/vue-query'
 import type { AppLocale } from '../preferences/preferences'
 

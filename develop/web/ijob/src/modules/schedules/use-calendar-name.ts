@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { computed } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { useRuntime } from '../../app/runtime'

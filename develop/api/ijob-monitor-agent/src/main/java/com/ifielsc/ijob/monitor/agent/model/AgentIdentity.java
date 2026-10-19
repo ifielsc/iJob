@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.monitor.agent.model;
 
 import com.ifielsc.ijob.contract.monitor.AgentInfo;

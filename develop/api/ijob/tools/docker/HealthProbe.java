@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

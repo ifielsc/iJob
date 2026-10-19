@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const batchEtlZh = {
   title: '批量 ETL',
   tab_tables: '表与资源',

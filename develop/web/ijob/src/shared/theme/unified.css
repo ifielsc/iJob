@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 ifielsc
+ * SPDX-License-Identifier: MIT
+ */
+
 /* Shared, approved 2026-09-29 list and drawer semantics. */
 .danger-action {
   color: var(--error, #c43543);

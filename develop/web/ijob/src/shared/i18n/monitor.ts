@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const monitorZh = {
   collect: '采集与应用',
   rules: '阈值规则',

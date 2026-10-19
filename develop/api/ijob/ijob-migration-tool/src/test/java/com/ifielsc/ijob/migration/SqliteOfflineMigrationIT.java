@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.migration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,6 +102,60 @@ class SqliteOfflineMigrationIT {
         assertThrows(
                 IllegalStateException.class, () -> service.exportBundle(settings(source), bundle));
         assertTrue(Files.isRegularFile(bundle.resolve("INCOMPLETE")));
+    }
+
+    @Test
+    void importsEquivalentColumnsInDifferentPhysicalOrder() throws Exception {
+        Path source = temporaryDirectory.resolve("ordered-source.db");
+        Path target = temporaryDirectory.resolve("reordered-target.db");
+        migrate(source);
+        migrate(target);
+        seedSource(source);
+        reorderRuntimeGuard(target, "INTEGER");
+        JdbcMigrationService service = new JdbcMigrationService(new ObjectMapper());
+        Path bundle = temporaryDirectory.resolve("reordered-bundle");
+        service.exportBundle(settings(source), bundle);
+        service.importBundle(settings(target), bundle);
+        service.verifyBundle(settings(target), bundle);
+        try (Connection connection = DriverManager.getConnection(url(target));
+                Statement statement = connection.createStatement();
+                ResultSet rows = statement.executeQuery("SELECT * FROM ifj_runtime_guard")) {
+            assertEquals("revision", rows.getMetaData().getColumnName(1));
+        }
+    }
+
+    @Test
+    void stillRejectsChangedLogicalTypeAfterColumnReordering() throws Exception {
+        Path source = temporaryDirectory.resolve("typed-source.db");
+        Path target = temporaryDirectory.resolve("wrong-type-target.db");
+        migrate(source);
+        migrate(target);
+        reorderRuntimeGuard(target, "TEXT");
+        JdbcMigrationService service = new JdbcMigrationService(new ObjectMapper());
+        Path bundle = temporaryDirectory.resolve("wrong-type-bundle");
+        service.exportBundle(settings(source), bundle);
+        var failure =
+                assertThrows(
+                        IllegalStateException.class,
+                        () -> service.importBundle(settings(target), bundle));
+        assertTrue(
+                failure.getMessage()
+                        .contains("Target logical column mismatch: ifj_runtime_guard.revision"));
+    }
+
+    private static void reorderRuntimeGuard(Path database, String revisionType) throws Exception {
+        try (Connection connection = DriverManager.getConnection(url(database));
+                Statement statement = connection.createStatement()) {
+            statement.executeUpdate(
+                    "CREATE TABLE reordered_guard (revision "
+                            + revisionType
+                            + " NOT NULL, guard_key TEXT NOT NULL PRIMARY KEY)");
+            statement.executeUpdate(
+                    "INSERT INTO reordered_guard (revision,guard_key) SELECT revision,guard_key"
+                            + " FROM ifj_runtime_guard");
+            statement.executeUpdate("DROP TABLE ifj_runtime_guard");
+            statement.executeUpdate("ALTER TABLE reordered_guard RENAME TO ifj_runtime_guard");
+        }
     }
 
     @Test

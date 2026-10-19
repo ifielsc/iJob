@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 /** Dormant drafts stay in history so undo can recover incomplete input. */
 export function hasActiveConditionDraft(
   edges: readonly { id: string; defaultRoute?: boolean }[],

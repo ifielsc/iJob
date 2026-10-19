@@ -9,6 +9,7 @@
 | 数据库、迁移和隔离 | [数据库](database.md) |
 | 工作区、环境资源与配置落点 | [工作区和环境](../operations/workspace-and-environments.md) |
 | 安全、配置与发布要求 | [安全与配置](security-and-configuration.md) |
+| 版权、许可证与素材 | [许可与素材](licensing.md) |
 | CI、完整本地验证与后续阶段 | [基础 CI](../ci/basic-ci.md)、[隔离集成](../ci/isolated-integration.md) |
 
 规范修改应与实现和验证同时审查；涉及配置落点、资源共享、数据库版本或协议兼容性的变化必须写明迁移方式，不能只改示例。

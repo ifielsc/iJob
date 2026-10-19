@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const experienceZh = {
   executionEnded: '执行已结束',
   unchanged: '尚未修改',

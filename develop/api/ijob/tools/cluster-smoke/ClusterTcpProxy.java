@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

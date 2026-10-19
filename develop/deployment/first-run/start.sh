@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 set -euo pipefail
 source "$(dirname -- "${BASH_SOURCE[0]}")/native-common.sh"
 [[ $# == 0 ]] || { echo 'Usage: ./start.sh (optional IJOB_HOME and JAVA_HOME environment variables)' >&2; exit 1; }

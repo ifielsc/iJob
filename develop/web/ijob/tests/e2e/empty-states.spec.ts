@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect, type Page } from '@playwright/test'
 
 async function emptyApi(page: Page, locale: string, theme: string) {

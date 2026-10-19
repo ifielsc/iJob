@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 // A wall-clock timestamp has no offset. Never convert it through the browser timezone.
 export function wallTime(value: string): string {
   const text = value.replace(' ', 'T')

@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import './sql-editor.css'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'

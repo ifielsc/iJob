@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { parse, stringify, isLosslessNumber } from 'lossless-json'
 import { exactId, record } from '../../shared/api/values'
 import { ApiError } from '../../shared/api/errors'

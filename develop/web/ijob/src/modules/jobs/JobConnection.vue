@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 import type { ConnectionLineProps } from '@vue-flow/core'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 // @vitest-environment node
 import { expect, it } from 'vitest'
 import { computed, reactive } from 'vue'

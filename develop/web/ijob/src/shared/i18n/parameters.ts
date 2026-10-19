@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const parametersZh = {
   detail: '模板详情',
   replaceDraft: '当前参数已修改，切换模板会替换这些内容，是否继续？',

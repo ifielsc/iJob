@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { randomUuid } from '../../src/shared/runtime/uuid'
 

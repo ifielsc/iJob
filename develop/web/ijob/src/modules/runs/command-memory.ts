@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { Runtime } from '../../app/runtime'
 const sessions = new WeakMap<Runtime, { revision: number; requests: Map<string, string> }>()
 export function commandMemory(runtime: Runtime) {

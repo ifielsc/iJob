@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 

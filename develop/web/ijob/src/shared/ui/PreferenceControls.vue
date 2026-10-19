@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { Globe2, Moon, Sun } from '@lucide/vue'

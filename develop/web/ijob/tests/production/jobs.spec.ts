@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, test } from '@playwright/test'
 test('production job canvas loads Vue Flow, lays out nodes and preserves compact styling', async ({
   page,

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { formatUtc, parseUtc, toApiUtc } from './format'
 
 /** Convert a wall-clock value in an explicit IANA zone. Never use the browser zone. */

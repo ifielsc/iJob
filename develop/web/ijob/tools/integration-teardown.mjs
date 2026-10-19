@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import process from 'node:process'
 import { spawnSync } from 'node:child_process'
 import { existsSync } from 'node:fs'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { createRouter, createWebHistory } from 'vue-router'
 import type { Router } from 'vue-router'
 import type { Permission } from '../shared/api/contracts'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 import { setupEtl } from '../etl-fixture'
 test('production ETL lazy editors load and preserve exact file markers', async ({ page }) => {

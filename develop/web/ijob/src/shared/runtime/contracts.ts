@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { ApiError } from '../api/errors'
 import { exactId, record } from '../api/values'
 export const terminal = new Set(['SUCCESS', 'FAILED', 'STOPPED', 'TIMED_OUT', 'SKIPPED'])

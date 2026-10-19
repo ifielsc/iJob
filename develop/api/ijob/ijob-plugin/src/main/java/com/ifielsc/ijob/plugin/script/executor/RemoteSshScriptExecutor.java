@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.plugin.script.executor;
 
 import com.ifielsc.ijob.core.execute.task.TaskContext;

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 import { batchConfig } from '../batch-etl-fixture'
 test('real isolated Batch ETL: publish, exact values, typed references and conflict', async ({

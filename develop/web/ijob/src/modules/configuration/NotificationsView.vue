@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import ConfigList from './ConfigList.vue'
 import { useRoute, useRouter } from 'vue-router'

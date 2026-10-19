@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 set -euo pipefail
 source "$(dirname -- "${BASH_SOURCE[0]}")/native-common.sh"
 if [[ ! -d "$data_home" ]]; then echo 'Already stopped (not initialized).'; exit 0; fi

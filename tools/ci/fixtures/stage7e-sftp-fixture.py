@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 """Loopback-only SFTP fixture; no business files or credentials."""
 import json, socket, sys, threading, stat, logging, warnings
 warnings.filterwarnings("ignore")

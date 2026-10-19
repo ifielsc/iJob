@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.contract.auth;
 
 /** Stable permission codes; labels are localized separately. */

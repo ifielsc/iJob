@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const localJarZh = {
   title: '本地 JAR',
   artifact: '制品与入口',

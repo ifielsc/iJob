@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from 'vitest'
 import { diagnostics, selection, drilldown } from '../../src/modules/diagnostics/model'
 import { diagnosticData } from '../diagnostics-fixture'

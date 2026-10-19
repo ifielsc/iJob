@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { LosslessNumber, parse, stringify } from 'lossless-json'
 import { pushId } from './push-model'
 export const collectTypes = ['CPU', 'MEMORY', 'DISK', 'NETWORK', 'APPLICATION'] as const

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { presentationForRoute } from '../navigation/route-presentation'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import { naiveTheme, themes } from './tokens'

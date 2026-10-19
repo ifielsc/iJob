@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { parse, stringify, LosslessNumber } from 'lossless-json'
 export const pushLimits = {
   fetchSize: [500, 1, 10000],

@@ -1,10 +1,14 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { bundleLicenses } from './tools/bundle-licenses'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
-    plugins: [vue()],
+    plugins: [vue(), bundleLicenses()],
     server: {
       port: 5173,
       strictPort: true,

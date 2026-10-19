@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, test } from '@playwright/test'
 test('production runtime graph loads for summary-only users', async ({ page }) => {
   const root = {

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, it } from 'vitest'
 import { draftFor, issues, taskBody, taskRow } from '../../src/modules/tasks/model'
 import {

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const etlZh = {
   messageTab: '消费与限制',
   field_topic: 'Topic',

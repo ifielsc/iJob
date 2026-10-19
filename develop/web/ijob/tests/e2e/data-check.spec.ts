@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect, type Page } from '@playwright/test'
 import { setup } from '../data-check-fixture'
 async function open(page: Page, en = false) {

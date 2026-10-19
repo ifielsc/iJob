@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { parseUtc } from './format'
 
 // UI-only local calendar coordinates; never send this timestamp to the API.

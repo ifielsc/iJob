@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.core.notify.channel.dingtalk;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

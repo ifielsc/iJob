@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 param(
     [Parameter(Mandatory)][ValidateSet('mysql', 'postgresql', 'sqlserver', 'oracle', 'sqlite')][string]$Database,
     [Parameter(Mandatory)][string]$ConfigPath,

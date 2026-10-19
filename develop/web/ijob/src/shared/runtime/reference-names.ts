@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { ComputedRef, InjectionKey } from 'vue'
 import { isLosslessNumber } from 'lossless-json'
 export interface ReferenceName {

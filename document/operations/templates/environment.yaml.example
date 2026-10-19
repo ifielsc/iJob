@@ -1,0 +1,41 @@
+schema_version: 1
+id: replace-with-new-environment-id
+owner: ifielsc
+purpose: replace-with-test-purpose
+status: planned
+resources_created: false
+source_commit_candidate: null
+source_archive_sha256: null
+product_version: 1.0.0
+local_jar_protocol: 1
+formal_database_version: V1
+resource_register: resources.md
+paths:
+  configuration: config
+  secrets: secrets
+  data: data
+  reports: runs/<run-id>/reports
+  temporary: runs/<run-id>/temp
+host:
+  identity: null
+  creation_source: null
+  os: null
+  architecture: null
+  cpu_count: null
+  memory_gib: null
+  initial_free_disk_gib: null
+isolation:
+  reuse_old_services: false
+  reuse_old_data: false
+  reuse_old_credentials: false
+  real_notifications: false
+  global_prune: false
+resources: []
+# Add actual resource identities, versions/digests, endpoint, database/schema or
+# SFTP directory/fingerprint, configuration and secret-file references here.
+# Never put passwords, tokens, private keys or AES keys in this manifest.
+validation:
+  status: not-started
+  source_and_artifact_binding: pending
+  reports: []
+  expected_skips: []

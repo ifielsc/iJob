@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 // Geometry only: shared by the worker and the single live connection preview.
 export type Point = { x: number; y: number }
 export type Side = 'left' | 'right' | 'top' | 'bottom'

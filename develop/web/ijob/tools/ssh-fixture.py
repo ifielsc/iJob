@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 """Disposable authenticated loopback SSH server for browser integration tests only."""
 import json
 import os

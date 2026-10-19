@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 param(
     [switch]$Check,
     [string]$FormatterJar = (Join-Path ([Environment]::GetFolderPath('UserProfile')) '.m2/repository/com/google/googlejavaformat/google-java-format/1.24.0/google-java-format-1.24.0-all-deps.jar'),

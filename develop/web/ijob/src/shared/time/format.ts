@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { AppLocale } from '../preferences/preferences'
 
 // The backend uses UTC LocalDateTime without a suffix; never parse it as browser local time.

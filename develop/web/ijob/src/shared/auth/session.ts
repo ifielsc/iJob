@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { defineStore } from 'pinia'
 import { ref, shallowRef } from 'vue'
 import type { Token } from '../api/contracts'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { CurrentUser, Permission } from '../api/contracts'
 
 export function can(user: CurrentUser | undefined, permission: Permission): boolean {

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { Form } from '../parameters/public/model'
 import { parse, stringify, isLosslessNumber } from 'lossless-json'
 import { ApiError } from '../../shared/api/errors'

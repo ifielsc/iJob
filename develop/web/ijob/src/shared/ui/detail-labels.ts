@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 type Translate = (key: string) => string
 type Exists = (key: string) => boolean
 const resourceScopes: Record<string, string[]> = {

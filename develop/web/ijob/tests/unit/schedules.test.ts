@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, it, expect, vi } from 'vitest'
 import { parse, stringify } from 'lossless-json'
 import {

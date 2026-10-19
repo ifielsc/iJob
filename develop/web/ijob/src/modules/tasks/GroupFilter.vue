@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch } from 'vue'
 import { NAutoComplete } from 'naive-ui'

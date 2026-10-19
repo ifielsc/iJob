@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { messageKey } from './i18n/keys'
 export const pluginTypes = [
   'SQL',

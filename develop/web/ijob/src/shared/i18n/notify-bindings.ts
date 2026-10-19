@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const notifyBindingsZh = {
   missing: '此绑定已被移除，草稿仍保留。请取消后重新添加。',
   title: '通知绑定',

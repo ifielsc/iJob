@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { parseExact as parse } from '../../shared/ui/json-form'
 import { validFileId } from './file-transfer-model'
 import { stringify, LosslessNumber } from 'lossless-json'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { randomUuid } from '../../shared/runtime/uuid'
 import { hidden, fieldValue, type ConfigRow, type HiddenField } from './contracts'
 export type MqType = 'KAFKA' | 'RABBITMQ'

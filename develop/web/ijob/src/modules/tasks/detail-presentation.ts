@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { isLosslessNumber } from 'lossless-json'
 import { detailSections, pluginDetailSections } from './detail-sections'
 import { eventActionFields, type EventAction } from './event-model'

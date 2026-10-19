@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { Page } from '@playwright/test'
 import { setupWorkbench } from './workbench-fixture'
 export function diagnosticData(category = 'LEASE_EXPIRED', limit = 20) {

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const mailChannelsZh = {
   select: '选择邮件通道 {name}',
   deleteHint:

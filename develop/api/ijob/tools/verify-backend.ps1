@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 param([Parameter(Mandatory=$true)][ValidatePattern('^[A-Za-z0-9_-]+$')][string]$RunId, [switch]$Offline, [switch]$ScanDependencies, [string]$ReportRoot, [string]$TemporaryRoot)
 $ErrorActionPreference = 'Stop'
 if ($Offline -and $ScanDependencies) { throw 'Dependency scanning requires network access' }

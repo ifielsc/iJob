@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 """Loopback, memory-only FTP/SFTP publication fixture. No user files are accessed."""
 import io, json, logging, posixpath, socket, socketserver, stat, sys, threading, warnings
 warnings.filterwarnings('ignore')

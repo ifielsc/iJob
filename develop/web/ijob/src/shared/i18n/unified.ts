@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const unifiedZh = {
   advanced: '高级筛选',
   copy: '复制',

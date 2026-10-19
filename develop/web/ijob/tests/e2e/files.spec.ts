@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect, type Page } from '@playwright/test'
 import { setupFiles } from '../files-fixture'
 async function editTask(page: Page, name: string, en = false) {

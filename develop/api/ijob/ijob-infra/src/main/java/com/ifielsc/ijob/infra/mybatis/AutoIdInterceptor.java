@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.infra.mybatis;
 
 import com.ifielsc.ijob.infra.coordination.id.IdGenerator;

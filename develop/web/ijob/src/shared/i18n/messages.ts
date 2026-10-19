@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { jsonFormZh, jsonFormEn } from './json-form'
 import { parametersZh, parametersEn } from './parameters'
 import { mailChannelsZh, mailChannelsEn } from './mail-channels'

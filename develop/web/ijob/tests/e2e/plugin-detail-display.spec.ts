@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 const samples: Record<string, object> = {
   SQL: { resourceId: '81', script: 'SELECT 1;\nSELECT 2;', transaction: false, minRows: 0 },

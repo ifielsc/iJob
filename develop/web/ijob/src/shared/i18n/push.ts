@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const pushZh = {
   source: '数据来源',
   sourceResourceId: '数据库资源',

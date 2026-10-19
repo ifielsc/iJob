@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const detailsZh = {
   searchRows: '搜索列表内容',
   rowCounts: '共 {total} 项 · 匹配 {count} 项',

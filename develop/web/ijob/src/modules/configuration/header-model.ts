@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { hidden, type HiddenField } from './contracts'
 export interface HeaderDraft {
   name: string

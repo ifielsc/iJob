@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { ApiError } from '../../shared/api/errors'
 import { parseUtc } from '../../shared/time/format'
 import { exactId, record } from '../../shared/api/values'

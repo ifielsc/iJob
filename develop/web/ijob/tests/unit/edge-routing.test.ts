@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from 'vitest'
 import { ObstacleIndex, portSide, routeEdge } from '../../src/modules/jobs/edge-routing'
 import type { Obstacle, RouteInput, Side } from '../../src/modules/jobs/edge-routing'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { Page } from '@playwright/test'
 import { setupPush } from './push-fixture'
 export const localJarConfig =

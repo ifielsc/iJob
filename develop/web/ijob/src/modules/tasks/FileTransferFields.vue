@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
 import { NCollapse, NCollapseItem, NInput, NSelect, NSwitch, useDialog } from 'naive-ui'

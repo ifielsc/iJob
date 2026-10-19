@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect, type Page } from '@playwright/test'
 const errors = new WeakMap<Page, string[]>()
 test.beforeEach(({ page }) => {

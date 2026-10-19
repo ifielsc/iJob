@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.plugin.push.reader;
 
 import com.ifielsc.ijob.plugin.common.jdbc.CancelableJdbcResources;

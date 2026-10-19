@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from 'vitest'
 import { zhCN, enUS } from '../../src/shared/i18n/messages'
 import { formatUtc, parseUtc, stringId, toApiUtc } from '../../src/shared/time/format'

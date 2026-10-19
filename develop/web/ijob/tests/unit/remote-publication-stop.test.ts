@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, it } from 'vitest'
 import { apiDraft, apiConfig, apiIssues } from '../../src/modules/tasks/api-call-model'
 import { transferDraft, transferConfig } from '../../src/modules/tasks/file-transfer-model'

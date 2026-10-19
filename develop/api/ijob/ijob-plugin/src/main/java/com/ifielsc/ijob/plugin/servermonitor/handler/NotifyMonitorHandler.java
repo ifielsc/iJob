@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.plugin.servermonitor.handler;
 
 import com.ifielsc.ijob.contract.enums.NotifySendSource;

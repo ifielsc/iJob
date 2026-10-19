@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 """Recover frozen historical SQL outside the checkout; never fetch or access a database."""
 import argparse
 import hashlib

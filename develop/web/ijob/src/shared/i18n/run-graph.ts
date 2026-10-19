@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const runGraphZh = {
   title: 'DAG 运行状态',
   hint: '按本次执行版本展示完整节点与连线；点击节点查看下方详情。',

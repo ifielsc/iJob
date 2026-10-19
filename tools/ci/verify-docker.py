@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 """Validate Compose and build local images only; never start or push containers."""
 import argparse
 import json

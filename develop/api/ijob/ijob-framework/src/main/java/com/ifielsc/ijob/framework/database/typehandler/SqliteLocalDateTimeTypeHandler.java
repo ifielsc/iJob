@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.framework.database.typehandler;
 
 import org.apache.ibatis.type.BaseTypeHandler;

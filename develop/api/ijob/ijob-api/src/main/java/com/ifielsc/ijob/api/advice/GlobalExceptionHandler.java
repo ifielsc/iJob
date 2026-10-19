@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.api.advice;
 
 import cn.dev33.satoken.exception.NotLoginException;

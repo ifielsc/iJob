@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { intersects, obstacleBox, ObstacleIndex, routeEdge } from './edge-routing'
 import type { Obstacle, RouteInput, Route } from './edge-routing'
 

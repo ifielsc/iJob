@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { LosslessNumber, parse, stringify } from 'lossless-json'
 
 export type NodeKind = 'string' | 'number' | 'boolean' | 'null' | 'object' | 'array'

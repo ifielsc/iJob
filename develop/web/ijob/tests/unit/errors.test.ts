@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from 'vitest'
 import { createI18n } from 'vue-i18n'
 import { ApiError, describeError } from '../../src/shared/api/errors'

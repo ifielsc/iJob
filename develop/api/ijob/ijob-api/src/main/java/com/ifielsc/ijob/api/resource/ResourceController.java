@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.api.resource;
 
 import com.ifielsc.ijob.common.response.ApiResponse;

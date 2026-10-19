@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const dataCheckZh = {
   delete: '删除',
   checks: '检查项',

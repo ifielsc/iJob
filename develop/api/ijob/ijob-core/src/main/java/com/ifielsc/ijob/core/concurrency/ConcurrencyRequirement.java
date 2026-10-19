@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.core.concurrency;
 
 public record ConcurrencyRequirement(String scopeKey, int maxConcurrency, long policyEpoch)

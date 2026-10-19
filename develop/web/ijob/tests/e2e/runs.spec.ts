@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, test, type Page } from '@playwright/test'
 
 test('trigger detail retains recorded business zone and offset without display-zone conversion', async ({

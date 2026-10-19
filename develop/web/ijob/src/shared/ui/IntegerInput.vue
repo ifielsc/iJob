@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { NInput } from 'naive-ui'
 defineProps<{ id: string; label?: string; disabled?: boolean; invalid?: boolean }>()

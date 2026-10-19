@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const configurationZh = {
   deliveryRangeError: '请选择有效起止时间，跨度不能超过 31 天。',
   deliveryHistory: '投递过程',

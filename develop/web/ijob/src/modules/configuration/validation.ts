@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { splitValues } from './contracts'
 import type { HiddenField } from './contracts'
 export const jdbcExamples: Record<string, string> = {

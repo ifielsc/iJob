@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 ifielsc
+ * SPDX-License-Identifier: MIT
+ */
+
 /* Route-scoped rollout: other business surfaces retain their previous geometry. */
 .application.compact-shell {
   grid-template-columns: 208px minmax(0, 1fr);

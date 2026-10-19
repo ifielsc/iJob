@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.core.retention;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

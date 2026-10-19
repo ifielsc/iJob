@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { parse, stringify, LosslessNumber } from 'lossless-json'
 export const archives = ['NONE', 'ZIP', 'GZIP', 'TAR', 'TAR_GZ', 'SEVEN_ZIP'] as const
 export const limits = {

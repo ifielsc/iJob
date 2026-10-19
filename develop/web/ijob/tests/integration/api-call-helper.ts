@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect } from '@playwright/test'
 import type { APIRequestContext, Page } from '@playwright/test'
 import { createServer } from 'node:http'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const workbenchZh = {
   running: '运行中',
   title: '工作台',

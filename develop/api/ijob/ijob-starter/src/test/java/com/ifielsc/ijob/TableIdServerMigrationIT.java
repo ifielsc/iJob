@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,12 +95,22 @@ class TableIdServerMigrationIT {
                 jdbc.queryForObject(
                         "SELECT id FROM ifj_calendar WHERE name='existing'", Long.class));
         configuration.target("37").load().migrate();
-        switch (vendor) {
-            case "mysql" -> new MySqlSchemaCompatibilityInspector(ds).verify();
-            case "postgresql" -> new PostgreSqlSchemaCompatibilityInspector(ds).verify();
-            case "sqlserver" -> new SqlServerSchemaCompatibilityInspector(ds).verify();
-            default -> new OracleSchemaCompatibilityInspector(ds).verify();
+        // Historical ID migration is valid independently of the current release boundary.
+        try (var connection = ds.getConnection()) {
+            TableIdSchemaVerifier.verify(connection);
         }
+        assertThrows(
+                IllegalStateException.class,
+                () -> {
+                    switch (vendor) {
+                        case "mysql" -> new MySqlSchemaCompatibilityInspector(ds).verify();
+                        case "postgresql" ->
+                                new PostgreSqlSchemaCompatibilityInspector(ds).verify();
+                        case "sqlserver" -> new SqlServerSchemaCompatibilityInspector(ds).verify();
+                        default -> new OracleSchemaCompatibilityInspector(ds).verify();
+                    }
+                },
+                "A historical schema must not be accepted as a release V1 installation");
         var c =
                 new Configuration(
                         new Environment("server-table-id", new JdbcTransactionFactory(), ds));

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { LosslessNumber, parse, stringify } from 'lossless-json'
 export const parameterKinds = ['object', 'array', 'string', 'number', 'boolean', 'null'] as const
 export type ParameterKind = (typeof parameterKinds)[number]

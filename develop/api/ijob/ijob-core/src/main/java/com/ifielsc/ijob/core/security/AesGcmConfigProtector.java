@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.core.security;
 
 import static com.ifielsc.ijob.core.security.ConfigProtectionException.Reason.DECRYPTION_FAILED;

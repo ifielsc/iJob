@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { Draft, Resource, Target } from './model'
 export interface Snapshot {
   name: string

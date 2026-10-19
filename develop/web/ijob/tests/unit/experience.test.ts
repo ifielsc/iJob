@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from 'vitest'
 import { draftFingerprint } from '../../src/shared/forms/draft-fingerprint'
 import { collectReferences } from '../../src/shared/runtime/reference-names'

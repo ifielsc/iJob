@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { draftFingerprint } from './draft-fingerprint'
 import { computed, ref, shallowRef } from 'vue'
 import { useLeaveGuard } from './use-leave-guard'

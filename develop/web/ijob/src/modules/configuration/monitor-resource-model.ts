@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { randomUuid } from '../../shared/runtime/uuid'
 import { hidden, fieldValue, type ConfigRow } from './contracts'
 import { headerDraft, headerBody, headerIssues } from './header-model'

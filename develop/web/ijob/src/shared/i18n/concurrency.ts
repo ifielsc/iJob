@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const concurrencyZh = {
   selectPage: '选择本页可删除资源',
   selectRow: '选择 {name}',

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, test } from '@playwright/test'
 
 for (const locale of ['zh-CN', 'en-US']) {

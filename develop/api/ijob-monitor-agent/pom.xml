@@ -15,10 +15,17 @@
     <description>ijob-monitor-agent</description>
     <url/>
     <licenses>
-        <license/>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/license/MIT</url>
+            <distribution>repo</distribution>
+        </license>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <id>ifielsc</id>
+            <name>ifielsc</name>
+        </developer>
     </developers>
     <scm>
         <connection/>

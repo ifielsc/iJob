@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const runsZh = {
   title: '运行中心',
   subtitle: '查询触发记录与执行实例',

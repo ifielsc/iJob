@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { computed, h, nextTick, onBeforeUnmount, ref, shallowRef } from 'vue'
 import { NButton, NSelect } from 'naive-ui'

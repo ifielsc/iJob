@@ -1,9 +1,14 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 ARG MAVEN_IMAGE
 ARG JRE_IMAGE
 FROM ${MAVEN_IMAGE} AS build
 WORKDIR /build
 COPY . .
-RUN --mount=type=cache,id=ijob-maven-v1,target=/root/.m2/repository mvn -B -ntp -Pquality -DskipTests package \
+RUN --mount=type=cache,id=ijob-maven-v1,target=/root/.m2/repository \
+    --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
+    mvn -B -ntp -Pquality -DskipTests package \
     && javac -d /health tools/docker/HealthProbe.java
 
 FROM ${JRE_IMAGE} AS runtime

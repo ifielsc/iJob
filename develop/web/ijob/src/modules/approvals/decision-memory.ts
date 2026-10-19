@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { Runtime } from '../../app/runtime'
 import { effectScope, watch } from 'vue'
 import type { Decision } from './model'

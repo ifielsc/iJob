@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { onBeforeUnmount, ref, watch, type Ref } from 'vue'
 
 /** Observe the scroll viewport and release its observer when replaced or unmounted. */

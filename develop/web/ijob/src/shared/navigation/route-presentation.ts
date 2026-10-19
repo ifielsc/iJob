@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { MessageKey } from '../i18n/keys'
 
 export const routePresentation: Readonly<

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect, type Page } from '@playwright/test'
 const id = '9007199254740993'
 async function setup(page: Page, writer = true, active = 0) {

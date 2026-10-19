@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { workspaceZH, workspaceEN } from './workspace-details'
 export const guideZH = {
   ...workspaceZH,

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { computed, inject, shallowRef } from 'vue'
 import type { InjectionKey } from 'vue'
 import { useQuery } from '@tanstack/vue-query'

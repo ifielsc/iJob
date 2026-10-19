@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { MonitorResourceView } from './monitor-resource-model'
 import type { FileConfigView } from './file-model'
 import { fileProtocols } from './file-protocols'

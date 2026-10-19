@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { addDays } from './calendar-data'
 import { validDate } from './contracts'
 import type { CalendarException } from './contracts'

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const approvalsZh = {
   search: '查询',
   reset: '重置',

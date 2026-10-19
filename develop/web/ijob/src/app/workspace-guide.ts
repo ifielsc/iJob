@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { Permission } from '../shared/api/contracts'
 export interface GuideLink {
   key: string

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { isLosslessNumber } from 'lossless-json'
 
 type Section = { title: string; keys: string[] }

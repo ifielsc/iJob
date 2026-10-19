@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.common.response;
 
 /** A stable message identity, independent of the transport status and the display locale. */

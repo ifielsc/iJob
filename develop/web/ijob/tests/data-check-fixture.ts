@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { Page } from '@playwright/test'
 export async function setup(page: Page, failure = '', permission = true) {
   const task = {

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import console from 'node:console'
 import { chromium } from '@playwright/test'
 import { readFileSync, writeFileSync } from 'node:fs'

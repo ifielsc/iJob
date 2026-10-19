@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const filesZh = {
   remotePublishMode: '远端发布方式',
   TEMP_RENAME: '临时上传后更名（推荐）',

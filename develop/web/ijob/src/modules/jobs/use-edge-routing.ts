@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { computed, onBeforeUnmount, provide, shallowReactive, shallowRef, watch } from 'vue'
 import type { InjectionKey, Ref } from 'vue'
 import type { GraphEdge, GraphNode } from '@vue-flow/core'

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 set -euo pipefail
 umask 077
 

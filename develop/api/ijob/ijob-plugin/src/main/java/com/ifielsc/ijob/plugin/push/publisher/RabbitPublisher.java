@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.plugin.push.publisher;
 
 import com.ifielsc.ijob.core.resource.factory.mq.rabbit.RabbitChannelPool;

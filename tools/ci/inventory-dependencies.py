@@ -1,3 +1,6 @@
+# Copyright (c) 2026 ifielsc
+# SPDX-License-Identifier: MIT
+
 """Inventory generated BOMs and installed pnpm license metadata; no network or legal verdict."""
 import argparse
 from collections import Counter

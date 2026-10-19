@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import { NInput } from 'naive-ui'
 const value = defineModel<string>('value', { required: true })

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const jsonFormZh = {
   systemParameters: '系统时间参数',
   businessHelp:

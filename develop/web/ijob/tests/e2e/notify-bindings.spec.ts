@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { expect, test, type Page } from '@playwright/test'
 const taskId = '9007199254740993',
   configId = '9223372036854775806',

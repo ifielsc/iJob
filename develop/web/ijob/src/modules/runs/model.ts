@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { exactId, record } from '../../shared/api/values'
 import { runRow, type Run, type Log } from '../../shared/runtime/contracts'
 import { parseUtc } from '../../shared/time/format'

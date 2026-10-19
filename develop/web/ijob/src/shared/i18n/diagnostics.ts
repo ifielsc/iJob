@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export const diagnosticsZh = {
   title: '运行诊断',
   subtitle: '只读检查 · 按数据库时间观察',

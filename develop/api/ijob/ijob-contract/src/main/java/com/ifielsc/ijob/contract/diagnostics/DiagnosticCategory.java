@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.contract.diagnostics;
 
 /** Observed database conditions, not inferred root causes or worker health. */

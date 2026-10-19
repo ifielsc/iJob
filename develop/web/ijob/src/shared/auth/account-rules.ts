@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 /* eslint-disable no-control-regex -- Explicitly reject Java ISO control characters. */
 // Shared account validation matches Java's UTF-16 length and UTF-8 byte limit.
 export const validUsername = (value: string) => /^[A-Za-z0-9][A-Za-z0-9_.@-]{2,63}$/.test(value)

@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from 'vitest'
 import { parseConfig, type ConfigRow } from '../../src/modules/configuration/contracts'
 import {

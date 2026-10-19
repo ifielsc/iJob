@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { isSupportedPlugin, type SupportedPlugin } from '../../shared/plugins'
 import { exactId, record, integer } from '../../shared/api/values'
 export { exactId, record, pageData } from '../../shared/api/values'

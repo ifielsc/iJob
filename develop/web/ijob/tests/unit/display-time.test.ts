@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { describe, expect, it } from 'vitest'
 import { wallToUtc, utcToWall } from '../../src/shared/time/display'
 describe('explicit display timezone, independent from browser timezone', () => {

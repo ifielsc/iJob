@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2026 ifielsc
+SPDX-License-Identifier: MIT
+-->
+
 <script setup lang="ts">
 import DrawerCloseButton from '../../shared/ui/DrawerCloseButton.vue'
 import { draftFingerprint } from '../../shared/forms/draft-fingerprint'

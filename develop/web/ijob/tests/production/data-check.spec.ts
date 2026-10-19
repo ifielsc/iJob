@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { test, expect } from '@playwright/test'
 import { setup } from '../data-check-fixture'
 test('production DATA_CHECK editor loads SQL chunk and publishes precise configuration', async ({

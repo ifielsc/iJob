@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { verifyJobs } from './job-helper'
 import { verifySchedules } from './schedule-helper'
 import { expect, test } from '@playwright/test'

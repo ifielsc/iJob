@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import { record, id } from './contracts'
 import { ApiError } from '../../shared/api/errors'
 export interface MailChannel {

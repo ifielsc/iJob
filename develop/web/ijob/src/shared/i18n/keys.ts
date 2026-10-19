@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 import type { zhCN } from './messages'
 type LeafKeys<T> = {
   [K in keyof T & string]: T[K] extends string ? K : `${K}.${LeafKeys<T[K]>}`

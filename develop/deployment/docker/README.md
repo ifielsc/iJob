@@ -1,5 +1,7 @@
 # Docker 交付准备
 
+本页注明 2026-10-17 的镜像及容量结果属于历史候选记录。当前命名空间与 MIT 候选正在独立 P2 环境重新构建、验证；本轮完成前不能沿用历史通过结论。当前阶段入口见 [隔离集成](../../../document/ci/isolated-integration.md)，精确制品与运行证据保存在对应工作区环境中。
+
 2026-10-17 的完整交付包首次启动器使用 `ijob-backend:1.0.0-setup.3`、`ijob-web:1.0.0-ui.1`。默认 STATIC，bootstrap=false 显式生成；定时、ETL/批量 ETL 开启，本地 JAR、事件接入 API 关闭。初始化器保留既有配置、密码哈希和 AES 密钥。步骤与切换 DATABASE/多实例见[启动说明](../first-run/README.md)；验收原件保存在维护工作区，不随源码仓库分发。本目录高级构建/Compose 模板及历史三镜像证据有自己的标签范围，不能将旧镜像当作当前简单启动器的默认镜像；已有数据不变。
 
 1.0.0 的 Linux amd64 三个镜像已在新的 Ubuntu 24.04 LTS 虚拟机实际从源码构建。基础镜像 digest 固定于 `images.lock.json` / `images.env`；最终应用镜像 ID、制品哈希、测试和剩余门禁记录在维护工作区的独立验收材料中。本轮仅在新虚拟机与隔离数据库验收，现有 QA/cluster 未切换，未推送镜像。
@@ -12,6 +14,8 @@
 - 三个上下文均使用 `.dockerignore` 白名单；不允许把工作区根目录、backup、outputs、local-secrets、数据库、构建缓存或真实配置作为构建上下文。运行镜像只复制 JAR/静态文件和健康检查类，测试源码不进入运行镜像。
 
 基础镜像以 digest 固定。Maven 构建镜像的 JDK 实际补丁号、Linux 包/SBOM/漏洞与依赖制品摘要须在构建主机验收并入清单；固定基础镜像不代表全部依赖可离线重现或通过发布审计。构建使用 `-DskipTests`，不能代替五库与统一候选测试。
+
+受限网络中的 Maven 代理或镜像源配置放在环境目录 `config/`（含凭据时放 `secrets/`），可在 `docker build` 时通过 `--secret id=maven_settings,src=<环境文件>` 临时挂载。该挂载为可选项，仅构建步骤可见，不复制到源码、构建层或运行镜像。Java/Maven 不一定使用 HTTP_PROXY 环境变量，不能以 Docker 拉取成功推断 Maven 已能联网。禁止在 Dockerfile 或 build args 中写代理口令。
 
 先把 `examples/application.<vendor>.yaml` 复制到源码树外的受限目录，填写新目标连接、BCrypt 管理员哈希和 Base64 编码的 32 字节 AES 密钥。没有默认密码。Compose 直接将完整配置文件作为 secret 挂载，并由 Spring 的配置导入读取；没有虚构 `_FILE` 支持。不要把秘密写入 `images.env`、Dockerfile 或镜像 build args。文件型 Compose secret 的宿主权限需使容器运行 UID 可读，不依赖本地 Compose 自动替你 chown。
 
@@ -32,13 +36,18 @@ Linux 可使用相同 Compose 文件与 `--env-file images.env`，设置 `IJOB_C
 
 MySQL 示例要求服务器证书验证，PostgreSQL 为 verify-full，SQL Server 为有效证书验证；实际证书/信任库单独只读挂载。Oracle 示例为外部服务基本 URL，生产环境的 TCPS/钱包、Oracle 驱动许可和服务名必须另行核定。所有外部主库都需完成运行权限和版本核验；模板不负责自动建用户或授予权限。
 
-后端只写 `/var/lib/ijob` 持久卷和 `/tmp` 临时卷，根文件系统只读。SQLite/JNA 从临时目录加载本地库，因此后端及 Agent 的 tmpfs 使用 `exec,mode=0700,uid=10001,gid=10001`，仅运行用户可读写；不能改成默认 noexec 后仍宣称 SQLite 可用。SQLite 数据库位于 `/var/lib/ijob/platform.db`，备份需使用一致备份机制或停写后连同 WAL 状态核验，不能只复制正在写入的主文件。已验证容器重建保留历史，以及 SQLite 停写备份恢复到新卷后历史、AES 密文资源与本地文件可用；磁盘满和真实生产备份调度仍需目标环境验收。默认容器内没有 Python、PowerShell、宿主命令或本地 JAR；SCRIPT 解释器、FILE/LOCAL_JAR 目录与 SPI 2 依赖应做专用派生镜像/明确挂载，再验收。不得挂 docker.sock 或使用 privileged 补齐能力。
+后端只写 `/var/lib/ijob` 持久卷和 `/tmp` 临时卷，根文件系统只读。SQLite/JNA 从临时目录加载本地库，因此后端及 Agent 的 tmpfs 使用 `exec,mode=0700,uid=10001,gid=10001`，仅运行用户可读写；不能改成默认 noexec 后仍宣称 SQLite 可用。SQLite 数据库位于 `/var/lib/ijob/platform.db`，备份需使用一致备份机制或停写后连同 WAL 状态核验，不能只复制正在写入的主文件。已验证容器重建保留历史，以及 SQLite 停写备份恢复到新卷后历史、AES 密文资源与本地文件可用；磁盘满和真实生产备份调度仍需目标环境验收。默认容器内没有 Python、PowerShell、宿主命令或本地 JAR；SCRIPT 解释器、FILE/LOCAL_JAR 目录与 SPI 1 依赖应做专用派生镜像/明确挂载，再验收。不得挂 docker.sock 或使用 privileged 补齐能力。
 
 后端健康检查访问 `/actuator/health/readiness`；前端 `/healthz` 只表示静态代理存活。Compose `service_healthy` 只控制启动顺序，Docker unhealthy 不会自动重启进程，也不会自动从 nginx 摘流。双上游 nginx 提供被动失败处理，未开启非幂等请求重试；发布前还需接入和验证按 readiness 摘流的外部负载均衡，以及 SSE、上传、退出排空与超时。不将基础模板宣称为完整生产负载均衡方案。
 
 配置提供 120 秒后端停止宽限、内存/CPU 上限、只读根目录、cap_drop、no-new-privileges 和日志轮转；已执行普通停止、强制停止单节点、幸存节点继续运行、重加入、容器重建保留数据等隔离验收；不等于任意在途业务均已验证。JRE 使用 UTC，调度业务时区独立，默认沿用应用配置。
 
+双节点代理将连接建立超时设为 3 秒，最多尝试两个上游；读取超时仍为 300 秒，兼顾流式响应，不启用 `non_idempotent` 重试。代理重试与执行器接管是不同机制：工作租约过期后，另一 Worker 可以重新领取并执行在途任务，因此任务具有至少一次执行语义。数据库 fencing 防止旧持有者继续提交平台状态，不能保证外部 HTTP、邮件或其他副作用恰好一次。对接端必须按稳定业务键做幂等或去重，不能将单节点故障演练当作任意外部调用的无损恢复证明。
+
+数据库中断导致心跳无法续约时，运行时会进入 fenced 保护状态并停止接收工作；CLUSTER 节点在数据库恢复后不会自动解除该状态。恢复步骤是先确认数据库健康与目标身份，再受控重启 A、等待 readiness 成功，随后重启 B 并核验任务与历史。数据库仍不可达时，健康探测可能超时而不立即返回 503；探测超时必须按不可用处理。不要通过清空运行记录或放松守卫解除保护。
+
 ## Agent
+
 
 `compose.agent.yaml` 需与主 Compose 一起使用；`IJOB_AGENT_TOKEN_PATH` 指向源码树外的 token 文件（无首尾空白/换行），通过 Spring configtree 映射 `agent.token`。健康检查读取该文件并用 Bearer 头访问 ping，不将 token 放进命令行。Agent 不映射宿主端口，应用资源端点使用 `http://agent:8081`。
 

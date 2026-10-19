@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob.core.execute;
 
 /** Execution failure with a stable, non-sensitive boundary message. */

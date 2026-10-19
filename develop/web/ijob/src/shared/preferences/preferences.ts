@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 export type ThemeMode = 'light' | 'dark'
 export type AppLocale = 'zh-CN' | 'en-US'
 export interface Preferences {

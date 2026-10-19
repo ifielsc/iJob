@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package com.ifielsc.ijob;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -233,13 +236,26 @@ class RuntimeGovernanceV26IT {
         assertEquals(
                 0L,
                 jdbc.queryForObject("SELECT revision FROM ifj_schedule WHERE id=1", Long.class));
-        switch (vendor) {
-            case "mysql" -> new MySqlSchemaCompatibilityInspector(dataSource).verify();
-            case "postgresql" -> new PostgreSqlSchemaCompatibilityInspector(dataSource).verify();
-            case "sqlserver" -> new SqlServerSchemaCompatibilityInspector(dataSource).verify();
-            case "oracle" -> new OracleSchemaCompatibilityInspector(dataSource).verify();
-            default -> new SqliteSchemaCompatibilityInspector(dataSource).verify();
+        // Validate historical runtime structures without treating them as a release installation.
+        try (Connection connection = dataSource.getConnection()) {
+            RuntimeGuardSchemaVerifier.verify(connection);
+            TableIdSchemaVerifier.verify(connection);
         }
+        assertThrows(
+                IllegalStateException.class,
+                () -> {
+                    switch (vendor) {
+                        case "mysql" -> new MySqlSchemaCompatibilityInspector(dataSource).verify();
+                        case "postgresql" ->
+                                new PostgreSqlSchemaCompatibilityInspector(dataSource).verify();
+                        case "sqlserver" ->
+                                new SqlServerSchemaCompatibilityInspector(dataSource).verify();
+                        case "oracle" ->
+                                new OracleSchemaCompatibilityInspector(dataSource).verify();
+                        default -> new SqliteSchemaCompatibilityInspector(dataSource).verify();
+                    }
+                },
+                "Historical migrations do not grant release V1 startup approval");
         Configuration configuration = new Configuration();
         configuration.setDatabaseId(vendor);
         configuration.setMapUnderscoreToCamelCase(true);

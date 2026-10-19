@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ifielsc
+// SPDX-License-Identifier: MIT
+
 package sample.localjar;
 
 import com.ifielsc.ijob.spi.localjar.LocalJarContext;
