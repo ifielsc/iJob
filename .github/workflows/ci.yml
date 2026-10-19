@@ -72,7 +72,10 @@ jobs:
       - name: Install loopback FTP/SFTP fixture dependency
         run: python -m pip install -r tools/ci/requirements.txt
       - name: Format, compile, test and package backend and Agent
-        run: ./develop/api/ijob/tools/verify-backend.ps1 -RunId backend-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          # Hosted runners supply Maven defaults; the isolated gate accepts no inherited flags.
+          Remove-Item Env:MAVEN_ARGS, Env:MAVEN_OPTS -ErrorAction SilentlyContinue
+          ./develop/api/ijob/tools/verify-backend.ps1 -RunId backend-${{ github.run_id }}-${{ github.run_attempt }}
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
