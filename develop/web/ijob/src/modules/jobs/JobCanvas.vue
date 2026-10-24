@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 <script setup lang="ts">
 import { randomUuid } from '../../shared/runtime/uuid'
-import { computed, markRaw, nextTick, ref, watch } from 'vue'
+import { computed, markRaw, nextTick, ref, toRef, watch } from 'vue'
 import { VueFlow, Handle, Position, MarkerType, ConnectionMode, useVueFlow } from '@vue-flow/core'
 import type { Connection, NodeDragEvent } from '@vue-flow/core'
 import dagre from '@dagrejs/dagre'
@@ -17,6 +17,8 @@ import { connectionProblem, isTextTarget } from './graph-tools'
 import SmartJobEdge from './JobEdge.vue'
 import JobConnection from './JobConnection.vue'
 import { useEdgeRouting } from './use-edge-routing'
+import { edgeLabelWidth } from './edge-routing'
+import { usePreferences } from '../../shared/preferences/store'
 import '@vue-flow/core/dist/style.css'
 import './canvas.css'
 const props = defineProps<{
@@ -58,7 +60,15 @@ const {
   removeSelectedElements,
   connectionStartHandle,
 } = useVueFlow(flowId)
-const { pending: routingPending } = useEdgeRouting(getNodes, getEdges)
+const preferences = usePreferences()
+const dragging = ref(false)
+const { pending: routingPending } = useEdgeRouting(
+  getNodes,
+  getEdges,
+  toRef(preferences, 'edgeRouting'),
+  dragging,
+  (id) => emit('edge', id),
+)
 const edgeTypes = { smart: markRaw(SmartJobEdge) }
 const ports = [Position.Left, Position.Top, Position.Right, Position.Bottom]
 const host = ref<HTMLElement>(),
@@ -86,6 +96,11 @@ const nodes = computed(() =>
         : '',
   })),
 )
+function branchLabel(e: JobEdge) {
+  return e.defaultRoute
+    ? t('jobs.defaultRoute')
+    : t('insights.routeLabel', { route: e.routeKey, priority: e.priority ?? 0 })
+}
 const edges = computed(() =>
   props.edges.map((e) => ({
     id: e.id,
@@ -96,8 +111,16 @@ const edges = computed(() =>
     type: 'smart',
     label:
       e.routeKey && (viewport.value.zoom >= 0.45 || props.selectedEdge === e.id)
-        ? `${e.priority} · ${e.defaultRoute ? t('jobs.defaultRoute') : e.routeKey}`
+        ? branchLabel(e)
         : '',
+    data: {
+      labelTitle: t('insights.routeDetails', {
+        route: e.routeKey ?? '',
+        priority: e.priority ?? 0,
+        target: props.nodes.find((n) => n.nodeId === e.toNodeId)?.name ?? e.toNodeId,
+        condition: e.defaultRoute ? t('insights.defaultCondition') : e.conditionText || '—',
+      }),
+    },
     markerEnd: MarkerType.ArrowClosed,
     selectable: true,
     selected: props.selectedEdge === e.id || props.highlightedEdges?.includes(e.id),
@@ -182,7 +205,11 @@ async function autoLayout(direction: 'LR' | 'TB' = 'LR') {
   )
   props.edges.forEach((e) => {
     if (graph.hasNode(e.fromNodeId) && graph.hasNode(e.toNodeId))
-      graph.setEdge(e.fromNodeId, e.toNodeId)
+      graph.setEdge(
+        e.fromNodeId,
+        e.toNodeId,
+        e.routeKey ? { width: edgeLabelWidth(branchLabel(e)) + 24, height: 56, labelpos: 'c' } : {},
+      )
   })
   dagre.layout(graph)
   props.nodes.forEach((n) => {
@@ -219,6 +246,7 @@ function endConnection(event: MouseEvent | TouchEvent | undefined) {
 }
 function dragStop(event: NodeDragEvent) {
   for (const n of event.nodes.length ? event.nodes : [event.node]) emit('move', n.id, n.position)
+  dragging.value = false
 }
 function keydown(event: KeyboardEvent) {
   if (event.key === 'Delete' && !event.repeat && !props.readonly && !isTextTarget(event.target)) {
@@ -263,6 +291,8 @@ defineExpose({
     :class="{ 'job-low-zoom': viewport.zoom < 0.45 }"
     :aria-label="t('jobs.graph')"
     :data-routing-pending="routingPending"
+    :data-routing-mode="preferences.edgeRouting"
+    :data-dragging="dragging"
     tabindex="0"
     @keydown="keydown"
   >
@@ -295,6 +325,8 @@ defineExpose({
       @connect="completeConnection"
       @connect-start="connectionMade = false"
       @connect-end="endConnection"
+      @node-drag-start="dragging = true"
+      @selection-drag-start="dragging = true"
       @node-drag-stop="dragStop"
       @selection-drag-stop="dragStop"
     >

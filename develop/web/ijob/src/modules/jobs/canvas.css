@@ -34,6 +34,31 @@
   fill: var(--text);
   font-size: 12px;
 }
+.job-label-guide {
+  stroke: var(--border);
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+}
+.job-route-label {
+  position: absolute;
+  pointer-events: all;
+  max-width: 280px;
+  height: 28px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.job-route-label.selected {
+  border-color: var(--primary);
+  background: var(--selected);
+}
 .job-canvas .vue-flow__arrowhead * {
   fill: var(--muted);
   stroke: var(--muted);
@@ -144,7 +169,8 @@
 }
 @media (max-width: 640px) {
   .job-canvas-count {
-    bottom: 68px;
+    top: 12px;
+    bottom: auto;
     right: 12px;
   }
   .job-canvas {

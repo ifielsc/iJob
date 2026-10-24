@@ -47,8 +47,25 @@ test('production job canvas loads Vue Flow, lays out nodes and preserves compact
   await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2)
   await page.mouse.down()
   await page.mouse.move(target.x + target.width / 2, target.y + target.height / 2, { steps: 8 })
+  await expect(page.locator('.vue-flow__connection-path')).toHaveAttribute(
+    'data-routing',
+    'preview',
+  )
   await page.mouse.up()
   await expect(page.locator('.vue-flow__edge')).toHaveCount(1)
+  await expect(page.locator('.vue-flow__edge [data-routing]')).toHaveAttribute(
+    'data-routing',
+    /^(direct|curve|detour)$/,
+  )
+  const routing = page.getByRole('combobox', { name: '布局与连线', exact: true })
+  await routing.click()
+  await page.getByRole('option', { name: '从左到右 · 简洁曲线', exact: true }).click()
+  await expect(page.locator('.vue-flow__edge [data-routing]')).toHaveAttribute(
+    'data-routing',
+    'simple',
+  )
+  await routing.click()
+  await page.getByRole('option', { name: '从左到右 · 自动避障', exact: true }).click()
   await expect(page.locator('.vue-flow__edge [data-routing]')).toHaveAttribute(
     'data-routing',
     /^(direct|curve|detour)$/,

@@ -29,15 +29,21 @@ describe('language, time, and visual contracts', () => {
     expect(ratio(t.onPrimary, t.primary)).toBeGreaterThanOrEqual(4.5)
   })
   it('has matching translation keys and interpolation parameters', () => {
-    for (const section of Object.keys(zhCN) as (keyof typeof zhCN)[]) {
-      expect(Object.keys(enUS[section]).sort()).toEqual(Object.keys(zhCN[section]).sort())
-      for (const key of Object.keys(zhCN[section])) {
-        const chinese = (zhCN[section] as Record<string, string>)[key]!
-        const english = (enUS[section] as Record<string, string>)[key]!
-        expect(english.match(/\{[^}]+\}/g) ?? []).toEqual(chinese.match(/\{[^}]+\}/g) ?? [])
-        expect(english.length).toBeGreaterThan(0)
+    function compare(chinese: unknown, english: unknown) {
+      if (typeof chinese === 'string') {
+        expect(typeof english).toBe('string')
+        expect((english as string).match(/\{[^}]+\}/g) ?? []).toEqual(
+          chinese.match(/\{[^}]+\}/g) ?? [],
+        )
+        expect((english as string).length).toBeGreaterThan(0)
+      } else {
+        const zh = chinese as Record<string, unknown>,
+          en = english as Record<string, unknown>
+        expect(Object.keys(en).sort()).toEqual(Object.keys(zh).sort())
+        for (const key of Object.keys(zh)) compare(zh[key], en[key])
       }
     }
+    compare(zhCN, enUS)
   })
   it('never shifts UTC source timestamps with language', () => {
     const value = '2026-09-20T00:42:10'

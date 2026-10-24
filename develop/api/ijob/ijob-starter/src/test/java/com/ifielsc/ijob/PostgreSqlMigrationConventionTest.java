@@ -90,7 +90,7 @@ class PostgreSqlMigrationConventionTest {
             }
         }
         assertEquals(60, resources.length);
-        assertEquals(356, genericStatements);
+        assertEquals(362, genericStatements);
         assertFalse(
                 genericIds.contains(
                         "com.ifielsc.ijob.infra.mapper.concurrency.ConcurrencyResourceMapper.selectAll"));

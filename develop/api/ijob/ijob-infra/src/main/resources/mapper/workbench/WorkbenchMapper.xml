@@ -3,6 +3,38 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ifielsc.ijob.infra.mapper.workbench.WorkbenchMapper">
     <sql id="count">COUNT(*)</sql>
+    <sql id="runtimeKey">CONCAT('ijob:runtime:', r.run_id)</sql>
+    <sql id="runtimeKey" databaseId="sqlite">('ijob:runtime:' || r.run_id)</sql>
+    <select id="selectRuntimeNodes" timeout="5" resultType="com.ifielsc.ijob.infra.mapper.workbench.RuntimeNodeRow">
+        SELECT r.run_id, r.instance_name, r.roles, r.worker_groups, r.status,
+               r.started_at, r.heartbeat_at, r.stopped_at, s.state_value AS telemetry
+        FROM ifj_app_run r LEFT JOIN ifj_cluster_state s ON s.state_key = <include refid="runtimeKey"/>
+        <where>
+            <choose>
+                <when test="history">r.status IN ('STOPPED', 'CRASHED')</when>
+                <otherwise>
+                    NOT EXISTS (SELECT 1 FROM ifj_app_run newer
+                        WHERE newer.instance_name = r.instance_name
+                        AND (newer.started_at &gt; r.started_at OR
+                            (newer.started_at = r.started_at AND newer.run_id &gt; r.run_id)))
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY r.started_at DESC, r.run_id DESC
+    </select>
+    <sql id="queued">status = 'READY' AND available_at &lt;= #{now} AND (expires_at IS NULL OR expires_at &gt; #{now})</sql>
+    <select id="countQueuedWork" timeout="5" resultType="long">
+        SELECT <include refid="count"/> FROM ifj_trigger_work_item WHERE <include refid="queued"/>
+    </select>
+    <select id="selectOldestQueuedAt" timeout="5" resultType="java.time.LocalDateTime">
+        SELECT MIN(available_at) FROM ifj_trigger_work_item WHERE <include refid="queued"/>
+    </select>
+    <select id="countClaimedWork" timeout="5" resultType="long">
+        SELECT <include refid="count"/> FROM ifj_trigger_work_item WHERE status = 'CLAIMED' AND lease_deadline &gt; #{now}
+    </select>
+    <select id="countExpiredWork" timeout="5" resultType="long">
+        SELECT <include refid="count"/> FROM ifj_trigger_work_item WHERE status = 'CLAIMED' AND lease_deadline &lt;= #{now}
+    </select>
     <sql id="count" databaseId="sqlserver">COUNT_BIG(*)</sql>
     <sql id="window">
         execution.parent_instance_id IS NULL

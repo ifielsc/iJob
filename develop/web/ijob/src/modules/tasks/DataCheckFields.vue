@@ -249,6 +249,7 @@ defineExpose({
           ><SqlEditor
             ref="sql"
             v-model="item.sql"
+            :query-context="{ resourceId: draft.resourceId, mode: 'DATA_CHECK' }"
             :context-key="item.key"
             :disabled="disabled"
             :invalid="!!error(field('sql'))"

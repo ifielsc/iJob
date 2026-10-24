@@ -105,7 +105,12 @@ export function transferIssues(d: TransferDraft) {
     if (!validFileId(d[key])) fail(key)
   for (const key of ['sourcePath', 'targetPath'] as const)
     if (d[key].length > 2048 || /[\0\r\n]/.test(d[key])) fail(key)
-  if (!d.filePattern.trim() || d.filePattern.length > 512 || /[/\\]/.test(d.filePattern))
+  if (
+    !d.filePattern.trim() ||
+    d.filePattern.length > 512 ||
+    /\//.test(d.filePattern) ||
+    /\\(?![*?{}[\]])/.test(d.filePattern)
+  )
     fail('filePattern')
   if (bundled(d.compressType) && (d.archiveName.length > 255 || /[/\\\0\r\n]/.test(d.archiveName)))
     fail('archiveName')

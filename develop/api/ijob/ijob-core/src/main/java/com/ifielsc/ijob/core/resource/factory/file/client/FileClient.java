@@ -10,6 +10,10 @@ import java.util.List;
 public interface FileClient extends AutoCloseable {
     List<FileInfo> list(String path) throws IOException;
 
+    default List<FileInfo> listBrowsable(String path, int maxEntries) throws IOException {
+        return list(path, maxEntries);
+    }
+
     default List<FileInfo> list(String path, int maxEntries) throws IOException {
         List<FileInfo> result = list(path);
         if (result != null && result.size() > maxEntries)

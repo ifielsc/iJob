@@ -77,6 +77,53 @@ describe('isolated local preferences', () => {
       timeMode: 'business',
     })
   })
+  it('isolates routing by account, restores it after reload and keeps it separate from login appearance', () => {
+    const store = usePreferences()
+    expect(store.edgeRouting).toBe('avoid')
+    store.switchIdentity('alice')
+    store.setEdgeRouting('simple')
+    store.setTheme('dark')
+    store.switchIdentity('bob', { preserveAppearance: true })
+    expect(store.edgeRouting).toBe('avoid')
+    store.switchIdentity(null)
+    expect(store.edgeRouting).toBe('avoid')
+    store.switchIdentity('alice', { preserveAppearance: true })
+    expect(store.edgeRouting).toBe('simple')
+    setActivePinia(createPinia())
+    const restored = usePreferences()
+    restored.switchIdentity('alice')
+    expect(restored.edgeRouting).toBe('simple')
+    restored.setEdgeRouting('avoid')
+    setActivePinia(createPinia())
+    const reset = usePreferences()
+    reset.switchIdentity('alice')
+    expect(reset.edgeRouting).toBe('avoid')
+  })
+  it.each([undefined, 'unexpected', null, 42])(
+    'defaults missing or invalid routing %s without losing other preferences',
+    (edgeRouting) => {
+      localStorage.setItem(
+        preferenceKey('alice'),
+        JSON.stringify({ theme: 'dark', locale: 'en-US', timeMode: 'UTC', edgeRouting }),
+      )
+      const store = usePreferences()
+      store.switchIdentity('alice')
+      expect([store.theme, store.locale, store.timeMode, store.edgeRouting]).toEqual([
+        'dark',
+        'en-US',
+        'UTC',
+        'avoid',
+      ])
+    },
+  )
+  it('retains account routing for this session when local storage is blocked', () => {
+    const repository = createPreferenceRepository(() => {
+      throw new Error('Blocked')
+    })
+    repository.write('alice', { theme: 'light', locale: 'zh-CN', edgeRouting: 'simple' })
+    expect(repository.read('alice')?.edgeRouting).toBe('simple')
+    expect(repository.read('bob')).toBeUndefined()
+  })
   it('rejects malformed values and restricts persisted fields', () => {
     const repository = createPreferenceRepository(() => localStorage)
     localStorage.setItem(preferenceKey(null), '{invalid')

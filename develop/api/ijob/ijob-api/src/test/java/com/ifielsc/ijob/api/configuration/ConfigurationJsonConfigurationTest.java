@@ -20,6 +20,32 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 class ConfigurationJsonConfigurationTest {
     @Test
+    void sqlPreviewParametersPreservePrecisionAndRejectFractionalResourceIds() throws Exception {
+        var builder = new Jackson2ObjectMapperBuilder();
+        new ConfigurationJsonConfiguration().configurationIdentifiers().customize(builder);
+        var mapper = builder.build();
+        var input =
+                mapper.readValue(
+                        "{\"resourceId\":\"9223372036854775807\",\"variables\":{\"n\":0.1234567890123456789},\"parameters\":{\"id\":9007199254740993}}",
+                        com.ifielsc.ijob.contract.resource.SqlPreviewDTO.Request.class);
+        assertEquals(Long.MAX_VALUE, input.resourceId());
+        assertEquals(new java.math.BigDecimal("0.1234567890123456789"), input.variables().get("n"));
+        assertEquals(new java.math.BigInteger("9007199254740993"), input.parameters().get("id"));
+        assertThrows(
+                com.fasterxml.jackson.core.JsonProcessingException.class,
+                () ->
+                        mapper.readValue(
+                                "{\"resourceId\":1.5}",
+                                com.ifielsc.ijob.contract.resource.SqlPreviewDTO.Request.class));
+        assertThrows(
+                com.fasterxml.jackson.core.JsonProcessingException.class,
+                () ->
+                        mapper.readValue(
+                                "{\"resourceId\":1.5}",
+                                com.ifielsc.ijob.contract.resource.FileBrowseDTO.Request.class));
+    }
+
+    @Test
     void parameterIdentifiersAndDecimalsRoundTripExactly() throws Exception {
         var builder = new Jackson2ObjectMapperBuilder();
         new ConfigurationJsonConfiguration().configurationIdentifiers().customize(builder);

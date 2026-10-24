@@ -13,6 +13,16 @@ import java.util.List;
 
 @Mapper
 public interface WorkbenchMapper {
+    List<RuntimeNodeRow> selectRuntimeNodes(@Param("history") boolean history);
+
+    long countQueuedWork(@Param("now") java.time.LocalDateTime now);
+
+    long countClaimedWork(@Param("now") java.time.LocalDateTime now);
+
+    long countExpiredWork(@Param("now") java.time.LocalDateTime now);
+
+    java.time.LocalDateTime selectOldestQueuedAt(@Param("now") java.time.LocalDateTime now);
+
     List<WorkbenchStatusCount> selectWindowStatuses(WorkbenchQuery query);
 
     List<WorkbenchStatusCount> selectCurrentActiveRoots();

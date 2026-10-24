@@ -70,6 +70,29 @@ public class FtpFileClient extends AbstractFileClient implements StagedFileClien
     }
 
     @Override
+    public List<FileInfo> listBrowsable(String path, int maxEntries) throws IOException {
+        String remote = resolve(path);
+        String current = rootPath;
+        String relative = remote.substring(rootPath.equals("/") ? 1 : rootPath.length());
+        for (String part : relative.split("/")) {
+            if (part.isBlank()) continue;
+            FTPFile[] parentEntries =
+                    ftpClient instanceof BoundedListingClient bounded
+                            ? bounded.listBounded(current, maxEntries)
+                            : ftpClient.listFiles(current);
+            FTPFile found =
+                    java.util.Arrays.stream(parentEntries)
+                            .filter(f -> part.equals(f.getName()))
+                            .findFirst()
+                            .orElseThrow(() -> new IOException("Cannot verify FTP directory"));
+            if (found.isSymbolicLink() || !found.isDirectory())
+                throw new IOException("FTP links are not browsable");
+            current = buildPath(current, part);
+        }
+        return list(path, maxEntries);
+    }
+
+    @Override
     public List<FileInfo> list(String path, int maxEntries) throws IOException {
         String remote = resolve(path);
 
@@ -87,7 +110,9 @@ public class FtpFileClient extends AbstractFileClient implements StagedFileClien
         }
         List<FileInfo> result = new ArrayList<>();
         for (FTPFile file : files) {
-            if (".".equals(file.getName()) || "..".equals(file.getName())) {
+            if (".".equals(file.getName())
+                    || "..".equals(file.getName())
+                    || file.isSymbolicLink()) {
                 continue;
             }
             result.add(

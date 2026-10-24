@@ -18,6 +18,11 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
+    <select id="selectByTask" resultMap="checkpointResultMap" timeout="5">
+        SELECT task_id, checkpoint_key, source_fingerprint, watermark_type, watermark_value,
+               tie_breaker_value, last_instance_id, version, create_time, update_time
+        FROM ifj_etl_checkpoint WHERE task_id = #{taskId} ORDER BY checkpoint_key
+    </select>
     <select id="select" resultMap="checkpointResultMap">
         SELECT task_id, checkpoint_key, source_fingerprint,
                watermark_type, watermark_value, tie_breaker_value,

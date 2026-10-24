@@ -320,6 +320,19 @@ defineExpose({ focusError })
               :key="field.key + String(draft.source.type)"
               :field="field"
               section="source"
+              :query-context="
+                draft.source.type === 'DATABASE'
+                  ? {
+                      resourceId: String(draft.source.resourceId),
+                      mode: 'ETL',
+                      parameters: String(draft.source.parameters),
+                    }
+                  : undefined
+              "
+              :file-resource-id="
+                draft.source.type === 'FILE' ? String(draft.source.resourceId) : undefined
+              "
+              :file-mode="draft.incremental.enabled ? 'directory' : 'file'"
               :value="draft.source[field.key]"
               :resource-type="String(draft.source.type)"
               :label="
@@ -366,6 +379,11 @@ defineExpose({ focusError })
                   :key="field.key"
                   :field="field"
                   section="source"
+                  :query-context="
+                    draft.source.type === 'DATABASE'
+                      ? { resourceId: String(draft.source.resourceId), mode: 'SQL' }
+                      : undefined
+                  "
                   :value="draft.source[field.key]"
                   :disabled="disabled"
                   :error="error('source.' + field.key)"
@@ -546,6 +564,15 @@ defineExpose({ focusError })
               :key="field.key + String(draft.target.type)"
               :field="field"
               section="target"
+              :query-context="
+                draft.target.type === 'DATABASE'
+                  ? { resourceId: String(draft.target.resourceId), mode: 'SQL' }
+                  : undefined
+              "
+              :file-resource-id="
+                draft.target.type === 'FILE' ? String(draft.target.resourceId) : undefined
+              "
+              file-mode="file"
               :value="draft.target[field.key]"
               :resource-type="String(draft.target.type)"
               :disabled="disabled"
@@ -640,6 +667,11 @@ defineExpose({ focusError })
                   :key="field.key"
                   :field="field"
                   section="target"
+                  :query-context="
+                    draft.target.type === 'DATABASE'
+                      ? { resourceId: String(draft.target.resourceId), mode: 'SQL' }
+                      : undefined
+                  "
                   :value="draft.target[field.key]"
                   :disabled="disabled"
                   :error="error('target.' + field.key)"
@@ -718,6 +750,11 @@ defineExpose({ focusError })
               :key="item.section + item.field.key"
               :field="item.field"
               :section="item.section"
+              :query-context="
+                draft.source.type === 'DATABASE'
+                  ? { resourceId: String(draft.source.resourceId), mode: 'SQL' }
+                  : undefined
+              "
               :value="draft[item.section][item.field.key]"
               :disabled="disabled"
               :error="error(item.section + '.' + item.field.key)"

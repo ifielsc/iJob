@@ -4,6 +4,20 @@
 import { test, expect } from '@playwright/test'
 import { setupWorkbench } from '../workbench-fixture'
 test.use({ viewport: { width: 1512, height: 1100 } })
+test('runtime separates heartbeat, execution observations and history', async ({ page }) => {
+  const state = await setupWorkbench(page)
+  await page.goto('/workbench')
+  const runtime = page.locator('.runtime-overview')
+  await expect(runtime).toContainText('node-a')
+  await expect(runtime).toContainText('node-b')
+  await expect(runtime).toContainText('心跳超时')
+  await expect(runtime).toContainText('不可用')
+  await runtime.getByText('详情 · node-a', { exact: true }).click()
+  await expect(runtime).toContainText('本次启动续租失败累计')
+  await runtime.getByRole('tab', { name: '最近运行历史' }).click()
+  await expect(runtime).toContainText('当前没有注册节点')
+  expect(state.writes).toEqual([])
+})
 for (const theme of ['light', 'dark'])
   for (const locale of ['zh-CN', 'en-US']) {
     test('workbench layout ' + theme + ' ' + locale, async ({ page }, info) => {
@@ -62,11 +76,15 @@ test('queries preserve fixed bounds and status links carry the correct time scop
   await page.goto('/workbench')
   await expect(page.getByTestId('total')).toBeVisible()
   await page.getByRole('button', { name: '查询', exact: true }).click()
-  await expect.poll(() => state.reads.filter((p) => p.startsWith('/api/workbench')).length).toBe(2)
+  await expect
+    .poll(() => state.reads.filter((p) => p.split('?')[0] === '/api/workbench').length)
+    .toBe(2)
   await expect(page.getByTestId('total')).toBeVisible()
   await page.getByRole('button', { name: '查询', exact: true }).click()
-  await expect.poll(() => state.reads.filter((p) => p.startsWith('/api/workbench')).length).toBe(3)
-  const queries = state.reads.filter((p) => p.startsWith('/api/workbench'))
+  await expect
+    .poll(() => state.reads.filter((p) => p.split('?')[0] === '/api/workbench').length)
+    .toBe(3)
+  const queries = state.reads.filter((p) => p.split('?')[0] === '/api/workbench')
   expect(queries[1]).toBe(queries[2])
   await page
     .locator('.workbench-distribution')

@@ -129,6 +129,10 @@ public class ParameterTemplateService {
         return row;
     }
 
+    public void validateImport(ParameterTemplateRequest request) {
+        prepare(request);
+    }
+
     private ParameterTemplate prepare(ParameterTemplateRequest r) {
         if (r == null
                 || r.getName() == null

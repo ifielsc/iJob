@@ -2,22 +2,34 @@
 // SPDX-License-Identifier: MIT
 
 import { computed, onBeforeUnmount, provide, shallowReactive, shallowRef, watch } from 'vue'
-import type { InjectionKey, Ref } from 'vue'
+import type { ComputedRef, InjectionKey, Ref } from 'vue'
 import type { GraphEdge, GraphNode } from '@vue-flow/core'
-import { ObstacleIndex, portSide, routeEdge } from './edge-routing'
-import type { Route, RouteInput } from './edge-routing'
+import { getBezierPath } from '@vue-flow/core'
+import { portSide, placeEdgeLabels } from './edge-routing'
+import type { Point, Route } from './edge-routing'
 import type { RoutingReply, RoutingRequest } from './edge-routing.worker'
+import type { EdgeRoutingMode } from '../../shared/preferences/preferences'
 
 export const routingKey: InjectionKey<{
   routes: Map<string, Route>
-  preview: (input: RouteInput) => Route
+  mode: Ref<EdgeRoutingMode>
+  dragging: Ref<boolean>
+  available: Ref<boolean>
+  labels: ComputedRef<Map<string, Point>>
+  select: (id: string) => void
 }> = Symbol('job-edge-routing')
 
-export function useEdgeRouting(nodes: Ref<GraphNode[]>, edges: Ref<GraphEdge[]>) {
+export function useEdgeRouting(
+  nodes: Ref<GraphNode[]>,
+  edges: Ref<GraphEdge[]>,
+  mode: Ref<EdgeRoutingMode>,
+  dragging: Ref<boolean>,
+  select: (id: string) => void = () => {},
+) {
   const routes = shallowReactive(new Map<string, Route>())
   const pending = shallowRef(false)
-  let index = new ObstacleIndex([]),
-    worker: Worker | undefined
+  const available = shallowRef(true)
+  let worker: Worker | undefined
   let timer: ReturnType<typeof setTimeout> | undefined,
     revision = 0,
     stopped = false
@@ -41,11 +53,20 @@ export function useEdgeRouting(nodes: Ref<GraphNode[]>, edges: Ref<GraphEdge[]>)
         targetSide: portSide(e.targetHandle, 'left'),
       })),
   }))
+  // Keep collision-driven label placement stable while nodes are being dragged.
+  const labelNodes = shallowRef(snapshot.value.nodes)
+  function failWorker() {
+    ++revision
+    worker?.terminate()
+    worker = undefined
+    available.value = false
+    pending.value = false
+    routes.clear()
+  }
   function submit() {
     timer = undefined
-    if (stopped) return
+    if (stopped || !available.value || dragging.value || mode.value !== 'avoid') return
     const data = snapshot.value
-    index = new ObstacleIndex(data.nodes)
     const ids = new Set(data.edges.map((e) => e.id))
     for (const id of routes.keys()) if (!ids.has(id)) routes.delete(id)
     try {
@@ -54,40 +75,63 @@ export function useEdgeRouting(nodes: Ref<GraphNode[]>, edges: Ref<GraphEdge[]>)
           type: 'module',
         })
         worker.onmessage = ({ data: reply }: MessageEvent<RoutingReply>) => {
-          if (reply.revision !== revision || stopped) return
+          if (reply.revision !== revision || stopped || !available.value) return
           for (const [id, route] of reply.routes) {
             const current = routes.get(id)
             if (current?.path !== route.path || current.kind !== route.kind) routes.set(id, route)
           }
           if (reply.done) pending.value = false
         }
-        worker.onerror = () => {
-          // Keep the editor usable if the browser cannot start the routing worker.
-          worker?.terminate()
-          worker = undefined
-          stopped = true
-          pending.value = false
-          routes.clear()
-        }
+        worker.onerror = failWorker
       }
       pending.value = true
-      worker.postMessage({ ...data, revision: ++revision } satisfies RoutingRequest)
+      worker.postMessage({ ...data, revision } satisfies RoutingRequest)
     } catch {
-      worker?.terminate()
-      worker = undefined
-      stopped = true
-      pending.value = false
+      failWorker()
     }
   }
   // Only geometry and ports are tracked: selection, labels, theme and zoom do not reroute.
   watch(
-    snapshot,
+    [snapshot, mode, dragging],
     () => {
-      if (!timer) timer = setTimeout(submit, 60)
+      // Invalidate immediately, including the debounce window and suspended gestures.
+      ++revision
+      clearTimeout(timer)
+      timer = undefined
+      pending.value = false
+      if (!dragging.value) labelNodes.value = snapshot.value.nodes
+      if (mode.value === 'simple') routes.clear()
+      if (stopped || !available.value || dragging.value || mode.value !== 'avoid') return
+      pending.value = true
+      timer = setTimeout(submit, 60)
     },
     { immediate: true, flush: 'post' },
   )
-  provide(routingKey, { routes, preview: (input) => routeEdge(input, index, 400) })
+  const labels = computed(() =>
+    placeEdgeLabels(
+      labelNodes.value,
+      edges.value
+        .filter((e) => e.label && Number.isFinite(e.sourceX) && Number.isFinite(e.targetX))
+        .map((e) => {
+          const saved = routes.get(e.id)
+          const current =
+            mode.value === 'avoid' &&
+            saved &&
+            Math.abs(saved.start.x - e.sourceX) < 0.1 &&
+            Math.abs(saved.start.y - e.sourceY) < 0.1 &&
+            Math.abs(saved.end.x - e.targetX) < 0.1 &&
+            Math.abs(saved.end.y - e.targetY) < 0.1
+          const [, x, y] = getBezierPath(e)
+          return {
+            id: e.id,
+            text: String(e.label),
+            anchor: current ? saved.label : { x, y },
+            points: current ? saved.points : undefined,
+          }
+        }),
+    ),
+  )
+  provide(routingKey, { routes, mode, dragging, available, labels, select })
   onBeforeUnmount(() => {
     stopped = true
     clearTimeout(timer)

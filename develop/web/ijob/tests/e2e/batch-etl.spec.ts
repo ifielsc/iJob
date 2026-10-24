@@ -4,6 +4,88 @@
 import { test, expect } from '@playwright/test'
 import { setupBatchEtl } from '../batch-etl-fixture'
 test.use({ viewport: { width: 1440, height: 1100 } })
+test('progress tab keeps draft and exact checkpoints without publishing', async ({ page }) => {
+  const state = await setupBatchEtl(page)
+  await page.route('**/api/tasks/*/etl-progress', (route) =>
+    route.fulfill({
+      json: {
+        success: true,
+        code: 200,
+        data: {
+          revision: String(state.tasks[0]!.currentRevision),
+          mode: 'INCREMENTAL',
+          checkpoints: [
+            {
+              sourceTable: 'orders',
+              targetTable: 'ods_orders',
+              checkpointKey: 'batch:test',
+              watermarkField: 'batch_no',
+              watermarkType: 'DECIMAL',
+              initialValue: '0',
+              watermarkValue: '9007199254740993.123456789',
+              tieBreakerValue: '[9007199254740995]',
+              version: '2',
+              lastInstanceId: '9007199254740997',
+              updateTime: '2026-10-21T10:00:00',
+              status: 'ADVANCED',
+              configurationMatch: 'MATCH',
+            },
+          ],
+        },
+      },
+    }),
+  )
+  await page.goto('/tasks')
+  await page.getByRole('button', { name: '编辑 Batch ETL 0', exact: true }).click()
+  await page.locator('#task-name').fill('Draft survives')
+  await page.getByRole('tab', { name: '增量进度', exact: true }).click()
+  await expect(page.locator('.checkpoint-panel')).toContainText('9007199254740993.123456789')
+  await expect(page.locator('.checkpoint-panel')).toContainText('当前有未保存修改')
+  await page.locator('.checkpoint-panel summary').click()
+  await expect(page.locator('.checkpoint-panel')).toContainText('检查点键')
+  await page.getByRole('tab', { name: '任务配置', exact: true }).click()
+  await expect(page.locator('#task-name')).toHaveValue('Draft survives')
+  expect(state.writes).toEqual([])
+})
+test('source table picker adds all matches once and Escape preserves drawer', async ({ page }) => {
+  const state = await setupBatchEtl(page)
+  await page.route('**/api/tasks/batch-etl/source-tables?**', (route) =>
+    route.fulfill({
+      json: {
+        success: true,
+        code: 200,
+        data: {
+          schema: 'demo_src',
+          truncated: false,
+          tables: ['orders', 'customers', ...Array.from({ length: 12 }, (_, i) => 'new_' + i)].map(
+            (name) => ({ name, type: 'TABLE' }),
+          ),
+        },
+      },
+    }),
+  )
+  await page.goto('/tasks')
+  await page.getByRole('button', { name: '编辑 Batch ETL 0', exact: true }).click()
+  await page.getByRole('button', { name: '从源库批量选表', exact: true }).click()
+  await expect(page.locator('.batch-metadata-modal')).toContainText('添加状态')
+  await expect(page.locator('.batch-metadata-modal')).toContainText('未选择')
+  await page.getByRole('checkbox', { name: '本页全选', exact: true }).check()
+  await expect(page.locator('.metadata-selection-count')).toContainText('将新增 8 张')
+  await page.getByRole('checkbox', { name: '本页全选', exact: true }).uncheck()
+  await expect(page.locator('.metadata-selection-count')).toContainText('将新增 0 张')
+  await page.getByRole('button', { name: '选择全部匹配项 (14)', exact: true }).click()
+  await page.getByRole('button', { name: '添加 12 张表', exact: true }).click()
+  await expect(page.locator('.batch-metadata-modal')).toHaveCount(0)
+  await expect(
+    page.getByRole('table', { name: '同步表', exact: true }).locator('tbody tr'),
+  ).toHaveCount(14)
+  await page.getByRole('button', { name: '从源库批量选表', exact: true }).click()
+  await expect(page.getByRole('button', { name: '添加 0 张表', exact: true })).toBeDisabled()
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.batch-metadata-modal')).toHaveCount(0)
+  await expect(page.locator('.task-drawer')).toBeVisible()
+  expect(state.writes).toEqual([])
+})
 for (const theme of ['light', 'dark'])
   for (const locale of ['zh-CN', 'en-US']) {
     const en = locale === 'en-US'

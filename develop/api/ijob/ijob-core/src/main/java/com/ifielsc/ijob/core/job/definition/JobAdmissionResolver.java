@@ -28,13 +28,23 @@ public class JobAdmissionResolver {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public JobAdmissionSnapshot resolve(Long jobId) {
+        return resolve(jobId, true);
+    }
+
+    /** Configuration import may attach a disabled schedule without admitting execution. */
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void lockPublishedConfiguration(Long jobId) {
+        resolve(jobId, false);
+    }
+
+    private JobAdmissionSnapshot resolve(Long jobId, boolean requireEnabled) {
         requirePositiveJobId(jobId);
         JobPublicationIdentityRow identity = publicationMapper.selectIdentityForUpdate(jobId);
         validateIdentity(jobId, identity);
 
         JobDefinition definition = definitionMapper.selectById(identity.getCurrentDefinitionId());
         validateDefinition(identity, definition);
-        if (!definition.getEnabled()) {
+        if (requireEnabled && !definition.getEnabled()) {
             throw new BusinessException(ResultCode.CONFLICT, CoreMessage.JOB_IS_DISABLED);
         }
 

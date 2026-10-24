@@ -13,6 +13,8 @@ import LineTabs from '../../shared/ui/LineTabs.vue'
 import EtlTable from './EtlTable.vue'
 import PushResourcePicker from './PushResourcePicker.vue'
 import BatchEtlValue from './BatchEtlValue.vue'
+import BatchTableDialog from './BatchTableDialog.vue'
+import { newTableNames } from './batch-table-selection'
 import { batchLimits, type BatchEtlDraft, type BatchLimit } from './batch-etl-model'
 const props = defineProps<{
   errors: Record<string, string>
@@ -27,6 +29,13 @@ const { t } = useI18n(),
   expanded = ref<string[]>([]),
   root = ref<HTMLElement>()
 const query = ref('')
+const metadataMode = ref<'picker' | 'check'>()
+watch(metadataMode, (value) => emit('select', !!value))
+function appendTables(names: string[]) {
+  const added = newTableNames(draft.value.tables, names)
+  if (draft.value.tables.length + added.length > 500) return
+  draft.value.tables.push(...added.map((name) => ({ name })))
+}
 const editingRow = ref<BatchEtlDraft['tables'][number]>()
 watch(query, () => {
   editingRow.value = undefined
@@ -105,6 +114,13 @@ defineExpose({ focusError })
 </script>
 <template>
   <section ref="root" class="batch-etl-fields">
+    <BatchTableDialog
+      v-if="metadataMode"
+      :draft="draft"
+      :mode="metadataMode"
+      @close="metadataMode = undefined"
+      @add="appendTables"
+    />
     <p v-if="draft.blocked" role="alert">{{ t('batchEtl.unsupported') }}</p>
     <template v-else>
       <LineTabs
@@ -164,7 +180,6 @@ defineExpose({ focusError })
               :title="t('batchEtl.tables')"
               :count="draft.tables.length"
               :disabled="disabled || draft.tables.length >= 500"
-              :add-label="t('batchEtl.addTable')"
               :columns="[
                 { key: 'index', label: '#', width: '44px' },
                 { key: 'source', label: t('batchEtl.sourceTable'), required: true },
@@ -174,6 +189,31 @@ defineExpose({ focusError })
               @add="addTable"
             >
               <template #tools>
+                <div class="batch-search batch-table-actions">
+                  <NButton
+                    size="small"
+                    :disabled="disabled || draft.tables.length >= 500"
+                    @click="addTable"
+                    >{{ t('batchEtl.addTable') }}</NButton
+                  >
+                  <NButton
+                    size="small"
+                    :disabled="disabled || !draft.sourceResourceId"
+                    @click="metadataMode = 'picker'"
+                    >{{ t('insights.picker') }}</NButton
+                  >
+                  <NButton
+                    size="small"
+                    :disabled="
+                      disabled ||
+                      !draft.sourceResourceId ||
+                      !draft.targetResourceId ||
+                      !draft.tables.length
+                    "
+                    @click="metadataMode = 'check'"
+                    >{{ t('insights.check') }}</NButton
+                  >
+                </div>
                 <div v-if="draft.tables.length > 6 || query" class="batch-search">
                   <NInput
                     v-model:value="query"
@@ -577,6 +617,10 @@ defineExpose({ focusError })
 .batch-search > .n-input {
   flex: 1;
   min-width: 0;
+}
+.batch-table-actions {
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 .batch-search > span {
   font-size: 12px;

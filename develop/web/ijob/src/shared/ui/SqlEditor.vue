@@ -5,8 +5,11 @@ SPDX-License-Identifier: MIT
 
 <script setup lang="ts">
 import './sql-editor.css'
+import SqlQueryPanel from './SqlQueryPanel.vue'
+import SqlEditorToolbar from './SqlEditorToolbar.vue'
+import type { QueryContext, QuerySelection } from './sql-preview'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { NButton, NCheckbox, useMessage } from 'naive-ui'
+import { NButton, useMessage } from 'naive-ui'
 import { Maximize2, X } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
 import { EditorState, Compartment } from '@codemirror/state'
@@ -29,6 +32,7 @@ const props = defineProps<{
   language?: string
   title?: string
   contextKey?: string
+  queryContext?: QueryContext
 }>()
 const emit = defineEmits<{ 'update:modelValue': [string]; expanded: [boolean] }>()
 const runtime = useRuntime(),
@@ -43,6 +47,7 @@ const host = ref<HTMLElement | null>(null),
 const expanded = ref(false),
   wrap = ref(true),
   expandButton = ref<InstanceType<typeof NButton> | null>(null)
+const querySelection = ref<QuerySelection>({ text: '', from: 0, count: 0 })
 const themeSlot = new Compartment(),
   wrapSlot = new Compartment(),
   accessSlot = new Compartment(),
@@ -51,6 +56,9 @@ const themeSlot = new Compartment(),
 let view: EditorView | undefined
 let activeContext = props.contextKey ?? 'SQL'
 const states = new Map<string, { state: EditorState; top: number; left: number }>()
+const previewEnabled = computed(
+  () => !!props.queryContext && !props.readOnly && (!props.language || props.language === 'SQL'),
+)
 const editorTitle = computed(
   () =>
     props.title ??
@@ -176,6 +184,12 @@ function stateFor(value: string) {
       phraseSlot.of(EditorState.phrases.of(phrases.value)),
       EditorView.updateListener.of((update) => {
         hasSelection.value = update.state.selection.ranges.some((range) => !range.empty)
+        const ranges = update.state.selection.ranges.filter((range) => !range.empty)
+        querySelection.value = {
+          count: ranges.length,
+          from: ranges[0]?.from ?? 0,
+          text: ranges.length === 1 ? update.state.sliceDoc(ranges[0]!.from, ranges[0]!.to) : '',
+        }
         hasContent.value = update.state.doc.length > 0
         if (update.docChanged) emit('update:modelValue', update.state.doc.toString())
       }),
@@ -269,10 +283,11 @@ function finish() {
   })
 }
 function escape(event: KeyboardEvent) {
+  if ((event.target as HTMLElement).closest('dialog') !== modal.value) return
   if (event.key === 'Tab' && modal.value) {
     const focusable = [
       ...modal.value.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), input:not([disabled]), [tabindex="0"], [contenteditable="true"]',
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex="0"], [contenteditable="true"]',
       ),
     ].filter((el) => el.getClientRects().length > 0 && el.getAttribute('aria-disabled') !== 'true')
     const target = event.shiftKey ? focusable.at(-1) : focusable[0]
@@ -363,7 +378,15 @@ async function copySelection(cut = false) {
 function focus() {
   view?.focus()
 }
-defineExpose({ focus })
+function locate(position: number) {
+  if (!view) return
+  view.dispatch({
+    selection: { anchor: Math.max(0, Math.min(position, view.state.doc.length)) },
+    scrollIntoView: true,
+  })
+  view.focus()
+}
+defineExpose({ focus, enlarge })
 onBeforeUnmount(() => {
   modal.value?.close()
   view?.destroy()
@@ -411,29 +434,44 @@ onBeforeUnmount(() => {
           ><X :size="18"
         /></NButton>
       </header>
-      <div class="sql-large-toolbar">
-        <NButton size="small" :disabled="!hasContent" @mousedown.prevent @click="selectAll">{{
-          t('tasks.selectAllText')
-        }}</NButton>
-        <NButton
-          size="small"
-          :disabled="(!hasSelection && !(readOnly && hasContent)) || copying"
-          @mousedown.prevent
-          @click="copySelection()"
-          >{{ t('unified.copy') }}</NButton
-        >
-        <NButton
-          v-if="!readOnly"
-          size="small"
-          :disabled="disabled || !hasSelection || copying"
-          @mousedown.prevent
-          @click="copySelection(true)"
-          >{{ t('tasks.cutText') }}</NButton
-        >
-        <NButton size="small" @click="find">{{ t('tasks.find') }}</NButton
-        ><NCheckbox v-model:checked="wrap">{{ t('tasks.wrap') }}</NCheckbox>
-      </div>
-      <div ref="largeHost" class="sql-large-host" />
+      <SqlEditorToolbar
+        v-if="!previewEnabled"
+        v-model:wrap="wrap"
+        :has-content="hasContent"
+        :has-selection="hasSelection"
+        :copying="copying"
+        :read-only="readOnly"
+        :disabled="disabled"
+        @select-all="selectAll"
+        @copy="copySelection()"
+        @cut="copySelection(true)"
+        @find="find"
+      />
+      <SqlQueryPanel
+        v-if="previewEnabled && queryContext"
+        :context="queryContext"
+        :sql="modelValue"
+        :selection="querySelection"
+        :expanded="expanded"
+        @locate="locate"
+      >
+        <template #tools>
+          <SqlEditorToolbar
+            v-model:wrap="wrap"
+            :has-content="hasContent"
+            :has-selection="hasSelection"
+            :copying="copying"
+            :read-only="readOnly"
+            :disabled="disabled"
+            @select-all="selectAll"
+            @copy="copySelection()"
+            @cut="copySelection(true)"
+            @find="find"
+          />
+        </template>
+        <div ref="largeHost" class="sql-large-host" />
+      </SqlQueryPanel>
+      <div v-else ref="largeHost" class="sql-large-host" />
       <footer>
         <span v-if="!readOnly">{{ t('tasks.editorHint') }}</span>
         <NButton type="primary" @click="finish">{{

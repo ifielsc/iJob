@@ -190,15 +190,17 @@ class SecurityHttpIT {
                                     .getPatternValues()
                                     .contains("/api/users/approvers/resolve")
                             || entry.getKey().getPatternValues().contains("/api/auth/login")
-                            || entry.getKey().getPatternValues().contains("/api/auth/logout");
+                            || entry.getKey().getPatternValues().contains("/api/auth/logout")
+                            || entry.getKey()
+                                    .getPatternValues()
+                                    .contains("/api/job-packages/inspect");
             if (!query)
                 assertNotNull(
                         entry.getValue().getMethodAnnotation(AuditOperation.class),
                         entry.getKey().toString());
         }
-        // Includes three concurrency paging/reconciliation reads; the legacy full-list GET is
-        // removed.
-        assertEquals(140, count);
+        // Includes eight package endpoints; inspect is read-only, plan/apply/export are audited.
+        assertEquals(158, count);
     }
 
     @Test

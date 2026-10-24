@@ -11,7 +11,9 @@ import FormItem from '../../shared/ui/CompactFormItem.vue'
 import PushResourcePicker from './PushResourcePicker.vue'
 import FileResourcePicker from './FileResourcePicker.vue'
 import JsonFormEditor from '../../shared/ui/JsonFormEditor.vue'
+import FilePathInput from '../../shared/ui/FilePathInput.vue'
 import type { Field } from './etl-model'
+import type { QueryContext } from '../../shared/ui/sql-preview'
 const SqlEditor = defineAsyncComponent(() => import('../../shared/ui/SqlEditor.vue'))
 const props = defineProps<{
   field: Field
@@ -21,6 +23,9 @@ const props = defineProps<{
   error?: string
   resourceType?: string
   label?: string
+  queryContext?: QueryContext
+  fileResourceId?: string
+  fileMode?: 'file' | 'directory'
 }>()
 const emit = defineEmits<{
   'update:value': [string | boolean]
@@ -104,6 +109,7 @@ const options = computed(() =>
         "
         v-model="text"
         :shape="field.key === 'parameters' ? 'object' : 'sqlArray'"
+        :query-context="queryContext"
         :title="label"
         :context-key="id"
         :disabled="disabled"
@@ -115,10 +121,21 @@ const options = computed(() =>
         v-else-if="field.kind === 'sql' || field.kind === 'json'"
         v-model="text"
         :language="field.kind === 'sql' ? 'SQL' : 'JSON'"
+        :query-context="field.kind === 'sql' ? queryContext : undefined"
         :context-key="id"
         :disabled="disabled"
         :invalid="!!error"
         @expanded="emit('expanded', $event)"
+      />
+      <FilePathInput
+        v-else-if="field.key === 'path' && fileResourceId"
+        :id="id"
+        v-model:value="text"
+        :resource-id="fileResourceId"
+        :mode="fileMode"
+        :disabled="disabled"
+        :invalid="!!error"
+        @select="emit('select', $event)"
       />
       <NInput
         v-else

@@ -127,6 +127,8 @@ watch(
   (loginId) => {
     if (loginId) runtime.preferences.switchIdentity(loginId)
   },
+  // Route guards can resolve identity before the shell mounts, including on refresh.
+  { immediate: true },
 )
 </script>
 

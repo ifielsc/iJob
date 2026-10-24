@@ -352,6 +352,10 @@ public class CalendarService {
         log.info("calendars deleted, count={}", ids.size());
     }
 
+    public void validateImport(CalendarUpsertRequest request) {
+        validateRequest(request);
+    }
+
     private List<CalendarExceptionRequest> validateRequest(CalendarUpsertRequest request) {
         if (request == null) {
             throw paramError(CoreMessage.REQUEST_BODY_IS_REQUIRED);

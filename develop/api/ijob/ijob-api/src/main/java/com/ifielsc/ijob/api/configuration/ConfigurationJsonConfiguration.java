@@ -46,6 +46,12 @@ public class ConfigurationJsonConfiguration {
                 builder.mixIn(type, Identifier.class);
             }
             builder.mixIn(ResourceConnectionTestDTO.class, ResourceIdentifier.class);
+            builder.mixIn(
+                    com.ifielsc.ijob.contract.resource.SqlPreviewDTO.Request.class,
+                    PreviewInput.class);
+            builder.mixIn(
+                    com.ifielsc.ijob.contract.resource.FileBrowseDTO.Request.class,
+                    BrowserInput.class);
             builder.mixIn(NotifyTestSendDTO.class, NotifyIdentifier.class);
             builder.mixIn(NotifyBindingDTO.class, BindingIdentifier.class);
             builder.mixIn(
@@ -65,6 +71,19 @@ public class ConfigurationJsonConfiguration {
             builder.mixIn(NotifyConfigView.Email.class, EmailChannelIdentifier.class);
             builder.mixIn(NotifyConfigRequest.Email.class, EmailChannelInput.class);
         };
+    }
+
+    abstract static class BrowserInput {
+        @JsonDeserialize(using = ConcurrencyJsonConfiguration.ExactLong.class)
+        public abstract Long resourceId();
+    }
+
+    abstract static class PreviewInput extends BrowserInput {
+        @JsonDeserialize(contentUsing = JobJsonConfiguration.PreciseLiteral.class)
+        public abstract java.util.Map<String, Object> variables();
+
+        @JsonDeserialize(contentUsing = JobJsonConfiguration.PreciseLiteral.class)
+        public abstract java.util.Map<String, Object> parameters();
     }
 
     abstract static class ParameterFormIdentifier {

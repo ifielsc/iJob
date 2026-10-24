@@ -352,15 +352,15 @@ public class BatchTableMigrator {
         throw new IllegalStateException("Batch ETL column is not selected");
     }
 
-    private String checkpointKey(BatchEtlTaskConfig config, BatchTablePlan plan) {
-        return "batch:"
-                + hash(
-                        (plan.sourceSchema() == null ? "" : plan.sourceSchema())
-                                + "."
-                                + plan.sourceTable());
+    public static String checkpointKey(BatchEtlTaskConfig config, BatchTablePlan plan) {
+        return checkpointKeyFor(plan.sourceSchema(), plan.sourceTable());
     }
 
-    private String fingerprint(BatchEtlTaskConfig config, BatchTablePlan plan) {
+    public static String checkpointKeyFor(String schema, String table) {
+        return "batch:" + hash((schema == null ? "" : schema) + "." + table);
+    }
+
+    public static String fingerprint(BatchEtlTaskConfig config, BatchTablePlan plan) {
         return hash(
                 config.getSourceResourceId()
                         + "\n"
@@ -383,7 +383,7 @@ public class BatchTableMigrator {
                         + config.getIncremental().getWatermarkType());
     }
 
-    private String hash(String value) {
+    private static String hash(String value) {
         try {
             return HexFormat.of()
                     .formatHex(

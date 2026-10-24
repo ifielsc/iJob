@@ -16,6 +16,12 @@ pnpm dev
 
 `pnpm build` 生成 dist；生产发布静态文件，不运行 Vite。API 使用同源 `/api`，反向代理保留原路径、Token 响应头和 Idempotency-Key，history 路由回退 index.html。部署模板见 [nginx](../../../document/examples/deployment/nginx.conf.example)，首次安装、认证及多实例见[启动说明](../../deployment/first-run/README.md)。
 
+## 画布连线显示
+
+作业编辑、历史版本在“自动布局”后提供合并的方向与连线选择框（四种组合），方向在点击自动布局后生效；运行图在“定位选中”后提供单独的连线选择框：默认“自动避障”，遇到节点时尽量绕行；“简洁曲线”直接连接端口，不避开其他节点。偏好按登录身份保存在当前浏览器，刷新后恢复，不跨设备同步；旧偏好缺少该字段时使用自动避障。切换只影响显示，不修改作业定义、执行依赖、撤销历史或未保存状态。
+
+拉线时使用简洁预览，完成连接后按所选方式显示。拖动节点或节点组时暂停避障重算，无关连线保持原路线，端点变化的连线使用临时曲线；松手后统一计算最终位置。只读画布也可切换显示方式。暂不提供单条连线覆盖或手动折点。
+
 ## 测试
 
 `pnpm check` 包含版本、类型、lint、边界、格式、单元测试、构建和包体积检查。安装 Playwright Chromium 后执行 `pnpm test:e2e`。统一脚本位于 [verify-frontend.ps1](../../../test/tools/verify-frontend.ps1)，默认 `-Suite Basic` 覆盖这些检查及普通/production 浏览器测试；`-Suite Full` 在 Windows 上追加七套真实后端集成。只使用新证据 RunId；输出被根忽略规则排除。覆盖边界和工具要求见 [CI 说明](../../../document/ci/basic-ci.md)。

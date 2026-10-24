@@ -154,6 +154,19 @@ test('complete graph polls by default, preserves zoom and selected node, and sto
   page,
 }) => {
   const state = await setup(page)
+  const routing = page.locator('.run-graph-tools .job-routing-select')
+  await expect(routing.locator('.n-base-selection')).toBeVisible()
+  expect(await routing.evaluate((e) => e.previousElementSibling?.textContent)).toContain('定位选中')
+  for (const mode of ['simple', 'avoid']) {
+    await routing.click()
+    await page
+      .getByRole('option', { name: mode === 'simple' ? '简洁曲线' : '自动避障', exact: true })
+      .click()
+    await expect(page.locator('.run-graph-canvas .job-canvas')).toHaveAttribute(
+      'data-routing-mode',
+      mode,
+    )
+  }
   await page.locator('.run-graph-canvas .job-node').filter({ hasText: '准备报表' }).click()
   await page.locator('.run-graph-canvas .job-canvas-controls button').first().click()
   const zoom = await page.locator('.run-graph-canvas .job-zoom').innerText()
@@ -267,7 +280,8 @@ test('runtime search locates nodes and exact edges and preserves selection acros
     viewport!,
   )
   await page.locator('.run-graph-search input').fill('no-such-node')
-  await expect(page.getByRole('option')).toHaveCount(0)
+  // Autocomplete results, excluding the native canvas display selector's options.
+  await expect(page.locator('[role="option"]')).toHaveCount(0)
   await page.keyboard.press('Escape')
   expect(state.paths.some((p) => p.startsWith('/api/jobs/'))).toBe(false)
 })
@@ -310,6 +324,15 @@ for (const theme of ['light', 'dark'])
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
       ).toBe(true)
+      for (const width of [390, 320]) {
+        await page.setViewportSize({ width, height: 900 })
+        expect(
+          await page
+            .locator('.run-graph-tools')
+            .evaluate((e) => e.scrollWidth <= e.clientWidth + 1),
+        ).toBe(true)
+        await expect(page.locator('.run-graph-tools .job-routing-select')).toBeVisible()
+      }
     })
 
 test('maximized graph retains selection and zoom through refresh and Escape', async ({ page }) => {

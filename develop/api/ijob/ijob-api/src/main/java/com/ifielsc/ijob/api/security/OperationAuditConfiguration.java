@@ -132,7 +132,13 @@ public class OperationAuditConfiguration {
                                                 instanceof
                                                 com.ifielsc.ijob.contract.notify.MailConnectionDTO
                                                                 mail
-                                        && !mail.connected();
+                                        && !mail.connected()
+                                || data
+                                                instanceof
+                                                com.ifielsc.ijob.contract.resource.SqlPreviewDTO
+                                                                        .Result
+                                                                preview
+                                        && !"SUCCESS".equals(preview.status());
                 String outcome = failed ? "FAILED" : "SUCCESS";
                 audits.independent(completed, outcome, event.getId().toString());
                 return result;
@@ -214,6 +220,12 @@ public class OperationAuditConfiguration {
     }
 
     private static String targetId(MethodInvocation invocation, AuditOperation policy) {
+        for (Object argument : invocation.getArguments()) {
+            if (argument instanceof com.ifielsc.ijob.contract.resource.SqlPreviewDTO.Request preview
+                    && preview.resourceId() != null) return preview.resourceId().toString();
+            if (argument instanceof com.ifielsc.ijob.contract.resource.FileBrowseDTO.Request browse
+                    && browse.resourceId() != null) return browse.resourceId().toString();
+        }
         if ("PARAMETER_TEMPLATE_BIND".equals(policy.action())) {
             Object[] arguments = invocation.getArguments();
             if (arguments.length >= 2

@@ -2,9 +2,16 @@
 // SPDX-License-Identifier: MIT
 
 export const jobsZh = {
+  canvasHelp: '画布说明',
   removeMany: '删除选中的 {count} 个节点及 {edges} 条关联连线？',
   bidirectionalPort: '输入／输出端点：从这里拖出为输出，拖入这里为输入；箭头指向下游',
   minimap: '小地图',
+  layoutAndRouting: '布局与连线',
+  layoutAndRoutingHelp: '方向在点击自动布局后生效；连线方式立即切换并按用户记住，不修改作业定义。',
+  edgeRouting: '连线方式',
+  edgeAvoid: '自动避障',
+  edgeSimple: '简洁曲线',
+  edgeRoutingHelp: '按当前用户记住显示偏好。简洁曲线不绕开节点，不影响作业执行。',
   searchGraph: '查找节点或连线…',
   locateSelected: '定位选中',
   undo: '撤销',
@@ -149,10 +156,19 @@ export const jobsZh = {
   layoutHint: '布局随作业版本发布；自动布局也属于未发布修改。',
 }
 export const jobsEn: Record<keyof typeof jobsZh, string> = {
+  canvasHelp: 'Canvas help',
   removeMany: 'Delete {count} selected nodes and {edges} connected edges?',
   bidirectionalPort:
     'Input/output port: drag out to send, drag here to receive; arrows point downstream',
   minimap: 'Minimap',
+  layoutAndRouting: 'Layout and connections',
+  layoutAndRoutingHelp:
+    'Direction applies when you click Auto layout. Connection style applies immediately and is remembered for this user without changing the job definition.',
+  edgeRouting: 'Connections',
+  edgeAvoid: 'Avoid obstacles',
+  edgeSimple: 'Simple curves',
+  edgeRoutingHelp:
+    'Display preference saved for this user. Simple curves do not avoid nodes or change job execution.',
   searchGraph: 'Find node or connection…',
   locateSelected: 'Locate selected',
   undo: 'Undo',

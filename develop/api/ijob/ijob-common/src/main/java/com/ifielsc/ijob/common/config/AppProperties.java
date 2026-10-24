@@ -30,6 +30,12 @@ public class AppProperties {
     private Notification notification = new Notification();
     private CacheConsistency cacheConsistency = new CacheConsistency();
     private Scheduling scheduling = new Scheduling();
+    private ResourceBrowser resourceBrowser = new ResourceBrowser();
+
+    @Data
+    public static class ResourceBrowser {
+        private List<String> localRoots = new ArrayList<>();
+    }
 
     public enum PlatformDatabaseVendor {
         MYSQL,

@@ -33,6 +33,25 @@ class WorkbenchMapperXmlTest {
         query.setFrom(LocalDateTime.of(2026, 9, 27, 0, 0));
         query.setTo(query.getFrom().plusDays(1));
         String prefix = WorkbenchMapper.class.getName() + ".";
+        String runtimeSql =
+                configuration
+                        .getMappedStatement(prefix + "selectRuntimeNodes")
+                        .getBoundSql(Map.of("history", false))
+                        .getSql();
+        assertTrue(runtimeSql.contains("NOT EXISTS"));
+        assertTrue(runtimeSql.contains("state_key"));
+        assertFalse(runtimeSql.contains("host_name"));
+        for (String name :
+                new String[] {
+                    "countQueuedWork",
+                    "countClaimedWork",
+                    "countExpiredWork",
+                    "selectOldestQueuedAt"
+                }) {
+            var statement = configuration.getMappedStatement(prefix + name);
+            assertEquals(5, statement.getTimeout());
+            assertTrue(statement.getBoundSql(Map.of("now", query.getTo())).getSql().contains("?"));
+        }
         for (String statement : new String[] {"selectWindowStatuses", "selectRecentFailures"}) {
             var mapped = configuration.getMappedStatement(prefix + statement);
             String sql = mapped.getBoundSql(query).getSql().replaceAll("\\s+", " ");

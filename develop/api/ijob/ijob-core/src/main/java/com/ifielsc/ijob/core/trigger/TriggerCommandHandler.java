@@ -57,6 +57,40 @@ public class TriggerCommandHandler implements RuntimeFenceListener {
     private final AtomicInteger inflightClaimSlots = new AtomicInteger();
     private volatile long nextWorkScanNanos;
     private volatile int consecutiveEmptyScans;
+    private volatile java.time.LocalDateTime lastScanAt;
+    private volatile java.time.LocalDateTime lastRenewAt;
+    private volatile long lastScanNanos;
+    private volatile long lastRenewNanos;
+    private final java.util.concurrent.atomic.AtomicLong renewalFailures =
+            new java.util.concurrent.atomic.AtomicLong();
+    private volatile long lastRenewalFailureNanos;
+
+    public Map<String, Object> runtimeTelemetry() {
+        long now = System.nanoTime();
+        var queue = appProperties.getRuntime().getWorkQueue();
+        long scanLimit =
+                queue.getMaxIdleScanInterval()
+                        .plus(queue.getScanInterval())
+                        .plusSeconds(10)
+                        .toNanos();
+        long renewLimit = queue.getRenewInterval().multipliedBy(3).plusSeconds(5).toNanos();
+        boolean healthy =
+                runtimeState.isReady()
+                        && lastScanNanos != 0
+                        && now - lastScanNanos < scanLimit
+                        && lastRenewNanos != 0
+                        && now - lastRenewNanos < renewLimit
+                        && (lastRenewalFailureNanos == 0
+                                || now - lastRenewalFailureNanos > renewLimit);
+        Map<String, Object> values = new java.util.LinkedHashMap<>();
+        values.put("healthy", healthy);
+        values.put("active", activeClaims.size());
+        values.put("capacity", queue.getMaxInflightRoots());
+        values.put("renewalFailures", renewalFailures.get());
+        values.put("lastScanAt", lastScanAt == null ? null : lastScanAt.toString());
+        values.put("lastRenewAt", lastRenewAt == null ? null : lastRenewAt.toString());
+        return values;
+    }
 
     @Autowired
     public TriggerCommandHandler(
@@ -225,10 +259,14 @@ public class TriggerCommandHandler implements RuntimeFenceListener {
                 appProperties.getRuntime().getWorkQueue().getMaxInflightRoots()
                         - inflightClaimSlots.get();
         if (capacity <= 0) {
+            lastScanNanos = System.nanoTime();
+            lastScanAt = java.time.LocalDateTime.now(java.time.ZoneOffset.UTC);
             scheduleNextWorkScan(false);
             return;
         }
         List<Long> triggerIds = workQueue.listDispatchableTriggerIds(capacity);
+        lastScanNanos = System.nanoTime();
+        lastScanAt = java.time.LocalDateTime.now(java.time.ZoneOffset.UTC);
         scheduleNextWorkScan(!triggerIds.isEmpty());
         for (Long triggerId : triggerIds) {
             try {
@@ -304,12 +342,18 @@ public class TriggerCommandHandler implements RuntimeFenceListener {
         for (TriggerWorkClaim claim : activeClaims.values()) {
             try {
                 if (!workQueue.renew(claim)) {
+                    renewalFailures.incrementAndGet();
+                    lastRenewalFailureNanos = System.nanoTime();
                     loseWorkOwnership(claim, "renewal was rejected", null);
                 }
             } catch (RuntimeException exception) {
+                renewalFailures.incrementAndGet();
+                lastRenewalFailureNanos = System.nanoTime();
                 loseWorkOwnership(claim, "renewal raised an error", exception);
             }
         }
+        lastRenewNanos = System.nanoTime();
+        lastRenewAt = java.time.LocalDateTime.now(java.time.ZoneOffset.UTC);
     }
 
     @Override

@@ -4,7 +4,7 @@
 import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { createPreferenceRepository, defaults } from './preferences'
-import type { AppLocale, Preferences, ThemeMode } from './preferences'
+import type { AppLocale, EdgeRoutingMode, Preferences, ThemeMode } from './preferences'
 
 export const usePreferences = defineStore('preferences', () => {
   const repository = createPreferenceRepository(() => window.localStorage)
@@ -12,6 +12,7 @@ export const usePreferences = defineStore('preferences', () => {
   const theme = ref<ThemeMode>(initial.theme)
   const locale = ref<AppLocale>(initial.locale)
   const timeMode = ref<'business' | 'UTC'>(initial.timeMode ?? 'business')
+  const edgeRouting = ref<EdgeRoutingMode>(initial.edgeRouting ?? 'avoid')
   const businessZone = ref<string | null>(null)
   const displayTimezone = computed(() =>
     timeMode.value === 'UTC' ? 'UTC' : (businessZone.value ?? 'UTC'),
@@ -27,6 +28,8 @@ export const usePreferences = defineStore('preferences', () => {
   let identity: string | null = null
   function apply(value: Preferences) {
     timeMode.value = value.timeMode ?? 'business'
+    // Canvas choices belong to this account, never the previously signed-in user.
+    edgeRouting.value = value.edgeRouting ?? 'avoid'
     theme.value = value.theme
     locale.value = value.locale
   }
@@ -54,11 +57,16 @@ export const usePreferences = defineStore('preferences', () => {
     locale.value = value
     save()
   }
+  function setEdgeRouting(value: EdgeRoutingMode) {
+    edgeRouting.value = value
+    save()
+  }
   function save() {
     repository.write(identity, {
       theme: theme.value,
       locale: locale.value,
       timeMode: timeMode.value,
+      ...(edgeRouting.value === 'simple' ? { edgeRouting: edgeRouting.value } : {}),
     })
   }
   watch(
@@ -74,9 +82,11 @@ export const usePreferences = defineStore('preferences', () => {
     theme,
     locale,
     timeMode,
+    edgeRouting,
     businessZone,
     displayTimezone,
     setTimeMode,
+    setEdgeRouting,
     setBusinessZone,
     switchIdentity,
     setTheme,

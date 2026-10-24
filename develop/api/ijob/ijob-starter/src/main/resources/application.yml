@@ -38,6 +38,9 @@ mybatis:
     map-underscore-to-camel-case: true
 
 app:
+  resource-browser:
+    # Configure explicit absolute roots in external configuration for LOCAL drafts.
+    local-roots: []
   scheduling:
     pool-size: ${IJOB_SCHEDULING_POOL_SIZE:8}
     shutdown-timeout: ${IJOB_SCHEDULING_SHUTDOWN_TIMEOUT:30s}

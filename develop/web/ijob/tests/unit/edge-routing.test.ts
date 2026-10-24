@@ -2,7 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 import { describe, expect, it } from 'vitest'
-import { ObstacleIndex, portSide, routeEdge } from '../../src/modules/jobs/edge-routing'
+import {
+  ObstacleIndex,
+  portSide,
+  routeEdge,
+  placeEdgeLabels,
+  nearestPathPoint,
+} from '../../src/modules/jobs/edge-routing'
 import type { Obstacle, RouteInput, Side } from '../../src/modules/jobs/edge-routing'
 
 const source: Obstacle = { id: 'a', x: 0, y: 100, width: 180, height: 76 }
@@ -17,6 +23,47 @@ const input: RouteInput = {
   targetSide: 'left',
 }
 describe('automatic edge routing', () => {
+  it('keeps branch labels on a free part of the edge when its midpoint is crowded', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 400, y: 0 },
+    ]
+    const labels = placeEdgeLabels(
+      [{ id: 'block', x: 150, y: -40, width: 100, height: 80 }],
+      [{ id: 'branch', text: '默认', anchor: { x: 200, y: 0 }, points }],
+    )
+    const p = labels.get('branch')!
+    expect(p.y).toBe(0)
+    expect(p.x < 110 || p.x > 290).toBe(true)
+    expect(nearestPathPoint(p, points).x).toBeCloseTo(p.x, 8)
+    expect(nearestPathPoint(p, points).y).toBeCloseTo(p.y, 8)
+  })
+  it('connects an offset label to its closest segment, including degenerate points', () => {
+    expect(
+      nearestPathPoint({ x: 350, y: 20 }, [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 },
+        { x: 400, y: 0 },
+      ]),
+    ).toEqual({ x: 350, y: 0 })
+  })
+  it('separates coincident branch labels from each other and the gateway', () => {
+    const node = { id: 'gate', x: 0, y: 0, width: 110, height: 110 }
+    const labels = placeEdgeLabels(
+      [node],
+      ['默认分支', 'risk · 优先级 10'].map((text, i) => ({
+        id: String(i),
+        text,
+        anchor: { x: 55, y: 55 },
+      })),
+    )
+    expect(labels.size).toBe(2)
+    const points = [...labels.values()]
+    expect(
+      Math.abs(points[0]!.y - points[1]!.y) >= 40 || Math.abs(points[0]!.x - points[1]!.x) >= 160,
+    ).toBe(true)
+    for (const p of points) expect(p.y < -20 || p.y > 130 || p.x < -100 || p.x > 210).toBe(true)
+  })
   it('keeps all 16 input/output port combinations and endpoint tangents', () => {
     const vectors = {
       left: { x: -1, y: 0 },

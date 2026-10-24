@@ -2,14 +2,14 @@
   "reviews": [
     {
       "path": ".gitignore",
-      "line": 2938,
+      "line": 2988,
       "rule": "email-address",
       "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
       "reason": "pnpm patch filename/version, not an email address."
     },
     {
       "path": ".repository/allowlist.json",
-      "line": 1635,
+      "line": 1671,
       "rule": "email-address",
       "line_sha256": "19f0e34d2de24909f3f9e4c329ff30ec56cb62c17e0373c97150ed36a4685fd4",
       "reason": "pnpm patch filename/version, not an email address."
@@ -632,7 +632,7 @@
     },
     {
       "path": "develop/api/ijob/ijob-starter/src/main/resources/application.yml",
-      "line": 103,
+      "line": 106,
       "rule": "credential-literal",
       "line_sha256": "dba94a77ec55ac0d52b97231b4562d778e3f319ccabef46ea95cd80ad7340d70",
       "reason": "Environment variable reference with empty default, no credential value."
@@ -891,14 +891,14 @@
     },
     {
       "path": "develop/web/ijob/src/modules/configuration/FileEditor.vue",
-      "line": 411,
+      "line": 436,
       "rule": "credential-literal",
       "line_sha256": "23c02a989b04c32f24fb9447da789b62256a9fb58e3a17e2a446d7dc1740eae5",
       "reason": "Reviewed UI binding, validation enum or translation key, not a credential value."
     },
     {
       "path": "develop/web/ijob/src/modules/configuration/FileEditor.vue",
-      "line": 412,
+      "line": 437,
       "rule": "credential-literal",
       "line_sha256": "058bacd5dba01f2cf7a54abedc52cd767b2922bb8d9c59a5d5dd5281b5e267ad",
       "reason": "Reviewed UI binding, validation enum or translation key, not a credential value."
@@ -1269,35 +1269,35 @@
     },
     {
       "path": "develop/web/ijob/src/shared/i18n/messages.ts",
-      "line": 73,
+      "line": 80,
       "rule": "credential-literal",
       "line_sha256": "17971884f45f5887761d909443bee83d1a8523cc876563dd77deb5265be989bc",
       "reason": "Reviewed user-interface validation/translation text, not a configured secret."
     },
     {
       "path": "develop/web/ijob/src/shared/i18n/messages.ts",
-      "line": 135,
+      "line": 142,
       "rule": "credential-literal",
       "line_sha256": "2035e7fb296a2ee540f8d1086ab65bebecc51ba3bcd6b85c451f54eec7de25f2",
       "reason": "Reviewed user-interface validation/translation text, not a configured secret."
     },
     {
       "path": "develop/web/ijob/src/shared/i18n/messages.ts",
-      "line": 151,
+      "line": 158,
       "rule": "credential-literal",
       "line_sha256": "9d926714ec0d3097a5f73d1a9747f5daa5805c018bbf7ca5af879821a8e65dfd",
       "reason": "Reviewed user-interface validation/translation text, not a configured secret."
     },
     {
       "path": "develop/web/ijob/src/shared/i18n/messages.ts",
-      "line": 283,
+      "line": 296,
       "rule": "credential-literal",
       "line_sha256": "28559e5ae4159fa83b821b64346479ef5044451491137764c374d52aa3cc1611",
       "reason": "Reviewed user-interface validation/translation text, not a configured secret."
     },
     {
       "path": "develop/web/ijob/src/shared/i18n/messages.ts",
-      "line": 299,
+      "line": 312,
       "rule": "credential-literal",
       "line_sha256": "356e1d1da126e4f8c60668f13a9da579e94768e0ffb202286ac61c9b9ea89109",
       "reason": "Reviewed user-interface validation/translation text, not a configured secret."
@@ -1889,6 +1889,370 @@
       "rule": "personal-path",
       "line_sha256": "ad33dbda456bf47cd8cb1a392910086154d6d6dd90682fb8037d02adeba1a32e",
       "reason": "Explicit forbidden-file name in repository guard; no account-file content."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/ui/SqlQueryPanel.vue",
+      "line": 405,
+      "rule": "credential-literal",
+      "line_sha256": "1f36a261b3f698ec82e6f4ff54fbbe04cdf6a8ca4f12266746719104054539e7",
+      "reason": "UI input type expression selecting password masking, not a credential value."
+    },
+    {
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/pack/PackageArchiveTest.java",
+      "line": 101,
+      "rule": "url-credential",
+      "line_sha256": "9ed294708e6df5e60aa6da72748f060ce88b0acc56181c0d70feb44f521fdaac",
+      "reason": "Synthetic user:pass URL at example.invalid solely tests removal of embedded credentials; never used for a connection."
+    },
+    {
+      "path": "develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/pack/PackageArchiveTest.java",
+      "line": 101,
+      "rule": "email-address",
+      "line_sha256": "9ed294708e6df5e60aa6da72748f060ce88b0acc56181c0d70feb44f521fdaac",
+      "reason": "Synthetic user:pass URL at example.invalid solely tests removal of embedded credentials; never used for a connection."
+    },
+    {
+      "path": "tools/job-package/test_ijob_package.py",
+      "line": 81,
+      "rule": "url-credential",
+      "line_sha256": "ef18617b392b306e43def45afca657f5b8a3d26457915339fa67522299d13444",
+      "reason": "Synthetic u:p URL at example.invalid solely verifies rejection before any network request."
+    },
+    {
+      "path": "tools/job-package/test_ijob_package.py",
+      "line": 81,
+      "rule": "email-address",
+      "line_sha256": "ef18617b392b306e43def45afca657f5b8a3d26457915339fa67522299d13444",
+      "reason": "Synthetic u:p URL at example.invalid solely verifies rejection before any network request."
+    },
+    {
+      "path": "develop/web/ijob/src/modules/packages/PackageMappingEditor.vue",
+      "line": 217,
+      "rule": "credential-literal",
+      "line_sha256": "67b0884ec207c938e97158611540776eb42a14abe2e05e70d183e4587ea3c878",
+      "reason": "Password input HTML type attribute; no stored secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 18,
+      "rule": "credential-literal",
+      "line_sha256": "297d6f6cce00715bcaaf414f01558f2d77865b87a6b59cce21dac6e66b6d257a",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 239,
+      "rule": "credential-literal",
+      "line_sha256": "1df7d09230839dab13a1472351681abbdf48bd7c4de2300fc540f7cef8b55ea9",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 96,
+      "rule": "credential-literal",
+      "line_sha256": "d36c32751bd3f602e3d8974962fa456bff7cd3c8267e8277f0c862996ceaa79b",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 97,
+      "rule": "credential-literal",
+      "line_sha256": "232fc040c884f8f6c6c6b21bfa32a020818e6781f06d6bd4a71b31b46462035d",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 98,
+      "rule": "credential-literal",
+      "line_sha256": "36ae3e079f225c4b73115079683835287a3e9141fb4541dd9da0c2f77cd72e27",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 99,
+      "rule": "credential-literal",
+      "line_sha256": "7a13587b3d44e54794358485d7c6130a787f9242c4cd8ae4b4f9ad0fc7505ad9",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 160,
+      "rule": "credential-literal",
+      "line_sha256": "24b4a8f832f2a8c29c756891c50c6c346f8fc590d6ac9cea5cf4ef7315905859",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 237,
+      "rule": "credential-literal",
+      "line_sha256": "bb54f39fd285828b283f18230e378c849fbd0a099d47208f288fc3f7e5d8a542",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 242,
+      "rule": "credential-literal",
+      "line_sha256": "970f8af9a2497d3696b21cc6082e9f7598e6c0ac387642d7a4bd36280239b1cb",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 243,
+      "rule": "credential-literal",
+      "line_sha256": "8d6db8c044f2ebd07bdf371792f5151450f5813544da6774c77a9d9dbe1b53c1",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 244,
+      "rule": "credential-literal",
+      "line_sha256": "77084fb338f3f1eaded908c703181361f9694acaf29b024d069bc89164585abb",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 245,
+      "rule": "credential-literal",
+      "line_sha256": "8fc9a4cfc9c553a9cbfcfe44a5581f8f5e1dbeec0f71feab4d1d5a5dc54913c1",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/tests/e2e/packages.spec.ts",
+      "line": 241,
+      "rule": "credential-literal",
+      "line_sha256": "007e092952e51dd5522becd52286f8fcccff383794933234cf58fae18dd69c29",
+      "reason": "Synthetic fixture-only credential used to assert report redaction; no live identity."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 93,
+      "rule": "credential-literal",
+      "line_sha256": "1df7d09230839dab13a1472351681abbdf48bd7c4de2300fc540f7cef8b55ea9",
+      "reason": "UI Token field label, not a credential."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 45,
+      "rule": "credential-literal",
+      "line_sha256": "40de56a47384ab10c43e01155408a070fa0cd8e7196955b756e2ebb15de78b22",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 120,
+      "rule": "credential-literal",
+      "line_sha256": "1df7d09230839dab13a1472351681abbdf48bd7c4de2300fc540f7cef8b55ea9",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 123,
+      "rule": "credential-literal",
+      "line_sha256": "d36c32751bd3f602e3d8974962fa456bff7cd3c8267e8277f0c862996ceaa79b",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 124,
+      "rule": "credential-literal",
+      "line_sha256": "232fc040c884f8f6c6c6b21bfa32a020818e6781f06d6bd4a71b31b46462035d",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 125,
+      "rule": "credential-literal",
+      "line_sha256": "36ae3e079f225c4b73115079683835287a3e9141fb4541dd9da0c2f77cd72e27",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 126,
+      "rule": "credential-literal",
+      "line_sha256": "7a13587b3d44e54794358485d7c6130a787f9242c4cd8ae4b4f9ad0fc7505ad9",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 216,
+      "rule": "credential-literal",
+      "line_sha256": "24b4a8f832f2a8c29c756891c50c6c346f8fc590d6ac9cea5cf4ef7315905859",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 293,
+      "rule": "credential-literal",
+      "line_sha256": "bb54f39fd285828b283f18230e378c849fbd0a099d47208f288fc3f7e5d8a542",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 295,
+      "rule": "credential-literal",
+      "line_sha256": "1df7d09230839dab13a1472351681abbdf48bd7c4de2300fc540f7cef8b55ea9",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 298,
+      "rule": "credential-literal",
+      "line_sha256": "970f8af9a2497d3696b21cc6082e9f7598e6c0ac387642d7a4bd36280239b1cb",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 299,
+      "rule": "credential-literal",
+      "line_sha256": "8d6db8c044f2ebd07bdf371792f5151450f5813544da6774c77a9d9dbe1b53c1",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 300,
+      "rule": "credential-literal",
+      "line_sha256": "77084fb338f3f1eaded908c703181361f9694acaf29b024d069bc89164585abb",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 301,
+      "rule": "credential-literal",
+      "line_sha256": "8fc9a4cfc9c553a9cbfcfe44a5581f8f5e1dbeec0f71feab4d1d5a5dc54913c1",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/tests/e2e/packages.spec.ts",
+      "line": 282,
+      "rule": "credential-literal",
+      "line_sha256": "007e092952e51dd5522becd52286f8fcccff383794933234cf58fae18dd69c29",
+      "reason": "Reviewed synthetic test value asserting credentials/configuration are excluded from downloaded reports; no real credential."
+    },
+    {
+      "path": "develop/web/ijob/tests/unit/packages.test.ts",
+      "line": 70,
+      "rule": "credential-literal",
+      "line_sha256": "83bb523dff906d7c9c8d0b65cb5b160bf590ef96efd0b05461e21ce02e2a4549",
+      "reason": "Reviewed synthetic test value asserting credentials/configuration are excluded from downloaded reports; no real credential."
+    },
+    {
+      "path": "develop/web/ijob/src/modules/packages/PackageMappingEditor.vue",
+      "line": 227,
+      "rule": "credential-literal",
+      "line_sha256": "67b0884ec207c938e97158611540776eb42a14abe2e05e70d183e4587ea3c878",
+      "reason": "Password input HTML type attribute; no stored secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 48,
+      "rule": "credential-literal",
+      "line_sha256": "40de56a47384ab10c43e01155408a070fa0cd8e7196955b756e2ebb15de78b22",
+      "reason": "Reviewed UI translation/credential field label, not a configured secret."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 123,
+      "rule": "credential-literal",
+      "line_sha256": "1df7d09230839dab13a1472351681abbdf48bd7c4de2300fc540f7cef8b55ea9",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 126,
+      "rule": "credential-literal",
+      "line_sha256": "d36c32751bd3f602e3d8974962fa456bff7cd3c8267e8277f0c862996ceaa79b",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 127,
+      "rule": "credential-literal",
+      "line_sha256": "232fc040c884f8f6c6c6b21bfa32a020818e6781f06d6bd4a71b31b46462035d",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 128,
+      "rule": "credential-literal",
+      "line_sha256": "36ae3e079f225c4b73115079683835287a3e9141fb4541dd9da0c2f77cd72e27",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 129,
+      "rule": "credential-literal",
+      "line_sha256": "7a13587b3d44e54794358485d7c6130a787f9242c4cd8ae4b4f9ad0fc7505ad9",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 224,
+      "rule": "credential-literal",
+      "line_sha256": "24b4a8f832f2a8c29c756891c50c6c346f8fc590d6ac9cea5cf4ef7315905859",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 301,
+      "rule": "credential-literal",
+      "line_sha256": "bb54f39fd285828b283f18230e378c849fbd0a099d47208f288fc3f7e5d8a542",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 303,
+      "rule": "credential-literal",
+      "line_sha256": "1df7d09230839dab13a1472351681abbdf48bd7c4de2300fc540f7cef8b55ea9",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 306,
+      "rule": "credential-literal",
+      "line_sha256": "970f8af9a2497d3696b21cc6082e9f7598e6c0ac387642d7a4bd36280239b1cb",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 307,
+      "rule": "credential-literal",
+      "line_sha256": "8d6db8c044f2ebd07bdf371792f5151450f5813544da6774c77a9d9dbe1b53c1",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 308,
+      "rule": "credential-literal",
+      "line_sha256": "77084fb338f3f1eaded908c703181361f9694acaf29b024d069bc89164585abb",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/src/shared/i18n/packages.ts",
+      "line": 309,
+      "rule": "credential-literal",
+      "line_sha256": "8fc9a4cfc9c553a9cbfcfe44a5581f8f5e1dbeec0f71feab4d1d5a5dc54913c1",
+      "reason": "UI translation label or credential-handling explanatory text; not a credential value."
+    },
+    {
+      "path": "develop/web/ijob/tests/e2e/packages.spec.ts",
+      "line": 315,
+      "rule": "credential-literal",
+      "line_sha256": "007e092952e51dd5522becd52286f8fcccff383794933234cf58fae18dd69c29",
+      "reason": "Synthetic fixture-only credential used to assert report redaction; no live identity."
+    },
+    {
+      "path": "develop/web/ijob/tests/unit/packages.test.ts",
+      "line": 71,
+      "rule": "credential-literal",
+      "line_sha256": "83bb523dff906d7c9c8d0b65cb5b160bf590ef96efd0b05461e21ce02e2a4549",
+      "reason": "Reviewed synthetic test value asserting credentials/configuration are excluded from downloaded reports; no real credential."
+    },
+    {
+      "path": "develop/web/ijob/tests/e2e/packages.spec.ts",
+      "line": 329,
+      "rule": "credential-literal",
+      "line_sha256": "007e092952e51dd5522becd52286f8fcccff383794933234cf58fae18dd69c29",
+      "reason": "Synthetic fixture-only credential used to assert report redaction; no live identity."
     }
   ],
   "binary_reviews": [

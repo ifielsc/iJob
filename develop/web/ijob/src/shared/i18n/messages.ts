@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import { jsonFormZh, jsonFormEn } from './json-form'
+import { packagesZh, packagesEn } from './packages'
+import { previewZh, previewEn, browseZh, browseEn } from './resource-preview'
 import { parametersZh, parametersEn } from './parameters'
 import { mailChannelsZh, mailChannelsEn } from './mail-channels'
 import { experienceZh, experienceEn } from './experience'
@@ -9,6 +11,7 @@ import { guideZH, guideEN } from './foundation-guide'
 import { detailsZh, detailsEn } from './details'
 import { unifiedZh, unifiedEn, pluginNamesZh, pluginNamesEn } from './unified'
 import { workbenchZh, workbenchEn } from './workbench'
+import { insightsZh, insightsEn } from './runtime-insights'
 import { diagnosticsZh, diagnosticsEn } from './diagnostics'
 import { localJarZh, localJarEn } from './local-jar'
 import { monitorZh, monitorEn, monitorResourceZh, monitorResourceEn } from './monitor'
@@ -32,7 +35,10 @@ import { runsZh, runsEn } from './runs'
 const { enums: runEnumsZh, ...runLabelsZh } = runsZh
 const { enums: runEnumsEn, ...runLabelsEn } = runsEn
 export const zhCN = {
+  preview: previewZh,
+  browse: browseZh,
   jsonForm: jsonFormZh,
+  packages: packagesZh,
   parameters: parametersZh,
   mailChannels: mailChannelsZh,
   experience: experienceZh,
@@ -40,6 +46,7 @@ export const zhCN = {
   unified: unifiedZh,
   pluginNames: pluginNamesZh,
   workbench: workbenchZh,
+  insights: insightsZh,
   diagnostics: diagnosticsZh,
   localJar: localJarZh,
   monitor: monitorZh,
@@ -175,9 +182,14 @@ export const zhCN = {
   },
 }
 
-type Dictionary = { [K in keyof typeof zhCN]: { [P in keyof (typeof zhCN)[K]]: string } }
+type Dictionary<T = typeof zhCN> = {
+  [K in keyof T]: T[K] extends string ? string : Dictionary<T[K]>
+}
 export const enUS: Dictionary = {
+  preview: previewEn,
+  browse: browseEn,
   jsonForm: jsonFormEn,
+  packages: packagesEn,
   parameters: parametersEn,
   mailChannels: mailChannelsEn,
   experience: experienceEn,
@@ -185,6 +197,7 @@ export const enUS: Dictionary = {
   unified: unifiedEn,
   pluginNames: pluginNamesEn,
   workbench: workbenchEn,
+  insights: insightsEn,
   diagnostics: diagnosticsEn,
   localJar: localJarEn,
   monitor: monitorEn,

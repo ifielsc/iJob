@@ -145,6 +145,29 @@ class WorkbenchHttpIT {
     }
 
     @Test
+    void runtimeFactsReachViewersButCheckpointAndMetadataAccessStayProtected() throws Exception {
+        var facts = get("/api/workbench/runtime", viewerToken);
+        assertTrue(facts.path("online").isTextual());
+        assertTrue(facts.path("nodes").isArray());
+        assertTrue(facts.has("queriedAt"));
+        assertFalse(facts.toString().contains("fixture-private"));
+        assertFalse(facts.toString().contains("pluginConfig"));
+        assertEquals(403, send("GET", "/api/tasks/1/etl-progress", null, viewerToken).statusCode());
+        assertEquals(
+                403,
+                send("GET", "/api/tasks/batch-etl/source-tables?resourceId=1", null, viewerToken)
+                        .statusCode());
+        assertEquals(
+                403,
+                send(
+                                "POST",
+                                "/api/tasks/batch-etl/check-tables",
+                                Map.of("pluginConfig", "{}"),
+                                viewerToken)
+                        .statusCode());
+    }
+
+    @Test
     void recentFailuresAreFiveStableHistoricalIdentitiesWithExactIdsAndNoSensitiveFields()
             throws Exception {
         var rows = get(WINDOW, viewerToken).path("recentFailures");

@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 
 <script setup lang="ts">
 import EmptyState from '../../shared/ui/EmptyState.vue'
+import { PackageActions } from '../packages/public/components'
 import { randomUuid } from '../../shared/runtime/uuid'
 import { ParameterFormEditor } from '../parameters/public/components'
 import { computed, h, onBeforeUnmount, reactive, ref, shallowRef, watch } from 'vue'
@@ -450,6 +451,11 @@ const { removeFilter } = useListMemory(filters, applied, page, size, query.isFet
           @click="remove(rows.filter((r) => checked.includes(r.id)))"
           >{{ t('tasks.batchDelete') }}</NButton
         ><span class="job-note">{{ t('tasks.selected', { count: checked.length }) }}</span>
+        <PackageActions
+          kind="JOB"
+          :selected="rows.filter((r) => checked.includes(r.id))"
+          @imported="query.refetch()"
+        />
       </div>
       <AppliedFilters
         :values="applied"

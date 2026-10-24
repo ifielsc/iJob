@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 
 <script setup lang="ts">
 import EmptyState from './EmptyState.vue'
+import type { QueryContext } from './sql-preview'
 import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue'
 import { NButton, NCheckbox, NInput, NSelect } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
@@ -25,6 +26,7 @@ const props = defineProps<{
   contextKey?: string
   shape?: 'object' | 'sqlArray'
   nested?: boolean
+  queryContext?: QueryContext
 }>()
 const emit = defineEmits<{
   'update:modelValue': [string]
@@ -327,6 +329,7 @@ defineExpose({
           "
           v-model="value.text"
           :language="shape === 'sqlArray' ? 'SQL' : 'JSON'"
+          :query-context="shape === 'sqlArray' ? queryContext : undefined"
           :context-key="contextKey + '-' + selected"
           :disabled="disabled"
           @update:model-value="publish"

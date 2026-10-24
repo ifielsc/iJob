@@ -30,6 +30,21 @@ import java.util.List;
 
 class TaskAdmissionResolverTest {
     @Test
+    void disabledConfigurationCanBeLockedWithoutAdmittingExecution() {
+        TaskDefinition disabled = definition();
+        disabled.setEnabled(false);
+        var resolver = resolver(identity(), disabled);
+        resolver.lockPublishedConfiguration(9L);
+        assertCode(ResultCode.CONFLICT, resolver, 9L);
+        TaskPublicationIdentityRow retired = identity();
+        retired.setRetired(true);
+        retired.setRetiredTime(LocalDateTime.now());
+        assertThrows(
+                BusinessException.class,
+                () -> resolver(retired, disabled).lockPublishedConfiguration(9L));
+    }
+
+    @Test
     void shouldLockThenReturnImmutableCurrentDefinitionSnapshot() throws Exception {
         List<String> calls = new ArrayList<>();
         TaskAdmissionResolver resolver =

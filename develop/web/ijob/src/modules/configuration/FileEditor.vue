@@ -5,7 +5,9 @@ SPDX-License-Identifier: MIT
 
 <script setup lang="ts">
 import DrawerCloseButton from '../../shared/ui/DrawerCloseButton.vue'
-import { computed, h, nextTick, onBeforeUnmount, reactive, ref } from 'vue'
+import { computed, defineAsyncComponent, h, nextTick, onBeforeUnmount, reactive, ref } from 'vue'
+import { FolderOpen } from '@lucide/vue'
+import { resourcePath, type FileChoice } from '../../shared/ui/file-browser'
 import {
   NButton,
   NDrawer,
@@ -38,6 +40,8 @@ import IntegerInput from '../../shared/ui/IntegerInput.vue'
 import type { ConfigRow } from './contracts'
 
 const props = defineProps<{ row?: ConfigRow; readonly?: boolean }>()
+const FilePathBrowser = defineAsyncComponent(() => import('../../shared/ui/FilePathBrowser.vue'))
+const browsing = ref(false)
 const emit = defineEmits<{ close: []; saved: [] }>()
 const runtime = useRuntime(),
   { t } = useI18n(),
@@ -46,6 +50,13 @@ const runtime = useRuntime(),
 const draft = reactive(fileDraft(props.row)),
   secrets = reactive(fileSecrets(props.row))
 const fallbackCode = draft.code
+function browseDraft() {
+  return fileBody(draft, secrets, fallbackCode, !!props.row)
+}
+function chooseRoot(choice: FileChoice) {
+  draft.basePath = resourcePath(choice.root, choice.path)
+  browsing.value = false
+}
 const protocolDrafts = reactive(
   new Map<
     FileProtocol,
@@ -248,7 +259,7 @@ onBeforeUnmount(() => {
     width="min(520px, 100vw)"
     class="resource-drawer file-drawer editor-drawer"
     :mask-closable="false"
-    :close-on-esc="!busy && !selectOpen"
+    :close-on-esc="!busy && !selectOpen && !browsing"
     @update:show="requestClose"
   >
     <NDrawerContent :native-scrollbar="true">
@@ -368,11 +379,25 @@ onBeforeUnmount(() => {
             required
             :invalid="!!fieldError('basePath')"
             :message="fieldError('basePath')"
-            ><NInput
-              v-model:value="draft.basePath"
-              :maxlength="2048"
-              :input-props="{ id: 'file-basePath', 'aria-invalid': !!fieldError('basePath') }"
-            />
+            ><div class="file-root-input">
+              <NInput
+                v-model:value="draft.basePath"
+                :maxlength="2048"
+                :input-props="{ id: 'file-basePath', 'aria-invalid': !!fieldError('basePath') }"
+              />
+              <NButton
+                :disabled="
+                  busy ||
+                  readonly ||
+                  uncertain ||
+                  (draft.protocol !== 'LOCAL' &&
+                    (!draft.basePath || (draft.protocol === 'SFTP' && !trusted)))
+                "
+                :aria-label="t('browse.browseRoot')"
+                @click="browsing = true"
+                ><FolderOpen :size="17"
+              /></NButton>
+            </div>
             <p class="configuration-note">{{ t('files.rootHint') }}</p>
           </FormItem>
           <template v-if="draft.protocol === 'SFTP'">
@@ -499,8 +524,27 @@ onBeforeUnmount(() => {
       >
     </NDrawerContent></NDrawer
   >
+  <FilePathBrowser
+    v-if="browsing"
+    :resource-id="row?.id"
+    mode="directory"
+    :draft="browseDraft"
+    :local="draft.protocol === 'LOCAL'"
+    @close="browsing = false"
+    @choose="chooseRoot"
+  />
 </template>
 <style scoped>
+.file-root-input {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+.file-root-input > .n-input {
+  min-width: 0;
+  flex: 1;
+}
 .file-protocol-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;

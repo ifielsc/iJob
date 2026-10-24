@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 
 <script setup lang="ts">
 import EmptyState from '../../shared/ui/EmptyState.vue'
+import { PackageActions } from '../packages/public/components'
 import { randomUuid } from '../../shared/runtime/uuid'
 import { ParameterFormEditor } from '../parameters/public/components'
 import { computed, h, nextTick, onBeforeUnmount, reactive, ref, shallowRef, watch } from 'vue'
@@ -594,6 +595,11 @@ const { removeFilter } = useListMemory(filters, applied, page, size, query.isFet
             ><span>{{ t('tasks.selected', { count: checked.length }) }}</span></template
           >
         </div>
+        <PackageActions
+          kind="TASK"
+          :selected="rows.filter((r) => checked.includes(r.id))"
+          @imported="query.refetch()"
+        />
       </div>
       <p v-if="query.isFetching.value" role="status">{{ t('common.loading') }}</p>
       <AppliedFilters

@@ -9,6 +9,8 @@ import com.ifielsc.ijob.infra.entity.runtime.EtlCheckpoint;
 import org.apache.ibatis.annotations.Param;
 
 public interface EtlCheckpointMapper {
+    java.util.List<EtlCheckpoint> selectByTask(@Param("taskId") Long taskId);
+
     EtlCheckpoint select(
             @Param("taskId") Long taskId, @Param("checkpointKey") String checkpointKey);
 

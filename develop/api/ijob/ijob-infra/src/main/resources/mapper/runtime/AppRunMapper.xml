@@ -5,8 +5,7 @@
 <mapper namespace="com.ifielsc.ijob.infra.mapper.runtime.AppRunMapper">
     <update id="markStaleActiveRunsCrashed">
         UPDATE ifj_app_run
-        SET status = 'CRASHED', stopped_at = CURRENT_TIMESTAMP(3),
-            heartbeat_at = CURRENT_TIMESTAMP(3)
+        SET status = 'CRASHED', stopped_at = CURRENT_TIMESTAMP(3)
         WHERE status IN ('STARTING', 'RUNNING', 'DRAINING')
           AND run_id &lt;&gt; #{excludeRunId}
           AND heartbeat_at &lt;= TIMESTAMPADD(
@@ -141,8 +140,7 @@
             LIMIT #{limit}
         )
         UPDATE ifj_app_run
-        SET status = 'CRASHED', stopped_at = CURRENT_TIMESTAMP(3),
-            heartbeat_at = CURRENT_TIMESTAMP(3)
+        SET status = 'CRASHED', stopped_at = CURRENT_TIMESTAMP(3)
         FROM candidates
         WHERE ifj_app_run.run_id = candidates.run_id
     </update>
@@ -158,15 +156,14 @@
             LIMIT #{limit}
         )
         UPDATE ifj_app_run
-        SET status = 'CRASHED', stopped_at = strftime('%Y-%m-%d %H:%M:%f','now'),
-            heartbeat_at = strftime('%Y-%m-%d %H:%M:%f','now')
+        SET status = 'CRASHED', stopped_at = strftime('%Y-%m-%d %H:%M:%f','now')
         FROM candidates
         WHERE ifj_app_run.run_id = candidates.run_id
     </update>
 
 <update id="markStaleActiveRunsCrashed" databaseId="oracle">
         UPDATE ifj_app_run
-        SET status = 'CRASHED', stopped_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3)), heartbeat_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
+        SET status = 'CRASHED', stopped_at = CAST(SYS_EXTRACT_UTC(SYSTIMESTAMP) AS TIMESTAMP(3))
         WHERE run_id IN (
             SELECT run_id FROM (
                 SELECT run_id FROM ifj_app_run
@@ -188,8 +185,7 @@
             OFFSET 0 ROWS FETCH NEXT #{limit} ROWS ONLY
         )
         UPDATE ifj_app_run
-        SET status = 'CRASHED', stopped_at = SYSUTCDATETIME(),
-            heartbeat_at = SYSUTCDATETIME()
+        SET status = 'CRASHED', stopped_at = SYSUTCDATETIME()
         FROM candidates
         WHERE ifj_app_run.run_id = candidates.run_id
     </update>

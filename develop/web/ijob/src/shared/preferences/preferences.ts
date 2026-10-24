@@ -3,8 +3,10 @@
 
 export type ThemeMode = 'light' | 'dark'
 export type AppLocale = 'zh-CN' | 'en-US'
+export type EdgeRoutingMode = 'avoid' | 'simple'
 export interface Preferences {
   timeMode?: 'business' | 'UTC'
+  edgeRouting?: EdgeRoutingMode
   theme: ThemeMode
   locale: AppLocale
 }
@@ -36,6 +38,10 @@ export function createPreferenceRepository(storage: () => Pick<Storage, 'getItem
             ...('timeMode' in value && (value.timeMode === 'UTC' || value.timeMode === 'business')
               ? { timeMode: value.timeMode }
               : {}),
+            ...('edgeRouting' in value &&
+            (value.edgeRouting === 'avoid' || value.edgeRouting === 'simple')
+              ? { edgeRouting: value.edgeRouting }
+              : {}),
           }
           memory.set(key, preference)
           return { ...preference }
@@ -51,6 +57,9 @@ export function createPreferenceRepository(storage: () => Pick<Storage, 'getItem
         theme: value.theme,
         locale: value.locale,
         ...(value.timeMode ? { timeMode: value.timeMode } : {}),
+        ...(value.edgeRouting === 'avoid' || value.edgeRouting === 'simple'
+          ? { edgeRouting: value.edgeRouting }
+          : {}),
       }
       memory.set(key, safe)
       try {

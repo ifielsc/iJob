@@ -232,6 +232,11 @@ public class SafeReadProjection implements ResponseBodyAdvice<Object> {
         // scoped.
         if (parameter.getContainingClass() == WorkbenchController.class
                 && envelope.getData() instanceof WorkbenchDTO) return body;
+        if (parameter.getContainingClass()
+                        == com.ifielsc.ijob.api.workbench.RuntimeOverviewController.class
+                && envelope.getData()
+                        instanceof com.ifielsc.ijob.contract.workbench.RuntimeOverviewDTO)
+            return body;
         // This exact diagnostics endpoint returns only explicitly selected coordination facts.
         if (parameter.getContainingClass() == DiagnosticsController.class
                 && envelope.getData() instanceof DiagnosticsDTO) return body;

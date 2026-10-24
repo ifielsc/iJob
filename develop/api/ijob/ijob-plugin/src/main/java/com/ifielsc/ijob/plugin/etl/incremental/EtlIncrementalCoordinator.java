@@ -106,7 +106,7 @@ public class EtlIncrementalCoordinator {
         }
     }
 
-    private String fingerprint(EtlTaskConfig config) {
+    public static String fingerprint(EtlTaskConfig config) {
         EtlTaskConfig.IncrementalConfig incremental = config.getIncremental();
         String source =
                 config.getSource().getResourceId()

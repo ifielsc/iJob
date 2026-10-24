@@ -340,6 +340,20 @@ public class ConcurrencyPolicyService {
         return result;
     }
 
+    /** Validation for portable package previews, without reading target IDs or writing state. */
+    public void validateResourceImport(ConcurrencyResourceUpsertRequest request) {
+        validateResourceRequest(request);
+    }
+
+    public void validateTaskImport(TaskConcurrencyPolicyUpdateRequest request) {
+        if (request == null) throw param("Request body is required");
+        if (request.getTaskMaxConcurrency() != null)
+            validateMax(request.getTaskMaxConcurrency(), "taskMaxConcurrency");
+        if (request.getResourceIds() == null || request.getResourceIds().size() > 500)
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        normalizeIds(request.getResourceIds());
+    }
+
     private void validateResourceRequest(ConcurrencyResourceUpsertRequest request) {
         if (request == null) throw param("Request body is required");
         if (request.getCode() == null

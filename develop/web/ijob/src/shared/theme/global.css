@@ -851,3 +851,14 @@ tbody tr:hover {
 div:has(> table .list-empty-cell) {
   container-type: inline-size;
 }
+
+/* Shared modal heading density: preserve the full content and close target. */
+:root .n-modal.n-card > .n-card-header {
+  padding: 10px 20px;
+}
+:root .n-modal.n-dialog {
+  padding: 16px 20px;
+}
+:root .n-modal.n-dialog > .n-dialog__title {
+  line-height: 26px;
+}

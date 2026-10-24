@@ -10,6 +10,8 @@ import { useI18n } from 'vue-i18n'
 import FormItem from '../../shared/ui/CompactFormItem.vue'
 import IntegerInput from '../../shared/ui/IntegerInput.vue'
 import FileResourcePicker from './FileResourcePicker.vue'
+import FilePathInput from '../../shared/ui/FilePathInput.vue'
+import { exactGlob, type FileChoice } from '../../shared/ui/file-browser'
 import { archives, bundled, limits, type TransferDraft, type LimitKey } from './file-transfer-model'
 const props = defineProps<{
   errors: Record<string, string>
@@ -23,6 +25,13 @@ const { t } = useI18n(),
   root = ref<HTMLElement>(),
   expanded = ref<string[]>([])
 const keys = Object.keys(limits) as LimitKey[]
+function chooseSource(choice: FileChoice) {
+  if (!choice.directory) {
+    draft.value.sourcePath = choice.parent
+    draft.value.filePattern = exactGlob(choice.name)
+    draft.value.recursive = false
+  }
+}
 const error = (key: string) =>
   props.submitted && props.errors['transfer.' + key]
     ? t('files.' + props.errors['transfer.' + key])
@@ -112,13 +121,16 @@ defineExpose({ focusError })
             :label="t('files.' + (key === 'sourceResourceId' ? 'sourcePath' : 'targetPath'))"
             :invalid="!!error(key === 'sourceResourceId' ? 'sourcePath' : 'targetPath')"
             :message="error(key === 'sourceResourceId' ? 'sourcePath' : 'targetPath')"
-            ><NInput
+            ><FilePathInput
+              :id="'task-transfer.' + (key === 'sourceResourceId' ? 'sourcePath' : 'targetPath')"
               v-model:value="draft[key === 'sourceResourceId' ? 'sourcePath' : 'targetPath']"
+              :resource-id="draft[key]"
+              :mode="key === 'sourceResourceId' ? 'both' : 'directory'"
+              :transfer="key === 'sourceResourceId'"
               :disabled="disabled"
               :maxlength="2048"
-              :input-props="{
-                id: 'task-transfer.' + (key === 'sourceResourceId' ? 'sourcePath' : 'targetPath'),
-              }"
+              @choose="key === 'sourceResourceId' && chooseSource($event)"
+              @select="emit('select', $event)"
           /></FormItem>
         </div>
         <template v-if="key === 'sourceResourceId'">

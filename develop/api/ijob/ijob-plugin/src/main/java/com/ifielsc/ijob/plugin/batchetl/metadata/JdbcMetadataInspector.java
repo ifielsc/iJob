@@ -22,6 +22,11 @@ import java.util.Map;
 
 @Component
 public class JdbcMetadataInspector {
+    public boolean hasUnmappedSourceColumns(
+            Connection connection, String schema, String table, int mapped) throws SQLException {
+        return columns(connection.getMetaData(), schema, table).columns().size() > mapped;
+    }
+
     public BatchTablePlan inspect(
             Connection sourceConnection,
             Connection targetConnection,

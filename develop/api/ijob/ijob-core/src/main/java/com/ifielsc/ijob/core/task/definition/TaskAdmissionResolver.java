@@ -26,6 +26,16 @@ public class TaskAdmissionResolver {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public TaskAdmissionSnapshot resolve(Long taskId) {
+        return resolve(taskId, true);
+    }
+
+    /** Configuration import may attach a disabled schedule without admitting execution. */
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void lockPublishedConfiguration(Long taskId) {
+        resolve(taskId, false);
+    }
+
+    private TaskAdmissionSnapshot resolve(Long taskId, boolean requireEnabled) {
         requirePositiveTaskId(taskId);
         TaskPublicationIdentityRow identity = publicationMapper.selectIdentityForUpdate(taskId);
         validateIdentity(taskId, identity);
@@ -33,7 +43,7 @@ public class TaskAdmissionResolver {
         TaskDefinition definition =
                 definitionMapper.selectById(identity.getCurrentTaskDefinitionId());
         validateDefinition(identity, definition);
-        if (!definition.getEnabled()) {
+        if (requireEnabled && !definition.getEnabled()) {
             throw new BusinessException(ResultCode.CONFLICT, CoreMessage.TASK_IS_DISABLED);
         }
 

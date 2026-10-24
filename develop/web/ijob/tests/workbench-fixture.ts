@@ -41,6 +41,49 @@ export async function setupWorkbench(page: Page, viewer = false) {
           mustChangePassword: false,
         })
       state.reads.push(url.pathname + url.search)
+      if (path === '/api/workbench/runtime')
+        return ok({
+          queriedAt: '2026-09-28T10:00:01',
+          staleAfterSeconds: 30,
+          mode: 'CLUSTER',
+          online: '1',
+          workers: '1',
+          stale: '1',
+          starting: '0',
+          queued: '3',
+          claimed: '2',
+          expired: '0',
+          oldestQueuedAt: '2026-09-28T09:59:55',
+          truncated: false,
+          nodes: [
+            {
+              runId: 'run-a',
+              name: 'node-a',
+              roles: 'API,WORKER',
+              groups: 'demo',
+              status: 'ONLINE',
+              startedAt: '2026-09-28T09:00:00',
+              heartbeatAt: '2026-09-28T10:00:00',
+              health: 'BUSY',
+              active: '2',
+              capacity: '8',
+              renewalFailures: '0',
+              lastScanAt: '2026-09-28T10:00:00',
+              lastRenewAt: '2026-09-28T09:59:59',
+              scheduleEnabled: false,
+            },
+            {
+              runId: 'run-b',
+              name: 'node-b',
+              roles: 'WORKER',
+              groups: 'demo',
+              status: 'STALE',
+              heartbeatAt: '2026-09-28T09:59:00',
+              health: 'UNAVAILABLE',
+            },
+          ],
+          history: [],
+        })
       if (path === '/api/workbench') {
         if (state.fail)
           return route.fulfill({

@@ -8,7 +8,7 @@ import { randomUuid } from '../../shared/runtime/uuid'
 import { hasActiveConditionDraft } from './condition-drafts'
 import { draftFingerprint } from '../../shared/forms/draft-fingerprint'
 import { parse as parseLossless } from 'lossless-json'
-import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, shallowRef, useId, watch } from 'vue'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import {
   NButton,
@@ -17,12 +17,13 @@ import {
   NInputNumber,
   NSelect,
   NModal,
+  NPopover,
   NSwitch,
   useDialog,
   useMessage,
 } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
-import { X } from '@lucide/vue'
+import { ArrowLeft, CircleHelp, X } from '@lucide/vue'
 import { useRuntime, useIdentity } from '../../app/runtime'
 import { can } from '../../shared/auth/access'
 import { ApiError } from '../../shared/api/errors'
@@ -32,6 +33,7 @@ import { EntityPicker } from '../schedules/public/components'
 import { exactId, record } from '../../shared/api/values'
 import { formatUtc } from '../../shared/time/format'
 import JobCanvas from './JobCanvas.vue'
+import EdgeRoutingSelect from './EdgeRoutingSelect.vue'
 import ConditionEditor from './ConditionEditor.vue'
 import {
   freshDraft,
@@ -54,6 +56,30 @@ const runtime = useRuntime(),
   { t } = useI18n(),
   dialog = useDialog(),
   message = useMessage()
+const helpId = useId(),
+  helpOpen = ref(false),
+  helpFocused = ref(false)
+function focusHelp() {
+  helpFocused.value = true
+  helpOpen.value = true
+}
+function closeHelp() {
+  helpFocused.value = false
+  helpOpen.value = false
+}
+function hoverHelp(show: boolean) {
+  if (show || !helpFocused.value) helpOpen.value = show
+}
+function dismissHelp(event: KeyboardEvent) {
+  if (helpOpen.value && event.key === 'Escape') {
+    closeHelp()
+    event.preventDefault()
+    event.stopPropagation()
+  }
+}
+window.addEventListener('keydown', dismissHelp, true)
+onBeforeUnmount(() => window.removeEventListener('keydown', dismissHelp, true))
+watch(() => route.fullPath, closeHelp)
 const draft = ref(freshDraft()),
   row = ref<JobRow>(),
   publishedAt = ref(''),
@@ -757,41 +783,94 @@ function jobLink(path: string) {
   >
     <header class="job-heading">
       <div>
-        <NButton text @click="router.push(parent ?? listBack)">{{
-          t(parent ? 'jobs.returnParent' : 'jobs.back')
-        }}</NButton>
+        <NButton text type="primary" @click="router.push(parent ?? listBack)">
+          <template #icon><ArrowLeft :size="16" aria-hidden="true" /></template>
+          {{ t(parent ? 'jobs.returnParent' : 'jobs.back') }}
+        </NButton>
         <h1>{{ draft.name || t(editing ? 'jobs.create' : 'jobs.details') }}</h1>
         <p v-if="row">
           {{ t('jobs.job') }} #{{ row.id }} · v{{ row.currentRevision }}
           <span v-if="dirty">· {{ t('jobs.localDraft') }}</span>
         </p>
       </div>
-      <div class="job-actions">
-        <NButton @click="maximized = !maximized">{{
-          t(maximized ? 'jobs.restoreCanvas' : 'jobs.maximizeCanvas')
-        }}</NButton>
-        <NButton v-if="row" @click="router.push(jobLink('/jobs/' + row.id + '/versions'))">{{
-          t('jobs.versions')
-        }}</NButton
-        ><template v-if="editing"
-          ><NButton :disabled="disabled" :loading="busy" @click="validate">{{
-            t('jobs.validate')
+      <div class="job-heading-controls">
+        <div class="job-actions">
+          <NButton @click="maximized = !maximized">{{
+            t(maximized ? 'jobs.restoreCanvas' : 'jobs.maximizeCanvas')
+          }}</NButton>
+          <NButton v-if="row" @click="router.push(jobLink('/jobs/' + row.id + '/versions'))">{{
+            t('jobs.versions')
           }}</NButton
+          ><template v-if="editing"
+            ><NButton :disabled="disabled" :loading="busy" @click="validate">{{
+              t('jobs.validate')
+            }}</NButton
+            ><NButton
+              type="primary"
+              :disabled="disabled || (!!row && !changed)"
+              :loading="busy"
+              @click="publish"
+              >{{ t('jobs.publish') }}</NButton
+            ></template
           ><NButton
+            v-else-if="row && !historical && can(user, 'CONFIGURATION_WRITE')"
             type="primary"
-            :disabled="disabled || (!!row && !changed)"
-            :loading="busy"
-            @click="publish"
-            >{{ t('jobs.publish') }}</NButton
-          ></template
-        ><NButton
-          v-else-if="row && !historical && can(user, 'CONFIGURATION_WRITE')"
-          type="primary"
-          @click="router.push(jobLink('/jobs/' + row!.id + '/edit'))"
-          >{{ t('tasks.editAction') }}</NButton
-        ><NButton :disabled="busy" @click="panel = !panel">{{
-          t(panel ? 'jobs.closeProperties' : 'jobs.showProperties')
-        }}</NButton>
+            @click="router.push(jobLink('/jobs/' + row!.id + '/edit'))"
+            >{{ t('tasks.editAction') }}</NButton
+          ><NButton :disabled="busy" @click="panel = !panel">{{
+            t(panel ? 'jobs.closeProperties' : 'jobs.showProperties')
+          }}</NButton>
+          <NPopover
+            v-if="!loading && (!error || row)"
+            :show="helpOpen"
+            trigger="hover"
+            :delay="0"
+            placement="bottom-end"
+            :style="{ maxWidth: 'min(420px, calc(100vw - 64px))' }"
+            @update:show="hoverHelp"
+            @clickoutside="closeHelp"
+          >
+            <template #trigger>
+              <NButton
+                class="job-help-trigger"
+                quaternary
+                circle
+                :aria-label="t('jobs.canvasHelp')"
+                :aria-describedby="helpOpen ? helpId : undefined"
+                @focus="focusHelp"
+                @blur="closeHelp"
+                @click="focusHelp"
+              >
+                <template #icon><CircleHelp :size="18" aria-hidden="true" /></template>
+              </NButton>
+            </template>
+            <div :id="helpId" class="job-help-content" role="tooltip">
+              <p class="job-reference-hint">
+                {{
+                  t(
+                    editing
+                      ? 'jobs.referenceHint'
+                      : historical
+                        ? 'jobs.historicalHint'
+                        : 'jobs.readOnly',
+                  )
+                }}
+                <span v-if="!editing && !historical"> · {{ t('jobs.historicalHint') }}</span>
+                <span v-if="historical">
+                  · v{{ row?.currentRevision }} · {{ t('jobs.definition') }} #{{
+                    row?.currentDefinitionId
+                  }}
+                  ·
+                  {{ formatted(publishedAt) }}
+                  <span v-if="currentVersion">({{ t('jobs.current') }})</span>
+                </span>
+              </p>
+              <p v-if="editing" class="job-interaction-hint">
+                {{ t('jobs.moveHint') }}
+              </p>
+            </div>
+          </NPopover>
+        </div>
       </div>
     </header>
     <RequestError :error="error" />
@@ -807,14 +886,6 @@ function jobLink(path: string) {
     <NButton v-if="error && (!row || (editing && !metadata))" @click="reload">{{
       t('jobs.retry')
     }}</NButton>
-    <div v-if="!loading && (!error || row)" class="job-notice">
-      {{ t(editing ? 'jobs.referenceHint' : historical ? 'jobs.historicalHint' : 'jobs.readOnly')
-      }}<span v-if="historical">
-        · v{{ row?.currentRevision }} · {{ t('jobs.definition') }} #{{ row?.currentDefinitionId }} ·
-        {{ formatted(publishedAt) }}
-        <span v-if="currentVersion">({{ t('jobs.current') }})</span></span
-      >
-    </div>
     <div v-if="localIssues.length || serverIssues.length" class="job-issues" role="alert">
       <strong>{{ t('jobs.issue') }}</strong
       ><button v-for="(issue, i) in localIssues" :key="'l' + i" @click="locate(issue.path)">
@@ -873,16 +944,8 @@ function jobLink(path: string) {
             :disabled="loading || busy || !draft.nodes.length"
             @click="canvas?.autoLayout(direction)"
             >{{ t('jobs.layout') }}</NButton
-          ><NSelect
-            v-model:value="direction"
-            class="job-direction"
-            :node-props="() => ({ role: 'option' })"
-            :aria-label="t('jobs.layoutDirection')"
-            :options="[
-              { value: 'LR', label: t('jobs.horizontal') },
-              { value: 'TB', label: t('jobs.vertical') },
-            ]"
-          />
+          >
+          <EdgeRoutingSelect v-model:direction="direction" />
         </div>
         <JobCanvas
           ref="canvas"
@@ -901,7 +964,6 @@ function jobLink(path: string) {
           @remove="removeSelected"
           @invalid="message.error(t('jobs.' + $event))"
         />
-        <p class="job-note">{{ t(editing ? 'jobs.moveHint' : 'jobs.historicalHint') }}</p>
       </div>
       <aside v-if="panel" class="job-properties" :aria-label="t('jobs.properties')">
         <div

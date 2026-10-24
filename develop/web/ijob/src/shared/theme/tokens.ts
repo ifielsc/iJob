@@ -77,6 +77,7 @@ export function naiveTheme(mode: ThemeMode): GlobalThemeOverrides {
       heightMedium: '36px',
       fontFamily: 'Inter, "Segoe UI", "Microsoft YaHei", sans-serif',
     },
+    Drawer: { headerPadding: '10px 22px' },
     Input: {
       color: t.panel,
       colorFocus: t.panel,

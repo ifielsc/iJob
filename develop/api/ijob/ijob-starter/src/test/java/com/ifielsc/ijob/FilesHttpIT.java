@@ -383,6 +383,92 @@ class FilesHttpIT {
         }
     }
 
+    @Test
+    @Order(5)
+    void browserAndPreviewAreAdminOnlyAndNeverCreateTaskRuns() throws Exception {
+        var opening = Map.of("resourceId", resourceId);
+        for (String token : new String[] {viewerToken, operatorToken}) {
+            assertEquals(
+                    403, send("POST", "/api/file-browser/sessions", opening, token).statusCode());
+            assertEquals(403, send("GET", "/api/file-browser/roots", null, token).statusCode());
+            assertEquals(403, send("POST", "/api/sql-preview", Map.of(), token).statusCode());
+            assertEquals(
+                    403,
+                    send(
+                                    "POST",
+                                    "/api/sql-preview/" + java.util.UUID.randomUUID() + "/cancel",
+                                    null,
+                                    token)
+                            .statusCode());
+        }
+        var response = send("POST", "/api/file-browser/sessions", opening, adminToken);
+        assertEquals(200, response.statusCode(), response.body());
+        String session = data(response).path("id").asText();
+        response = send("GET", "/api/file-browser/sessions/" + session, null, adminToken);
+        assertEquals(200, response.statusCode(), response.body());
+        assertTrue(data(response).path("entries").isArray());
+        assertEquals(
+                400,
+                send(
+                                "GET",
+                                "/api/file-browser/sessions/" + session + "?path=..%2F",
+                                null,
+                                adminToken)
+                        .statusCode());
+        assertEquals(
+                200,
+                send("DELETE", "/api/file-browser/sessions/" + session, null, adminToken)
+                        .statusCode());
+        assertEquals(
+                409,
+                send("GET", "/api/file-browser/sessions/" + session, null, adminToken)
+                        .statusCode());
+        response =
+                send(
+                        "POST",
+                        "/api/resources",
+                        Map.of(
+                                "name",
+                                "Preview DB",
+                                "code",
+                                "preview-db",
+                                "type",
+                                "DB",
+                                "enabled",
+                                true,
+                                "dbConfig",
+                                Map.of(
+                                        "dbType",
+                                        "MYSQL",
+                                        "jdbcUrl",
+                                        "jdbc:mysql://127.0.0.1:1/never-connect",
+                                        "username",
+                                        "fixture")),
+                        adminToken);
+        assertEquals(201, response.statusCode(), response.body());
+        String dbId = data(response).asText();
+        response =
+                send(
+                        "POST",
+                        "/api/sql-preview",
+                        Map.of(
+                                "requestId",
+                                java.util.UUID.randomUUID().toString(),
+                                "resourceId",
+                                dbId,
+                                "mode",
+                                "SQL",
+                                "sql",
+                                "SELECT 1; DELETE FROM blocked",
+                                "maxRows",
+                                200),
+                        adminToken);
+        assertEquals(200, response.statusCode(), response.body());
+        assertEquals("READ_ONLY", data(response).path("status").asText(), response.body());
+        assertEquals(0, data(response).path("rows").size());
+        assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM ifj_instance", Integer.class));
+    }
+
     private String login(String username, String password) throws Exception {
         var response =
                 send(

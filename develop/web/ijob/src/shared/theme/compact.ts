@@ -77,7 +77,7 @@ export function compactTheme(mode: ThemeMode): GlobalThemeOverrides {
       titleFontSize: '18px',
       titleFontWeight: '600',
       lineHeight: '1.5',
-      headerPadding: '18px 22px',
+      headerPadding: '10px 22px',
       bodyPadding: '18px 22px',
       footerPadding: '14px 22px',
       headerBorderBottom: `1px solid ${t.border}`,

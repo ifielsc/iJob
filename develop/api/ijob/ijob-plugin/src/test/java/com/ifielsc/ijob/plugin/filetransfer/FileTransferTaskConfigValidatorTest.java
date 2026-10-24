@@ -62,6 +62,22 @@ class FileTransferTaskConfigValidatorTest {
     }
 
     @Test
+    void escapedFileNameMatchesOnlyTheSelectedFileAndDoesNotPermitPaths() {
+        var config = base();
+        config.setFilePattern("orders\\[1\\].csv");
+        assertDoesNotThrow(() -> validator.validate(config));
+        var matcher =
+                java.nio.file.FileSystems.getDefault()
+                        .getPathMatcher("glob:" + config.getFilePattern());
+        org.junit.jupiter.api.Assertions.assertTrue(
+                matcher.matches(java.nio.file.Path.of("orders[1].csv")));
+        org.junit.jupiter.api.Assertions.assertFalse(
+                matcher.matches(java.nio.file.Path.of("orders1.csv")));
+        config.setFilePattern("sub\\orders.csv");
+        assertThrows(IllegalArgumentException.class, () -> validator.validate(config));
+    }
+
+    @Test
     void deleteSourceShouldRequireTransferAndDifferentResources() {
         FileTransferConfig readOnly = base();
         readOnly.setMode(TransferMode.READ_ONLY);

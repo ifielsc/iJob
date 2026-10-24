@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n'
 import FormItem from '../../shared/ui/CompactFormItem.vue'
 import IntegerInput from '../../shared/ui/IntegerInput.vue'
 import FileResourcePicker from './FileResourcePicker.vue'
+import FilePathInput from '../../shared/ui/FilePathInput.vue'
 import type { EventValues } from './event-model'
 const props = defineProps<{
   errors: Record<string, string>
@@ -46,10 +47,21 @@ const error = (key: string) =>
       required
       :invalid="!!error(key)"
       :message="error(key)"
-      ><NInput
+      ><FilePathInput
+        v-if="key === 'filePath'"
+        id="task-event.filePath"
+        v-model:value="value.filePath"
+        :resource-id="value.fileResourceId"
+        mode="directory"
+        :disabled="disabled"
+        :maxlength="1024"
+        :invalid="!!error(key)"
+        @select="emit('select', $event)" />
+      <NInput
+        v-else
         v-model:value="value[key]"
         :disabled="disabled"
-        :maxlength="key === 'filePath' ? 1024 : 128"
+        :maxlength="128"
         :input-props="{ id: 'task-event.' + key, 'aria-invalid': !!error(key) }"
     /></FormItem>
     <p class="task-note">{{ t('files.probePathHint') }}</p>

@@ -152,13 +152,36 @@
   color: var(--muted);
   line-height: 1.6;
 }
+.main-column:has(> main > .job-editor) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  height: 100dvh;
+}
+main:has(> .job-editor) {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  margin: 0 auto;
+}
+.job-editor {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.job-editor > :not(.job-workspace) {
+  flex: none;
+}
 .job-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   position: relative;
   min-height: 600px;
-  height: calc(100dvh - 270px);
+  flex: 1;
 }
 .job-workspace.panel-open {
   grid-template-columns: minmax(0, 1fr) var(--job-property-width, 360px);
@@ -174,9 +197,7 @@
 }
 .job-graph-panel > .job-canvas {
   flex: 1;
-}
-.job-graph-panel > .job-note {
-  padding: 8px 16px;
+  height: auto;
 }
 .job-properties {
   min-width: 0;
@@ -301,6 +322,23 @@
 .job-editor .job-heading .job-actions {
   justify-content: flex-end;
 }
+.job-heading-controls {
+  min-width: 0;
+  max-width: 640px;
+}
+.job-help-trigger {
+  margin-left: auto;
+}
+.job-help-content {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.job-help-content p {
+  margin: 0;
+}
+.job-help-content p + p {
+  margin-top: 6px;
+}
 .job-version-table {
   margin-top: 16px;
 }
@@ -310,6 +348,9 @@
   color: var(--muted);
 }
 @media (max-width: 1199px) {
+  .main-column:has(> main > .job-editor) {
+    height: auto;
+  }
   .job-workspace.panel-open {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -333,7 +374,6 @@
 }
 @media (max-width: 640px) {
   .job-workspace {
-    height: calc(100dvh - 220px);
     min-height: 560px;
   }
   .job-panel {
@@ -387,9 +427,6 @@
   width: 230px;
   max-width: 100%;
 }
-.job-toolbar .job-direction {
-  width: 115px;
-}
 .job-panel-resizer {
   position: absolute;
   left: 0;
@@ -414,7 +451,6 @@
   overflow: auto;
 }
 .job-maximized .job-workspace {
-  height: calc(100dvh - 180px);
   min-height: 360px;
 }
 .job-condition-modal .n-card__content {
@@ -424,7 +460,6 @@
 @media (min-width: 1200px) {
   .job-workspace {
     min-height: 360px;
-    height: calc(100dvh - 295px);
   }
 }
 @media (max-width: 640px) {

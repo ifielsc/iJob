@@ -275,5 +275,7 @@
   ["tasks", "", "scriptCharset"],
   ["tasks", "", "sshResourceId"],
   ["tasks", "", "transaction"],
-  ["tasks", "", "workingDir"]
+  ["tasks", "", "workingDir"],
+  ["batchEtl", "incremental", "initialWatermark"],
+  ["batchEtl", "incremental", "initialLogicalKeyValues"]
 ]

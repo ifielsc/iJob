@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 
 <script setup lang="ts">
 import EmptyState from '../../shared/ui/EmptyState.vue'
+import RuntimeOverview from './RuntimeOverview.vue'
 import { computed, nextTick, onBeforeUnmount, reactive, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -362,11 +363,12 @@ onBeforeUnmount(cancel)
               </dd>
             </dl>
             <p class="workbench-node-note">
-              <Info :size="16" aria-hidden="true" />{{ t('workbench.clusterUnknown') }}
+              <Info :size="16" aria-hidden="true" />{{ t('insights.noHealthyClaim') }}
             </p>
           </details>
         </div>
       </div>
+      <RuntimeOverview />
       <section class="workbench-card workbench-recent">
         <div class="workbench-section-heading">
           <h2>{{ t('workbench.recent') }}</h2>

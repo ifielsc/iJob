@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/vue-query'
 import { NButton, NSelect } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { useRuntime } from '../../app/runtime'
-import { JobCanvas } from '../jobs/public/components'
+import { EdgeRoutingSelect, JobCanvas } from '../jobs/public/components'
 import RequestError from '../../shared/ui/RequestError.vue'
 import { runGraph } from './graph'
 import { terminal } from './model'
@@ -257,6 +257,7 @@ defineExpose({ refresh: () => query.refetch() })
         <NButton size="small" :disabled="!selected && !edge" @click="locateSelected">{{
           t('jobs.locateSelected')
         }}</NButton>
+        <EdgeRoutingSelect />
       </div>
       <div class="run-graph-legend">
         <span

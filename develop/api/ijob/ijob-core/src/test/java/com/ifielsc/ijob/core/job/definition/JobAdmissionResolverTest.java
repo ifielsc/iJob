@@ -28,6 +28,21 @@ import java.util.List;
 
 class JobAdmissionResolverTest {
     @Test
+    void disabledConfigurationCanBeLockedWithoutAdmittingExecution() {
+        JobDefinition disabled = definition();
+        disabled.setEnabled(false);
+        var resolver = resolver(identity(), disabled);
+        resolver.lockPublishedConfiguration(8L);
+        assertCode(ResultCode.CONFLICT, resolver, 8L);
+        JobPublicationIdentityRow retired = identity();
+        retired.setRetired(true);
+        retired.setRetiredTime(LocalDateTime.now());
+        assertThrows(
+                BusinessException.class,
+                () -> resolver(retired, disabled).lockPublishedConfiguration(8L));
+    }
+
+    @Test
     void shouldLockThenReturnCurrentDefinitionSnapshot() throws Exception {
         List<String> calls = new ArrayList<>();
         JobAdmissionResolver resolver =

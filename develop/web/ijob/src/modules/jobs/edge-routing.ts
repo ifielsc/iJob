@@ -29,6 +29,119 @@ export type Route = {
   bounds: Box
 }
 export type Box = { left: number; top: number; right: number; bottom: number }
+export function edgeLabelWidth(text: string) {
+  return Math.min(280, 24 + [...text].reduce((sum, c) => sum + (c.charCodeAt(0) > 255 ? 13 : 8), 0))
+}
+export function nearestPathPoint(point: Point, points: Point[]): Point {
+  let nearest = points[0] ?? point
+  let distance = Infinity
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1]!,
+      b = points[i]!
+    const dx = b.x - a.x,
+      dy = b.y - a.y
+    const t = Math.max(
+      0,
+      Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / (dx * dx + dy * dy || 1)),
+    )
+    const candidate = { x: a.x + t * dx, y: a.y + t * dy }
+    const d = Math.hypot(point.x - candidate.x, point.y - candidate.y)
+    if (d < distance) {
+      nearest = candidate
+      distance = d
+    }
+  }
+  return nearest
+}
+
+// Place labels independently of paths so changing language never reroutes graph edges.
+export function placeEdgeLabels(
+  nodes: Obstacle[],
+  labels: { id: string; text: string; anchor: Point; points?: Point[] }[],
+) {
+  const occupied: Box[] = nodes.map((n) => ({
+    left: n.x - 8,
+    top: n.y - 8,
+    right: n.x + n.width + 8,
+    bottom: n.y + n.height + 8,
+  }))
+  const result = new Map<string, Point>()
+  for (const label of labels) {
+    const width = edgeLabelWidth(label.text)
+    // Try positions along this edge before moving a label away from the line.
+    // Bound sampling even for very large layouts.
+    const points = label.points ?? []
+    const length = points
+      .slice(1)
+      .reduce((sum, p, i) => sum + Math.hypot(p.x - points[i]!.x, p.y - points[i]!.y), 0)
+    const step = Math.max(24, length / 128)
+    const onPath = [label.anchor]
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i - 1]!,
+        b = points[i]!
+      const count = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / step))
+      for (let j = 1; j <= count; j++)
+        onPath.push({ x: a.x + ((b.x - a.x) * j) / count, y: a.y + ((b.y - a.y) * j) / count })
+    }
+    onPath.sort(
+      (a, b) =>
+        Math.hypot(a.x - label.anchor.x, a.y - label.anchor.y) -
+        Math.hypot(b.x - label.anchor.x, b.y - label.anchor.y),
+    )
+    const candidates = [...onPath]
+    for (const r of [16, 32, 48, 64])
+      for (const point of onPath)
+        for (const [dx, dy] of [
+          [0, -r],
+          [0, r],
+          [r, 0],
+          [-r, 0],
+        ])
+          candidates.push({ x: point.x + dx!, y: point.y + dy! })
+    for (let r = 32; r <= 640; r += 32) {
+      for (const [dx, dy] of [
+        [0, -r],
+        [0, r],
+        [r, 0],
+        [-r, 0],
+        [r, -r],
+        [-r, r],
+        [r, r],
+        [-r, -r],
+      ])
+        candidates.push({ x: label.anchor.x + dx!, y: label.anchor.y + dy! })
+    }
+    for (const point of candidates) {
+      const box = {
+        left: point.x - width / 2 - 6,
+        right: point.x + width / 2 + 6,
+        top: point.y - 20,
+        bottom: point.y + 20,
+      }
+      if (
+        occupied.some(
+          (b) =>
+            box.left < b.right && box.right > b.left && box.top < b.bottom && box.bottom > b.top,
+        )
+      )
+        continue
+      result.set(label.id, point)
+      occupied.push(box)
+      break
+    }
+    if (!result.has(label.id)) {
+      const x = Math.max(label.anchor.x, ...occupied.map((b) => b.right)) + width / 2 + 16
+      result.set(label.id, { x, y: label.anchor.y })
+      occupied.push({
+        left: x - width / 2,
+        right: x + width / 2,
+        top: label.anchor.y - 20,
+        bottom: label.anchor.y + 20,
+      })
+    }
+  }
+  return result
+}
 const clearance = 14
 const stub = 28
 const bucket = 256

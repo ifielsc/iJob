@@ -85,9 +85,14 @@ public class FileTransferTaskConfigValidator {
         if (pattern == null
                 || pattern.isBlank()
                 || pattern.length() > MAX_PATTERN_LENGTH
-                || pattern.indexOf('/') >= 0
-                || pattern.indexOf('\\') >= 0) {
+                || pattern.indexOf('/') >= 0) {
             throw invalid("File transfer filePattern is invalid");
+        }
+        for (int i = 0; i < pattern.length(); i++) {
+            if (pattern.charAt(i) == '\\'
+                    && (++i == pattern.length() || "*?{}[]".indexOf(pattern.charAt(i)) < 0)) {
+                throw invalid("File transfer filePattern is invalid");
+            }
         }
         try {
             FileSystems.getDefault().getPathMatcher("glob:" + pattern);

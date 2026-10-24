@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import DrawerCloseButton from '../../shared/ui/DrawerCloseButton.vue'
 import {
   computed,
+  provide,
   defineAsyncComponent,
   h,
   nextTick,
@@ -33,6 +34,7 @@ import {
   useMessage,
 } from 'naive-ui'
 import { draftFingerprint } from '../../shared/forms/draft-fingerprint'
+import { previewFieldsKey } from '../../shared/ui/sql-preview'
 import { pluginLabel, pluginTypes } from '../../shared/plugins'
 import { X } from '@lucide/vue'
 import { useI18n } from 'vue-i18n'
@@ -61,6 +63,8 @@ import EtlFields from './EtlFields.vue'
 import LocalJarFields from './LocalJarFields.vue'
 import MonitorFields from './MonitorFields.vue'
 import BatchEtlFields from './BatchEtlFields.vue'
+import LineTabs from '../../shared/ui/LineTabs.vue'
+import EtlProgress from './EtlProgress.vue'
 import { prepareEtlForms } from './etl-model'
 import FileTransferFields from './FileTransferFields.vue'
 import EventFields from './EventFields.vue'
@@ -80,6 +84,14 @@ function draftFor(row?: TaskRow) {
 const current = shallowRef(props.row),
   draft = reactive(draftFor(props.row)),
   baseline = ref(JSON.stringify(draft))
+const editorTab = ref('configuration')
+provide(previewFieldsKey, () =>
+  current.value?.id
+    ? runtime.request('/api/parameter-templates/bindings/TASK/' + current.value.id, {
+        lossless: true,
+      })
+    : Promise.resolve(null),
+)
 const isLocalJar = computed(() => draft.pluginType === 'LOCAL_JAR'),
   localJarFields = ref<InstanceType<typeof LocalJarFields>>()
 const isMonitor = computed(() => draft.pluginType === 'SERVER_MONITOR'),
@@ -444,6 +456,8 @@ const numbers = computed<NumericKey[]>(() =>
       : ['queryTimeoutSeconds', 'timeout', 'retryTimes', 'retryInterval', 'minRows', 'maxRows'],
 )
 async function submit() {
+  editorTab.value = 'configuration'
+  await nextTick()
   if (current.value && !changed.value) return
   if (busy.value || conflict.value || runtime.accessIssue.value || large.value || uncertain.value)
     return
@@ -591,650 +605,690 @@ async function verifyPublication() {
           </div>
           <DrawerCloseButton :disabled="busy" @close="close" /></div
       ></template>
-      <div ref="form" class="task-form">
-        <p class="task-note">
-          {{
-            current
-              ? t('tasks.publishNext', { revision: current.currentRevision })
-              : t('tasks.publishNew')
-          }}
-        </p>
-        <RequestError :error="error" />
-        <div v-if="uncertain" role="alert">
-          <p>{{ t('eventTask.unknown') }}</p>
-          <NButton :disabled="busy" @click="verifyPublication">{{ t('eventTask.verify') }}</NButton>
-          <p v-if="latest">{{ latest.name }} · v{{ latest.currentRevision }}</p>
-        </div>
-        <section v-if="conflict" class="task-conflict" role="alert">
-          <p>{{ t('tasks.conflict') }}</p>
-          <NButton :loading="busy" @click="loadLatest">{{ t('tasks.latest') }}</NButton>
-          <template v-if="latest"
-            ><p>{{ t('tasks.latestHint') }}</p>
-            <pre>{{ JSON.stringify(latest, null, 2) }}</pre>
-            <NButton :disabled="busy" @click="adopt">{{ t('tasks.adopt') }}</NButton></template
-          >
-        </section>
-        <NForm :disabled="busy" :show-feedback="false" novalidate @submit.prevent="submit">
-          <h3>{{ t('unified.basic') }}</h3>
-          <FormItem
-            id="task-name"
-            :label="t('tasks.name')"
-            required
-            :invalid="!!fieldError('name')"
-            :message="fieldError('name')"
-            ><NInput
-              v-model:value="draft.name"
-              :maxlength="128"
-              :input-props="{ id: 'task-name', 'aria-invalid': !!fieldError('name') }"
-          /></FormItem>
-          <div class="task-plugin-row">
-            <FormItem id="task-pluginType" :label="t('tasks.pluginType')" required>
+      <LineTabs
+        v-if="isEtl || isBatchEtl"
+        id="task-editor-tabs"
+        :label="t('tasks.edit')"
+        :value="editorTab"
+        :tabs="
+          ['configuration', 'progress'].map((value) => ({ value, label: t('insights.' + value) }))
+        "
+        panel-id="task-editor-panel"
+        :disabled="busy"
+        @change="editorTab = $event"
+      />
+      <div
+        id="task-editor-panel"
+        :role="isEtl || isBatchEtl ? 'tabpanel' : undefined"
+        :aria-labelledby="isEtl || isBatchEtl ? 'task-editor-tabs-' + editorTab : undefined"
+      >
+        <EtlProgress
+          v-if="(isEtl || isBatchEtl) && editorTab === 'progress'"
+          :task-id="current?.id"
+          :revision="current?.currentRevision"
+          :dirty="changed"
+        />
+        <div v-show="editorTab === 'configuration'" ref="form" class="task-form">
+          <p class="task-note">
+            {{
+              current
+                ? t('tasks.publishNext', { revision: current.currentRevision })
+                : t('tasks.publishNew')
+            }}
+          </p>
+          <RequestError :error="error" />
+          <div v-if="uncertain" role="alert">
+            <p>{{ t('eventTask.unknown') }}</p>
+            <NButton :disabled="busy" @click="verifyPublication">{{
+              t('eventTask.verify')
+            }}</NButton>
+            <p v-if="latest">{{ latest.name }} · v{{ latest.currentRevision }}</p>
+          </div>
+          <section v-if="conflict" class="task-conflict" role="alert">
+            <p>{{ t('tasks.conflict') }}</p>
+            <NButton :loading="busy" @click="loadLatest">{{ t('tasks.latest') }}</NButton>
+            <template v-if="latest"
+              ><p>{{ t('tasks.latestHint') }}</p>
+              <pre>{{ JSON.stringify(latest, null, 2) }}</pre>
+              <NButton :disabled="busy" @click="adopt">{{ t('tasks.adopt') }}</NButton></template
+            >
+          </section>
+          <NForm :disabled="busy" :show-feedback="false" novalidate @submit.prevent="submit">
+            <h3>{{ t('unified.basic') }}</h3>
+            <FormItem
+              id="task-name"
+              :label="t('tasks.name')"
+              required
+              :invalid="!!fieldError('name')"
+              :message="fieldError('name')"
+              ><NInput
+                v-model:value="draft.name"
+                :maxlength="128"
+                :input-props="{ id: 'task-name', 'aria-invalid': !!fieldError('name') }"
+            /></FormItem>
+            <div class="task-plugin-row">
+              <FormItem id="task-pluginType" :label="t('tasks.pluginType')" required>
+                <NSelect
+                  v-model:value="draft.pluginType"
+                  filterable
+                  :virtual-scroll="false"
+                  :options="pluginTypes.map((value) => ({ value, label: pluginLabel(value, t) }))"
+                  :disabled="busy || !!current"
+                  :input-props="{
+                    id: 'task-pluginType',
+                    'aria-label': t('tasks.pluginType'),
+                    role: 'combobox',
+                    'aria-expanded': selectOpen,
+                  }"
+                  :node-props="() => ({ role: 'option' })"
+                  @update:show="selectOpen = $event"
+                />
+              </FormItem>
+              <div class="task-inline">
+                <label for="task-enabled">{{ t('tasks.enable') }}</label
+                ><NSwitch
+                  id="task-enabled"
+                  v-model:value="draft.enabled"
+                  :aria-label="t('tasks.enable')"
+                />
+              </div>
+            </div>
+            <h3 v-if="isScript || draft.pluginType === 'SQL' || isApi">
+              {{ t('unified.target') }}
+            </h3>
+            <template v-if="isScript">
+              <div class="task-advanced-grid">
+                <FormItem id="task-executionMode" :label="t('tasks.executionMode')" required>
+                  <NSelect
+                    v-model:value="draft.executionMode"
+                    filterable
+                    :options="[
+                      { value: 'LOCAL', label: t('tasks.localMode') },
+                      { value: 'SSH', label: t('tasks.sshMode') },
+                    ]"
+                    :input-props="{
+                      id: 'task-executionMode',
+                      'aria-label': t('tasks.executionMode'),
+                    }"
+                    @update:show="selectOpen = $event"
+                  />
+                </FormItem>
+                <FormItem
+                  id="task-engine"
+                  :label="t('tasks.engine')"
+                  required
+                  :invalid="!!fieldError('engine')"
+                  :message="fieldError('engine')"
+                >
+                  <NSelect
+                    v-model:value="scriptDraft.engine"
+                    filterable
+                    :options="engines"
+                    :input-props="{ id: 'task-engine', 'aria-label': t('tasks.engine') }"
+                    @update:show="selectOpen = $event"
+                  />
+                </FormItem>
+              </div>
+              <p class="task-note">
+                {{ t(draft.executionMode === 'SSH' ? 'tasks.sshModeHelp' : 'tasks.localModeHelp') }}
+              </p>
+            </template>
+            <FormItem
+              v-if="resourceType"
+              id="task-resourceId"
+              :label="
+                t(isApi ? 'apiCall.resource' : isScript ? 'tasks.sshResource' : 'tasks.resource')
+              "
+              required
+              :invalid="!!fieldError('resourceId')"
+              :message="fieldError('resourceId')"
+            >
               <NSelect
-                v-model:value="draft.pluginType"
+                :value="resourceId || null"
                 filterable
-                :virtual-scroll="false"
-                :options="pluginTypes.map((value) => ({ value, label: pluginLabel(value, t) }))"
-                :disabled="busy || !!current"
+                remote
+                :options="options"
+                :loading="resourceBusy"
+                :disabled="busy"
+                :placeholder="
+                  t(
+                    isApi
+                      ? 'apiCall.choose'
+                      : isScript
+                        ? 'tasks.chooseSshResource'
+                        : 'tasks.chooseResource',
+                  )
+                "
                 :input-props="{
-                  id: 'task-pluginType',
-                  'aria-label': t('tasks.pluginType'),
-                  role: 'combobox',
-                  'aria-expanded': selectOpen,
+                  id: 'task-resourceId',
+                  'aria-label': t(
+                    isApi ? 'apiCall.resource' : isScript ? 'tasks.sshResource' : 'tasks.resource',
+                  ),
+                  'aria-invalid': !!fieldError('resourceId'),
                 }"
-                :node-props="() => ({ role: 'option' })"
+                @search="searchResources"
+                @scroll="moreResources"
+                @update:value="resourceId = $event"
                 @update:show="selectOpen = $event"
               />
+              <p v-if="isApi" class="task-note field-hint">{{ t('apiCall.authHelp') }}</p></FormItem
+            >
+            <FormItem
+              v-if="isScript && scriptDraft.engine === 'PYTHON'"
+              id="task-interpreter"
+              :label="t('tasks.interpreter')"
+              required
+              :invalid="!!fieldError('interpreter')"
+              :message="fieldError('interpreter')"
+            >
+              <NInput
+                v-model:value="scriptDraft.interpreter"
+                :input-props="{
+                  id: 'task-interpreter',
+                  'aria-invalid': !!fieldError('interpreter'),
+                }"
+              />
             </FormItem>
-            <div class="task-inline">
-              <label for="task-enabled">{{ t('tasks.enable') }}</label
-              ><NSwitch
-                id="task-enabled"
-                v-model:value="draft.enabled"
-                :aria-label="t('tasks.enable')"
-              />
-            </div>
-          </div>
-          <h3 v-if="isScript || draft.pluginType === 'SQL' || isApi">{{ t('unified.target') }}</h3>
-          <template v-if="isScript">
-            <div class="task-advanced-grid">
-              <FormItem id="task-executionMode" :label="t('tasks.executionMode')" required>
-                <NSelect
-                  v-model:value="draft.executionMode"
-                  filterable
-                  :options="[
-                    { value: 'LOCAL', label: t('tasks.localMode') },
-                    { value: 'SSH', label: t('tasks.sshMode') },
-                  ]"
-                  :input-props="{
-                    id: 'task-executionMode',
-                    'aria-label': t('tasks.executionMode'),
-                  }"
-                  @update:show="selectOpen = $event"
-                />
-              </FormItem>
-              <FormItem
-                id="task-engine"
-                :label="t('tasks.engine')"
-                required
-                :invalid="!!fieldError('engine')"
-                :message="fieldError('engine')"
+            <div v-if="isApi && serviceError" role="alert">
+              {{ t('apiCall.metadataFailed') }}
+              <NButton
+                text
+                type="primary"
+                :disabled="serviceLoading || busy"
+                @click="loadService"
+                >{{ t('apiCall.retry') }}</NButton
               >
-                <NSelect
-                  v-model:value="scriptDraft.engine"
-                  filterable
-                  :options="engines"
-                  :input-props="{ id: 'task-engine', 'aria-label': t('tasks.engine') }"
-                  @update:show="selectOpen = $event"
-                />
-              </FormItem>
             </div>
-            <p class="task-note">
-              {{ t(draft.executionMode === 'SSH' ? 'tasks.sshModeHelp' : 'tasks.localModeHelp') }}
-            </p>
-          </template>
-          <FormItem
-            v-if="resourceType"
-            id="task-resourceId"
-            :label="
-              t(isApi ? 'apiCall.resource' : isScript ? 'tasks.sshResource' : 'tasks.resource')
-            "
-            required
-            :invalid="!!fieldError('resourceId')"
-            :message="fieldError('resourceId')"
-          >
-            <NSelect
-              :value="resourceId || null"
-              filterable
-              remote
-              :options="options"
-              :loading="resourceBusy"
+            <LocalJarFields
+              v-if="isLocalJar"
+              ref="localJarFields"
+              v-model:draft="draft.localJar"
+              :errors="validation"
+              :submitted="submitted"
+              :disabled="busy || uncertain"
+              @select="selectOpen = $event"
+            />
+            <MonitorFields
+              v-if="isMonitor"
+              ref="monitorFields"
+              v-model:draft="draft.monitor"
+              :errors="validation"
+              :submitted="submitted"
+              :disabled="busy || uncertain"
+              @select="selectOpen = $event"
+            />
+            <BatchEtlFields
+              v-if="isBatchEtl"
+              ref="batchEtlFields"
+              v-model:draft="draft.batchEtl"
+              :errors="validation"
+              :submitted="submitted"
               :disabled="busy"
-              :placeholder="
-                t(
-                  isApi
-                    ? 'apiCall.choose'
-                    : isScript
-                      ? 'tasks.chooseSshResource'
-                      : 'tasks.chooseResource',
-                )
-              "
-              :input-props="{
-                id: 'task-resourceId',
-                'aria-label': t(
-                  isApi ? 'apiCall.resource' : isScript ? 'tasks.sshResource' : 'tasks.resource',
-                ),
-                'aria-invalid': !!fieldError('resourceId'),
-              }"
-              @search="searchResources"
-              @scroll="moreResources"
-              @update:value="resourceId = $event"
-              @update:show="selectOpen = $event"
+              :retries="draft.retryTimes ?? 0"
+              @select="selectOpen = $event"
             />
-            <p v-if="isApi" class="task-note field-hint">{{ t('apiCall.authHelp') }}</p></FormItem
-          >
-          <FormItem
-            v-if="isScript && scriptDraft.engine === 'PYTHON'"
-            id="task-interpreter"
-            :label="t('tasks.interpreter')"
-            required
-            :invalid="!!fieldError('interpreter')"
-            :message="fieldError('interpreter')"
-          >
-            <NInput
-              v-model:value="scriptDraft.interpreter"
-              :input-props="{ id: 'task-interpreter', 'aria-invalid': !!fieldError('interpreter') }"
+            <EtlFields
+              v-if="isEtl"
+              ref="etlFields"
+              v-model:draft="draft.etl"
+              :errors="validation"
+              :submitted="submitted"
+              :disabled="busy || uncertain"
+              @expanded="large = $event"
+              @select="selectOpen = $event"
             />
-          </FormItem>
-          <div v-if="isApi && serviceError" role="alert">
-            {{ t('apiCall.metadataFailed') }}
-            <NButton text type="primary" :disabled="serviceLoading || busy" @click="loadService">{{
-              t('apiCall.retry')
-            }}</NButton>
-          </div>
-          <LocalJarFields
-            v-if="isLocalJar"
-            ref="localJarFields"
-            v-model:draft="draft.localJar"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy || uncertain"
-            @select="selectOpen = $event"
-          />
-          <MonitorFields
-            v-if="isMonitor"
-            ref="monitorFields"
-            v-model:draft="draft.monitor"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy || uncertain"
-            @select="selectOpen = $event"
-          />
-          <BatchEtlFields
-            v-if="isBatchEtl"
-            ref="batchEtlFields"
-            v-model:draft="draft.batchEtl"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy"
-            :retries="draft.retryTimes ?? 0"
-            @select="selectOpen = $event"
-          />
-          <EtlFields
-            v-if="isEtl"
-            ref="etlFields"
-            v-model:draft="draft.etl"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy || uncertain"
-            @expanded="large = $event"
-            @select="selectOpen = $event"
-          />
-          <PushFields
-            v-if="isPush"
-            ref="pushFields"
-            v-model:draft="draft.push"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy || uncertain"
-            @expanded="large = $event"
-            @select="selectOpen = $event"
-          />
-          <FileTransferFields
-            v-if="isTransfer"
-            ref="transferFields"
-            v-model:draft="draft.transfer"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy || uncertain"
-            @select="selectOpen = $event"
-          />
-          <DataCheckFields
-            v-if="isCheck"
-            ref="checkFields"
-            v-model:draft="draft.check"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy || uncertain"
-            @expanded="large = $event"
-            @select="selectOpen = $event"
-          />
-          <EventFields
-            v-if="isEvent"
-            ref="eventFields"
-            v-model:draft="draft.event"
-            v-model:timeout="draft.timeout"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy || uncertain"
-            @expanded="large = $event"
-            @select="selectOpen = $event"
-          />
-          <ApiCallFields
-            v-if="isApi"
-            v-model:draft="draft.api"
-            :errors="validation"
-            :submitted="submitted"
-            :disabled="busy"
-            @expanded="large = $event"
-            @select="selectOpen = $event"
-          />
-          <FormItem
-            v-if="
-              !isEvent &&
-              !isCheck &&
-              !isTransfer &&
-              !isPush &&
-              !isEtl &&
-              !isBatchEtl &&
-              !isMonitor &&
-              !isLocalJar
-            "
-            v-show="!isApi || draft.api.protocol !== 'WEB_SERVICE'"
-            :id="isApi ? 'task-body' : 'task-script'"
-            :label="t(isApi ? 'apiCall.body' : isScript ? 'tasks.script' : 'tasks.sql')"
-            :required="!isApi"
-            :invalid="!!fieldError(isApi ? 'body' : 'script')"
-            :message="fieldError(isApi ? 'body' : 'script')"
-            ><JsonFormEditor
+            <PushFields
+              v-if="isPush"
+              ref="pushFields"
+              v-model:draft="draft.push"
+              :errors="validation"
+              :submitted="submitted"
+              :disabled="busy || uncertain"
+              @expanded="large = $event"
+              @select="selectOpen = $event"
+            />
+            <FileTransferFields
+              v-if="isTransfer"
+              ref="transferFields"
+              v-model:draft="draft.transfer"
+              :errors="validation"
+              :submitted="submitted"
+              :disabled="busy || uncertain"
+              @select="selectOpen = $event"
+            />
+            <DataCheckFields
+              v-if="isCheck"
+              ref="checkFields"
+              v-model:draft="draft.check"
+              :errors="validation"
+              :submitted="submitted"
+              :disabled="busy || uncertain"
+              @expanded="large = $event"
+              @select="selectOpen = $event"
+            />
+            <EventFields
+              v-if="isEvent"
+              ref="eventFields"
+              v-model:draft="draft.event"
+              v-model:timeout="draft.timeout"
+              :errors="validation"
+              :submitted="submitted"
+              :disabled="busy || uncertain"
+              @expanded="large = $event"
+              @select="selectOpen = $event"
+            />
+            <ApiCallFields
               v-if="isApi"
-              ref="sql"
-              v-model="scriptValue"
-              :title="t('apiCall.body')"
+              v-model:draft="draft.api"
+              :errors="validation"
+              :submitted="submitted"
               :disabled="busy"
-              :invalid="!!fieldError('body')"
-              context-key="API_CALL_HTTP"
               @expanded="large = $event"
-              @select="selectOpen = $event" /><SqlEditor
-              v-else
-              ref="sql"
-              v-model="scriptValue"
-              :language="isApi ? 'JSON' : isScript ? scriptDraft.engine : 'SQL'"
-              :context-key="isApi ? 'API_CALL_HTTP' : isScript ? draft.executionMode : 'SQL'"
-              :disabled="busy"
+              @select="selectOpen = $event"
+            />
+            <FormItem
+              v-if="
+                !isEvent &&
+                !isCheck &&
+                !isTransfer &&
+                !isPush &&
+                !isEtl &&
+                !isBatchEtl &&
+                !isMonitor &&
+                !isLocalJar
+              "
+              v-show="!isApi || draft.api.protocol !== 'WEB_SERVICE'"
+              :id="isApi ? 'task-body' : 'task-script'"
+              :label="t(isApi ? 'apiCall.body' : isScript ? 'tasks.script' : 'tasks.sql')"
+              :required="!isApi"
               :invalid="!!fieldError(isApi ? 'body' : 'script')"
-              @expanded="large = $event"
-          /></FormItem>
-          <p v-if="draft.pluginType === 'SQL'" class="task-note">
-            {{ t('jsonForm.sqlPluginHint') }}
-          </p>
-          <p v-if="isApi && ['GET', 'HEAD'].includes(draft.api.http.method)" class="task-note">
-            {{ t('apiCall.noBody') }}
-          </p>
-          <NCollapse v-model:expanded-names="expanded"
-            ><NCollapseItem name="advanced" :title="t('tasks.advanced')">
-              <ApiCallFields
+              :message="fieldError(isApi ? 'body' : 'script')"
+              ><JsonFormEditor
                 v-if="isApi"
-                v-model:draft="draft.api"
-                :errors="validation"
-                :submitted="submitted"
+                ref="sql"
+                v-model="scriptValue"
+                :title="t('apiCall.body')"
                 :disabled="busy"
-                advanced
-                @select="selectOpen = $event"
-              />
-              <RemoteStopFields
-                v-if="isApi"
-                ref="remoteStopFields"
-                v-model:draft="draft.api"
-                :errors="validation"
-                :submitted="submitted"
-                :disabled="busy"
-                @select="selectOpen = $event"
+                :invalid="!!fieldError('body')"
+                context-key="API_CALL_HTTP"
                 @expanded="large = $event"
-              />
-              <p v-if="isApi && (draft.retryTimes ?? 0) > 0" class="task-note">
-                {{ t('apiCall.retryHelp') }}
-              </p>
-              <div class="task-advanced-grid">
-                <template v-if="isScript">
+                @select="selectOpen = $event" /><SqlEditor
+                v-else
+                ref="sql"
+                v-model="scriptValue"
+                :language="isApi ? 'JSON' : isScript ? scriptDraft.engine : 'SQL'"
+                :query-context="
+                  draft.pluginType === 'SQL'
+                    ? { resourceId: draft.resourceId, mode: 'SQL' }
+                    : undefined
+                "
+                :context-key="isApi ? 'API_CALL_HTTP' : isScript ? draft.executionMode : 'SQL'"
+                :disabled="busy"
+                :invalid="!!fieldError(isApi ? 'body' : 'script')"
+                @expanded="large = $event"
+            /></FormItem>
+            <p v-if="draft.pluginType === 'SQL'" class="task-note">
+              {{ t('jsonForm.sqlPluginHint') }}
+            </p>
+            <p v-if="isApi && ['GET', 'HEAD'].includes(draft.api.http.method)" class="task-note">
+              {{ t('apiCall.noBody') }}
+            </p>
+            <NCollapse v-model:expanded-names="expanded"
+              ><NCollapseItem name="advanced" :title="t('tasks.advanced')">
+                <ApiCallFields
+                  v-if="isApi"
+                  v-model:draft="draft.api"
+                  :errors="validation"
+                  :submitted="submitted"
+                  :disabled="busy"
+                  advanced
+                  @select="selectOpen = $event"
+                />
+                <RemoteStopFields
+                  v-if="isApi"
+                  ref="remoteStopFields"
+                  v-model:draft="draft.api"
+                  :errors="validation"
+                  :submitted="submitted"
+                  :disabled="busy"
+                  @select="selectOpen = $event"
+                  @expanded="large = $event"
+                />
+                <p v-if="isApi && (draft.retryTimes ?? 0) > 0" class="task-note">
+                  {{ t('apiCall.retryHelp') }}
+                </p>
+                <div class="task-advanced-grid">
+                  <template v-if="isScript">
+                    <FormItem
+                      v-for="key in ['scriptCharset', 'outputCharset'] as const"
+                      :id="'task-' + key"
+                      :key="key"
+                      :label="t('tasks.' + key)"
+                      :invalid="!!fieldError(key)"
+                      :message="fieldError(key)"
+                    >
+                      <NSelect
+                        v-model:value="scriptDraft[key]"
+                        filterable
+                        tag
+                        :options="
+                          ['UTF-8', 'GBK', 'GB18030', 'UTF-16LE', 'ISO-8859-1'].map((value) => ({
+                            value,
+                            label: value,
+                          }))
+                        "
+                        :input-props="{ id: 'task-' + key, 'aria-label': t('tasks.' + key) }"
+                        @update:show="selectOpen = $event"
+                      />
+                    </FormItem>
+                  </template>
                   <FormItem
-                    v-for="key in ['scriptCharset', 'outputCharset'] as const"
+                    v-for="key in numbers"
                     :id="'task-' + key"
                     :key="key"
                     :label="t('tasks.' + key)"
                     :invalid="!!fieldError(key)"
                     :message="fieldError(key)"
+                    ><NInputNumber
+                      v-model:value="draft[key]"
+                      :precision="0"
+                      :input-props="{ id: 'task-' + key, 'aria-invalid': !!fieldError(key) }"
+                  /></FormItem>
+                  <FormItem
+                    v-if="
+                      !isScript &&
+                      !isApi &&
+                      !isEvent &&
+                      !isCheck &&
+                      !isTransfer &&
+                      !isPush &&
+                      !isEtl &&
+                      !isBatchEtl &&
+                      !isMonitor &&
+                      !isLocalJar
+                    "
+                    id="task-delimiter"
+                    :label="t('tasks.delimiter')"
+                    :invalid="!!fieldError('delimiter')"
+                    :message="fieldError('delimiter')"
+                    ><NInput
+                      v-model:value="draft.delimiter"
+                      :maxlength="16"
+                      :input-props="{
+                        id: 'task-delimiter',
+                        'aria-invalid': !!fieldError('delimiter'),
+                      }"
+                  /></FormItem>
+                  <FormItem
+                    v-if="
+                      !isScript &&
+                      !isApi &&
+                      !isEvent &&
+                      !isCheck &&
+                      !isTransfer &&
+                      !isPush &&
+                      !isEtl &&
+                      !isBatchEtl &&
+                      !isMonitor &&
+                      !isLocalJar
+                    "
+                    id="task-resultVariable"
+                    :label="t('tasks.resultVariable')"
+                    :invalid="!!fieldError('resultVariable')"
+                    :message="fieldError('resultVariable')"
+                    ><NInput
+                      v-model:value="draft.resultVariable"
+                      :maxlength="128"
+                      :input-props="{
+                        id: 'task-resultVariable',
+                        'aria-invalid': !!fieldError('resultVariable'),
+                      }"
+                  /></FormItem>
+                  <div
+                    v-if="
+                      !isScript &&
+                      !isApi &&
+                      !isEvent &&
+                      !isCheck &&
+                      !isTransfer &&
+                      !isPush &&
+                      !isEtl &&
+                      !isBatchEtl &&
+                      !isMonitor &&
+                      !isLocalJar
+                    "
+                    class="task-inline"
                   >
-                    <NSelect
-                      v-model:value="scriptDraft[key]"
-                      filterable
-                      tag
-                      :options="
-                        ['UTF-8', 'GBK', 'GB18030', 'UTF-16LE', 'ISO-8859-1'].map((value) => ({
-                          value,
-                          label: value,
-                        }))
-                      "
-                      :input-props="{ id: 'task-' + key, 'aria-label': t('tasks.' + key) }"
-                      @update:show="selectOpen = $event"
+                    <label for="task-transaction">{{ t('tasks.transaction') }}</label
+                    ><NSwitch
+                      id="task-transaction"
+                      v-model:value="draft.transaction"
+                      :aria-label="t('tasks.transaction')"
+                    />
+                  </div>
+                  <div
+                    v-if="
+                      !isScript &&
+                      !isApi &&
+                      !isEvent &&
+                      !isCheck &&
+                      !isTransfer &&
+                      !isPush &&
+                      !isEtl &&
+                      !isBatchEtl &&
+                      !isMonitor &&
+                      !isLocalJar
+                    "
+                    class="task-inline"
+                  >
+                    <label for="task-continue">{{ t('tasks.continueOnError') }}</label
+                    ><NSwitch
+                      id="task-continue"
+                      v-model:value="draft.continueOnError"
+                      :disabled="busy || draft.transaction"
+                      :aria-disabled="busy || draft.transaction"
+                      :aria-label="t('tasks.continueOnError')"
+                    />
+                  </div>
+                </div>
+                <p
+                  v-if="
+                    !isScript &&
+                    !isApi &&
+                    !isEvent &&
+                    !isCheck &&
+                    !isTransfer &&
+                    !isPush &&
+                    !isEtl &&
+                    !isBatchEtl &&
+                    !isMonitor &&
+                    !isLocalJar
+                  "
+                  class="task-note task-transaction-hint"
+                >
+                  {{ t('tasks.continueHint') }}
+                </p>
+                <template v-if="isScript">
+                  <FormItem
+                    id="task-workingDir"
+                    :label="t('tasks.workingDir')"
+                    :invalid="!!fieldError('workingDir')"
+                    :message="fieldError('workingDir')"
+                  >
+                    <NInput
+                      v-model:value="scriptDraft.workingDir"
+                      :input-props="{
+                        id: 'task-workingDir',
+                        'aria-invalid': !!fieldError('workingDir'),
+                      }"
                     />
                   </FormItem>
+                  <p class="task-note">
+                    {{
+                      t(
+                        draft.executionMode === 'SSH'
+                          ? 'tasks.sshDirectoryHelp'
+                          : 'tasks.localDirectoryHelp',
+                      )
+                    }}
+                  </p>
+                  <EditableTable
+                    :title="t('tasks.environment')"
+                    :columns="[
+                      { key: 'name', label: t('tasks.envName'), required: true },
+                      { key: 'value', label: t('tasks.envValue') },
+                      { key: 'actions', label: t('common.actions') },
+                    ]"
+                    :count="scriptDraft.env.length"
+                    :add-label="t('tasks.addEnv')"
+                    :disabled="busy"
+                    @add="scriptDraft.env.push({ name: '', value: '' })"
+                  >
+                    <tr v-for="(entry, index) in scriptDraft.env" :key="index">
+                      <td>
+                        <FormItem
+                          :id="'task-env-name-' + index"
+                          hide-label
+                          :label="t('tasks.envName')"
+                          :invalid="!!fieldError('env-name-' + index)"
+                          :message="fieldError('env-name-' + index)"
+                        >
+                          <NInput
+                            v-model:value="entry.name"
+                            :input-props="{
+                              id: 'task-env-name-' + index,
+                              'aria-label': t('tasks.envName') + ' ' + (index + 1),
+                              'aria-invalid': !!fieldError('env-name-' + index),
+                            }"
+                          />
+                        </FormItem>
+                      </td>
+                      <td>
+                        <FormItem
+                          :id="'task-env-value-' + index"
+                          hide-label
+                          :label="t('tasks.envValue')"
+                          :invalid="!!fieldError('env-value-' + index)"
+                          :message="fieldError('env-value-' + index)"
+                        >
+                          <NInput
+                            v-model:value="entry.value"
+                            :input-props="{
+                              id: 'task-env-value-' + index,
+                              'aria-label': t('tasks.envValue') + ' ' + (index + 1),
+                              'aria-invalid': !!fieldError('env-value-' + index),
+                            }"
+                          />
+                        </FormItem>
+                      </td>
+                      <td>
+                        <NButton
+                          text
+                          type="error"
+                          :disabled="busy"
+                          :aria-label="t('tasks.removeEnv', { index: index + 1 })"
+                          @click="scriptDraft.env.splice(index, 1)"
+                          >{{ t('apiCall.remove') }}</NButton
+                        >
+                      </td>
+                    </tr>
+                    <template #feedback
+                      ><p class="task-note">{{ t('tasks.envHelp') }}</p></template
+                    >
+                  </EditableTable>
                 </template>
                 <FormItem
-                  v-for="key in numbers"
-                  :id="'task-' + key"
-                  :key="key"
-                  :label="t('tasks.' + key)"
-                  :invalid="!!fieldError(key)"
-                  :message="fieldError(key)"
-                  ><NInputNumber
-                    v-model:value="draft[key]"
-                    :precision="0"
-                    :input-props="{ id: 'task-' + key, 'aria-invalid': !!fieldError(key) }"
-                /></FormItem>
-                <FormItem
-                  v-if="
-                    !isScript &&
-                    !isApi &&
-                    !isEvent &&
-                    !isCheck &&
-                    !isTransfer &&
-                    !isPush &&
-                    !isEtl &&
-                    !isBatchEtl &&
-                    !isMonitor &&
-                    !isLocalJar
-                  "
-                  id="task-delimiter"
-                  :label="t('tasks.delimiter')"
-                  :invalid="!!fieldError('delimiter')"
-                  :message="fieldError('delimiter')"
-                  ><NInput
-                    v-model:value="draft.delimiter"
-                    :maxlength="16"
-                    :input-props="{
-                      id: 'task-delimiter',
-                      'aria-invalid': !!fieldError('delimiter'),
-                    }"
-                /></FormItem>
-                <FormItem
-                  v-if="
-                    !isScript &&
-                    !isApi &&
-                    !isEvent &&
-                    !isCheck &&
-                    !isTransfer &&
-                    !isPush &&
-                    !isEtl &&
-                    !isBatchEtl &&
-                    !isMonitor &&
-                    !isLocalJar
-                  "
-                  id="task-resultVariable"
-                  :label="t('tasks.resultVariable')"
-                  :invalid="!!fieldError('resultVariable')"
-                  :message="fieldError('resultVariable')"
-                  ><NInput
-                    v-model:value="draft.resultVariable"
-                    :maxlength="128"
-                    :input-props="{
-                      id: 'task-resultVariable',
-                      'aria-invalid': !!fieldError('resultVariable'),
-                    }"
-                /></FormItem>
-                <div
-                  v-if="
-                    !isScript &&
-                    !isApi &&
-                    !isEvent &&
-                    !isCheck &&
-                    !isTransfer &&
-                    !isPush &&
-                    !isEtl &&
-                    !isBatchEtl &&
-                    !isMonitor &&
-                    !isLocalJar
-                  "
-                  class="task-inline"
+                  id="task-groups"
+                  :label="t('tasks.group')"
+                  :invalid="!!groupError || !!fieldError('groups')"
+                  :message="groupError ? t('tasks.' + groupError) : fieldError('groups')"
                 >
-                  <label for="task-transaction">{{ t('tasks.transaction') }}</label
-                  ><NSwitch
-                    id="task-transaction"
-                    v-model:value="draft.transaction"
-                    :aria-label="t('tasks.transaction')"
-                  />
-                </div>
-                <div
-                  v-if="
-                    !isScript &&
-                    !isApi &&
-                    !isEvent &&
-                    !isCheck &&
-                    !isTransfer &&
-                    !isPush &&
-                    !isEtl &&
-                    !isBatchEtl &&
-                    !isMonitor &&
-                    !isLocalJar
-                  "
-                  class="task-inline"
-                >
-                  <label for="task-continue">{{ t('tasks.continueOnError') }}</label
-                  ><NSwitch
-                    id="task-continue"
-                    v-model:value="draft.continueOnError"
-                    :disabled="busy || draft.transaction"
-                    :aria-disabled="busy || draft.transaction"
-                    :aria-label="t('tasks.continueOnError')"
-                  />
-                </div>
-              </div>
-              <p
-                v-if="
-                  !isScript &&
-                  !isApi &&
-                  !isEvent &&
-                  !isCheck &&
-                  !isTransfer &&
-                  !isPush &&
-                  !isEtl &&
-                  !isBatchEtl &&
-                  !isMonitor &&
-                  !isLocalJar
-                "
-                class="task-note task-transaction-hint"
-              >
-                {{ t('tasks.continueHint') }}
-              </p>
-              <template v-if="isScript">
-                <FormItem
-                  id="task-workingDir"
-                  :label="t('tasks.workingDir')"
-                  :invalid="!!fieldError('workingDir')"
-                  :message="fieldError('workingDir')"
-                >
-                  <NInput
-                    v-model:value="scriptDraft.workingDir"
-                    :input-props="{
-                      id: 'task-workingDir',
-                      'aria-invalid': !!fieldError('workingDir'),
-                    }"
-                  />
-                </FormItem>
-                <p class="task-note">
-                  {{
-                    t(
-                      draft.executionMode === 'SSH'
-                        ? 'tasks.sshDirectoryHelp'
-                        : 'tasks.localDirectoryHelp',
-                    )
-                  }}
-                </p>
-                <EditableTable
-                  :title="t('tasks.environment')"
-                  :columns="[
-                    { key: 'name', label: t('tasks.envName'), required: true },
-                    { key: 'value', label: t('tasks.envValue') },
-                    { key: 'actions', label: t('common.actions') },
-                  ]"
-                  :count="scriptDraft.env.length"
-                  :add-label="t('tasks.addEnv')"
-                  :disabled="busy"
-                  @add="scriptDraft.env.push({ name: '', value: '' })"
-                >
-                  <tr v-for="(entry, index) in scriptDraft.env" :key="index">
-                    <td>
-                      <FormItem
-                        :id="'task-env-name-' + index"
-                        hide-label
-                        :label="t('tasks.envName')"
-                        :invalid="!!fieldError('env-name-' + index)"
-                        :message="fieldError('env-name-' + index)"
-                      >
-                        <NInput
-                          v-model:value="entry.name"
-                          :input-props="{
-                            id: 'task-env-name-' + index,
-                            'aria-label': t('tasks.envName') + ' ' + (index + 1),
-                            'aria-invalid': !!fieldError('env-name-' + index),
-                          }"
-                        />
-                      </FormItem>
-                    </td>
-                    <td>
-                      <FormItem
-                        :id="'task-env-value-' + index"
-                        hide-label
-                        :label="t('tasks.envValue')"
-                        :invalid="!!fieldError('env-value-' + index)"
-                        :message="fieldError('env-value-' + index)"
-                      >
-                        <NInput
-                          v-model:value="entry.value"
-                          :input-props="{
-                            id: 'task-env-value-' + index,
-                            'aria-label': t('tasks.envValue') + ' ' + (index + 1),
-                            'aria-invalid': !!fieldError('env-value-' + index),
-                          }"
-                        />
-                      </FormItem>
-                    </td>
-                    <td>
+                  <div v-if="groupValues.length" class="task-group-tags">
+                    <NTag v-for="group in groupValues" :key="group" size="small">
+                      <span class="task-group-code">{{ group }}</span>
                       <NButton
-                        text
-                        type="error"
+                        quaternary
+                        circle
+                        size="tiny"
                         :disabled="busy"
-                        :aria-label="t('tasks.removeEnv', { index: index + 1 })"
-                        @click="scriptDraft.env.splice(index, 1)"
-                        >{{ t('apiCall.remove') }}</NButton
-                      >
-                    </td>
-                  </tr>
-                  <template #feedback
-                    ><p class="task-note">{{ t('tasks.envHelp') }}</p></template
-                  >
-                </EditableTable>
-              </template>
-              <FormItem
-                id="task-groups"
-                :label="t('tasks.group')"
-                :invalid="!!groupError || !!fieldError('groups')"
-                :message="groupError ? t('tasks.' + groupError) : fieldError('groups')"
-              >
-                <div v-if="groupValues.length" class="task-group-tags">
-                  <NTag v-for="group in groupValues" :key="group" size="small">
-                    <span class="task-group-code">{{ group }}</span>
-                    <NButton
-                      quaternary
-                      circle
-                      size="tiny"
-                      :disabled="busy"
-                      :aria-label="t('tasks.removeGroup', { group })"
-                      @click="removeGroup(group)"
-                      ><X :size="12"
-                    /></NButton>
-                  </NTag>
-                </div>
-                <div class="task-group-input">
-                  <NInput
-                    v-model:value="groupInput"
-                    :placeholder="t('tasks.groupPlaceholder')"
+                        :aria-label="t('tasks.removeGroup', { group })"
+                        @click="removeGroup(group)"
+                        ><X :size="12"
+                      /></NButton>
+                    </NTag>
+                  </div>
+                  <div class="task-group-input">
+                    <NInput
+                      v-model:value="groupInput"
+                      :placeholder="t('tasks.groupPlaceholder')"
+                      :input-props="{
+                        id: 'task-groups',
+                        'aria-invalid': !!groupError || !!fieldError('groups'),
+                        'aria-describedby': 'task-groups-help',
+                      }"
+                      @keydown="groupKey"
+                    />
+                    <NButton :disabled="busy || !groupInput.trim()" @click="addGroup">{{
+                      t('tasks.addGroup')
+                    }}</NButton>
+                  </div>
+                </FormItem>
+                <p id="task-groups-help" class="task-note">{{ t('tasks.groupHelp') }}</p>
+                <FormItem
+                  id="task-description"
+                  :label="t('tasks.description')"
+                  :invalid="!!fieldError('description')"
+                  :message="fieldError('description')"
+                  ><NInput
+                    v-model:value="draft.description"
+                    type="textarea"
+                    :maxlength="500"
                     :input-props="{
-                      id: 'task-groups',
-                      'aria-invalid': !!groupError || !!fieldError('groups'),
-                      'aria-describedby': 'task-groups-help',
+                      id: 'task-description',
+                      'aria-invalid': !!fieldError('description'),
                     }"
-                    @keydown="groupKey"
-                  />
-                  <NButton :disabled="busy || !groupInput.trim()" @click="addGroup">{{
-                    t('tasks.addGroup')
-                  }}</NButton>
-                </div>
-              </FormItem>
-              <p id="task-groups-help" class="task-note">{{ t('tasks.groupHelp') }}</p>
-              <FormItem
-                id="task-description"
-                :label="t('tasks.description')"
-                :invalid="!!fieldError('description')"
-                :message="fieldError('description')"
-                ><NInput
-                  v-model:value="draft.description"
-                  type="textarea"
-                  :maxlength="500"
-                  :input-props="{
-                    id: 'task-description',
-                    'aria-invalid': !!fieldError('description'),
-                  }"
-              /></FormItem> </NCollapseItem
-          ></NCollapse>
-          <p
-            v-if="
-              !expanded.length &&
-              !isEvent &&
-              !isCheck &&
-              !isTransfer &&
-              !isPush &&
-              !isEtl &&
-              !isBatchEtl &&
-              !isMonitor &&
-              !isLocalJar
-            "
-            class="task-note"
-          >
-            {{
-              isEvent
-                ? t(
-                    draft.event.action === 'PUBLISH'
-                      ? 'eventTask.publishHint'
-                      : 'eventTask.waitingHint',
-                  )
-                : isApi
-                  ? t('apiCall.advancedSummary', {
-                      size: draft.api.maxResponseBytes,
-                      retry: draft.retryTimes,
-                    })
-                  : isScript
-                    ? t('tasks.scriptSummary', {
-                        encoding: scriptDraft.scriptCharset || 'UTF-8',
-                        retries: draft.retryTimes,
+                /></FormItem> </NCollapseItem
+            ></NCollapse>
+            <p
+              v-if="
+                !expanded.length &&
+                !isEvent &&
+                !isCheck &&
+                !isTransfer &&
+                !isPush &&
+                !isEtl &&
+                !isBatchEtl &&
+                !isMonitor &&
+                !isLocalJar
+              "
+              class="task-note"
+            >
+              {{
+                isEvent
+                  ? t(
+                      draft.event.action === 'PUBLISH'
+                        ? 'eventTask.publishHint'
+                        : 'eventTask.waitingHint',
+                    )
+                  : isApi
+                    ? t('apiCall.advancedSummary', {
+                        size: draft.api.maxResponseBytes,
+                        retry: draft.retryTimes,
                       })
-                    : t('tasks.summary', {
-                        transaction: t(draft.transaction ? 'tasks.on' : 'tasks.off'),
-                        seconds: draft.queryTimeoutSeconds,
-                        retries: draft.retryTimes,
-                      })
-            }}
-          </p>
-        </NForm>
+                    : isScript
+                      ? t('tasks.scriptSummary', {
+                          encoding: scriptDraft.scriptCharset || 'UTF-8',
+                          retries: draft.retryTimes,
+                        })
+                      : t('tasks.summary', {
+                          transaction: t(draft.transaction ? 'tasks.on' : 'tasks.off'),
+                          seconds: draft.queryTimeoutSeconds,
+                          retries: draft.retryTimes,
+                        })
+              }}
+            </p>
+          </NForm>
+        </div>
       </div>
       <template #footer
         ><div class="task-footer">

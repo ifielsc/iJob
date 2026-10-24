@@ -35,6 +35,8 @@
 /test/tools/*
 !/tools/ci/
 /tools/ci/*
+!/tools/job-package/
+/tools/job-package/*
 !/tools/repository/
 /tools/repository/*
 !/develop/api/ijob/
@@ -217,6 +219,8 @@
 /develop/web/ijob/src/modules/diagnostics/*
 !/develop/web/ijob/src/modules/jobs/
 /develop/web/ijob/src/modules/jobs/*
+!/develop/web/ijob/src/modules/packages/
+/develop/web/ijob/src/modules/packages/*
 !/develop/web/ijob/src/modules/parameters/
 /develop/web/ijob/src/modules/parameters/*
 !/develop/web/ijob/src/modules/runs/
@@ -325,6 +329,8 @@
 /develop/web/ijob/src/modules/configuration/public/*
 !/develop/web/ijob/src/modules/jobs/public/
 /develop/web/ijob/src/modules/jobs/public/*
+!/develop/web/ijob/src/modules/packages/public/
+/develop/web/ijob/src/modules/packages/public/*
 !/develop/web/ijob/src/modules/parameters/public/
 /develop/web/ijob/src/modules/parameters/public/*
 !/develop/web/ijob/src/modules/runs/public/
@@ -631,6 +637,8 @@
 /develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/job/*
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/notify/
 /develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/notify/*
+!/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/pack/
+/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/pack/*
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/parameter/
 /develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/parameter/*
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/resource/
@@ -715,6 +723,8 @@
 /develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/monitor/*
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/notify/
 /develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/notify/*
+!/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/pack/
+/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/pack/*
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/parameter/
 /develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/parameter/*
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/
@@ -757,6 +767,8 @@
 /develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/management/*
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/notify/
 /develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/notify/*
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/
+/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/*
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/parameter/
 /develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/parameter/*
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/query/
@@ -803,6 +815,8 @@
 /develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/management/*
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/
 /develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/*
+!/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/pack/
+/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/pack/*
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/parameter/
 /develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/parameter/*
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/query/
@@ -1407,9 +1421,12 @@
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/notify/NotifyBindingController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/notify/NotifyConfigController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/notify/NotifySendLogController.java
+!/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/pack/JobPackageController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/parameter/ParameterTemplateController.java
+!/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/resource/FileBrowseController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/resource/ReferenceSummaryController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/resource/ResourceController.java
+!/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/resource/SqlPreviewController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/resource/SshHostKeyController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/runtime/InstanceControlController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/runtime/RuntimeCommandController.java
@@ -1421,10 +1438,12 @@
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/security/AuditOperation.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/security/OperationAuditConfiguration.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/security/SafeReadProjection.java
+!/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/task/EtlInspectionController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/task/TaskController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/task/TaskExecutionContextController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/task/TaskExecutionController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/task/TaskHistoryController.java
+!/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/workbench/RuntimeOverviewController.java
 !/develop/api/ijob/ijob-api/src/main/java/com/ifielsc/ijob/api/workbench/WorkbenchController.java
 !/develop/api/ijob/ijob-api/src/main/resources/META-INF/LICENSE
 !/develop/api/ijob/ijob-api/src/test/java/com/ifielsc/ijob/api/BatchDeleteControllerContractTest.java
@@ -1616,11 +1635,13 @@
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/notify/NotifySendLogPageQuery.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/notify/NotifyTestSendDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/notify/NotifyTestSendRequest.java
+!/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/pack/JobPackageDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/parameter/ParameterField.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/parameter/ParameterForm.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/parameter/ParameterTemplateDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/parameter/ParameterTemplateQuery.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/parameter/ParameterTemplateRequest.java
+!/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/FileBrowseDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/ReferenceSummaryDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/ReferenceSummaryRequest.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/ResourceConfigRequest.java
@@ -1630,6 +1651,7 @@
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/ResourceListDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/ResourcePageQuery.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/ResourceUpsertRequest.java
+!/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/SqlPreviewDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/SshHostKeyDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/resource/SshHostKeyProbeRequest.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/runtime/GatewayDecisionDTO.java
@@ -1651,6 +1673,7 @@
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/schedule/SchedulePreviewItemDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/schedule/SchedulePreviewRequest.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/schedule/ScheduleUpsertRequest.java
+!/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/task/EtlInspectionDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/task/TaskDetailDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/task/TaskExecutionContextDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/task/TaskListDTO.java
@@ -1658,6 +1681,7 @@
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/task/TaskPublicationDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/task/TaskUpsertRequest.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/task/TaskVersionDTO.java
+!/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/workbench/RuntimeOverviewDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/workbench/WorkbenchDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/workbench/WorkbenchFailureDTO.java
 !/develop/api/ijob/ijob-contract/src/main/java/com/ifielsc/ijob/contract/workbench/WorkbenchQuery.java
@@ -1692,6 +1716,7 @@
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/etl/EtlCheckpointSnapshot.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/etl/EtlCheckpointStore.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/etl/EtlFileStateStore.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/etl/EtlInspection.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/etl/EtlMessageBindingStore.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/event/EventBindingService.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/event/EventPublishCommand.java
@@ -1827,10 +1852,19 @@
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/notify/template/NotifyTemplate.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/notify/template/PluginNotification.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/notify/template/TaskNotifyTemplate.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/PackageArchive.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/PackageExporter.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/PackageImporter.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/PackageJson.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/PackageObjects.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/PackageReferences.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/PackageSecrets.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/pack/PackageStore.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/parameter/ParameterMessage.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/parameter/ParameterRules.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/parameter/ParameterTemplateService.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/query/PageResults.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/FileBrowseService.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/HiddenHeaders.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/LeasedDataSource.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/ReferenceSummaryService.java
@@ -1840,6 +1874,7 @@
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/ResourceResolver.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/ResourceRuntimeService.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/ResourceService.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/SqlPreview.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/factory/ResourceClientFactory.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/factory/db/DbResourceConfig.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/resource/factory/db/DbResourceFactory.java
@@ -1945,6 +1980,7 @@
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/trigger/TriggerExecutionDisposition.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/trigger/TriggerRuntimeService.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/trigger/TriggerService.java
+!/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/workbench/RuntimeOverviewService.java
 !/develop/api/ijob/ijob-core/src/main/java/com/ifielsc/ijob/core/workbench/WorkbenchService.java
 !/develop/api/ijob/ijob-core/src/main/resources/META-INF/LICENSE
 !/develop/api/ijob/ijob-core/src/main/resources/notifications.properties
@@ -2044,8 +2080,12 @@
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/template/NotificationMessagesTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/template/NotificationPreviewServiceTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/notify/template/PluginNotificationTest.java
+!/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/pack/PackageArchiveTest.java
+!/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/pack/PackageExporterTest.java
+!/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/pack/PackageImporterTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/parameter/ParameterRulesTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/query/PageResultsTest.java
+!/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/FileBrowseServiceTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/FileResourceConfigTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/LeasedDataSourceTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/resource/MqResourceConfigTest.java
@@ -2101,6 +2141,7 @@
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/trigger/TriggerCommandHandlerTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/trigger/TriggerRuntimeServiceTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/trigger/TriggerServiceTest.java
+!/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/workbench/RuntimeOverviewServiceTest.java
 !/develop/api/ijob/ijob-core/src/test/java/com/ifielsc/ijob/core/workbench/WorkbenchServiceTest.java
 !/develop/api/ijob/ijob-framework/pom.xml
 !/develop/api/ijob/ijob-framework/src/main/java/com/ifielsc/ijob/framework/config/AsyncConfig.java
@@ -2291,6 +2332,7 @@
 !/develop/api/ijob/ijob-infra/src/main/java/com/ifielsc/ijob/infra/mapper/task/TaskPublicationMapper.java
 !/develop/api/ijob/ijob-infra/src/main/java/com/ifielsc/ijob/infra/mapper/task/TaskReferenceLockMapper.java
 !/develop/api/ijob/ijob-infra/src/main/java/com/ifielsc/ijob/infra/mapper/task/TaskReferenceMapper.java
+!/develop/api/ijob/ijob-infra/src/main/java/com/ifielsc/ijob/infra/mapper/workbench/RuntimeNodeRow.java
 !/develop/api/ijob/ijob-infra/src/main/java/com/ifielsc/ijob/infra/mapper/workbench/WorkbenchMapper.java
 !/develop/api/ijob/ijob-infra/src/main/java/com/ifielsc/ijob/infra/mapper/workbench/WorkbenchStatusCount.java
 !/develop/api/ijob/ijob-infra/src/main/java/com/ifielsc/ijob/infra/mybatis/AutoId.java
@@ -2490,6 +2532,7 @@
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/datacheck/model/DataCheckContext.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/datacheck/model/DataCheckItemResult.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/datacheck/model/DataCheckResult.java
+!/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/etl/EtlInspectionService.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/etl/EtlPipeline.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/etl/EtlPipelineFactory.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/etl/EtlTaskRunner.java
@@ -2699,6 +2742,8 @@
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/servermonitor/rule/NetworkMonitorRule.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/servermonitor/rule/Threshold.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/sql/SqlExecutionResource.java
+!/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/sql/SqlPreviewDiagnostic.java
+!/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/sql/SqlPreviewService.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/sql/SqlScriptParser.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/sql/SqlTaskConfig.java
 !/develop/api/ijob/ijob-plugin/src/main/java/com/ifielsc/ijob/plugin/sql/SqlTaskConfigValidator.java
@@ -2735,6 +2780,7 @@
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/datacheck/executor/DataCheckSqlExecutorTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/datacheck/executor/JdbcExecutorTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/datacheck/handler/DataCheckHandlerTest.java
+!/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/EtlInspectionServiceTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/EtlPipelineTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/EtlTaskRunnerConditionTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/LookupTransformerTest.java
@@ -2798,6 +2844,8 @@
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/servermonitor/handler/NotifyMonitorHandlerTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/servermonitor/handler/VariableMonitorHandlerTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/servermonitor/provider/HttpMonitorDataProviderTest.java
+!/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/sql/SqlPreviewDiagnosticTest.java
+!/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/sql/SqlPreviewServiceTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/sql/SqlScriptParserTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/sql/SqlTaskConfigValidatorTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/sql/SqlTaskRunnerTest.java
@@ -2817,6 +2865,7 @@
 !/develop/api/ijob/ijob-starter/src/main/java/com/ifielsc/ijob/RuntimeGuardSchemaVerifier.java
 !/develop/api/ijob/ijob-starter/src/main/java/com/ifielsc/ijob/RuntimeMaintenanceScanner.java
 !/develop/api/ijob/ijob-starter/src/main/java/com/ifielsc/ijob/RuntimeStartupCoordinator.java
+!/develop/api/ijob/ijob-starter/src/main/java/com/ifielsc/ijob/RuntimeTelemetryPublisher.java
 !/develop/api/ijob/ijob-starter/src/main/java/com/ifielsc/ijob/SqlServerPreMigrationGuard.java
 !/develop/api/ijob/ijob-starter/src/main/java/com/ifielsc/ijob/SqlServerSchemaCompatibilityInspector.java
 !/develop/api/ijob/ijob-starter/src/main/java/com/ifielsc/ijob/SqliteMigrationBoundary.java
@@ -2850,6 +2899,7 @@
 !/develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/IdLogTestDatabase.java
 !/develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/InstanceLogSnapshotIT.java
 !/develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/InstancePermitDialectTest.java
+!/develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/JobPackageHttpIT.java
 !/develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/MessageCatalogContractTest.java
 !/develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/MysqlDatabaseProvisionerIT.java
 !/develop/api/ijob/ijob-starter/src/test/java/com/ifielsc/ijob/MysqlIntegrationTargetTest.java
@@ -3038,6 +3088,7 @@
 !/develop/web/ijob/src/modules/diagnostics/diagnostics.css
 !/develop/web/ijob/src/modules/diagnostics/model.ts
 !/develop/web/ijob/src/modules/jobs/ConditionEditor.vue
+!/develop/web/ijob/src/modules/jobs/EdgeRoutingSelect.vue
 !/develop/web/ijob/src/modules/jobs/JobCanvas.vue
 !/develop/web/ijob/src/modules/jobs/JobConnection.vue
 !/develop/web/ijob/src/modules/jobs/JobEdge.vue
@@ -3054,6 +3105,14 @@
 !/develop/web/ijob/src/modules/jobs/public/components.ts
 !/develop/web/ijob/src/modules/jobs/public/contracts.ts
 !/develop/web/ijob/src/modules/jobs/use-edge-routing.ts
+!/develop/web/ijob/src/modules/packages/PackageActions.vue
+!/develop/web/ijob/src/modules/packages/PackageExport.vue
+!/develop/web/ijob/src/modules/packages/PackageImport.vue
+!/develop/web/ijob/src/modules/packages/PackageMappingEditor.vue
+!/develop/web/ijob/src/modules/packages/model.ts
+!/develop/web/ijob/src/modules/packages/packages.css
+!/develop/web/ijob/src/modules/packages/public/components.ts
+!/develop/web/ijob/src/modules/packages/report.ts
 !/develop/web/ijob/src/modules/parameters/FieldDefinitions.vue
 !/develop/web/ijob/src/modules/parameters/FieldValue.vue
 !/develop/web/ijob/src/modules/parameters/ParameterFormEditor.vue
@@ -3085,11 +3144,13 @@
 !/develop/web/ijob/src/modules/tasks/ApiCallFields.vue
 !/develop/web/ijob/src/modules/tasks/BatchEtlFields.vue
 !/develop/web/ijob/src/modules/tasks/BatchEtlValue.vue
+!/develop/web/ijob/src/modules/tasks/BatchTableDialog.vue
 !/develop/web/ijob/src/modules/tasks/DataCheckFields.vue
 !/develop/web/ijob/src/modules/tasks/EtlField.vue
 !/develop/web/ijob/src/modules/tasks/EtlFields.vue
 !/develop/web/ijob/src/modules/tasks/EtlFormNode.vue
 !/develop/web/ijob/src/modules/tasks/EtlMessageFields.vue
+!/develop/web/ijob/src/modules/tasks/EtlProgress.vue
 !/develop/web/ijob/src/modules/tasks/EtlTable.vue
 !/develop/web/ijob/src/modules/tasks/EventBindingsDrawer.vue
 !/develop/web/ijob/src/modules/tasks/EventFields.vue
@@ -3118,6 +3179,7 @@
 !/develop/web/ijob/src/modules/tasks/TieBreakerEditor.vue
 !/develop/web/ijob/src/modules/tasks/api-call-model.ts
 !/develop/web/ijob/src/modules/tasks/batch-etl-model.ts
+!/develop/web/ijob/src/modules/tasks/batch-table-selection.ts
 !/develop/web/ijob/src/modules/tasks/data-check-model.ts
 !/develop/web/ijob/src/modules/tasks/detail-presentation.ts
 !/develop/web/ijob/src/modules/tasks/detail-sections.ts
@@ -3137,6 +3199,7 @@
 !/develop/web/ijob/src/modules/users/UserEditor.vue
 !/develop/web/ijob/src/modules/users/UsersView.vue
 !/develop/web/ijob/src/modules/users/users.css
+!/develop/web/ijob/src/modules/workbench/RuntimeOverview.vue
 !/develop/web/ijob/src/modules/workbench/WorkbenchView.vue
 !/develop/web/ijob/src/modules/workbench/model.ts
 !/develop/web/ijob/src/modules/workbench/workbench.css
@@ -3144,6 +3207,7 @@
 !/develop/web/ijob/src/shared/api/contracts.ts
 !/develop/web/ijob/src/shared/api/errors.ts
 !/develop/web/ijob/src/shared/api/query.ts
+!/develop/web/ijob/src/shared/api/request.ts
 !/develop/web/ijob/src/shared/api/values.ts
 !/develop/web/ijob/src/shared/auth/access.ts
 !/develop/web/ijob/src/shared/auth/account-rules.ts
@@ -3174,10 +3238,13 @@
 !/develop/web/ijob/src/shared/i18n/messages.ts
 !/develop/web/ijob/src/shared/i18n/monitor.ts
 !/develop/web/ijob/src/shared/i18n/notify-bindings.ts
+!/develop/web/ijob/src/shared/i18n/packages.ts
 !/develop/web/ijob/src/shared/i18n/parameters.ts
 !/develop/web/ijob/src/shared/i18n/push.ts
+!/develop/web/ijob/src/shared/i18n/resource-preview.ts
 !/develop/web/ijob/src/shared/i18n/run-graph.ts
 !/develop/web/ijob/src/shared/i18n/runs.ts
+!/develop/web/ijob/src/shared/i18n/runtime-insights.ts
 !/develop/web/ijob/src/shared/i18n/schedules.ts
 !/develop/web/ijob/src/shared/i18n/security.ts
 !/develop/web/ijob/src/shared/i18n/tasks.ts
@@ -3214,6 +3281,8 @@
 !/develop/web/ijob/src/shared/ui/EditableTable.vue
 !/develop/web/ijob/src/shared/ui/EditorHeading.vue
 !/develop/web/ijob/src/shared/ui/EmptyState.vue
+!/develop/web/ijob/src/shared/ui/FilePathBrowser.vue
+!/develop/web/ijob/src/shared/ui/FilePathInput.vue
 !/develop/web/ijob/src/shared/ui/IdentityText.vue
 !/develop/web/ijob/src/shared/ui/IntegerInput.vue
 !/develop/web/ijob/src/shared/ui/JsonFormEditor.vue
@@ -3224,14 +3293,18 @@
 !/develop/web/ijob/src/shared/ui/RequestError.vue
 !/develop/web/ijob/src/shared/ui/RunProgress.vue
 !/develop/web/ijob/src/shared/ui/SqlEditor.vue
+!/develop/web/ijob/src/shared/ui/SqlEditorToolbar.vue
+!/develop/web/ijob/src/shared/ui/SqlQueryPanel.vue
 !/develop/web/ijob/src/shared/ui/TimeEvidence.vue
 !/develop/web/ijob/src/shared/ui/TimezoneControl.vue
 !/develop/web/ijob/src/shared/ui/UtcDateTimePicker.vue
 !/develop/web/ijob/src/shared/ui/detail-labels.ts
 !/develop/web/ijob/src/shared/ui/editable-table.css
+!/develop/web/ijob/src/shared/ui/file-browser.ts
 !/develop/web/ijob/src/shared/ui/json-form.css
 !/develop/web/ijob/src/shared/ui/json-form.ts
 !/develop/web/ijob/src/shared/ui/sql-editor.css
+!/develop/web/ijob/src/shared/ui/sql-preview.ts
 !/develop/web/ijob/src/shared/ui/use-list-memory.ts
 !/develop/web/ijob/src/shared/ui/use-table-overflow.ts
 !/develop/web/ijob/tests/batch-etl-fixture.ts
@@ -3261,10 +3334,12 @@
 !/develop/web/ijob/tests/e2e/mail-channels.spec.ts
 !/develop/web/ijob/tests/e2e/monitor.spec.ts
 !/develop/web/ijob/tests/e2e/notify-bindings.spec.ts
+!/develop/web/ijob/tests/e2e/packages.spec.ts
 !/develop/web/ijob/tests/e2e/parameters.spec.ts
 !/develop/web/ijob/tests/e2e/plugin-detail-display.spec.ts
 !/develop/web/ijob/tests/e2e/push.spec.ts
 !/develop/web/ijob/tests/e2e/qa15-rules.spec.ts
+!/develop/web/ijob/tests/e2e/resource-preview.spec.ts
 !/develop/web/ijob/tests/e2e/runs.spec.ts
 !/develop/web/ijob/tests/e2e/runtime-graph.spec.ts
 !/develop/web/ijob/tests/e2e/schedules.spec.ts
@@ -3324,6 +3399,7 @@
 !/develop/web/ijob/tests/unit/approvals.test.ts
 !/develop/web/ijob/tests/unit/auth-required.test.ts
 !/develop/web/ijob/tests/unit/batch-etl.test.ts
+!/develop/web/ijob/tests/unit/batch-table-selection.test.ts
 !/develop/web/ijob/tests/unit/calendar-data.test.ts
 !/develop/web/ijob/tests/unit/calendar-exceptions.test.ts
 !/develop/web/ijob/tests/unit/client.test.ts
@@ -3357,12 +3433,14 @@
 !/develop/web/ijob/tests/unit/notification-channels.test.ts
 !/develop/web/ijob/tests/unit/notification-preview.test.ts
 !/develop/web/ijob/tests/unit/notify-bindings.test.ts
+!/develop/web/ijob/tests/unit/packages.test.ts
 !/develop/web/ijob/tests/unit/parameters.test.ts
 !/develop/web/ijob/tests/unit/plugin-facts.test.ts
 !/develop/web/ijob/tests/unit/preferences.test.ts
 !/develop/web/ijob/tests/unit/presentation.test.ts
 !/develop/web/ijob/tests/unit/push.test.ts
 !/develop/web/ijob/tests/unit/remote-publication-stop.test.ts
+!/develop/web/ijob/tests/unit/resource-preview.test.ts
 !/develop/web/ijob/tests/unit/router.test.ts
 !/develop/web/ijob/tests/unit/run-graph.test.ts
 !/develop/web/ijob/tests/unit/runs.test.ts
@@ -3370,6 +3448,7 @@
 !/develop/web/ijob/tests/unit/script-ssh.test.ts
 !/develop/web/ijob/tests/unit/security.test.ts
 !/develop/web/ijob/tests/unit/tasks.test.ts
+!/develop/web/ijob/tests/unit/use-edge-routing.test.ts
 !/develop/web/ijob/tests/unit/utc-picker.test.ts
 !/develop/web/ijob/tests/unit/uuid.test.ts
 !/develop/web/ijob/tests/unit/workbench.test.ts
@@ -3396,6 +3475,7 @@
 !/document/ci/isolated-integration.md
 !/document/examples/deployment/frontend.env.local.example
 !/document/examples/deployment/nginx.conf.example
+!/document/operations/resource-preview.md
 !/document/operations/templates/environment.yaml.example
 !/document/operations/templates/resources.md
 !/document/operations/workspace-and-environments.md
@@ -3416,5 +3496,8 @@
 !/tools/ci/requirements.txt
 !/tools/ci/verify-docker.py
 !/tools/ci/verify-local-integration.ps1
+!/tools/job-package/README.md
+!/tools/job-package/ijob_package.py
+!/tools/job-package/test_ijob_package.py
 !/tools/repository/check-license.py
 !/tools/repository/prepare.py

@@ -9,6 +9,16 @@ test.beforeEach(({ page }) => {
   page.on('pageerror', (e) => list.push(e.message))
 })
 test.afterEach(({ page }) => expect(errors.get(page)).toEqual([]))
+function routingLabel(value: string, locale = 'zh-CN') {
+  const [direction, mode] = value.split(':')
+  return locale === 'zh-CN'
+    ? `${direction === 'LR' ? '从左到右' : '从上到下'} · ${mode === 'avoid' ? '自动避障' : '简洁曲线'}`
+    : `${direction === 'LR' ? 'Left to right' : 'Top to bottom'} · ${mode === 'avoid' ? 'Avoid obstacles' : 'Simple curves'}`
+}
+async function selectRouting(page: Page, value: string, locale = 'zh-CN') {
+  await page.locator('.job-routing-select').click()
+  await page.getByRole('option', { name: routingLabel(value, locale), exact: true }).click()
+}
 const jobId = '9223372036854775807'
 const row = {
   id: jobId,
@@ -238,6 +248,45 @@ for (const suffix of ['', '/edit', '/versions/23010'])
     await page.goto('/jobs/' + jobId + suffix)
     await expect(page.locator('.vue-flow__node')).toHaveCount(4)
     await expect(page.getByText('正在加载作业...', { exact: true })).toHaveCount(0)
+    await expect(page.locator('.job-graph-panel > .job-note')).toHaveCount(0)
+    const help = page.getByRole('button', { name: '画布说明', exact: true })
+    const tooltip = page.getByRole('tooltip')
+    await expect(help).toBeVisible()
+    await expect(tooltip).toBeHidden()
+    await expect(page.locator('.job-heading .job-reference-hint')).toHaveCount(0)
+    const canvasBefore = await page.locator('.job-canvas').boundingBox()
+    await help.hover()
+    await expect(tooltip).toBeVisible()
+    if (suffix === '/edit') await expect(tooltip).toContainText('Shift')
+    else await expect(tooltip).toContainText('展示发布时的引用')
+    if (suffix !== '/edit') {
+      await expect(tooltip).toContainText(suffix ? '展示发布时的引用' : '只读拓扑')
+      await expect(page.locator('.job-editor > .job-notice')).toHaveCount(0)
+      if (suffix) await expect(tooltip).toContainText('#23010')
+      const spacing = await page
+        .locator('.job-workspace')
+        .evaluate(
+          (e) =>
+            e.getBoundingClientRect().top -
+            document.querySelector('.job-heading')!.getBoundingClientRect().bottom,
+        )
+      expect(spacing).toBeLessThanOrEqual(20)
+    }
+    await tooltip.hover()
+    await expect(tooltip).toBeVisible()
+    expect(await page.locator('.job-canvas').boundingBox()).toEqual(canvasBefore)
+    await page.keyboard.press('Escape')
+    await expect(tooltip).toBeHidden()
+    await page.mouse.move(0, 0)
+    await help.focus()
+    await expect(tooltip).toBeVisible()
+    await expect(help).toHaveAttribute('aria-describedby', (await tooltip.getAttribute('id')) || '')
+    await page.keyboard.press('Escape')
+    await expect(tooltip).toBeHidden()
+    await help.press('Enter')
+    await expect(tooltip).toBeVisible()
+    await help.press('Tab')
+    await expect(tooltip).toBeHidden()
     await expect(page.locator('.job-unrelated')).toHaveCount(0)
     await expect(page.locator('.vue-flow__node.selected')).toHaveCount(0)
     await expect(page.locator('.vue-flow__node[data-id="yes"]')).toHaveCSS('opacity', '1')
@@ -479,6 +528,11 @@ test('vertical drag connection, confirmed Delete and undo/redo retain directions
   await page.mouse.down()
   await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 12 })
   await expect(to).toHaveClass(/vue-flow__handle-valid/)
+  await expect(page.locator('.vue-flow__connection-path')).toHaveAttribute(
+    'data-routing',
+    'preview',
+  )
+  expect(await page.locator('.vue-flow__connection-path').getAttribute('d')).toContain('C')
   await page.mouse.up()
   await expect(page.locator('.vue-flow__edge')).toHaveCount(4)
   await page.locator('.job-canvas').focus()
@@ -552,8 +606,7 @@ for (const count of [100, 500])
     await expect(page.locator('.job-minimap')).toBeVisible()
     await page.getByRole('button', { name: '最大化画布', exact: true }).click()
     await expect(page.locator('.job-editor')).toHaveClass(/job-maximized/)
-    await page.locator('.job-direction').click()
-    await page.getByRole('option', { name: '从上到下', exact: true }).click()
+    await selectRouting(page, 'TB:avoid')
     await page.getByRole('button', { name: '自动布局', exact: true }).click()
     await expect(page.locator('.vue-flow__edge')).toHaveCount(count - 1)
   })
@@ -645,7 +698,11 @@ test('automatic routes avoid unrelated nodes, reroute after dragging and follow 
   await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2)
   await page.mouse.down()
   await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2 + 150, { steps: 10 })
+  await expect(page.locator('.job-canvas')).toHaveAttribute('data-dragging', 'true')
+  await page.waitForTimeout(150)
+  await expect(path).toHaveAttribute('d', before!)
   await page.mouse.up()
+  await expect(page.locator('.job-canvas')).toHaveAttribute('data-dragging', 'false')
   await expect(edge.locator('[data-routing]')).toHaveAttribute('data-routing', 'direct')
   expect(await path.getAttribute('d')).not.toBe(before)
   await expect(page.getByRole('button', { name: '撤销', exact: true })).toBeEnabled()
@@ -664,6 +721,200 @@ test('automatic routes avoid unrelated nodes, reroute after dragging and follow 
   await expect(page.getByRole('dialog')).toBeVisible()
   await page.getByRole('dialog').getByRole('button', { name: '取消', exact: true }).click()
   await expect(edge).toBeVisible()
+  // Incident edges follow the moved endpoint with a simple preview until release.
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  const sourceNode = page.locator('.vue-flow__node[data-id="a"]')
+  await sourceNode.hover()
+  const source = (await sourceNode.boundingBox())!
+  await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(source.x + source.width / 2, source.y + source.height / 2 - 50, {
+    steps: 8,
+  })
+  await expect(page.locator('.job-canvas')).toHaveAttribute('data-dragging', 'true')
+  await expect(edge.locator('[data-routing]')).toHaveAttribute('data-routing', 'preview')
+  await page.mouse.up()
+  await expect(edge.locator('[data-routing]')).toHaveAttribute(
+    'data-routing',
+    /^(direct|curve|detour)$/,
+  )
+})
+
+test('routing preference changes only the view, persists per account and works in read-only history', async ({
+  page,
+}) => {
+  const state = await setup(page)
+  await page.goto('/jobs/' + jobId + '/edit')
+  await expect(page.getByRole('combobox', { name: '布局与连线', exact: true })).toBeVisible()
+  await expect(page.locator('.job-routing-select')).toContainText(routingLabel('LR:avoid'))
+  await page.locator('.vue-flow__node[data-id="read"]').click()
+  const view = await page.locator('.vue-flow__transformationpane').getAttribute('style')
+  await selectRouting(page, 'LR:simple')
+  await expect(page.locator('.vue-flow__edge [data-routing="simple"]')).toHaveCount(3)
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem('ijob:preferences:v1:user:job-admin') ?? 'null')
+          ?.edgeRouting,
+    ),
+  ).toBe('simple')
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem('ijob:preferences:v1:guest') ?? 'null')?.edgeRouting,
+    ),
+  ).toBeUndefined()
+  await expect(page.locator('.vue-flow__node[data-id="read"]')).toHaveClass(/selected/)
+  expect(await page.locator('.vue-flow__transformationpane').getAttribute('style')).toBe(view)
+  await expect(page.getByRole('button', { name: '保存并发布', exact: true })).toBeDisabled()
+  await expect(page.getByRole('button', { name: '撤销', exact: true })).toBeDisabled()
+  expect(state.writes).toHaveLength(0)
+  await page.reload()
+  await expect(page.locator('.job-routing-select')).toContainText(routingLabel('LR:simple'))
+  await expect(page.locator('.vue-flow__edge [data-routing="simple"]')).toHaveCount(3)
+  await page.goto('/jobs/' + jobId + '/versions/23010')
+  await expect(page.locator('.job-routing-select')).toContainText(routingLabel('LR:simple'))
+  await selectRouting(page, 'LR:avoid')
+  await expect(page.locator('.job-canvas')).toHaveAttribute('data-routing-pending', 'false')
+  await expect(page.locator('.vue-flow__edge [data-routing="simple"]')).toHaveCount(0)
+  await selectRouting(page, 'LR:simple')
+  await page.route('**/api/auth/me', (route) =>
+    route.fulfill({
+      json: {
+        success: true,
+        code: 200,
+        data: {
+          loginId: 'another-viewer',
+          username: 'viewer',
+          displayName: 'Viewer',
+          roleCode: 'VIEWER',
+          permissions: ['DEFINITION_READ', 'SENSITIVE_READ'],
+          mustChangePassword: false,
+        },
+      },
+    }),
+  )
+  await page.reload()
+  await expect(page.locator('.job-routing-select')).toContainText(routingLabel('LR:avoid'))
+  await selectRouting(page, 'LR:simple')
+  await selectRouting(page, 'LR:avoid')
+  await page.unroute('**/api/auth/me')
+  await page.reload()
+  await expect(page.locator('.job-routing-select')).toContainText(routingLabel('LR:simple'))
+  expect(state.writes).toHaveLength(0)
+})
+
+for (const theme of ['light', 'dark'] as const)
+  for (const locale of ['zh-CN', 'en-US'] as const)
+    test(`routing controls remain readable at 390 and 320 pixels ${theme} ${locale}`, async ({
+      page,
+    }, info) => {
+      await setup(page)
+      await page.addInitScript(
+        ({ theme, locale }) => {
+          localStorage.setItem('ijob:preferences:v1:guest', JSON.stringify({ theme, locale }))
+        },
+        { theme, locale },
+      )
+      await page.goto('/jobs/' + jobId + '/edit')
+      const select = page.getByRole('combobox', {
+        name: locale === 'zh-CN' ? '布局与连线' : 'Layout and connections',
+        exact: true,
+      })
+      await expect(select).toBeVisible()
+      await page
+        .getByRole('button', {
+          name: locale === 'zh-CN' ? '收起属性' : 'Hide properties',
+          exact: true,
+        })
+        .click()
+      for (const width of [390, 320]) {
+        await page.setViewportSize({ width, height: 900 })
+        const help = page.getByRole('button', {
+          name: locale === 'zh-CN' ? '画布说明' : 'Canvas help',
+          exact: true,
+        })
+        await help.click()
+        const tooltip = page.getByRole('tooltip')
+        await page.mouse.move(0, 0)
+        // A focused help button keeps its text available after the hover hide delay.
+        await page.waitForTimeout(250)
+        await expect(tooltip).toContainText('Ctrl+Z')
+        await expect
+          .poll(() =>
+            tooltip.evaluate((e) => {
+              const b = e.getBoundingClientRect()
+              return {
+                left: b.left >= 0,
+                right: b.right <= innerWidth,
+                fits: e.scrollWidth <= e.clientWidth + 1,
+              }
+            }),
+          )
+          .toEqual({ left: true, right: true, fits: true })
+        await page.screenshot({ path: info.outputPath(`help-${width}.png`) })
+        await page.locator('.job-heading h1').click()
+        await expect(tooltip).toBeHidden()
+        for (const mode of ['simple', 'avoid']) {
+          await selectRouting(page, 'LR:' + mode, locale)
+          await expect(page.locator('.job-routing-select')).toContainText(
+            routingLabel('LR:' + mode, locale),
+          )
+          await page.locator('.job-heading h1').click()
+          const selector = page.locator('.job-routing-select')
+          expect((await selector.boundingBox())!.width).toBeLessThanOrEqual(
+            locale === 'zh-CN' ? 176 : 224,
+          )
+          expect(
+            await selector.locator('.n-base-selection-overlay__wrapper').evaluate((e) => {
+              const range = document.createRange()
+              range.selectNodeContents(e)
+              return range.getBoundingClientRect().width <= e.getBoundingClientRect().width + 1
+            }),
+          ).toBe(true)
+          expect(
+            await page.locator('.job-routing-select').evaluate((element) => {
+              const bounds = element.getBoundingClientRect(),
+                canvas = element.closest('.job-toolbar')!.getBoundingClientRect()
+              return (
+                element.previousElementSibling!.tagName === 'BUTTON' &&
+                element.parentElement!.scrollWidth <= element.parentElement!.clientWidth + 1 &&
+                bounds.left >= canvas.left &&
+                bounds.right <= canvas.right
+              )
+            }),
+          ).toBe(true)
+          expect(
+            await page.locator('.job-canvas-count').evaluate((element) => {
+              const count = element.getBoundingClientRect()
+              const controls = element
+                .closest('.job-canvas')!
+                .querySelector('.job-canvas-controls')!
+                .getBoundingClientRect()
+              return count.bottom <= controls.top
+            }),
+          ).toBe(true)
+          await page
+            .locator('.job-editor')
+            .screenshot({ path: info.outputPath(`canvas-${width}-${mode}.png`) })
+        }
+      }
+    })
+
+test.describe('touch canvas help', () => {
+  test.use({ hasTouch: true, viewport: { width: 390, height: 900 } })
+  test('opens on tap and closes outside without changing the draft', async ({ page }) => {
+    const state = await setup(page)
+    await page.goto('/jobs/' + jobId + '/edit')
+    const help = page.getByRole('button', { name: '画布说明', exact: true })
+    await help.tap()
+    await page.waitForTimeout(250)
+    await expect(page.getByRole('tooltip')).toContainText('预检不锁定引用版本')
+    await expect(page.getByRole('tooltip')).toContainText('Shift')
+    await page.locator('.job-heading h1').tap()
+    await expect(page.getByRole('tooltip')).toBeHidden()
+    await expect(page.getByRole('button', { name: '保存并发布', exact: true })).toBeDisabled()
+    expect(state.writes).toHaveLength(0)
+  })
 })
 
 test('5000-edge boundary remains searchable without console failures', async ({ page }) => {
@@ -724,6 +975,84 @@ test('return from details retains exact ID, group and page size', async ({ page 
   await expect(page.locator('#jobs-id')).toHaveValue(jobId)
   expect(new URL(page.url()).searchParams.get('group')).toBe('daily')
   expect(new URL(page.url()).searchParams.get('pageSize')).toBe('50')
+})
+
+test('editor canvas fills available height after resize and maximize with standard selects', async ({
+  page,
+}, info) => {
+  await setup(page)
+  await page.goto('/jobs/' + jobId + '/edit')
+  await expect(page.locator('.job-routing-select.n-select .n-base-selection')).toBeVisible()
+  for (const viewport of [
+    { width: 1600, height: 1000 },
+    { width: 1280, height: 800 },
+    { width: 1600, height: 1200 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await expect
+      .poll(() =>
+        page
+          .locator('.job-workspace')
+          .evaluate((e) => innerHeight - e.getBoundingClientRect().bottom),
+      )
+      .toBeGreaterThanOrEqual(15)
+    await expect
+      .poll(() =>
+        page
+          .locator('.job-workspace')
+          .evaluate((e) => innerHeight - e.getBoundingClientRect().bottom),
+      )
+      .toBeLessThanOrEqual(25)
+  }
+  await page.getByRole('button', { name: '最大化画布', exact: true }).click()
+  await expect
+    .poll(() =>
+      page
+        .locator('.job-workspace')
+        .evaluate((e) => innerHeight - e.getBoundingClientRect().bottom),
+    )
+    .toBeLessThanOrEqual(17)
+  await page.getByRole('button', { name: '还原画布', exact: true }).click()
+  await page.locator('.job-routing-select').click()
+  await expect(page.getByRole('option')).toHaveCount(4)
+  await page.screenshot({ path: info.outputPath('editor-select-menu.png'), fullPage: true })
+  await page.keyboard.press('Escape')
+})
+
+test('editor header is compact and auto layout keeps branch labels close to their edges', async ({
+  page,
+}) => {
+  await setup(page)
+  await page.setViewportSize({ width: 1600, height: 1000 })
+  await page.goto('/jobs/' + jobId + '/edit')
+  const back = page.getByRole('button', { name: '返回作业', exact: true })
+  await expect(back.locator('svg')).toBeVisible()
+  expect(
+    await back.evaluate((e) => {
+      const color = getComputedStyle(e).color.match(/\d+/g)!.map(Number)
+      return color[2]! > color[0]!
+    }),
+  ).toBe(true)
+  await page.getByRole('button', { name: '画布说明', exact: true }).hover()
+  await expect(page.getByRole('tooltip')).toContainText('预检不锁定引用版本')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.job-editor > .job-notice')).toHaveCount(0)
+  await page.getByRole('button', { name: '收起属性', exact: true }).click()
+  for (const direction of ['从左到右', '从上到下']) {
+    await selectRouting(page, direction === '从左到右' ? 'LR:avoid' : 'TB:avoid')
+    await page.getByRole('button', { name: '自动布局', exact: true }).click()
+    await expect(page.locator('.job-canvas')).toHaveAttribute('data-routing-pending', 'false')
+    await expect(page.locator('.job-route-label')).toHaveCount(2)
+    await expect
+      .poll(() =>
+        page
+          .locator('.job-label-guide')
+          .evaluateAll((lines) =>
+            Math.max(...lines.map((line) => (line as SVGPathElement).getTotalLength())),
+          ),
+      )
+      .toBeLessThanOrEqual(64)
+  }
 })
 
 test('removed condition draft survives undo but does not block route after publish', async ({

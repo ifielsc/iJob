@@ -67,6 +67,7 @@ defineExpose({ focusError })
             ref="sql"
             v-model="draft.sql"
             context-key="PUSH"
+            :query-context="{ resourceId: draft.sourceResourceId, mode: 'PUSH' }"
             :disabled="disabled"
             :invalid="!!error('sql')"
             @expanded="emit('expanded', $event)"

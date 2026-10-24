@@ -135,6 +135,27 @@ class WorkbenchServiceTest {
     }
 
     private static final class FakeMapper implements WorkbenchMapper {
+        public java.util.List<com.ifielsc.ijob.infra.mapper.workbench.RuntimeNodeRow>
+                selectRuntimeNodes(boolean history) {
+            return List.of();
+        }
+
+        public long countQueuedWork(LocalDateTime now) {
+            return 0;
+        }
+
+        public long countClaimedWork(LocalDateTime now) {
+            return 0;
+        }
+
+        public long countExpiredWork(LocalDateTime now) {
+            return 0;
+        }
+
+        public LocalDateTime selectOldestQueuedAt(LocalDateTime now) {
+            return null;
+        }
+
         private List<WorkbenchStatusCount> rows = List.of();
         private String operator;
         private boolean fail;

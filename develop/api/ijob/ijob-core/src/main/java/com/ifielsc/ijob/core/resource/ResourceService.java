@@ -253,6 +253,12 @@ public class ResourceService {
         }
     }
 
+    /** Validate package input without persisting it or connecting to an external system. */
+    public void validateImport(ResourceUpsertRequest request) {
+        validateRequest(request);
+        configService.protect(request, null);
+    }
+
     private void validateRequest(ResourceUpsertRequest request) {
         if (request == null) {
             throw paramError(CoreMessage.REQUEST_BODY_IS_REQUIRED);

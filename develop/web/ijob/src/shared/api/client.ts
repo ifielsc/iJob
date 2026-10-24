@@ -25,6 +25,7 @@ export function createApiClient(context: Context) {
       anonymous?: boolean
       idempotencyKey?: string
       localForbidden?: boolean
+      timeoutMs?: number
     } = {},
   ): Promise<T> {
     if (!/^\/api\/[a-zA-Z0-9/_?=&.%+-]+$/.test(path) || path.includes('..'))
@@ -36,7 +37,10 @@ export function createApiClient(context: Context) {
     if (options.body !== undefined) headers.set('Content-Type', 'application/json')
     if (options.idempotencyKey) headers.set('Idempotency-Key', options.idempotencyKey)
     const timeout = new AbortController()
-    const timer = setTimeout(() => timeout.abort(), context.timeoutMs ?? 15_000)
+    const timer = setTimeout(
+      () => timeout.abort(),
+      options.timeoutMs ?? context.timeoutMs ?? 15_000,
+    )
     const signal = options.signal
       ? AbortSignal.any([options.signal, timeout.signal])
       : timeout.signal

@@ -185,9 +185,28 @@ public class ScheduleService {
 
     @Transactional
     public Long create(ScheduleUpsertRequest request) {
+        return create(request, false);
+    }
+
+    /** Only the package importer uses this path; enabling still requires normal admission. */
+    @Transactional
+    public Long importDisabled(ScheduleUpsertRequest request) {
+        if (request == null || !Boolean.FALSE.equals(request.getEnabled())) {
+            throw paramError(CoreMessage.ENABLED_STATE_IS_REQUIRED);
+        }
+        return create(request, true);
+    }
+
+    private Long create(ScheduleUpsertRequest request, boolean importedDisabled) {
         LocalDateTime now = nowInBusinessZone();
         Schedule schedule = toSchedule(request, now);
-        validateTarget(schedule.getTargetType(), schedule.getTargetId());
+        if (importedDisabled) {
+            if (schedule.getTargetType() == TargetType.TASK) {
+                taskAdmissionResolver.lockPublishedConfiguration(schedule.getTargetId());
+            } else if (schedule.getTargetType() == TargetType.JOB) {
+                jobAdmissionResolver.lockPublishedConfiguration(schedule.getTargetId());
+            } else throw paramError(CoreMessage.TARGET_TYPE_IS_REQUIRED);
+        } else validateTarget(schedule.getTargetType(), schedule.getTargetId());
         validateCalendar(schedule.getCalendarId());
         initializeNextFireTime(schedule, now);
         convertBusinessFieldsToUtc(schedule);
@@ -713,6 +732,12 @@ public class ScheduleService {
             return null;
         }
         return candidate;
+    }
+
+    public void validateImport(ScheduleUpsertRequest request) {
+        validateRequest(request);
+        variableSnapshotService.serializeUserVariables(
+                request.getVariables(), request.getParameterForm());
     }
 
     private void validateRequest(ScheduleUpsertRequest request) {
