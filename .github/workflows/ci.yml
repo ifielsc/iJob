@@ -39,6 +39,10 @@ jobs:
         run: python tools/repository/prepare.py scan --report test/reports/repository/scan.json
       - name: Verify first-party license declarations
         run: python tools/repository/check-license.py
+      - name: Verify paired manuals and distribution boundaries
+        run: |
+          python tools/distribution/docs.py --check
+          python -m unittest discover -s tools/distribution -p test_build.py
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

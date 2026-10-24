@@ -1,0 +1,22 @@
+key	type	default	en	zh
+server.address	text	127.0.0.1	Native listen address; Docker keeps 0.0.0.0 inside the container.	原生监听地址；Docker 容器内部保持 0.0.0.0。
+server.port	port	18080	Native HTTP port; Docker keeps 8080 and changes the published host port.	原生 HTTP 端口；Docker 保持内部 8080，修改宿主端口映射。
+spring.datasource.url	text	generated	Database URL created during setup. Changing database products requires a migration plan.	初始化生成的数据库地址；更换数据库产品必须另行迁移。
+spring.datasource.username	text	generated	Database account; not used for SQLite. Never put credentials in a URL.	数据库账号，SQLite 不使用；不要将凭据写入连接地址。
+spring.datasource.password	secret	generated	Edit only in the private application.properties; never pass on the command line.	仅在受限 application.properties 内修改，不通过命令行传递。
+spring.datasource.hikari.maximum-pool-size	positive-int	4	Connection pool size; coordinate with the database connection budget.	连接池大小，应与数据库可承受连接数一起规划。
+app.schedule.enabled	boolean	true	Global schedule scanner; individual schedules still need to be enabled in the UI.	全局调度扫描开关；具体调度仍需在页面启用。
+app.plugin.etl.enabled	boolean	true	Enable ETL tasks.	启用 ETL 任务。
+app.plugin.batch-etl.enabled	boolean	true	Enable batch ETL tasks.	启用批量 ETL 任务。
+app.plugin.local-jar.enabled	boolean	false	Enable trusted Local JAR plugins only after preparing their directory and dependencies.	准备好目录和依赖后，按需启用可信 Local JAR 插件。
+app.plugin.local-jar.root-directory	text	empty	Absolute plugin directory on the executing node; Docker requires an explicit mount.	执行节点的插件绝对目录；Docker 需要显式挂载。
+app.resource-browser.local-roots	text	empty	Comma-separated absolute roots allowed for browsing LOCAL resource drafts.	允许浏览 LOCAL 资源草稿的绝对根目录，多个目录用逗号分隔。
+app.http.connect-timeout	duration	5s	Connection timeout for the shared HTTP client, not every external plugin.	共用 HTTP 客户端连接超时，不代表所有外部插件的超时。
+app.http.read-timeout	duration	30s	Read timeout for the shared HTTP client.	共用 HTTP 客户端读取超时。
+app.notification.locale	locale	en	Default notification language; notification-specific choices can override it.	通知默认语言，可被具体通知配置覆盖。
+app.event.ingress.enabled	boolean	false	Enable event ingress; authentication and EVENT_PUBLISH permission still apply.	启用事件接入；仍要求登录和 EVENT_PUBLISH 权限。
+app.retention.enabled	boolean	false	Enable history retention only after reviewing the retention rules.	核对保留规则后再启用历史清理。
+app.retention.dry-run	boolean	true	Keep true for a dry run; false permits deletion when retention is enabled.	保持 true 时只演练；清理开启且为 false 时允许删除。
+ijob.logging.max-file-size	size	10MB	Native log rotation size; Docker logging is configured in Compose.	原生日志单文件滚动大小；Docker 日志在 Compose 中配置。
+ijob.logging.max-history	positive-int	14	Native log archive retention in days.	原生日志归档保留天数。
+ijob.logging.total-size-cap	size	200MB	Native archive size cap; may remove archives before the day limit.	原生日志归档总容量上限，可能提前清理未到期归档。

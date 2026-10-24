@@ -88,6 +88,7 @@ public final class SetupTool {
                             "app.retention.dry-run",
                             "When true, history cleanup does not delete data. Independent of"
                                     + " application log rotation."));
+    private boolean chinese = "zh".equals(System.getenv("IJOB_LANG"));
     private final Console console = System.console();
     private final BufferedReader input =
             new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
@@ -95,7 +96,9 @@ public final class SetupTool {
 
     public static void main(String[] args) {
         try {
-            new SetupTool().run(args);
+            if (args.length > 0 && Set.of("settings", "check-settings").contains(args[0])) {
+                UserSettings.run(args, System.out);
+            } else new SetupTool().run(args);
         } catch (Exception e) {
             // Do not echo connection strings, passwords or configuration contents in errors.
             System.err.println(
@@ -115,10 +118,15 @@ public final class SetupTool {
         for (int i = 1; i < args.length; i++) {
             String key = args[i];
             if (key.equals("--stdin")) options.put(key, "true");
-            else if (Set.of("--home", "--bundle", "--mode", "--host-uid", "--host-gid")
+            else if (Set.of("--home", "--bundle", "--mode", "--host-uid", "--host-gid", "--lang")
                             .contains(key)
                     && i + 1 < args.length) options.put(key, args[++i]);
             else throw new SetupException("Unknown or incomplete option");
+        }
+        if (options.containsKey("--lang")) {
+            if (!Set.of("zh", "en").contains(options.get("--lang")))
+                throw new SetupException("Use --lang zh or en");
+            chinese = "zh".equals(options.get("--lang"));
         }
         Path bundle = Path.of(options.getOrDefault("--bundle", ".")).toAbsolutePath().normalize();
         String homeOption =
@@ -148,7 +156,7 @@ public final class SetupTool {
         }
         if (Files.exists(home, NOFOLLOW) && !emptyHome) {
             installation = existing(home, mode);
-            System.out.println("Reusing existing installation: " + home);
+            System.out.println((SetupMessages.text(chinese, "reused")) + home);
         } else {
             if (console == null && !options.containsKey("--stdin"))
                 throw new SetupException(
@@ -268,7 +276,9 @@ public final class SetupTool {
             }
             writePrivate(home.resolve("setup.complete"), "1\n");
             System.out.println(
-                    "Initialized: " + home + " (configuration only; no database connection made)");
+                    (SetupMessages.text(chinese, "initialized"))
+                            + home
+                            + (SetupMessages.text(chinese, "configuration-only")));
         }
         if (command.equals("start")) {
             Path jar = bundle.resolve("ijob-starter-1.0.0.jar");
@@ -339,6 +349,25 @@ public final class SetupTool {
     }
 
     private String read(String prompt, boolean secret) throws IOException {
+        if (chinese)
+            prompt =
+                    switch (prompt) {
+                        case "Administrator username: " ->
+                                SetupMessages.text(chinese, "prompt.username");
+                        case "Administrator password (12+ characters): " ->
+                                SetupMessages.text(chinese, "prompt.password");
+                        case "Confirm password: " -> SetupMessages.text(chinese, "prompt.confirm");
+                        case "Database [sqlite/mysql/postgresql/sqlserver/oracle] (sqlite): " ->
+                                SetupMessages.text(chinese, "prompt.database");
+                        case "Database username: " ->
+                                SetupMessages.text(chinese, "prompt.database-user");
+                        case "Database password: " ->
+                                SetupMessages.text(chinese, "prompt.database-password");
+                        default ->
+                                prompt.startsWith("JDBC URL")
+                                        ? SetupMessages.text(chinese, "prompt.jdbc")
+                                        : prompt;
+                    };
         if (console != null) {
             if (secret) {
                 char[] chars = console.readPassword("%s", prompt);
@@ -479,7 +508,7 @@ public final class SetupTool {
                name: ijob-setup-%s
                services:
                  backend:
-                   image: ijob-backend:1.0.0-setup.3
+                   image: ijob-backend:1.0.0
                    environment:
                      IJOB_PLATFORM_DB: %s
                      SPRING_PROFILES_ACTIVE: release
@@ -505,7 +534,7 @@ public final class SetupTool {
                      driver: json-file
                      options: {max-size: 10m, max-file: '5'}
                  web:
-                   image: ijob-web:1.0.0-ui.1
+                   image: ijob-web:1.0.0
                    ports: ['127.0.0.1:${IJOB_HTTP_PORT:-18080}:8080']
                    depends_on:
                      backend: {condition: service_healthy}

@@ -1,5 +1,9 @@
 # iJob 1.0.0
 
+[English](README.en.md) · [中文用户手册](document/zh-CN/README.md) · [English manual](document/en/README.md)
+
+新用户请从[安装与打包](document/zh-CN/installation.md)和[快速入门](document/zh-CN/quickstart.md)开始。源码 ZIP 与 Git clone 都可通过 `python tools/distribution/build.py --target native --output ../ijob-build-001` 生成完整交付包；Docker 路径见手册。
+
 任务调度与执行平台，包含 Java 后端、Vue 前端、监控 Agent、首次初始化和离线迁移工具。私有仓库 [ifielsc/iJob](https://github.com/ifielsc/iJob)，默认分支 `main`。开发前阅读[规范入口](document/standards/README.md)与[工作区和环境规则](document/operations/workspace-and-environments.md)；日常同步见[维护说明](document/repository/private-repository.md)。
 
 ## 源码与工具链

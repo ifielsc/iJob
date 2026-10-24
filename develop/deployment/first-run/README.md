@@ -1,5 +1,7 @@
 # iJob 1.0.0 启动说明
 
+当前新用户入口：[中文完整手册](../../../document/zh-CN/README.md) / [English manual](../../../document/en/README.md)。以下保留数据库、认证和集群的详细操作契约。Windows 新交付使用 start/stop/status/logs/restart.cmd 管理后台进程。
+
 本交付保持默认 `STATIC` 认证、`STANDALONE` 单实例。数据库向导默认 SQLite，支持选择 MySQL、PostgreSQL、SQL Server、Oracle。认证模式、数据库产品和实例模式独立配置。
 
 本次更新显式生成 `app.auth.bootstrap-enabled=false`，为常用开关添加注释，并在输入服务器数据库 JDBC 地址前显示对应格式示例。已有安装只复用，不补写注释或覆盖配置。请使用完整交付目录。
@@ -17,7 +19,7 @@ $env:IJOB_HOME = 'F:\iJobData\installation-a'
 .\start.cmd
 ```
 
-这只设置当前窗口环境；以后启动必须继续使用相同 `IJOB_HOME`。路径必须在交付目录外，不使用符号链接或目录联接。改路径不会自动迁移已有数据。停止时在启动窗口按 Ctrl+C 并等待退出。
+这只设置当前窗口环境；以后启动必须继续使用相同 `IJOB_HOME`。路径必须在交付目录外，不使用符号链接或目录联接。改路径不会自动迁移已有数据。停止使用 `stop.cmd` 并等待退出；`logs.cmd` 中 Ctrl+C 只结束日志查看。
 
 ## 2. Linux 原生
 
@@ -43,7 +45,7 @@ sudo ./start-docker.sh
 sudo ./stop-docker.sh
 ```
 
-缺少镜像时自动加载离线归档。后端镜像为 `ijob-backend:1.0.0-setup.3`，前端为 `ijob-web:1.0.0-ui.1`。默认数据目录为包同级 `ijob-data-docker`，主机入口为 `127.0.0.1:18080`。
+缺少镜像时自动加载离线归档。后端镜像为 `ijob-backend:1.0.0`，前端为 `ijob-web:1.0.0`。默认数据目录为包同级 `ijob-data-docker`，主机入口为 `127.0.0.1:18080`。
 
 ```sh
 sudo env IJOB_HOME=/home/ijob/installation-a IJOB_HTTP_PORT=18080 ./start-docker.sh
@@ -188,7 +190,7 @@ sudo docker run --rm -it --user 0:0 --network none \
   --cap-drop ALL --cap-add CHOWN --cap-add DAC_OVERRIDE --cap-add FOWNER \
   --security-opt no-new-privileges \
   --mount "type=bind,source=$HOME_PATH,target=$HOME_PATH" \
-  --entrypoint java ijob-backend:1.0.0-setup.3 \
+  --entrypoint java ijob-backend:1.0.0 \
   -jar /opt/ijob/setup.jar init --mode docker --bundle /opt/ijob \
   --home "$HOME_PATH" --host-uid "$(id -u)" --host-gid "$(id -g)"
 ```
@@ -201,6 +203,6 @@ sudo docker run --rm -it --user 0:0 --network none \
 
 ## 8. 日志与交付内容
 
-Windows 窗口与文件同时输出，Linux 原生后台运行。原生日志位于 `IJOB_HOME/logs/ijob.log`，按 UTC 日期/10 MB 滚动并压缩，同一天归档序号 `.0`、`.1`、`.2` 递增。归档最多保留 14 天、200 MB，容量限制可能提前移除旧归档；当前文件另计，清理异步。可通过 `ijob.logging.max-file-size`、`ijob.logging.max-history`、`ijob.logging.total-size-cap` 调整并重启。Docker 每容器沿用 10 MB × 5 份日志。
+Windows 和 Linux 原生均后台运行，通过 logs 命令查看文件日志。原生日志位于 `IJOB_HOME/logs/ijob.log`，按 UTC 日期/10 MB 滚动并压缩，同一天归档序号 `.0`、`.1`、`.2` 递增。归档最多保留 14 天、200 MB，容量限制可能提前移除旧归档；当前文件另计，清理异步。可通过 `ijob.logging.max-file-size`、`ijob.logging.max-history`、`ijob.logging.total-size-cap` 调整并重启。Docker 每容器沿用 10 MB × 5 份日志。
 
 `logging-native.xml`、启动脚本、两个 JAR 和 `web-dist` 应完整复制。升级保留整个数据目录和 AES 密钥；原安装配置不会自动覆盖。源码归档、`source-manifest.json`、`MANIFEST.json`、`SHA256SUMS.txt` 和隔离验证证据随交付包提供。当前功能默认及使用流程以本说明为准，旧报告保留其历史验证范围。

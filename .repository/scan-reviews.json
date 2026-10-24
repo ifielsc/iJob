@@ -2,14 +2,14 @@
   "reviews": [
     {
       "path": ".gitignore",
-      "line": 2988,
+      "line": 3019,
       "rule": "email-address",
       "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
       "reason": "pnpm patch filename/version, not an email address."
     },
     {
       "path": ".repository/allowlist.json",
-      "line": 1671,
+      "line": 1684,
       "rule": "email-address",
       "line_sha256": "19f0e34d2de24909f3f9e4c329ff30ec56cb62c17e0373c97150ed36a4685fd4",
       "reason": "pnpm patch filename/version, not an email address."
@@ -2253,6 +2253,41 @@
       "rule": "credential-literal",
       "line_sha256": "007e092952e51dd5522becd52286f8fcccff383794933234cf58fae18dd69c29",
       "reason": "Synthetic fixture-only credential used to assert report redaction; no live identity."
+    },
+    {
+      "path": "develop/api/ijob/ijob-setup-tool/src/main/java/com/ifielsc/ijob/setup/SetupTool.java",
+      "line": 359,
+      "rule": "credential-literal",
+      "line_sha256": "a215ce9367b1ddd4b607476dac3e468e97a496eca7e5b74fb64f7a59684f9132",
+      "reason": "User-facing password prompt in the setup translation catalog, not a credential value."
+    },
+    {
+      "path": "develop/api/ijob/ijob-setup-tool/src/main/resources/setup-messages.properties",
+      "line": 8,
+      "rule": "credential-scalar",
+      "line_sha256": "afad5a06633acc47010e23be24a4dc23e173cdd60907b648d9c0c030d9253cbd",
+      "reason": "User-facing password prompt in the setup translation catalog, not a credential value."
+    },
+    {
+      "path": "develop/api/ijob/ijob-setup-tool/src/main/resources/setup-messages.properties",
+      "line": 12,
+      "rule": "credential-scalar",
+      "line_sha256": "390e3a962468f6af2237428fc91024b7d78dc932fa1221b24b63042c464eeca0",
+      "reason": "User-facing password prompt in the setup translation catalog, not a credential value."
+    },
+    {
+      "path": "develop/api/ijob/ijob-setup-tool/src/main/resources/setup-messages_zh.properties",
+      "line": 8,
+      "rule": "credential-scalar",
+      "line_sha256": "ecfa88e9ffadfe356c28759ae051ae5479ff2c048002465625aa55d677090cd9",
+      "reason": "User-facing password prompt in the setup translation catalog, not a credential value."
+    },
+    {
+      "path": "develop/api/ijob/ijob-setup-tool/src/main/resources/setup-messages_zh.properties",
+      "line": 12,
+      "rule": "credential-scalar",
+      "line_sha256": "c1847473975a6c65d199c928676dc69e9576c4d9dde907981aff5b7f18f4df50",
+      "reason": "User-facing password prompt in the setup translation catalog, not a credential value."
     }
   ],
   "binary_reviews": [
