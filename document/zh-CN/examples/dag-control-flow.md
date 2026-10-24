@@ -1,0 +1,25 @@
+# 串行、并行、汇合与条件分支
+
+[English](../../en/examples/dag-control-flow.md) · [手册首页](../README.md)
+
+**验证状态：基础路径已在独立环境实测；下述扩展不自动继承通过结论。**
+
+相关字段：[页面操作手册](../user-guide/README.md)。
+
+## 准备、配置与执行
+
+已实测基础：建立 docs-flow，hello 引用 docs-hello，check 引用 docs-check，连 hello→check，ALL_SUCCESS/STOP；发布后运行，核对两个节点 SUCCESS 和实际引用版本。
+
+扩展 1：A 同时连 B/C，再由 B/C 连 D，D=ALL_SUCCESS；确认 D 等待两个上游终态。扩展 2：排他网关金额 >100 走 review，默认走 finish，分支优先级唯一，恰好一个默认；测试 101/100/缺失值。扩展 3：令 B 失败，分别测试 STOP、SKIP 与 D=ALWAYS，确认继续判断仍保留失败结果。
+
+扩展需单独记录运行拓扑，基础串行截图不证明所有分支验证完成。节点和条件规则见[节点手册](../user-guide/job-nodes.md)。
+
+## 结束检查
+
+保留输入、定义版本、触发/实例 ID、脱敏日志和目标核对结果。只停止本案例拥有的进程或调度；其他环境和历史证据不作为清理对象。
+
+## 真实页面示例
+
+基础串行路径实测结果，扩展分支需另验。
+
+![基础串行路径实测结果，扩展分支需另验。](../images/manual/job-run.png)

@@ -10,9 +10,14 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.DateTimeException;
+import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 
 final class UserSettings {
     private UserSettings() {}
@@ -84,6 +89,30 @@ final class UserSettings {
         out.println(SetupMessages.text(chinese, "settings.valid"));
     }
 
+    private static boolean validList(String type, String value) {
+        if (value.isBlank()) return !type.equals("roles");
+        Set<String> unique = new HashSet<>();
+        for (String part : value.split(",", -1)) {
+            String item = part.trim();
+            if (type.equals("groups")) {
+                item = item.toLowerCase(Locale.ROOT);
+                if (!item.matches("[a-z0-9][a-z0-9._-]{0,63}")) return false;
+            } else if (type.equals("ids")) {
+                try {
+                    long id = Long.parseLong(item);
+                    if (id <= 0) return false;
+                    item = Long.toString(id);
+                } catch (NumberFormatException error) {
+                    return false;
+                }
+            } else if (!List.of("API", "SCHEDULER", "WORKER", "MAINTENANCE").contains(item)) {
+                return false;
+            }
+            unique.add(item);
+        }
+        return unique.size() <= (type.equals("groups") ? 16 : 100);
+    }
+
     static boolean valid(String type, String value) {
         return switch (type) {
             case "boolean" -> value.equals("true") || value.equals("false");
@@ -95,10 +124,31 @@ final class UserSettings {
                     yield false;
                 }
             }
-            case "duration" -> value.matches("[1-9][0-9]*(ms|s|m|h)");
+            case "session-seconds" -> {
+                try {
+                    long seconds = Long.parseLong(value);
+                    yield seconds == -1 || seconds > 0;
+                } catch (NumberFormatException error) {
+                    yield false;
+                }
+            }
+            case "nonnegative-duration" -> value.matches("(0|[1-9][0-9]*)(ms|s|m|h|d)");
+            case "duration" -> value.matches("[1-9][0-9]*(ms|s|m|h|d)");
             case "size" -> value.matches("[1-9][0-9]*(KB|MB|GB)");
             case "locale" -> Arrays.asList("en", "en-US", "zh", "zh-CN").contains(value);
-            default -> true;
+            case "notification-locale" -> List.of("en", "zh").contains(value);
+            case "misfire" -> List.of("SKIP", "FIRE_ONCE", "CATCH_UP_BOUNDED").contains(value);
+            case "zone" -> {
+                try {
+                    ZoneId.of(value);
+                    yield true;
+                } catch (DateTimeException error) {
+                    yield false;
+                }
+            }
+            case "groups", "ids", "roles" -> validList(type, value);
+            case "text", "secret" -> true;
+            default -> false;
         };
     }
 }

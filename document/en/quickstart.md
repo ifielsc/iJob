@@ -1,47 +1,51 @@
-# Quick start: your first task and job
+# Quick start: from a task to a workflow
 
 [简体中文](../zh-CN/quickstart.md) · [Manual home](README.md)
 
-Prerequisite: complete installation, confirm READY, and sign in with your own initialized administrator. Use an isolated practice installation. Language, theme and display timezone are available in the page header; defaults are sufficient to begin.
+## Prepare
 
-## 1. Create a task without external dependencies
+Start an independent installation and log in using [Installation](installation.md). The default administrator can complete this chapter; a viewer cannot create or execute. Confirm an eligible Worker in the dashboard. The example does not access business systems.
 
-1. Open Task management, choose New task and name it hello-ijob.
-2. Select SCRIPT and Local Worker. Choose BAT on Windows, or SHELL on Linux/the official Docker backend (using /bin/sh inside that host/container).
-3. Enter the two lines below. Leave working directory, environment variables and execution groups empty. Keep retries at 0 and set timeout to 30 seconds.
-4. Keep the task enabled and save. Saving publishes a version; it does not run the script.
+## 1. Create and save a script task
 
-```text
+Tasks → New: name `docs-hello`, plugin SCRIPT, execution LOCAL. Choose BAT on Windows or SHELL with `/bin/sh` on Linux. Keep 0 retries, interval 1 and timeout 60 seconds; initially leave groups unrestricted.
+
+```sh
 echo hello-ijob
+echo __VAR__:rows=3
 exit 0
 ```
 
-The default image does not include Python, PowerShell or business commands. The browser's computer is not necessarily the Worker. Do not select BAT on Linux or confuse local paths with remote paths.
+Saving publishes the first version and **does not run the task**. This real screenshot uses Windows BAT; select the matching engine on Linux.
 
-## 2. Run and inspect
+![SCRIPT configuration: local execution, script and publication notice](images/manual/script-editor.png)
 
-1. Click Run in the task list. Check task, engine and execution location before confirming once.
-2. Find the new instance through Run history or the Run center and note its instance ID.
-3. Wait for SUCCESS. Inspect start/end times, executing node and instance logs. Script lifecycle logs should show execution started and exitCode=0.
+## 2. Run and inspect the result
 
-Script stdout/stderr is not automatically included in lifecycle logs. Missing hello-ijob output does not mean execution failed. If network acceptance is uncertain, inspect history by target and time before submitting again.
+Click Run and confirm the parameter dialog. After trigger acceptance, open Run center → Instances and this docs-hello instance. Expect SUCCESS and `[STDOUT] hello-ijob` in Logs. Verify output rows=3 in Variables; the declaration value is redacted in logs. stdout/stderr are recorded with size bounds, not as file-output storage.
 
-Change the script to exit 7, save a new version and run it to observe FAILED with a nonzero exit code. Restore exit 0 afterward. This controlled failure exercise requires no external database or real messages.
+The screenshot uses the UI search to show the hello output; complete logs are retained.
 
-## 3. Create a two-node job
+![Successful instance and actual script log](images/manual/script-run.png)
 
-Create a second task named hello-finish using the same engine/script. In Job orchestration, create hello-flow, add both task nodes and drag a connection from the first node to the second. Keep the second node's all-upstream-success execution condition and stop-on-failure policy.
+## 3. Compose a two-node workflow
 
-Apply Auto layout, Validate and Save and publish. Enable and run the job, then inspect its topology in the Run center. Both nodes should succeed in dependency order. Editing a task creates a new version; an already-published job keeps its published references. Review and republish the job to use newer task versions.
+This script alone is sufficient: create `docs-flow`, add first/second task nodes both referencing docs-hello, connect first→second and use ALL_SUCCESS/STOP. Validate, save/publish, review reference versions and run.
 
-The layout direction applies when Auto layout is clicked; connection style changes immediately and does not change execution. The help icon supports hover, keyboard focus and touch.
+The screenshot uses the advanced hello→check example, whose second node is DATA_CHECK with an independently configured database. For this basic walkthrough, select docs-hello again; canvas/dependency operations are the same.
 
-## 4. Preview a schedule
+![Two-node editor showing the advanced hello-to-check example](images/manual/job-editor.png)
 
-Create a schedule for hello-flow, select CRON and enter 0 */5 * * * * (every five minutes). Explicitly choose the business timezone. Keep it disabled while using Preview to inspect candidate times. Preview does not execute the job.
+Inspect the run graph and confirm ordered completion. Later child-task updates do not change existing published job references; republish the job to adopt new versions.
 
-Enable only when automatic execution is intended. The job, global schedule scanner and a SCHEDULER node must also be available. Disable the practice schedule when finished. See examples for calendars and missed-trigger behavior.
+![Actual two-node run graph for the advanced example](images/manual/job-run.png)
 
-## 5. Completion checklist
+## 4. Preview scheduling
 
-You should now be able to publish a version, submit one manual execution, inspect its logs, distinguish success/failure, publish and observe a DAG, and preview/disable a schedule. Deployment scripts stop the platform; the Run center stops a running task. These are different operations.
+Schedules → New: TASK/docs-hello, INTERVAL=3600, disabled. Preview five future candidates and check business time zone. Preview neither saves nor executes. Enable only when ready, verify a real trigger/instance, then disable the practice schedule. See [Schedules](user-guide/schedules.md).
+
+![Actual preview of five candidates for a disabled schedule](images/manual/schedule-preview.png)
+
+## Completion check
+
+You should now distinguish publication, trigger acceptance, execution instances and business outcomes. Continue with [Page reference](user-guide/README.md) or [Scenarios](examples.md). Use platform lifecycle commands to stop; do not delete the database to reset an exercise.

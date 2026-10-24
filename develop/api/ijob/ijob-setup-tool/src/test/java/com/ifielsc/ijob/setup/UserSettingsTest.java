@@ -32,6 +32,47 @@ class UserSettingsTest {
     }
 
     @Test
+    void validatesRoutingAndScheduleSettings() {
+        assertTrue(UserSettings.valid("groups", " Finance, finance,nightly "));
+        assertTrue(UserSettings.valid("groups", ""));
+        assertFalse(UserSettings.valid("groups", "bad group"));
+        assertFalse(UserSettings.valid("groups", "a,"));
+        assertFalse(UserSettings.valid("groups", "a".repeat(65)));
+        assertFalse(
+                UserSettings.valid(
+                        "groups",
+                        java.util.stream.IntStream.range(0, 17)
+                                .mapToObj(i -> "g" + i)
+                                .collect(java.util.stream.Collectors.joining(","))));
+        assertTrue(UserSettings.valid("ids", "1,2,2"));
+        assertFalse(UserSettings.valid("ids", "0"));
+        assertFalse(UserSettings.valid("ids", "9223372036854775808"));
+        assertFalse(
+                UserSettings.valid(
+                        "ids",
+                        java.util.stream.IntStream.rangeClosed(1, 101)
+                                .mapToObj(Integer::toString)
+                                .collect(java.util.stream.Collectors.joining(","))));
+        assertTrue(UserSettings.valid("roles", "API,WORKER"));
+        assertFalse(UserSettings.valid("roles", "WORKERS"));
+        assertFalse(UserSettings.valid("roles", ""));
+        assertTrue(UserSettings.valid("zone", "Asia/Shanghai"));
+        assertFalse(UserSettings.valid("zone", "Asia/Unknown"));
+        assertTrue(UserSettings.valid("misfire", "CATCH_UP_BOUNDED"));
+        assertFalse(UserSettings.valid("misfire", "RETRY"));
+        assertTrue(UserSettings.valid("duration", "90d"));
+        assertTrue(UserSettings.valid("nonnegative-duration", "0s"));
+        assertFalse(UserSettings.valid("nonnegative-duration", "-1s"));
+        assertTrue(UserSettings.valid("session-seconds", "-1"));
+        assertTrue(UserSettings.valid("session-seconds", "1800"));
+        assertFalse(UserSettings.valid("session-seconds", "0"));
+        assertFalse(UserSettings.valid("session-seconds", "-2"));
+        assertTrue(UserSettings.valid("notification-locale", "zh"));
+        assertFalse(UserSettings.valid("notification-locale", "zh-CN"));
+        assertFalse(UserSettings.valid("unknown", "value"));
+    }
+
+    @Test
     void reportsKeysWithoutLeakingValues() throws Exception {
         String privateValue = "not-a-port-private-value";
         Files.writeString(home.resolve("application.properties"), "server.port=" + privateValue);

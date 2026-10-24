@@ -2,7 +2,7 @@
   "reviews": [
     {
       "path": ".gitignore",
-      "line": 3019,
+      "line": 3057,
       "rule": "email-address",
       "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
       "reason": "pnpm patch filename/version, not an email address."
@@ -2288,6 +2288,27 @@
       "rule": "credential-scalar",
       "line_sha256": "c1847473975a6c65d199c928676dc69e9576c4d9dde907981aff5b7f18f4df50",
       "reason": "User-facing password prompt in the setup translation catalog, not a credential value."
+    },
+    {
+      "path": "document/en/images/manual/parameter-editor.png",
+      "line": 3170,
+      "rule": "email-address",
+      "line_sha256": "4a2ce390132f7cf959b6af26c5fb197fcbbf3f5edc81abc34af417419a9902bf",
+      "reason": "Compressed bytes in visually reviewed real UI PNG incidentally match email syntax; not a text email or credential. Image SHA-256/provenance reviewed separately."
+    },
+    {
+      "path": "document/en/images/manual/schedule-preview.png",
+      "line": 4892,
+      "rule": "email-address",
+      "line_sha256": "c736a08d23cbbea83f65fb90fddfe436df757c8beee4662de1f23d8423b7f0a6",
+      "reason": "Compressed bytes in visually reviewed real UI PNG incidentally match email syntax; not a text email or credential. Image SHA-256/provenance reviewed separately."
+    },
+    {
+      "path": "document/en/images/manual/script-run.png",
+      "line": 1043,
+      "rule": "email-address",
+      "line_sha256": "c44f4dd721f527b382534de3950149e80f438edf84442d1b9aba067369964df6",
+      "reason": "Compressed bytes in visually reviewed real UI PNG incidentally match email syntax; not a text email or credential. Image SHA-256/provenance reviewed separately."
     }
   ],
   "binary_reviews": [
@@ -2310,6 +2331,136 @@
       "path": "develop/web/ijob/src/assets/brand/login-light.webp",
       "sha256": "56c5b424cae6f50d7e06a0ddd2f87de8e52118110d0055295ec9508c7fcf718b",
       "reason": "Visually reviewed product icon or abstract login background; no user screenshot, document, credentials or environment details. Public redistribution rights remain a separate review."
+    },
+    {
+      "path": "document/zh-CN/images/manual/script-editor.png",
+      "sha256": "a9a42304523d2a74da84e5913a214385b45461680564d2fbf0fffa81b53e474b",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/sql-editor.png",
+      "sha256": "c4511572df27055e0da4e0e49f506dab1f33acce4dd61221662ae42c3c3454ea",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/check-editor.png",
+      "sha256": "ab62eab319beda01295735a1ac6a4f98df475fed039559764ff662a2c97c2b59",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/transfer-editor.png",
+      "sha256": "28ca30bc393a74c64b552fa7d25eba2c6648ace1525645f5bc87a6223b278959",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/etl-editor.png",
+      "sha256": "fbec9fda3345955d2e73db8e404a9bad328c366780effd29824dc87123a910f1",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/etl-target.png",
+      "sha256": "8747959c3c40e8225ecde16fc07aa71bf62428c35d77ea622d3b7e9f4cc58e0b",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/job-editor.png",
+      "sha256": "45c2a459ed6400b2671abfc06b4196bd497761bf6dc7daebb9c36c5d7befa59c",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/job-node.png",
+      "sha256": "5debf2ecccc38a34f6ec9be38b3c5b34b83856be3d4d940e40f4694d11fc1d0e",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/script-run.png",
+      "sha256": "1656f46d966a84254fba49e047f82bd8d6060457219dabc8426c30bfff405c9e",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/job-run.png",
+      "sha256": "426637019043d32cb092536978bb8d755080686abacb465b978148618ab65e2a",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/etl-run.png",
+      "sha256": "369fce549404693ec19c9da2717ec33072e045554aeb966eaaf8b150ff7eace4",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/schedule-preview.png",
+      "sha256": "9d165ec836a0c54fc0aa285575f45912a4f05a3212c3ff673a778870efdb0d25",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/parameter-editor.png",
+      "sha256": "11a11f24ea4a665cf975ef7b9d9038895e9d44ebd319586cff5699d78b08f207",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/script-editor.png",
+      "sha256": "16b7f7454257df536fa030f802dc749be07fa28a4ce134ba5648b340271ef1ae",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/sql-editor.png",
+      "sha256": "43df3ccdc1666fc57f51d168537739aa8b6787746fa556b803648581dcaf9e05",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/check-editor.png",
+      "sha256": "adadb410c57c01bc3a08c72ea5417766d0ee63ebab0be20080389354ee1545c5",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/transfer-editor.png",
+      "sha256": "19d2ccc9932fefa2509a316f30bc65e57ff37b9d5e5b35051b3938e3334a2805",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/etl-editor.png",
+      "sha256": "ac55a8496232ae1e363f4d56f862805804eb40e3030ac8d4c5eed18585ce2d70",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/etl-target.png",
+      "sha256": "bacda72a9d64bb6927fc42220664ccfb72bc3fd2c0fdd8d4933b6a15b5bd3375",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/job-editor.png",
+      "sha256": "5a7ecccedbb4375becc205128857cc8e4e7179006b37701166c20fbd8e1ff262",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/job-node.png",
+      "sha256": "55610c1037402dfe1416916bd91d3d5f5747d730c04d41d85fbea7714869d708",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/script-run.png",
+      "sha256": "2d076e66b538f129931eb545d49e1ed9b1989f1352f37e1b5c5500ae7cf7234e",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/job-run.png",
+      "sha256": "bab70399db4dbb37ed11167f58fbc15bc52c31aeab0c637961becee0153f3cfc",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/etl-run.png",
+      "sha256": "c30e5c6096008c6819578abe22697b9c50a40bdf70f51b2ed628797aacffdf16",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/schedule-preview.png",
+      "sha256": "1059a910e33bbf286ead92bfa925fc437b5e3ed2f61bb8f4e54dd7e1101db590",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/parameter-editor.png",
+      "sha256": "7914866ed104530df21f650fa3639b692c4fa426f8dba74370814a9bf214ad64",
+      "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
     }
   ]
 }

@@ -13,10 +13,43 @@ app.plugin.local-jar.root-directory	text	empty	Absolute plugin directory on the 
 app.resource-browser.local-roots	text	empty	Comma-separated absolute roots allowed for browsing LOCAL resource drafts.	允许浏览 LOCAL 资源草稿的绝对根目录，多个目录用逗号分隔。
 app.http.connect-timeout	duration	5s	Connection timeout for the shared HTTP client, not every external plugin.	共用 HTTP 客户端连接超时，不代表所有外部插件的超时。
 app.http.read-timeout	duration	30s	Read timeout for the shared HTTP client.	共用 HTTP 客户端读取超时。
-app.notification.locale	locale	en	Default notification language; notification-specific choices can override it.	通知默认语言，可被具体通知配置覆盖。
+app.notification.locale	notification-locale	en	Default notification language; notification-specific choices can override it.	通知默认语言，可被具体通知配置覆盖。
 app.event.ingress.enabled	boolean	false	Enable event ingress; authentication and EVENT_PUBLISH permission still apply.	启用事件接入；仍要求登录和 EVENT_PUBLISH 权限。
 app.retention.enabled	boolean	false	Enable history retention only after reviewing the retention rules.	核对保留规则后再启用历史清理。
 app.retention.dry-run	boolean	true	Keep true for a dry run; false permits deletion when retention is enabled.	保持 true 时只演练；清理开启且为 false 时允许删除。
 ijob.logging.max-file-size	size	10MB	Native log rotation size; Docker logging is configured in Compose.	原生日志单文件滚动大小；Docker 日志在 Compose 中配置。
 ijob.logging.max-history	positive-int	14	Native log archive retention in days.	原生日志归档保留天数。
 ijob.logging.total-size-cap	size	200MB	Native archive size cap; may remove archives before the day limit.	原生日志归档总容量上限，可能提前清理未到期归档。
+spring.web.locale	locale	en	Server fallback locale; Accept-Language and frontend preference also apply.	服务端缺省语言；Accept-Language 和前端偏好另有作用。
+app.scheduling.pool-size	positive-int	8	Internal scheduled-scanner threads; not the maximum business-task concurrency.	内部周期扫描线程数量；不是业务任务最大并发数。
+app.runtime.instance-name	text	generated	Node identity; use distinct names in a cluster for traceability.	节点标识；集群各节点取不同名称，便于追踪运行。
+app.runtime.roles	roles	API,SCHEDULER,WORKER,MAINTENANCE	API/SCHEDULER/WORKER/MAINTENANCE responsibilities; retain coverage of required roles.	API/SCHEDULER/WORKER/MAINTENANCE 职责；部署前确保所需角色仍有人承担。
+app.runtime.groups	groups	default	Worker groups match published definitions; empty worker groups do not mean all groups.	节点执行分组；与发布定义的分组匹配，空节点分组并不表示能接所有分组。
+app.runtime.allowed-task-ids	ids	empty	Task IDs eligible as root trigger targets; jointly restrict scope with the job allowlist.	允许领取的根触发目标任务 ID；与作业白名单共同限制范围，见组合规则。
+app.runtime.allowed-job-ids	ids	empty	Job IDs eligible as root trigger targets; not an individual authorization list for every descendant task.	允许领取的根触发目标作业 ID；不等价于对子作业内每个任务逐一授权。
+app.runtime.work-queue.max-inflight-roots	positive-int	20	In-flight root-run limit per node; size with executors, concurrency controls and capacity.	节点在途根运行上限；结合线程池、任务并发和资源容量评估。
+app.schedule.zone-id	zone	Asia/Shanghai	Default scheduling time zone; distinct from display time zone. Check individual schedules.	调度默认业务时区；与用户显示时区不同，核验单条调度设置。
+app.schedule.misfire-policy	misfire	FIRE_ONCE	Default missed-fire policy SKIP/FIRE_ONCE/CATCH_UP_BOUNDED; may create real catch-up runs.	错过触发默认策略 SKIP/FIRE_ONCE/CATCH_UP_BOUNDED；可能产生实际补发。
+app.schedule.misfire-grace	nonnegative-duration	60s	Grace period for missed fires; verify alongside catch-up policy.	判断错过触发的宽限时间；联动补发策略验证。
+app.schedule.max-catchup-window	duration	24h	Maximum catch-up lookback; bounds recovery bursts.	补发回溯时间上限；避免恢复后集中补发过多历史运行。
+app.schedule.max-catchup-count	positive-int	10	Maximum catch-up count; applies with the lookback window.	补发次数上限；与时间窗口共同约束。
+app.retention.interval	duration	1h	History cleanup: Run interval. Validate against load, recovery or cleanup policy before tuning.	历史清理：运行间隔。结合负载、恢复或清理策略验证后调整。
+app.retention.batch-size	positive-int	500	History cleanup: Batch size. Validate against load, recovery or cleanup policy before tuning.	历史清理：批次大小。结合负载、恢复或清理策略验证后调整。
+app.retention.max-batches-per-run	positive-int	10	History cleanup: Maximum batches per run. Validate against load, recovery or cleanup policy before tuning.	历史清理：单轮最大批次数。结合负载、恢复或清理策略验证后调整。
+app.retention.execution	duration	90d	Execution history retention duration; applies with cleanup enabled and dry-run settings.	执行历史保留时长；与清理总开关和试运行共同生效。
+app.retention.notification	duration	90d	Notification history retention duration; applies with cleanup enabled and dry-run settings.	通知历史保留时长；与清理总开关和试运行共同生效。
+app.retention.event	duration	180d	Event history retention duration; applies with cleanup enabled and dry-run settings.	事件历史保留时长；与清理总开关和试运行共同生效。
+app.retention.app-run	duration	30d	Node-run history retention duration; applies with cleanup enabled and dry-run settings.	节点运行历史保留时长；与清理总开关和试运行共同生效。
+app.retention.audit	duration	90d	Audit history retention duration; applies with cleanup enabled and dry-run settings.	审计历史保留时长；与清理总开关和试运行共同生效。
+app.execution.shutdown-timeout	duration	30s	Executor shutdown wait; coordinate with container grace and Spring shutdown limits.	执行器关闭等待；与容器停止宽限和 Spring 关闭时限一起规划。
+app.plugin.event.enabled	boolean	true	event plugin switch on this node; review published tasks and active work before disabling.	event 插件节点级开关；关闭前检查已发布任务和运行中工作。
+app.plugin.script.enabled	boolean	true	script plugin switch on this node; review published tasks and active work before disabling.	script 插件节点级开关；关闭前检查已发布任务和运行中工作。
+app.plugin.sql.enabled	boolean	true	sql plugin switch on this node; review published tasks and active work before disabling.	sql 插件节点级开关；关闭前检查已发布任务和运行中工作。
+app.plugin.file-transfer.enabled	boolean	true	file-transfer plugin switch on this node; review published tasks and active work before disabling.	file-transfer 插件节点级开关；关闭前检查已发布任务和运行中工作。
+app.plugin.api-call.enabled	boolean	true	api-call plugin switch on this node; review published tasks and active work before disabling.	api-call 插件节点级开关；关闭前检查已发布任务和运行中工作。
+app.plugin.push.enabled	boolean	true	push plugin switch on this node; review published tasks and active work before disabling.	push 插件节点级开关；关闭前检查已发布任务和运行中工作。
+app.plugin.data-check.enabled	boolean	true	data-check plugin switch on this node; review published tasks and active work before disabling.	data-check 插件节点级开关；关闭前检查已发布任务和运行中工作。
+app.plugin.server-monitor.enabled	boolean	true	server-monitor plugin switch on this node; review published tasks and active work before disabling.	server-monitor 插件节点级开关；关闭前检查已发布任务和运行中工作。
+sa-token.timeout	session-seconds	1800	Total session token lifetime in seconds; tune to session policy.	登录令牌总有效期，单位秒；按会话策略调整。
+sa-token.active-timeout	session-seconds	300	Idle session timeout in seconds; distinct from total lifetime.	空闲会话超时，单位秒；区别于总有效期。
+app.notify.email.enabled	boolean	true	Email channel implementation switch, enabled when absent; SMTP and credentials belong in mail-channel UI.	邮件通道实现开关，缺省也启用；SMTP 连接与凭据在邮件通道页面维护。

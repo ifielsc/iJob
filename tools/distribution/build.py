@@ -104,6 +104,7 @@ def copy_deployment(source, bundle):
                 destination.chmod(0o755)
     for language in ['zh-CN', 'en']:
         shutil.copytree(source / 'document' / language, bundle / 'docs' / language)
+    shutil.copytree(source / 'document/reference', bundle / 'docs/reference')
     shutil.copy2(source / 'LICENSE', bundle / 'LICENSE')
     (bundle / 'README.md').write_text(
         '# iJob 1.0.0\n\n[中文](docs/zh-CN/README.md) | [English](docs/en/README.md)\n\n'
