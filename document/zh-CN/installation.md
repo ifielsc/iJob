@@ -76,7 +76,7 @@ docker compose -f "$IJOB_HOME/compose.yaml" logs --tail=100 -f
 ./stop-docker.sh
 ```
 
-根据主机权限使用 sudo，并用 `sudo env IJOB_HOME=... IJOB_HTTP_PORT=... IJOB_LANG=zh ./start-docker.sh` 显式传递环境。首次自动加载缺失镜像并初始化；现有安装不覆盖。默认 SQLite 数据在本安装 runtime 目录，不创建外部数据库服务器。宿主访问 `http://127.0.0.1:18080`，容器内后端保持 8080。修改端口后用同一个 IJOB_HTTP_PORT 执行 `docker compose ... up -d`，不能仅 restart。
+根据主机权限使用 sudo，并用 `sudo env IJOB_HOME=... IJOB_HTTP_PORT=... IJOB_LANG=zh ./start-docker.sh` 显式传递环境。首次自动加载缺失镜像并初始化；现有安装不覆盖。默认 SQLite 数据在本安装 runtime 目录，不创建外部数据库服务器。宿主访问 `http://127.0.0.1:18080`，容器内后端保持 8080。修改端口或 application.properties 后，用同一个 IJOB_HOME 和新的 IJOB_HTTP_PORT 执行 `./start-docker.sh --recreate`，重新建立挂载并读取配置。
 
 Docker Desktop 的 Linux 容器模式可以作为构建端；本手册运行脚本面向 Linux 主机。ARM64、Windows 容器和 Docker Desktop 文件权限行为不属于 Linux amd64 验收结论。Agent 是可选组件，基础 start 不启动 Agent。
 
@@ -85,3 +85,5 @@ Docker Desktop 的 Linux 容器模式可以作为构建端；本手册运行脚�
 先核对 SHA256SUMS.txt，再初始化；确认日志出现 READY、浏览器可以登录，然后执行[快速入门](quickstart.md)。数据目录独立于程序目录，升级时保留整个数据目录和原 AES 密钥。不要把旧完整目录覆盖到新安装上。
 
 包内包含 JAR、web-dist、启停脚本、双语 docs、LICENSE、source.zip、source-manifest.json、MANIFEST.json、SHA256SUMS.txt；Docker 包另含镜像归档。MANIFEST 明确记录实际执行/未执行的检查，以及公开发布尚未批准的状态。
+
+Docker 启动入口使用包内镜像 ID 锁文件和 Compose 覆盖文件，即使多个候选版本都叫 1.0.0，也会启动该包对应的镜像。升级和回退都使用相应包的 start-docker.sh；直接执行基础 compose.yaml 的 up 不包含这个镜像锁。

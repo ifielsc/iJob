@@ -16,6 +16,8 @@ SQLite 入门安装采用停机一致备份：停用练习调度、优雅停止�
 
 服务数据库使用相应数据库的备份/恢复机制，并与应用配置和原密钥共同管理。恢复目标是新库，不指向现有业务库。RPO/RTO 必须通过本环境实测，历史演练时间不代表生产承诺。
 
+恢复到新目录时，原生 SQLite 的 spring.datasource.url 应指向新 runtime/platform.db。Docker 保留容器内数据库地址和 8080 端口，但须修改复制的 compose.yaml：使用新项目名，将两个绑定 source 分别改为新目录的 application.properties 和 runtime；配置与 runtime 保持 UID/GID 10001 的受限权限。修改后通过对应程序包的 start-docker.sh --recreate 启动。
+
 ## 升级与回退
 
 1. 记录当前包哈希、源码标识、配置位置和数据库版本，完成可恢复备份。

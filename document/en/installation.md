@@ -76,7 +76,7 @@ docker compose -f "$IJOB_HOME/compose.yaml" logs --tail=100 -f
 ./stop-docker.sh
 ```
 
-Where sudo is required, pass choices explicitly: sudo env IJOB_HOME=... IJOB_HTTP_PORT=... IJOB_LANG=en ./start-docker.sh. Missing images load automatically and first start initializes settings. Existing installations are retained. SQLite data lives in this installation's runtime directory; no external database server is created. Browse http://127.0.0.1:18080; backend keeps port 8080 inside the container. After changing the published port, use the same IJOB_HTTP_PORT with docker compose ... up -d; restart alone does not apply that change.
+Where sudo is required, pass choices explicitly: sudo env IJOB_HOME=... IJOB_HTTP_PORT=... IJOB_LANG=en ./start-docker.sh. Missing images load automatically and first start initializes settings. Existing installations are retained. SQLite data lives in this installation's runtime directory; no external database server is created. Browse http://127.0.0.1:18080; backend keeps port 8080 inside the container. After changing the port or application.properties, use the same IJOB_HOME and the selected IJOB_HTTP_PORT with `./start-docker.sh --recreate`.
 
 Docker Desktop Linux containers can provide the build engine; runtime scripts target Linux hosts. ARM64, Windows containers and Docker Desktop filesystem permissions are outside Linux amd64 acceptance. Agent is optional and is not started by the basic launcher.
 
@@ -85,3 +85,5 @@ Docker Desktop Linux containers can provide the build engine; runtime scripts ta
 Verify SHA256SUMS.txt, initialize, confirm READY in logs and successful login, then follow the [quick start](quickstart.md). Keep the complete data home and original AES key across upgrades; do not overwrite a fresh installation with an unrelated old directory.
 
 Packages contain JARs, web-dist, lifecycle scripts, bilingual docs, LICENSE, source.zip, source-manifest.json, MANIFEST.json and SHA256SUMS.txt. Docker packages add the image archive. MANIFEST records performed/unperformed checks and the fact that public release is not yet approved.
+
+The Docker launcher uses the package image-ID lock and Compose override. Candidates named 1.0.0 still start their own exact images. Use the corresponding package launcher for upgrades and rollback; running up with only the base compose.yaml omits that image lock. Use `./start-docker.sh --recreate` after editing configuration or port mappings.

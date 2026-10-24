@@ -16,6 +16,8 @@ Rehearse restoration into a new directory with independent ports. Retain the ori
 
 Use the database vendor's backup/restore mechanisms for service databases, managed alongside application settings and the original key. Restore to a new database, not an existing business database. Measure RPO/RTO in the target environment; historical rehearsal timing is not a production guarantee.
 
+When restoring to a new directory, point the native SQLite spring.datasource.url at the new runtime/platform.db. For Docker, retain the container database path and port 8080; change the copied compose.yaml project name and both bind sources to the new application.properties and runtime. Preserve restricted UID/GID 10001 ownership for configuration/runtime. Start through the matching package with start-docker.sh --recreate.
+
 ## Upgrade and rollback
 
 1. Record current package hashes, source identity, settings location and database version. Produce a restorable backup.

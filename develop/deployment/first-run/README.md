@@ -37,7 +37,7 @@ chmod +x start.sh stop.sh status.sh logs.sh
 
 ## 3. Docker（Linux amd64）
 
-准备 Docker Engine 和 Compose 插件，进入完整交付目录：
+准备 Docker Engine 和 Compose 插件，使用 tools/distribution/build.py --target docker 生成完整交付目录（包含 docker-images.lock 和 docker-images.compose.yaml），然后进入该目录：
 
 ```sh
 chmod +x start-docker.sh stop-docker.sh

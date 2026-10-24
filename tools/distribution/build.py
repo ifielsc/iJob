@@ -152,6 +152,14 @@ def docker(work, bundle, reports):
         identity = run(['docker', 'image', 'inspect', '--format', '{{.Id}}', tag], work,
                        reports / (name + '-image-id.log'), capture=True)
         images.append({'tag': tag, 'id': identity})
+    image_ids = {image['tag'].split(':')[0].removeprefix('ijob-'): image['id'] for image in images}
+    for identity in image_ids.values():
+        if not identity.startswith('sha256:') or len(identity) != 71 or any(c not in '0123456789abcdef' for c in identity[7:]):
+            raise ValueError('Docker returned an invalid image ID')
+    (bundle / 'docker-images.lock').write_text(''.join(
+        'IJOB_' + name.upper() + '_IMAGE=' + identity + '\n' for name, identity in image_ids.items()), newline='\n')
+    (bundle / 'docker-images.compose.yaml').write_text('services:\n' + ''.join(
+        '  ' + name + ':\n    image: ' + image_ids[name] + '\n' for name in ['backend', 'web']), newline='\n')
     # Created containers are never started; only artifacts are copied, then exact owned IDs removed.
     for name, paths in [('backend', [('/opt/ijob/app.jar', f'ijob-starter-{VERSION}.jar'),
                                      ('/opt/ijob/setup.jar', f'ijob-setup-tool-{VERSION}.jar')]),
