@@ -47,7 +47,7 @@ function Stop-OwnedProcess {
 if ($Action -in @('init','start','restart')) {
     $version = & $java --version | Out-String
     if ($LASTEXITCODE -ne 0 -or $version -notmatch '(?m)^(openjdk|java) 21[. ]') { throw 'Java 21 is required.' }
-    & $java -jar (Join-Path $bundle 'ijob-setup-tool-1.0.0.jar') init --mode windows --bundle $bundle --home $dataRoot
+    & $java '-Dstdout.encoding=UTF-8' '-Dstderr.encoding=UTF-8' -jar (Join-Path $bundle 'ijob-setup-tool-1.0.0.jar') init --mode windows --bundle $bundle --home $dataRoot
     if ($LASTEXITCODE -ne 0) { throw 'Initialization failed; existing files retained.' }
     if ($Action -eq 'init') { exit 0 }
 }

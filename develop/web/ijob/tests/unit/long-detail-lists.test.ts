@@ -22,12 +22,17 @@ it('searches all 500 records including collapsed fields while retaining original
     props: { value, path: 'checks' },
     global: { plugins: plugins() },
   })
+  expect(wrapper.findAll('.plugin-detail-row')).toHaveLength(0)
   await wrapper.get('input[type=search]').setValue('secret_499')
   expect(wrapper.findAll('tbody > tr:not(.plugin-detail-row)')).toHaveLength(1)
   expect(wrapper.text()).toContain('table_499')
   expect(wrapper.text()).toContain('500')
   await wrapper.get('.plugin-row-toggle').trigger('click')
   expect(wrapper.text()).toContain('secret_499')
+  const detail = wrapper.get('.plugin-detail-row').element
+  await wrapper.get('.plugin-row-toggle').trigger('click')
+  await wrapper.get('.plugin-row-toggle').trigger('click')
+  expect(wrapper.get('.plugin-detail-row').element).toBe(detail)
   await wrapper.get('input[type=search]').setValue('no-matches')
   expect(wrapper.findAll('tbody > tr')).toHaveLength(0)
   expect(value).toHaveLength(500)

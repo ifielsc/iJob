@@ -42,6 +42,24 @@ def source_files():
     return sorted(names)
 
 
+def git_source():
+    if not (ROOT / '.git').exists() or not shutil.which('git'):
+        return None, {}
+    revision = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True)
+    if revision.returncode:
+        return None, {}
+    commit = revision.stdout.strip()
+    tree = subprocess.run(['git', 'ls-tree', '-r', '-z', commit], cwd=ROOT, capture_output=True)
+    if tree.returncode:
+        return None, {}
+    files = {}
+    for record in tree.stdout.decode('utf-8').split('\0'):
+        if record:
+            metadata, name = record.split('\t', 1)
+            files[name] = metadata.split()[2]
+    return commit, files
+
+
 def run(command, cwd, log, capture=False):
     # Resolve .cmd tools on Windows without building a shell command from user input.
     command = [str(item) for item in command]
@@ -165,6 +183,7 @@ def main():
     args = parser.parse_args()
     output = external_destination(args.output)
     names = source_files()
+    commit, git_files = git_source()
     output.mkdir()
     reports = output / 'reports'; reports.mkdir()
     work = output / 'build-source'; work.mkdir()
@@ -185,16 +204,19 @@ def main():
             if digest(destination) != manifest[name] or digest(source) != manifest[name]:
                 raise RuntimeError('Source changed while copying: ' + name)
     (bundle / 'source-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    provenance = {}
+    if commit:
+        matches = set(git_files) == set(names)
+        for name in names:
+            data = (work / name).read_bytes()
+            blob = hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') + b'\0' + data).hexdigest()
+            matches = matches and git_files.get(name) == blob
+        provenance = {'source_base_commit': commit, 'source_has_local_changes': not matches}
     copy_deployment(work, bundle)
     result = native(work, bundle, reports) if args.target == 'native' else docker(work, bundle, reports)
     result.update(version=VERSION, target=args.target, public_release_approved=False,
                   source_manifest_sha256=digest(bundle / 'source-manifest.json'))
-    if (ROOT / '.git').exists():
-        revision = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True)
-        status = subprocess.run(['git', 'status', '--porcelain'], cwd=ROOT, capture_output=True, text=True)
-        if revision.returncode == 0 and status.returncode == 0:
-            result['source_base_commit'] = revision.stdout.strip()
-            result['source_has_local_changes'] = bool(status.stdout.strip())
+    result.update(provenance)
     (bundle / 'MANIFEST.json').write_text(json.dumps(result, indent=2) + '\n')
     entries = sorted(p for p in bundle.rglob('*') if p.is_file())
     (bundle / 'SHA256SUMS.txt').write_text(''.join(digest(p) + '  ' + p.relative_to(bundle).as_posix() + '\n' for p in entries))

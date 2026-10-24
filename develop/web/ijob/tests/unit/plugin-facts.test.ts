@@ -52,7 +52,7 @@ for (const entry of audit)
       expect(JSON.stringify(value)).toBe(original)
     },
   )
-test('heterogeneous record rows retain later columns, nested extensions, null, zero and exact decimals', () => {
+test('heterogeneous record rows retain later columns, nested extensions, null, zero and exact decimals', async () => {
   const wrapper = mount(PluginFacts, {
     props: {
       scope: 'apiCall',
@@ -73,6 +73,7 @@ test('heterogeneous record rows retain later columns, nested extensions, null, z
   })
   expect(wrapper.findAll('tbody > tr:not(.plugin-detail-row)')).toHaveLength(2)
   expect(wrapper.findAll('thead th').map((node) => node.text())).toHaveLength(5)
+  for (const toggle of wrapper.findAll('.plugin-row-toggle')) await toggle.trigger('click')
   for (const item of [
     'operationId',
     '$.id',

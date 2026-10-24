@@ -64,7 +64,9 @@ const display = computed(() => {
 })
 const query = ref('')
 const openRows = ref<number[]>([])
+const mountedRows = ref(new Set<number>())
 function toggleRow(index: number) {
+  mountedRows.value.add(index)
   openRows.value = openRows.value.includes(index)
     ? openRows.value.filter((value) => value !== index)
     : [...openRows.value, index]
@@ -205,7 +207,7 @@ const remaining = (row: Record<string, unknown>) =>
                   </td>
                 </tr>
                 <tr
-                  v-if="extraColumns.length"
+                  v-if="extraColumns.length && mountedRows.has(index)"
                   v-show="openRows.includes(index)"
                   class="plugin-detail-row"
                 >
