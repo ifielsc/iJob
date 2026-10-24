@@ -13,7 +13,7 @@ function routingLabel(value: string, locale = 'zh-CN') {
   const [direction, mode] = value.split(':')
   return locale === 'zh-CN'
     ? `${direction === 'LR' ? '从左到右' : '从上到下'} · ${mode === 'avoid' ? '自动避障' : '简洁曲线'}`
-    : `${direction === 'LR' ? 'Left to right' : 'Top to bottom'} · ${mode === 'avoid' ? 'Avoid obstacles' : 'Simple curves'}`
+    : `${direction === 'LR' ? 'Horizontal' : 'Vertical'} · ${mode === 'avoid' ? 'Avoid obstacles' : 'Simple curves'}`
 }
 async function selectRouting(page: Page, value: string, locale = 'zh-CN') {
   await page.locator('.job-routing-select').click()
@@ -1089,14 +1089,20 @@ test('removed condition draft survives undo but does not block route after publi
     .toBe(true)
   await page.locator('.vue-flow__node[data-id="yes"]').click()
   await page.getByRole('button', { name: '删除节点', exact: true }).click()
+  // Wait for the mouse-origin scale transition before clicking its moving button.
+  await expect(page.locator('.n-dialog')).not.toHaveClass(/transition-enter/)
   await page.locator('.n-dialog').getByRole('button', { name: '确认', exact: true }).click()
+  await expect(page.locator('.n-dialog')).toHaveCount(0)
   await expect(page.locator('.vue-flow__edge[data-id="402"]')).toHaveCount(0)
   await page.getByRole('button', { name: '撤销', exact: true }).click()
   await edge.dispatchEvent('click')
   await expect(literal).toHaveValue('[')
   await page.getByRole('button', { name: '重做', exact: true }).click()
   await page.getByRole('button', { name: '保存并发布', exact: true }).click()
+  // Wait for the mouse-origin scale transition before clicking its moving button.
+  await expect(page.locator('.n-dialog')).not.toHaveClass(/transition-enter/)
   await page.locator('.n-dialog').getByRole('button', { name: '确认', exact: true }).click()
+  await expect(page.locator('.n-dialog')).toHaveCount(0)
   await expect.poll(() => state.writes.length).toBe(1)
   await expect(page).toHaveURL(new RegExp('/jobs/' + jobId + '(?:\\?.*)?$'))
   await expect(page.locator('.n-dialog')).toHaveCount(0)
