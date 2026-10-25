@@ -28,26 +28,29 @@ function Separate-Paths([string]$First, [string]$Second) {
 function Say([string]$English, [string]$Chinese) { if ($Lang -eq 'zh') { Write-Host $Chinese } else { Write-Host $English } }
 try {
     if ($Action -eq 'configure') {
+        $Lang = $Lang.ToLowerInvariant()
         if ($Once) { throw '-Once is only supported by logs.' }
         $control = Absolute-Path $Directory
         $dataRoot = Absolute-Path $DataHome
-        $bundle = Absolute-Path $PSScriptRoot
+        $bundle = Absolute-Path (Split-Path -Parent $PSScriptRoot)
         Separate-Paths $bundle $control; Separate-Paths $bundle $dataRoot; Separate-Paths $control $dataRoot
         if (Test-Path -LiteralPath $control) { throw 'Control directory already exists; existing configuration was retained.' }
         foreach ($parent in @((Split-Path $control), (Split-Path $dataRoot))) {
             if (-not (Test-Path -LiteralPath $parent -PathType Container)) { throw 'Create the control and data parent directories first.' }
         }
-        foreach ($name in @('manage.ps1','ijob-setup-tool-1.0.0.jar','ijob-starter-1.0.0.jar','ijob.cmd')) {
+        foreach ($name in @('support/manage.ps1','ijob-setup-tool-1.0.0.jar','ijob-starter-1.0.0.jar','ijob.cmd')) {
             if (-not (Test-Path -LiteralPath (Join-Path $bundle $name) -PathType Leaf)) { throw 'Configure from a complete native distribution.' }
         }
         New-Item -ItemType Directory -Path $control | Out-Null
         [IO.File]::WriteAllText((Join-Path $control 'instance.conf'), "version=1`nbundle=$bundle`nhome=$dataRoot`nlang=$Lang`nmode=windows`n", [Text.UTF8Encoding]::new($false))
-        Copy-Item -LiteralPath (Join-Path $bundle 'ijob.cmd'), (Join-Path $bundle 'instance.ps1') -Destination $control
+        Copy-Item -LiteralPath (Join-Path $bundle 'ijob.cmd') -Destination $control
+        $support = New-Item -ItemType Directory -Path (Join-Path $control 'support')
+        Copy-Item -LiteralPath (Join-Path $bundle 'support/instance.ps1') -Destination $support.FullName
         Say "Configured. Run $control\ijob.cmd start. Application data was not initialized." "配置完成。运行 $control\ijob.cmd start。尚未初始化应用数据。"
         exit 0
     }
     if ($Directory -or $DataHome -or $PSBoundParameters.ContainsKey('Lang') -or ($Once -and $Action -ne 'logs')) { throw 'Runtime commands read instance.conf; directory/language options are only for configure.' }
-    $control = Absolute-Path $PSScriptRoot
+    $control = Absolute-Path (Split-Path -Parent $PSScriptRoot)
     $file = Join-Path $control 'instance.conf'
     if (-not (Test-Path -LiteralPath $file -PathType Leaf) -or ((Get-Item -LiteralPath $file).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Use ijob.cmd configure -Directory <new-control-directory> -Home <data-directory> -Lang zh or en first.' }
     $settings = @{}
@@ -71,7 +74,8 @@ try {
         Get-Content -LiteralPath (Join-Path $dataRoot 'logs/ijob.log') -Encoding UTF8 -Tail 200
         exit 0
     }
-    $manager = Join-Path $bundle 'manage.ps1'
+    $manager = Join-Path $bundle 'support/manage.ps1'
+    if (-not (Test-Path -LiteralPath $manager -PathType Leaf)) { $manager = Join-Path $bundle 'manage.ps1' }
     if (-not (Test-Path -LiteralPath $manager -PathType Leaf)) { throw 'Configured distribution is missing manage.ps1.' }
     & powershell.exe -NoProfile -File $manager $Action
     exit $LASTEXITCODE

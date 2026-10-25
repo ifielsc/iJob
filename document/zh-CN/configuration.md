@@ -6,7 +6,7 @@
 
 | 类型 | 修改入口 | 生效 |
 | --- | --- | --- |
-| 平台启动配置 | IJOB_HOME/application.properties | 原生重启；Docker 使用 start-docker.sh --recreate |
+| 平台启动配置 | IJOB_HOME/application.properties | 原生重启；Docker 使用 legacy/start-docker.sh --recreate |
 | 宿主/容器配置 | 环境变量、同一 home 的 compose.yaml | 重新启动对应进程或重建容器 |
 | 任务/作业/资源/调度等业务配置 | 管理页面 | 按页面保存/发布/启用；一般不重启平台 |
 

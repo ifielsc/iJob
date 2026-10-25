@@ -8,7 +8,7 @@ The program directory holds the complete distribution; the control directory hol
 
 ```text
 programs/ijob-1.0.0/       Complete distribution
-instances/a/              ijob.cmd + instance.ps1 (Windows) or ijob.sh (Linux/Docker)
+instances/a/              ijob.cmd + support/instance.ps1 (Windows) or ijob.sh (Linux/Docker)
                           instance.conf: this instance's launch settings
 data/a/                   This instance's IJOB_HOME; may contain secrets
 ```
@@ -43,13 +43,13 @@ Use the same OS account for all commands; if Docker needs sudo, use it consisten
 
 ## Legacy scripts without environment variables
 
-Direct start.cmd, start.sh and start-docker.sh remain supported. Without IJOB_HOME they select these locations beside the program directory; they do not remember a previously chosen custom home:
+Direct legacy/start.cmd, legacy/start.sh and legacy/start-docker.sh remain supported. Without IJOB_HOME they select these locations beside the program directory; they do not remember a previously chosen custom home:
 
 | Legacy entry | Default home |
 | --- | --- |
-| Windows start.cmd | Program parent/ijob-data |
-| Linux start.sh | Program parent/ijob-data-linux |
-| Docker start-docker.sh | Program parent/ijob-data-docker |
+| Windows legacy/start.cmd | Program parent/ijob-data |
+| Linux legacy/start.sh | Program parent/ijob-data-linux |
+| Docker legacy/start-docker.sh | Program parent/ijob-data-docker |
 
 IJOB_LANG defaults to English; zh selects Chinese initialization/launch messages. It does not change the web UI or business-notification language; some underlying errors and technical logs remain English. Legacy actions still need consistent environment variables. Prefer the persistent entry point for daily operation.
 
@@ -57,4 +57,44 @@ The setup JAR accepts --home/--lang, but a single invocation does not persist th
 
 ## Upgrade and diagnosis
 
-Use show to confirm the instance, stop, then follow [backup/upgrade](../operations/upgrade-rollback.md). Keep home and change bundle to the new complete distribution while stopped; review control-script compatibility, start, then verify login, history and a harmless task. Do not change home/bundle while running or status/logs could point elsewhere. Use canonical absolute paths without symlinks/junctions. Missing, duplicate or unknown keys are rejected.
+Use show to confirm the instance, stop, then follow [backup/upgrade](../operations/upgrade-rollback.md). For the old flat layout, create a new control entry as described below. With compatible control scripts and the same layout, keep home and change bundle while stopped, start, then verify login, history and a harmless task. Do not change home/bundle while running or status/logs could point elsewhere. Use canonical absolute paths without symlinks/junctions. Missing, duplicate or unknown keys are rejected.
+
+## Package layout and legacy entry points
+
+```text
+ijob-1.0.0/
+  ijob.cmd / ijob.sh    Recommended: configure, then use the instance control directory
+  legacy/              Previous initialize/start/stop/status/logs entry points
+  support/             Internal helpers and logging-native.xml; do not invoke directly
+  docs/                Chinese and English manuals
+  JARs, web-dist, ...   Program resources
+```
+
+From the package root, call `.\legacy\start.cmd`, `bash ./legacy/start.sh`, or `sudo bash ./legacy/start-docker.sh`; entering legacy first also works. Keep the whole package intact. Program resources are always resolved from the package root. Default legacy data homes remain ijob-data / ijob-data-linux / ijob-data-docker beside the program directory, never a new installation inside the program or legacy directory.
+
+A new Windows control directory contains only ijob.cmd, instance.conf and support/instance.ps1. Linux/Docker control directories contain ijob.sh and instance.conf.
+
+## Upgrade from the previous flat-script package
+
+Old control scripts do not know the legacy/support layout. **Changing only bundle in an old instance.conf is insufficient.** Retain the old control directory and create a new one referencing the same data:
+
+1. Run show through the old control directory; record home, lang and mode and verify the instance identity.
+2. Run stop through that directory, confirm shutdown and back up the original data/configuration.
+3. Extract the new complete package to a separate program directory and run configure from its root. Use a new control directory and retain the original home, lang and mode.
+
+Windows example, from the new package root:
+
+```powershell
+.\ijob.cmd configure -Directory D:/ijob/instances/a-layout -Home D:/ijob-data/a -Lang en
+```
+
+Linux native example; for Docker select mode docker and consistently use the original account/sudo convention:
+
+```sh
+bash ./ijob.sh configure --directory /srv/ijob/instances/a-layout --home /srv/ijob-data/a --lang en --mode linux
+```
+
+4. Use show, start, status and logs through the new control directory. Verify the existing account, definitions and history. Existing installations are reused without reinitialization or new keys. Never launch the same data home concurrently through both entries.
+5. Update shortcuts/operations records to the new control directory. To roll back only this script-layout change, stop through the new entry and start the original package through the retained old entry. Other program/database changes still require the documented rollback procedure.
+
+New control scripts also recognize the old flat management layout for controlled rollback; old control scripts do not automatically recognize the new layout. Old controls and packages are retained, not automatically removed.

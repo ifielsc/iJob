@@ -16,7 +16,7 @@
 
 恢复到新目录、新端口；原备份和现有实例不动。原生将 spring.datasource.url 指向新 runtime/platform.db，核对绝对路径、监听端口和权限。复制来的 PID 记录不是现有进程身份，不得按其中 PID 直接杀进程。
 
-Docker 保留内部数据库路径和 8080；为复制的 compose.yaml 使用新项目名，把两个绑定源分别改为新 application.properties 和 runtime，保持容器 UID/GID 10001 权限。使用对应包 `start-docker.sh --recreate`。
+Docker 保留内部数据库路径和 8080；为复制的 compose.yaml 使用新项目名，把两个绑定源分别改为新 application.properties 和 runtime，保持容器 UID/GID 10001 权限。使用对应包 `legacy/start-docker.sh --recreate`。
 
 验证就绪、登录、任务/作业版本、历史实例、加密资源可读性，再运行独立无副作用任务。记录恢复耗时与差异；一次历史演练不构成生产 RPO/RTO 承诺。
 

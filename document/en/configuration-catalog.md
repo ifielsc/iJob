@@ -23,7 +23,7 @@ These approved levels are maintenance guidance, not new access controls. setting
 
 - Source declarations preserve expressions such as `${VARIABLE:fallback}`. A declaration does not apply unless its file is loaded. Database-specific values apply only to the selected vendor. The mail-profile declaration applies when that profile loads, while the email implementation itself is enabled when the switch is absent.
 - Fresh-install overrides distinguish setup and deployment modes. No extra override means the loaded configuration/implementation default applies; not every implicit framework default is enumerated. Java field initializers are not automatically installation defaults.
-- Restart the installation after platform application.properties changes. For Docker, use the corresponding bundle's start-docker.sh --recreate to refresh mounts and configuration. Restart Agent for Agent changes. Build variables apply only when rebuilding images/frontend.
+- Restart the installation after platform application.properties changes. For Docker, use the corresponding bundle's legacy/start-docker.sh --recreate to refresh mounts and configuration. Restart Agent for Agent changes. Build variables apply only when rebuilding images/frontend.
 - Some IJOB_* names are YAML placeholder inputs or script inputs, so they do not universally override external files. Explicit launch arguments, system properties and directly bound environment variables also influence effective values. Avoid maintaining competing copies.
 - Secret entries show only variable names or generation rules, never live values. Ordinary configuration edits require no program rebuild. Existing production and demonstration environments remain unchanged.
 
@@ -316,7 +316,7 @@ This filters persistent work-queue claims for root triggers. It is not login aut
 | C159<br>`management.endpoint.health.show-details`<br>enum | `never` (S01) | No extra setup override; use loaded configuration/implementation default | — | **C** Health detail visibility; design access controls before exposing details. | Platform; restart installation |
 | C160<br>`management.health.livenessstate.enabled`<br>boolean | `true` (S01) | No extra setup override; use loaded configuration/implementation default | — | **D** Liveness state probe; retain deployment probe contract. | Platform; restart installation |
 | C161<br>`management.health.readinessstate.enabled`<br>boolean | `true` (S01) | No extra setup override; use loaded configuration/implementation default | — | **D** Readiness state probe; retain deployment probe contract. | Platform; restart installation |
-| C190<br>`logging.config`<br>uri | `launcher: <bundle>/logging-native.xml` (S11) | No extra setup override; use loaded configuration/implementation default | — | **D** Native logging configuration resource, set by launcher. | Native; restart installation |
+| C190<br>`logging.config`<br>uri | `launcher: <bundle>/support/logging-native.xml` (S11) | No extra setup override; use loaded configuration/implementation default | — | **D** Native logging configuration resource, set by launcher. | Native; restart installation |
 | C194<br>`ijob.logging.max-file-size`<br>size | `10MB` (S12) | No extra setup override; use loaded configuration/implementation default | — | **A** Native log rollover size per file. | Native; restart installation |
 | C195<br>`ijob.logging.max-history`<br>days | `14` (S12) | No extra setup override; use loaded configuration/implementation default | — | **A** Native log archive retention in days. | Native; restart installation |
 | C196<br>`ijob.logging.total-size-cap`<br>size | `200MB` (S12) | No extra setup override; use loaded configuration/implementation default | — | **A** Native archive size cap; may remove archives before age limit. | Native; restart installation |
@@ -456,13 +456,13 @@ Paths are relative to the repository root. The shared machine inventory is `docu
 | S08 | `develop/api/ijob-monitor-agent/src/main/resources/application.yaml` |
 | S09 | `develop/api/ijob-monitor-agent/src/main/java/com/ifielsc/ijob/monitor/agent/config/AgentProperties.java` |
 | S10 | `develop/api/ijob/ijob-setup-tool/src/main/java/com/ifielsc/ijob/setup/SetupTool.java` |
-| S11 | `develop/deployment/first-run/manage.ps1` |
-| S12 | `develop/deployment/first-run/logging-native.xml` |
+| S11 | `develop/deployment/first-run/support/manage.ps1` |
+| S12 | `develop/deployment/first-run/support/logging-native.xml` |
 | S13 | `develop/api/ijob-monitor-agent/Dockerfile` |
-| S14 | `develop/deployment/first-run/native-common.sh` |
-| S15 | `develop/deployment/first-run/start-docker.sh` |
-| S16 | `develop/deployment/first-run/start.sh` |
-| S17 | `develop/deployment/first-run/stop.sh` |
+| S14 | `develop/deployment/first-run/support/native-common.sh` |
+| S15 | `develop/deployment/first-run/legacy/start-docker.sh` |
+| S16 | `develop/deployment/first-run/legacy/start.sh` |
+| S17 | `develop/deployment/first-run/legacy/stop.sh` |
 | S18 | `develop/deployment/docker/compose.yaml` |
 | S19 | `develop/deployment/docker/compose.agent.yaml` |
 | S20 | `develop/deployment/docker/images.env` |
@@ -478,7 +478,7 @@ Paths are relative to the repository root. The shared machine inventory is `docu
 | S30 | `develop/web/ijob/Dockerfile` |
 | S31 | `develop/api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/routing/ExecutionGroupCodes.java` |
 | S32 | `develop/api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/routing/ExecutionTargetIds.java` |
-| S33 | `develop/deployment/first-run/instance.ps1` |
+| S33 | `develop/deployment/first-run/support/instance.ps1` |
 | S34 | `develop/deployment/first-run/ijob.sh` |
 
 Groups, allowlists and all plugin switches now appear in the approved references. Databases/credentials use controlled workflows; internal parameters remain in the appendix. See [Configuration](configuration.md) and [Page reference](user-guide/README.md).

@@ -16,7 +16,7 @@ Keep the program/hash, complete IJOB_HOME, original AES key/key-id, database bac
 
 Restore into a new directory/port, leaving backup and current instance untouched. For native deployment, point spring.datasource.url at the new runtime/platform.db and verify absolute paths, listener and permissions. Copied PID files are not current process identities; never kill a process solely using their PID.
 
-For Docker, retain internal database paths and port 8080. Give the copied compose.yaml a new project name and change both bind sources to the new application.properties and runtime, preserving container UID/GID 10001 permissions. Start with the matching bundle's `start-docker.sh --recreate`.
+For Docker, retain internal database paths and port 8080. Give the copied compose.yaml a new project name and change both bind sources to the new application.properties and runtime, preserving container UID/GID 10001 permissions. Start with the matching bundle's `legacy/start-docker.sh --recreate`.
 
 Verify readiness, login, task/job versions, history and encrypted resource readability, then run an independent harmless task. Record duration/differences. A past rehearsal does not establish production RPO/RTO commitments.
 

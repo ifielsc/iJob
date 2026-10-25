@@ -6,7 +6,7 @@
 
 `IJOB_HOME` selects the private installation directory; `IJOB_LANG=en/zh` controls setup prompts, not browser language. JAVA_HOME selects Java 21. Native IJOB_START_TIMEOUT/IJOB_STOP_TIMEOUT differ from application-executor timeouts. After first setup, edit actual files; initialization variables do not rewrite an existing installation.
 
-Treat advanced Compose templates separately from generated first-run Compose. The former may consume IJOB_HTTP_BIND and other template variables; the latter uses its actual mappings, mounts and resource limits. After changes, run `start-docker.sh --recreate` from the matching complete bundle. Do not reuse another environment's project name, directories or secret files.
+Treat advanced Compose templates separately from generated first-run Compose. The former may consume IJOB_HTTP_BIND and other template variables; the latter uses its actual mappings, mounts and resource limits. After changes, run `legacy/start-docker.sh --recreate` from the matching complete bundle. Do not reuse another environment's project name, directories or secret files.
 
 ## Agent
 

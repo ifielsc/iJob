@@ -8,7 +8,7 @@ case "$#:${1:-}" in
     1:--recreate) set -- --force-recreate ;;
     *) echo 'Usage: ./start-docker.sh [--recreate]' >&2; exit 1 ;;
 esac
-bundle=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+bundle=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 IJOB_HOME=${IJOB_HOME:-"$(dirname -- "$bundle")/ijob-data-docker"}
 export IJOB_HOME
 case "$IJOB_HOME" in /*) ;; *) echo 'IJOB_HOME must be absolute' >&2; exit 1;; esac

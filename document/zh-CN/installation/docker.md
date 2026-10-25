@@ -54,4 +54,6 @@ sudo /srv/ijob/instances/docker-a/ijob.sh restart
 
 restart 使用该程序包的镜像锁重建本项目并等待就绪，不删除卷；Compose 中端口、挂载或资源变更也随重建应用。容器内 HTTP 保持 0.0.0.0:8080，同机各实例改独立宿主端口。不要用 down -v 作为日常停止命令。生成的 Compose 与仓库高级模板不同，IJOB_HTTP_BIND 等高级模板变量不会自动修改生成配置。
 
-目录、语言、默认值和升级方式见[统一入口](instance-launcher.md)。旧 start-docker.sh / stop-docker.sh 和 Compose 命令仍支持；需要每次保持相同 IJOB_HOME。
+目录、语言、默认值和升级方式见[统一入口](instance-launcher.md)。旧 legacy/start-docker.sh / legacy/stop-docker.sh 和 Compose 命令仍支持；需要每次保持相同 IJOB_HOME。
+
+同机多实例请把 compose.yaml 的 web.ports 中 `${IJOB_HTTP_PORT:-18080}` 改为各实例固定端口（例如 `127.0.0.1:18081:8080`），再用本实例入口 restart。只在初始化阶段设置临时环境变量不会将端口保存下来。

@@ -92,7 +92,7 @@ D 级项用于框架、协调协议、数据库方言/迁移和实现边界。�
 | C187 / `app.web.enabled` | D / boolean | native=true; docker uses separate web service | 原生静态前端托管开关；由安装方式决定，Docker 使用独立 Web 容器。 |
 | C188 / `app.web.directory` | D / path | native=<bundle>/web-dist | 前端资源目录；原生启动器按当前包传入，换目录不会重建前端。 |
 | C189 / `spring.config.additional-location` | D / uri | launcher: external private configuration URI | 启动器指定私有外部配置的位置，勿同时维护多个冲突入口。 |
-| C190 / `logging.config` | D / uri | launcher: <bundle>/logging-native.xml | 原生日志配置资源位置，由启动器设置。 |
+| C190 / `logging.config` | D / uri | launcher: <bundle>/support/logging-native.xml | 原生日志配置资源位置，由启动器设置。 |
 | C191 / `ijob.native.home` | D / path | launcher: IJOB_HOME process identity | 进程身份校验标记；启动器生成，不可冒用或独立改写。 |
 | C192 / `ijob.native.log-directory` | D / path | launcher: <IJOB_HOME>/logs | 日志目录由 IJOB_HOME 派生，随安装目录管理。 |
 | C193 / `ijob.native.log-session` | D / text | launcher-generated unique launch identity | 本次启动的就绪日志标记，由启动器生成。 |

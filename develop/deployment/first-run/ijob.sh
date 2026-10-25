@@ -77,22 +77,24 @@ separate_paths "$control" "$bundle"; separate_paths "$control" "$data_home"; sep
 if [[ $action == show ]]; then printf 'bundle=%s\nhome=%s\nlang=%s\nmode=%s\n' "$bundle" "$data_home" "$lang" "$mode"; exit 0; fi
 export IJOB_HOME="$data_home" IJOB_LANG="$lang"
 say "Instance home: $data_home" "实例数据目录：$data_home"
+entry_dir=$bundle/legacy
+[[ -d $entry_dir ]] || entry_dir=$bundle
 if [[ $mode == linux ]]; then
     case $action in
-        restart) bash "$bundle/stop.sh"; exec bash "$bundle/start.sh";;
+        restart) bash "$entry_dir/stop.sh"; exec bash "$entry_dir/start.sh";;
         logs)
             if $once; then
                 absolute_path "$data_home/logs/ijob.log"
                 exec tail -n 200 -- "$data_home/logs/ijob.log"
             fi
-            exec bash "$bundle/logs.sh";;
-        *) exec bash "$bundle/$action.sh";;
+            exec bash "$entry_dir/logs.sh";;
+        *) exec bash "$entry_dir/$action.sh";;
     esac
 else
     case $action in
-        start) exec bash "$bundle/start-docker.sh";;
-        restart) exec bash "$bundle/start-docker.sh" --recreate;;
-        stop) exec bash "$bundle/stop-docker.sh";;
+        start) exec bash "$entry_dir/start-docker.sh";;
+        restart) exec bash "$entry_dir/start-docker.sh" --recreate;;
+        stop) exec bash "$entry_dir/stop-docker.sh";;
         status) exec docker compose -f "$data_home/compose.yaml" ps;;
         logs)
             follow=(); $once || follow=(-f)

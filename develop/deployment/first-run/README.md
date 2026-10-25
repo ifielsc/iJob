@@ -8,7 +8,7 @@
 
 ## 1. Windows
 
-准备 Java 21，双击 `start.cmd`。首次输入管理员账号、密码并确认，数据库直接回车选择 SQLite。启动后打开 http://127.0.0.1:18080。`initialize.cmd` 只生成配置，不启动应用、不连接数据库。
+准备 Java 21，双击 `legacy/start.cmd`。首次输入管理员账号、密码并确认，数据库直接回车选择 SQLite。启动后打开 http://127.0.0.1:18080。`legacy/initialize.cmd` 只生成配置，不启动应用、不连接数据库。
 
 密码至少 12 个 Java UTF-16 字符单位，UTF-8 最多 72 字节，输入两遍且不回显。BCrypt 哈希、随机 AES 密钥及私有文件权限自动生成。网页由后端读取 `web-dist` 提供，无需额外安装 Node.js 或 Nginx。
 
@@ -19,28 +19,28 @@ $env:IJOB_HOME = 'F:\iJobData\installation-a'
 .\start.cmd
 ```
 
-这只设置当前窗口环境；以后启动必须继续使用相同 `IJOB_HOME`。路径必须在交付目录外，不使用符号链接或目录联接。改路径不会自动迁移已有数据。停止使用 `stop.cmd` 并等待退出；`logs.cmd` 中 Ctrl+C 只结束日志查看。
+这只设置当前窗口环境；以后启动必须继续使用相同 `IJOB_HOME`。路径必须在交付目录外，不使用符号链接或目录联接。改路径不会自动迁移已有数据。停止使用 `legacy/stop.cmd` 并等待退出；`legacy/logs.cmd` 中 Ctrl+C 只结束日志查看。
 
 ## 2. Linux 原生
 
 准备 Java 21、Bash、util-linux 的 `flock`，进入完整交付目录：
 
 ```sh
-chmod +x start.sh stop.sh status.sh logs.sh
+chmod +x legacy/start.sh legacy/stop.sh legacy/status.sh legacy/logs.sh
 ./start.sh
 ./status.sh
 ./logs.sh
 ./stop.sh
 ```
 
-首次交互初始化，之后后台运行。`logs.sh` 中 Ctrl+C 只结束日志查看。默认数据目录为包同级 `ijob-data-linux`；可在当前终端 `export IJOB_HOME=/home/ijob/installation-a`，所有启动、停止、状态和日志命令使用同一路径。使用规范绝对路径，父目录需存在。默认监听 `127.0.0.1:18080`，远程访问可通过 SSH 转发。
+首次交互初始化，之后后台运行。`legacy/logs.sh` 中 Ctrl+C 只结束日志查看。默认数据目录为包同级 `ijob-data-linux`；可在当前终端 `export IJOB_HOME=/home/ijob/installation-a`，所有启动、停止、状态和日志命令使用同一路径。使用规范绝对路径，父目录需存在。默认监听 `127.0.0.1:18080`，远程访问可通过 SSH 转发。
 
 ## 3. Docker（Linux amd64）
 
 准备 Docker Engine 和 Compose 插件，使用 tools/distribution/build.py --target docker 生成完整交付目录（包含 docker-images.lock 和 docker-images.compose.yaml），然后进入该目录：
 
 ```sh
-chmod +x start-docker.sh stop-docker.sh
+chmod +x legacy/start-docker.sh legacy/stop-docker.sh
 sudo ./start-docker.sh
 sudo ./stop-docker.sh
 ```
@@ -116,7 +116,7 @@ app.http.read-timeout=60s
 
 Windows/Linux 原生启动器通过 `spring.config.additional-location` 加载安装数据目录的文件；Docker 首次启动模板把同一个宿主配置挂载为 `/run/secrets/application.properties` 并加载。外部文件可覆盖包内默认值，命令行、Java 系统属性、直接绑定的环境变量或 SPRING_APPLICATION_JSON 仍可能覆盖文件。`IJOB_*` 中也有仅供 YAML 占位符或启动器使用的变量，不应把所有名称一律当成更高优先级的配置。框架加载规则见 [Spring Boot 3.5 外部配置说明](https://docs.spring.io/spring-boot/3.5/reference/features/external-config.html)。
 
-原生启动器显式设置 profile、Web 目录和日志配置位置等参数；Linux start.sh 不接受任意额外参数。若这些固定参数与文件冲突，应按启动器设计处理，不能假设在文件里改同名项一定有效，也不能假设启动器会读取 JAVA_OPTS。
+原生启动器显式设置 profile、Web 目录和日志配置位置等参数；Linux legacy/start.sh 不接受任意额外参数。若这些固定参数与文件冲突，应按启动器设计处理，不能假设在文件里改同名项一定有效，也不能假设启动器会读取 JAVA_OPTS。
 
 | 想改的内容 | 正确位置 |
 | --- | --- |
@@ -177,7 +177,7 @@ DATABASE 且 bootstrap 关闭后，配置里的 `app.auth.username` / `app.auth.
 5. 普通双节点保留默认 `API,SCHEDULER,WORKER,MAINTENANCE` 全部角色。保持 Flyway、通知 Outbox 和运行维护开启。组名和执行白名单根据任务路由配置；默认向导的 `default` 组可在各节点一致保留。节点上的任务依赖文件、脚本和资源访问也需要准备，不能假设数据库会复制本地文件。
 6. 用各自的 `IJOB_HOME` 先启动 A，确认就绪后启动 B，检查节点登记、跨节点登录、任务执行和停止后接管。不同机器可使用相同端口；同机端口必须不同。原生默认监听 `127.0.0.1`，跨机入口需显式设置受限内网监听地址并配置访问控制；统一访问地址可由反向代理或负载均衡提供。
 
-Windows 可分别在两个 PowerShell 窗口设置各自 `$env:IJOB_HOME` 后运行 `start.cmd`；Linux 分别用 `IJOB_HOME=/path/to/node-a ./start.sh` 和 `IJOB_HOME=/path/to/node-b ./start.sh`，停止时同样指定对应目录。各节点日志和进程控制文件独立。
+Windows 可分别在两个 PowerShell 窗口设置各自 `$env:IJOB_HOME` 后运行 `legacy/start.cmd`；Linux 分别用 `IJOB_HOME=/path/to/node-a ./start.sh` 和 `IJOB_HOME=/path/to/node-b ./start.sh`，停止时同样指定对应目录。各节点日志和进程控制文件独立。
 
 Docker 每节点还需独立 Compose 项目名和绑定目录。可用向导先为 B 生成自己的安装和 Compose（只初始化、不启动），再停机同步上述共享配置；或者审阅复制后的 Compose，逐项修改项目名及两个 volume source，不能让 B 仍挂载 A 的配置/runtime。保留容器内 `server.port=8080`，同机通过不同的 `IJOB_HTTP_PORT` 映射 Web 端口。配置文件为 0600、runtime 为 0700，容器访问的文件及 runtime 归 UID/GID 10001；安装目录及 Compose 保持宿主用户权限。
 
@@ -205,4 +205,4 @@ sudo docker run --rm -it --user 0:0 --network none \
 
 Windows 和 Linux 原生均后台运行，通过 logs 命令查看文件日志。原生日志位于 `IJOB_HOME/logs/ijob.log`，按 UTC 日期/10 MB 滚动并压缩，同一天归档序号 `.0`、`.1`、`.2` 递增。归档最多保留 14 天、200 MB，容量限制可能提前移除旧归档；当前文件另计，清理异步。可通过 `ijob.logging.max-file-size`、`ijob.logging.max-history`、`ijob.logging.total-size-cap` 调整并重启。Docker 每容器沿用 10 MB × 5 份日志。
 
-`logging-native.xml`、启动脚本、两个 JAR 和 `web-dist` 应完整复制。升级保留整个数据目录和 AES 密钥；原安装配置不会自动覆盖。源码归档、`source-manifest.json`、`MANIFEST.json`、`SHA256SUMS.txt` 和隔离验证证据随交付包提供。当前功能默认及使用流程以本说明为准，旧报告保留其历史验证范围。
+`support/logging-native.xml`、完整 legacy/support 目录与新入口、两个 JAR 和 `web-dist` 应完整复制。升级保留整个数据目录和 AES 密钥；原安装配置不会自动覆盖。源码归档、`source-manifest.json`、`MANIFEST.json`、`SHA256SUMS.txt` 和隔离验证证据随交付包提供。当前功能默认及使用流程以本说明为准，旧报告保留其历史验证范围。

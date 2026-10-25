@@ -131,7 +131,7 @@ Avoid repeated explanations: plugin fields live in the reference, examples link 
 | --- | --- | --- |
 | F01 | Relationship of build.py to pnpm check/-DskipTests is unclear | Explain that these are internal script steps; installers need no second build, while full gates serve developers/publishers |
 | F02 | Windows command block suggests initialize must precede every start | Explain automatic initialization by start; initialize only configures without starting; separate first/routine use |
-| F03 | Docker recreation instructions conflict with pinned-image entrypoint | Use the corresponding distribution start-docker.sh --recreate consistently; separate status/logs/stop |
+| F03 | Docker recreation instructions conflict with pinned-image entrypoint | Use the corresponding distribution legacy/start-docker.sh --recreate consistently; separate status/logs/stop |
 | F04 | Quick start/examples say script stdout is not recorded, contrary to implementation/evidence | Correct output path, limits and UI location; demonstrate with real run screenshots |
 | F05 | The 21-setting table omits routing, switches, retention durations, sessions and Agent | Present the complete classified inventory; explicitly state checker coverage rather than claiming future support |
 | F06 | Multi-account, cluster and production ingress are compressed together | Separate authentication mode from runtime mode, each with prerequisites, steps, checks and failure handling |

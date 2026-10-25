@@ -5,7 +5,7 @@
 set -euo pipefail
 umask 077
 
-bundle=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+bundle=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 data_home=${IJOB_HOME:-"$(dirname -- "$bundle")/ijob-data-linux"}
 case "$data_home" in /*) ;; *) echo 'IJOB_HOME must be an absolute path.' >&2; exit 1;; esac
 [[ $(readlink -m -- "$data_home") == "$data_home" ]] || { echo 'Use a canonical data path without symlinks.' >&2; exit 1; }

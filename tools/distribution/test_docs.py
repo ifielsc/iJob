@@ -17,6 +17,13 @@ class ManualBoundaryTest(unittest.TestCase):
             self.assertTrue((bundle / 'docs/en/installation/windows.md').is_file())
             self.assertTrue((bundle / 'docs/zh-CN/images/manual/script-run.png').is_file())
             self.assertTrue((bundle / 'docs/reference/screenshots.json').is_file())
+            self.assertEqual({'ijob.cmd', 'ijob.sh'},
+                             {p.name for p in bundle.iterdir() if p.suffix in {'.cmd', '.sh', '.ps1'}})
+            self.assertTrue((bundle / 'legacy/start.cmd').is_file())
+            self.assertTrue((bundle / 'legacy/stop-docker.sh').is_file())
+            self.assertTrue((bundle / 'support/instance.ps1').is_file())
+            self.assertTrue((bundle / 'support/logging-native.xml').is_file())
+            self.assertNotIn(b'\r\n', (bundle / 'legacy/start.sh').read_bytes())
             self.assertEqual(docs.validate_pages(build.ROOT),
                              docs.validate_pages(bundle, bundle / 'docs'))
 

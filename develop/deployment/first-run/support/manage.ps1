@@ -6,7 +6,7 @@ $ErrorActionPreference = 'Stop'
 [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Console]::OutputEncoding
-$bundle = [IO.Path]::GetFullPath($PSScriptRoot)
+$bundle = [IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $dataRoot = if ($env:IJOB_HOME) { [IO.Path]::GetFullPath($env:IJOB_HOME) } else { Join-Path (Split-Path $bundle) 'ijob-data' }
 if ($dataRoot.StartsWith($bundle + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) -or $dataRoot -eq $bundle) { throw 'IJOB_HOME must be outside the bundle.' }
 if ($dataRoot -match '[\r\n"]') { throw 'Unsupported data path.' }
@@ -35,7 +35,7 @@ function Stop-OwnedProcess {
     $process = Get-OwnedProcess
     if (-not $process) { Say 'Already stopped.' '已经停止。'; return }
     # A separate console helper sends Ctrl+C only to the verified Java console.
-    $args = @('-NoProfile','-File',('"' + (Join-Path $bundle 'signal-stop.ps1') + '"'),'-ProcessId',$process.ProcessId,'-Created',('"' + $process.CreationDate.ToUniversalTime().ToString('o') + '"'),'-DataRoot',('"' + $dataRoot + '"'))
+    $args = @('-NoProfile','-File',('"' + (Join-Path $PSScriptRoot 'signal-stop.ps1') + '"'),'-ProcessId',$process.ProcessId,'-Created',('"' + $process.CreationDate.ToUniversalTime().ToString('o') + '"'),'-DataRoot',('"' + $dataRoot + '"'))
     $helper = Start-Process -FilePath (Join-Path $env:WINDIR 'System32/WindowsPowerShell/v1.0/powershell.exe') -ArgumentList $args -WindowStyle Hidden -Wait -PassThru
     if ($helper.ExitCode -ne 0) { throw 'Graceful signal refused or failed; process retained.' }
     for ($attempt = 0; $attempt -lt 120; $attempt++) {
@@ -53,7 +53,7 @@ if ($Action -in @('init','start','restart')) {
 }
 if (-not (Test-Path -LiteralPath $dataRoot)) {
     if ($Action -eq 'stop') { Say 'Already stopped.' '已经停止。'; exit 0 }
-    throw 'Installation not initialized; run initialize.cmd.'
+    throw 'Installation not initialized; run the instance ijob.cmd start or legacy/initialize.cmd.'
 }
 if (-not (Select-String -LiteralPath (Join-Path $dataRoot 'installation.properties') -Pattern '^mode=windows$' -Quiet)) { throw 'This is not a Windows installation.' }
 if ($Action -eq 'logs') { Get-Content -LiteralPath $log -Tail 100 -Wait; exit 0 }
@@ -79,7 +79,7 @@ try {
         '--spring.profiles.active=release,native-background',
         ('--spring.config.additional-location=' + ([uri](Join-Path $dataRoot 'application.properties')).AbsoluteUri),
         ('--app.web.directory=' + (Join-Path $bundle 'web-dist')),
-        ('--logging.config=' + ([uri](Join-Path $bundle 'logging-native.xml')).AbsoluteUri),
+        ('--logging.config=' + ([uri](Join-Path $PSScriptRoot 'logging-native.xml')).AbsoluteUri),
         ('--ijob.native.log-directory=' + (Join-Path $dataRoot 'logs')), "--ijob.native.log-session=$session")
     $previousVendor = $env:IJOB_PLATFORM_DB
     try {
@@ -96,5 +96,5 @@ try {
         }
         Start-Sleep -Seconds 1
     }
-    throw 'Startup timed out; process retained. Inspect logs or run stop.cmd.'
+    throw 'Startup timed out; process retained. Inspect logs or run the instance ijob.cmd stop or legacy/stop.cmd.'
 } finally { $lock.Dispose() }

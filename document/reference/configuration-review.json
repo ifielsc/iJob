@@ -52,16 +52,16 @@
     {
       "id": "S10",
       "path": "develop/api/ijob/ijob-setup-tool/src/main/java/com/ifielsc/ijob/setup/SetupTool.java",
-      "sha256": "7cdfb4675e3e62ef1379adc4c791f350a15938607d185e05e2ba66b772738df9"
+      "sha256": "c8efd620f7a33ee9f3bf8107e721040cd239349a120581e0afee82805a04b3d5"
     },
     {
       "id": "S11",
-      "path": "develop/deployment/first-run/manage.ps1",
-      "sha256": "1c0a4e10e21570b77286e160cba12980c88de2175486c5819a33f30e97c86991"
+      "path": "develop/deployment/first-run/support/manage.ps1",
+      "sha256": "0e6f8ad8766176c91805461c50a42141cdd1aae559d53a4f024d95d3a845e581"
     },
     {
       "id": "S12",
-      "path": "develop/deployment/first-run/logging-native.xml",
+      "path": "develop/deployment/first-run/support/logging-native.xml",
       "sha256": "9776362c1f3b6df6159f3c165a2ce5de240610b5bef7137012fad77d5836c801"
     },
     {
@@ -71,23 +71,23 @@
     },
     {
       "id": "S14",
-      "path": "develop/deployment/first-run/native-common.sh",
-      "sha256": "6e4090156f9997ebeb6dbeadf8c624450f7dd1755d26537550bf7ad4c3660b43"
+      "path": "develop/deployment/first-run/support/native-common.sh",
+      "sha256": "0b706abe45f4f17dd0a21bb3d76fcb17d35f96b88e5d96165337afb0319cf516"
     },
     {
       "id": "S15",
-      "path": "develop/deployment/first-run/start-docker.sh",
-      "sha256": "89c67ff1c00c4eeee8fa55c73dae276fb789202d44c41b013519d83b33f2c52e"
+      "path": "develop/deployment/first-run/legacy/start-docker.sh",
+      "sha256": "b1e5878869b027bdb9e4e7f7bed8fbf6222bc241bc9a7adc1f9a5589034910be"
     },
     {
       "id": "S16",
-      "path": "develop/deployment/first-run/start.sh",
-      "sha256": "f3899befefed5232754ba8e2f42eef8a0eee012ac7e6f0d75b859e94a1b49896"
+      "path": "develop/deployment/first-run/legacy/start.sh",
+      "sha256": "7f2f3d84b5aca77e92d4bdd274c4819dfc402338a093dd50a5c5149a2852bcee"
     },
     {
       "id": "S17",
-      "path": "develop/deployment/first-run/stop.sh",
-      "sha256": "624c149fe631334e9ed3f3876e1c8c147353354baf4a853fa4340ca6f6bc6c11"
+      "path": "develop/deployment/first-run/legacy/stop.sh",
+      "sha256": "0e55252941ce5f3619dabbe01590ad8e0a3a4cdc7dedfe531e6268a90db4e3ab"
     },
     {
       "id": "S18",
@@ -117,7 +117,7 @@
     {
       "id": "S23",
       "path": "tools/distribution/build.py",
-      "sha256": "5577879d78b2ce56fc2f8ad3ba563c81819fbe3b29d5f81662f2e221ebec0376"
+      "sha256": "35bf3f94edde11ce7649cb7603ad9ff3e57a97cb67a3571b1f555456648459ae"
     },
     {
       "id": "S24",
@@ -166,13 +166,13 @@
     },
     {
       "id": "S33",
-      "path": "develop/deployment/first-run/instance.ps1",
-      "sha256": "604158d8f962b4eb0b2c6ce66808f645eda7c32ceec72010c1225beb7b14c540"
+      "path": "develop/deployment/first-run/support/instance.ps1",
+      "sha256": "5b844c410d6b5cee6f2dff2a57fbc4123d36471409348dba5913717b8f643a9b"
     },
     {
       "id": "S34",
       "path": "develop/deployment/first-run/ijob.sh",
-      "sha256": "229dc393ce92ceafa6bf716c22200e587c7b6b1b65de91cbd53c49a0e4307a8a"
+      "sha256": "5c0c00c47bc9688ec07c4a0d909b056cdbb4160d7e58432666752fca9cbdeffa"
     }
   ],
   "entries": [
@@ -5241,7 +5241,7 @@
       "defaults": [
         {
           "source": "S11",
-          "value": "launcher: <bundle>/logging-native.xml"
+          "value": "launcher: <bundle>/support/logging-native.xml"
         }
       ],
       "level": "D",

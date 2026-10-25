@@ -6,7 +6,7 @@
 
 | Layer | Where to edit | Activation |
 | --- | --- | --- |
-| Platform startup settings | IJOB_HOME/application.properties | Native restart; Docker start-docker.sh --recreate |
+| Platform startup settings | IJOB_HOME/application.properties | Native restart; Docker legacy/start-docker.sh --recreate |
 | Host/container settings | Environment variables and this home's compose.yaml | Restart the process or recreate containers |
 | Tasks/jobs/resources/schedules | Management pages | Save/publish/enable as documented; usually no platform restart |
 

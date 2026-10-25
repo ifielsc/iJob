@@ -23,7 +23,7 @@
 
 - “源码声明”保留实际配置表达式，包括 `${变量:回退值}`；相关文件未加载时，该声明不会生效。数据库专用值只适用于选中的数据库；mail profile 中的值仅在该 profile 加载时写入，但邮件实现本身缺省也启用。
 - “新安装/覆盖”列出初始化器和平台差异。未另写入表示使用实际加载的配置/实现默认值，不保证所有框架隐式默认值都在清单内。Java 配置类的初始值不应直接当作安装默认值。
-- 平台 application.properties 修改后重启本安装；Docker 使用对应包的 start-docker.sh --recreate 重新建立挂载并读取配置。Agent 的配置需重启 Agent；构建变量只在重建镜像/前端时生效。
+- 平台 application.properties 修改后重启本安装；Docker 使用对应包的 legacy/start-docker.sh --recreate 重新建立挂载并读取配置。Agent 的配置需重启 Agent；构建变量只在重建镜像/前端时生效。
 - IJOB_* 有些只是 YAML 占位符输入或脚本输入，不能笼统认定它们覆盖外部文件。明确的启动参数、系统属性、直接绑定的环境变量也可能参与最终值；不要重复维护同一参数。
 - `secret` 项只列变量/生成规则，不提供实际值。普通配置变更不需要重新打包程序。此稿中的建议不改变现有生产或演示环境。
 
@@ -316,7 +316,7 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | C159<br>`management.endpoint.health.show-details`<br>枚举 | `never` (S01) | 未另写入；采用所加载配置/实现默认值 | — | **C** 健康细节展示；按访问权限设计，不直接对外开放。 | 平台；重启本安装 |
 | C160<br>`management.health.livenessstate.enabled`<br>布尔 | `true` (S01) | 未另写入；采用所加载配置/实现默认值 | — | **D** 存活状态探针，保留部署探测契约。 | 平台；重启本安装 |
 | C161<br>`management.health.readinessstate.enabled`<br>布尔 | `true` (S01) | 未另写入；采用所加载配置/实现默认值 | — | **D** 就绪状态探针，保留部署探测契约。 | 平台；重启本安装 |
-| C190<br>`logging.config`<br>URI | `launcher: <bundle>/logging-native.xml` (S11) | 未另写入；采用所加载配置/实现默认值 | — | **D** 原生日志配置资源位置，由启动器设置。 | 原生安装；重启本安装 |
+| C190<br>`logging.config`<br>URI | `launcher: <bundle>/support/logging-native.xml` (S11) | 未另写入；采用所加载配置/实现默认值 | — | **D** 原生日志配置资源位置，由启动器设置。 | 原生安装；重启本安装 |
 | C194<br>`ijob.logging.max-file-size`<br>容量 | `10MB` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **A** 原生日志单文件滚动大小。 | 原生安装；重启本安装 |
 | C195<br>`ijob.logging.max-history`<br>天 | `14` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **A** 原生日志归档保留天数。 | 原生安装；重启本安装 |
 | C196<br>`ijob.logging.total-size-cap`<br>容量 | `200MB` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **A** 原生日志归档总容量，可能先于天数触发清理。 | 原生安装；重启本安装 |
@@ -456,13 +456,13 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | S08 | `develop/api/ijob-monitor-agent/src/main/resources/application.yaml` |
 | S09 | `develop/api/ijob-monitor-agent/src/main/java/com/ifielsc/ijob/monitor/agent/config/AgentProperties.java` |
 | S10 | `develop/api/ijob/ijob-setup-tool/src/main/java/com/ifielsc/ijob/setup/SetupTool.java` |
-| S11 | `develop/deployment/first-run/manage.ps1` |
-| S12 | `develop/deployment/first-run/logging-native.xml` |
+| S11 | `develop/deployment/first-run/support/manage.ps1` |
+| S12 | `develop/deployment/first-run/support/logging-native.xml` |
 | S13 | `develop/api/ijob-monitor-agent/Dockerfile` |
-| S14 | `develop/deployment/first-run/native-common.sh` |
-| S15 | `develop/deployment/first-run/start-docker.sh` |
-| S16 | `develop/deployment/first-run/start.sh` |
-| S17 | `develop/deployment/first-run/stop.sh` |
+| S14 | `develop/deployment/first-run/support/native-common.sh` |
+| S15 | `develop/deployment/first-run/legacy/start-docker.sh` |
+| S16 | `develop/deployment/first-run/legacy/start.sh` |
+| S17 | `develop/deployment/first-run/legacy/stop.sh` |
 | S18 | `develop/deployment/docker/compose.yaml` |
 | S19 | `develop/deployment/docker/compose.agent.yaml` |
 | S20 | `develop/deployment/docker/images.env` |
@@ -478,7 +478,7 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | S30 | `develop/web/ijob/Dockerfile` |
 | S31 | `develop/api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/routing/ExecutionGroupCodes.java` |
 | S32 | `develop/api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/routing/ExecutionTargetIds.java` |
-| S33 | `develop/deployment/first-run/instance.ps1` |
+| S33 | `develop/deployment/first-run/support/instance.ps1` |
 | S34 | `develop/deployment/first-run/ijob.sh` |
 
 分组、白名单和全部插件开关按已确认分级进入正文；数据库/凭据使用受控流程，内部参数保留附录。详见[配置正文](configuration.md)与[页面手册](user-guide/README.md)。

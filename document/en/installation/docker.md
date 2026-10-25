@@ -54,4 +54,6 @@ sudo /srv/ijob/instances/docker-a/ijob.sh restart
 
 restart recreates this project using the bundle’s image locks and waits for readiness without removing volumes. Compose port/mount/resource changes are applied too. Keep container HTTP at 0.0.0.0:8080; assign separate host ports on the same machine. Do not use down -v for daily stopping. Generated Compose differs from advanced repository templates; variables such as IJOB_HTTP_BIND do not automatically modify generated configuration.
 
-See the [unified entry](instance-launcher.md) for paths, language, defaults and upgrades. Legacy start-docker.sh / stop-docker.sh and Compose commands remain supported with consistent IJOB_HOME.
+See the [unified entry](instance-launcher.md) for paths, language, defaults and upgrades. Legacy legacy/start-docker.sh / legacy/stop-docker.sh and Compose commands remain supported with consistent IJOB_HOME.
+
+For multiple instances on one host, replace `${IJOB_HTTP_PORT:-18080}` in compose.yaml web.ports with each fixed port (for example `127.0.0.1:18081:8080`), then restart through that instance entry. A temporary variable supplied only during initialization does not persist the port.

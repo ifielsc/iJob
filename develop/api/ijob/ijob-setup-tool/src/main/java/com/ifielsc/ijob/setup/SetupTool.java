@@ -141,7 +141,8 @@ public final class SetupTool {
         if (!Set.of("windows", "linux", "docker").contains(mode))
             throw new SetupException("Invalid mode");
         if (command.equals("start") && mode.equals("docker"))
-            throw new SetupException("Use start-docker.sh for Docker");
+            throw new SetupException(
+                    "Use the instance ijob.sh start or legacy/start-docker.sh for Docker");
         if (home.startsWith(bundle))
             throw new SetupException("Data home must be outside the release folder");
         rejectLinks(home);
@@ -283,10 +284,7 @@ public final class SetupTool {
         if (command.equals("start")) {
             Path jar = bundle.resolve("ijob-starter-1.0.0.jar");
             if (!Files.isRegularFile(jar)) throw new SetupException("Backend JAR missing");
-            Path logging = bundle.resolve("logging-native.xml");
-            if (!Files.isRegularFile(logging))
-                throw new SetupException(
-                        "Native logging configuration missing; copy the complete release folder");
+            Path logging = nativeLogging(bundle);
             Path logs = home.resolve("logs");
             rejectLinks(logs);
             rejectLinks(logs.resolve("ijob.log"));
@@ -385,6 +383,15 @@ public final class SetupTool {
         String value = input.readLine();
         if (value == null) throw new EOFException();
         return value;
+    }
+
+    static Path nativeLogging(Path bundle) throws IOException {
+        Path logging = bundle.resolve("support/logging-native.xml");
+        if (!Files.isRegularFile(logging)) logging = bundle.resolve("logging-native.xml");
+        if (!Files.isRegularFile(logging))
+            throw new SetupException(
+                    "Native logging configuration missing; copy the complete release folder");
+        return logging;
     }
 
     private static void rejectLinks(Path path) throws IOException {

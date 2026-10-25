@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 set -euo pipefail
-source "$(dirname -- "${BASH_SOURCE[0]}")/native-common.sh"
+source "$(dirname -- "${BASH_SOURCE[0]}")/../support/native-common.sh"
 [[ $# == 0 ]] || { echo 'Usage: ./start.sh (optional IJOB_HOME and JAVA_HOME environment variables)' >&2; exit 1; }
 select_java
 "$java" -jar "$bundle/ijob-setup-tool-1.0.0.jar" init --mode linux --bundle "$bundle" --home "$data_home"
@@ -16,7 +16,7 @@ case "$vendor" in sqlite|mysql|postgresql|sqlserver|oracle) ;; *) echo 'Invalid 
 timeout=${IJOB_START_TIMEOUT:-120}
 [[ $timeout =~ ^[1-9][0-9]*$ && $timeout -le 600 ]] || { echo 'IJOB_START_TIMEOUT must be 1-600 seconds.' >&2; exit 1; }
 mkdir -p -- "$data_home/logs"
-[[ -f "$bundle/logging-native.xml" ]] || { echo 'logging-native.xml is missing; copy the complete release folder.' >&2; exit 1; }
+[[ -f "$bundle/support/logging-native.xml" ]] || { echo 'logging-native.xml is missing; copy the complete release folder.' >&2; exit 1; }
 for name in ijob.log bootstrap.log archive; do
     [[ ! -L "$data_home/logs/$name" ]] || { echo 'Unexpected symlink in log paths.' >&2; exit 1; }
 done
@@ -29,7 +29,7 @@ config_uri=$(file_uri "$data_home/application.properties")
     exec env IJOB_PLATFORM_DB="$vendor" nohup "$java" "-Dijob.native.home=$data_home" \
         -jar "$bundle/ijob-starter-1.0.0.jar" --spring.profiles.active=release,native-background \
         "--spring.config.additional-location=$config_uri" "--app.web.directory=$bundle/web-dist" \
-        "--logging.config=$(file_uri "$bundle/logging-native.xml")" \
+        "--logging.config=$(file_uri "$bundle/support/logging-native.xml")" \
         "--ijob.native.log-directory=$data_home/logs" "--ijob.native.log-session=$session"
 ) </dev/null > >(tail -c 1048576 >"$bootstrap" 2>&1 9>&-) 2>&1 9>&- &
 pid=$!
@@ -45,7 +45,7 @@ for ((elapsed=0; elapsed<timeout; elapsed++)); do
     owned_process || { echo "Application exited. See $log and $bootstrap" >&2; exit 1; }
     if [[ -f "$log" ]] && grep -q "\[launch=$session\].*runtimePhase=READY" "$log"; then
         echo 'Ready. Default URL: http://127.0.0.1:18080 (use your configured port if changed).'
-        echo 'Run ./logs.sh to follow the application log.'
+        echo 'Run the instance ijob.sh logs or ./legacy/logs.sh to follow the application log.'
         exit 0
     fi
     sleep 1

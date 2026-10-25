@@ -11,3 +11,5 @@
 Product/Maven remain 1.0.0, formal installation migration V1 and new Local JAR protocol 1. Distinguish same-version candidates by source and hashes, not version strings. Docker must use each candidate's own image lock and launcher.
 
 Do not connect historical databases directly to the formal application; conversion needs separate tools/resources and migration review. Updating source does not update existing bundles or running instances automatically.
+
+When upgrading from flat scripts to legacy/support, follow the [control-entry migration procedure](../installation/instance-launcher.md) to create a new control directory pointing at the original data. Do not change only bundle in an old control file.

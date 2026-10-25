@@ -8,7 +8,7 @@
 
 ```text
 programs/ijob-1.0.0/       完整程序包
-instances/a/              ijob.cmd + instance.ps1（Windows）或 ijob.sh（Linux/Docker）
+instances/a/              ijob.cmd + support/instance.ps1（Windows）或 ijob.sh（Linux/Docker）
                           instance.conf：本实例启动设置
 data/a/                   本实例 IJOB_HOME，可能包含秘密
 ```
@@ -43,13 +43,13 @@ instance.conf 是 UTF-8 纯文本，每项一行，不使用引号、变量展�
 
 ## 没有设置环境变量时，旧脚本会怎样
 
-仍可直接使用旧 start.cmd、start.sh、start-docker.sh。未设置 IJOB_HOME 时，按程序包父目录选择以下默认位置，不会自动查找曾经使用过的自定义目录：
+仍可直接使用旧 legacy/start.cmd、legacy/start.sh、legacy/start-docker.sh。未设置 IJOB_HOME 时，按程序包父目录选择以下默认位置，不会自动查找曾经使用过的自定义目录：
 
 | 旧入口 | 默认数据目录 |
 | --- | --- |
-| Windows start.cmd | 程序包父目录/ijob-data |
-| Linux start.sh | 程序包父目录/ijob-data-linux |
-| Docker start-docker.sh | 程序包父目录/ijob-data-docker |
+| Windows legacy/start.cmd | 程序包父目录/ijob-data |
+| Linux legacy/start.sh | 程序包父目录/ijob-data-linux |
+| Docker legacy/start-docker.sh | 程序包父目录/ijob-data-docker |
 
 未设置 IJOB_LANG 时默认英文，中文值为 zh。它控制初始化与启动提示，不改变网页语言或业务通知语言；部分底层工具错误与技术日志保留英文。旧脚本启停时仍需保证相同的环境变量；日常推荐使用上述持久入口。
 
@@ -57,4 +57,44 @@ setup JAR 支持 --home/--lang 参数，但单次执行不为旧脚本保存位�
 
 ## 升级与定位
 
-先执行 show 确认实例，再 stop，完成[备份及升级](../operations/upgrade-rollback.md)。在保留 home 的前提下修改 instance.conf 的 bundle 为新完整包，复核控制脚本兼容性后 start，核对登录、历史与无副作用任务。不能在程序运行时改 home 或 bundle，否则状态与日志可能指向别处。路径必须是规范绝对路径，不使用符号链接/目录联接；配置缺项、重复键或未知键会拒绝执行。
+先执行 show 确认实例，再 stop，完成[备份及升级](../operations/upgrade-rollback.md)。跨越旧平铺布局时按下文创建新控制入口；相同布局且控制脚本兼容时，可在保留 home 的前提下修改 bundle 后 start，核对登录、历史与无副作用任务。不能在程序运行时改 home 或 bundle，否则状态与日志可能指向别处。路径必须是规范绝对路径，不使用符号链接/目录联接；配置缺项、重复键或未知键会拒绝执行。
+
+## 程序包目录与旧入口
+
+```text
+ijob-1.0.0/
+  ijob.cmd / ijob.sh    推荐入口：先 configure，再使用实例控制目录
+  legacy/              旧式 initialize/start/stop/status/logs 等入口
+  support/             内部辅助脚本和 logging-native.xml；不直接运行
+  docs/                中英文手册
+  JAR、web-dist 等      程序资源
+```
+
+legacy 下的命令从程序包根目录调用，例如 `.\legacy\start.cmd`、`bash ./legacy/start.sh`、`sudo bash ./legacy/start-docker.sh`，也可进入 legacy 目录调用。必须保留完整包；程序资源始终按包根目录定位。旧入口默认数据位置仍为程序包父目录下的 ijob-data / ijob-data-linux / ijob-data-docker，不会变成程序目录或 legacy 目录下的新安装。
+
+Windows 新控制目录只有 ijob.cmd、instance.conf 和 support/instance.ps1；Linux/Docker 新控制目录为 ijob.sh 和 instance.conf。
+
+## 从原平铺脚本包升级
+
+旧控制脚本不知道新的 legacy/support 布局，**不能只把旧 instance.conf 的 bundle 改为新包路径**。推荐保留旧控制目录，创建一个指向原数据的新控制目录：
+
+1. 通过旧控制目录执行 show，记下原 home、lang、mode；确认路径和实例身份。
+2. 通过旧控制目录 stop，核对停止状态，并按备份流程备份原数据与配置。
+3. 解压新完整包到另一个程序目录，在新包根目录执行 configure。控制目录使用新路径，home、lang 和 mode 沿用第 1 步的值。
+
+Windows 示例（在新程序包根目录）：
+
+```powershell
+.\ijob.cmd configure -Directory D:/ijob/instances/a-layout -Home D:/ijob-data/a -Lang zh
+```
+
+Linux 原生示例；Docker 将 mode 改为 docker，并按原实例账号一致使用 sudo：
+
+```sh
+bash ./ijob.sh configure --directory /srv/ijob/instances/a-layout --home /srv/ijob-data/a --lang zh --mode linux
+```
+
+4. 从新控制目录执行 show、start、status、logs，核对原账号、任务定义和历史。已有安装会复用，不再次初始化或生成新密钥。切勿同时通过新旧入口启动同一数据目录。
+5. 将日常快捷方式/运维记录指向新控制目录。若仅回退本次脚本布局，先通过新入口 stop，再使用保留的旧入口启动原程序包；涉及其他程序或数据库变更仍遵循升级回退手册。
+
+新控制脚本也识别旧包的平铺管理文件，便于受控回退；这不代表旧控制脚本自动识别新包。旧控制目录与旧包保留，不自动删除。

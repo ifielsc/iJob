@@ -25,7 +25,7 @@ cd D:/ijob/instances/a
 .\ijob.cmd start
 ```
 
-start initializes a new installation automatically. Enter an independent administrator/password and database type; SQLite is suitable for the introduction. initialize.cmd is not a prerequisite. Existing valid installations retain configuration. Visit `http://127.0.0.1:18080` or your changed port. The hidden background process survives closing the terminal.
+start initializes a new installation automatically. Enter an independent administrator/password and database type; SQLite is suitable for the introduction. legacy/initialize.cmd is not a prerequisite. Existing valid installations retain configuration. Visit `http://127.0.0.1:18080` or your changed port. The hidden background process survives closing the terminal.
 
 ## 4. Inspect settings and status
 

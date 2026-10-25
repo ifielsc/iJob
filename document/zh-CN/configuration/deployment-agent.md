@@ -6,7 +6,7 @@
 
 `IJOB_HOME` 选择私有安装目录；`IJOB_LANG=en/zh` 控制初始化提示，不改变浏览器语言；JAVA_HOME 选择 Java 21。原生 IJOB_START_TIMEOUT/IJOB_STOP_TIMEOUT 与应用执行器超时不同。首次生成后修改配置文件，不期望初始化变量自动重写已有文件。
 
-高级 Compose 模板与完整包生成的 Compose 分开管理：前者可使用 IJOB_HTTP_BIND 等模板变量，后者以生成的实际映射、挂载、资源上限为准。修改 Compose 后从对应完整包执行 `start-docker.sh --recreate`。不要复制其他环境的项目名、目录或 secret 文件。
+高级 Compose 模板与完整包生成的 Compose 分开管理：前者可使用 IJOB_HTTP_BIND 等模板变量，后者以生成的实际映射、挂载、资源上限为准。修改 Compose 后从对应完整包执行 `legacy/start-docker.sh --recreate`。不要复制其他环境的项目名、目录或 secret 文件。
 
 ## Agent
 

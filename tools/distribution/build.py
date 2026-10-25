@@ -93,12 +93,14 @@ def toolchains(reports):
 
 
 def copy_deployment(source, bundle):
-    for path in (source / 'develop/deployment/first-run').iterdir():
-        if path.is_file() and path.name != 'README.md':
+    deployment = source / 'develop/deployment/first-run'
+    for path in deployment.rglob('*'):
+        if path.is_file() and path != deployment / 'README.md':
             content = path.read_bytes()
             if path.suffix == '.sh':
                 content = content.replace(b'\r\n', b'\n')
-            destination = bundle / path.name
+            destination = bundle / path.relative_to(deployment)
+            destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes(content)
             if path.suffix == '.sh':
                 destination.chmod(0o755)
@@ -108,6 +110,9 @@ def copy_deployment(source, bundle):
     shutil.copy2(source / 'LICENSE', bundle / 'LICENSE')
     (bundle / 'README.md').write_text(
         '# iJob 1.0.0\n\n[中文](docs/zh-CN/README.md) | [English](docs/en/README.md)\n\n'
+        '推荐入口 / Recommended entry: `ijob.cmd` (Windows), `ijob.sh` (Linux/Docker).\n\n'
+        '旧入口 / Legacy entry points: [legacy/README.md](legacy/README.md). '
+        '`support/` contains internal helpers, not user entry points.\n\n'
         'Start with the installation guide for your platform. Keep the data home outside this '
         'directory. This package contains no credentials or database.\n', encoding='utf-8')
 

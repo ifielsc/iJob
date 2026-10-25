@@ -2,14 +2,14 @@
   "reviews": [
     {
       "path": ".gitignore",
-      "line": 3060,
+      "line": 3067,
       "rule": "email-address",
       "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
       "reason": "pnpm patch filename/version, not an email address."
     },
     {
       "path": ".repository/allowlist.json",
-      "line": 1687,
+      "line": 1690,
       "rule": "email-address",
       "line_sha256": "19f0e34d2de24909f3f9e4c329ff30ec56cb62c17e0373c97150ed36a4685fd4",
       "reason": "pnpm patch filename/version, not an email address."
@@ -2256,7 +2256,7 @@
     },
     {
       "path": "develop/api/ijob/ijob-setup-tool/src/main/java/com/ifielsc/ijob/setup/SetupTool.java",
-      "line": 359,
+      "line": 357,
       "rule": "credential-literal",
       "line_sha256": "a215ce9367b1ddd4b607476dac3e468e97a496eca7e5b74fb64f7a59684f9132",
       "reason": "User-facing password prompt in the setup translation catalog, not a credential value."

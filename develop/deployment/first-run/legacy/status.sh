@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 set -euo pipefail
-source "$(dirname -- "${BASH_SOURCE[0]}")/native-common.sh"
+source "$(dirname -- "${BASH_SOURCE[0]}")/../support/native-common.sh"
 if [[ ! -d "$data_home" ]]; then echo 'STOPPED (not initialized)'; exit 3; fi
 require_installation
 lock_control

@@ -54,4 +54,4 @@ After backing up and editing application.properties in the data home using [Conf
 
 restart stops then starts, retaining data and history. Do not switch OS accounts to take over an existing process.
 
-See the [unified entry](instance-launcher.md) for paths, language, defaults and upgrades. Legacy start.sh / stop.sh / status.sh / logs.sh remain supported with consistent IJOB_HOME.
+See the [unified entry](instance-launcher.md) for paths, language, defaults and upgrades. Legacy legacy/start.sh / legacy/stop.sh / legacy/status.sh / legacy/logs.sh remain supported with consistent IJOB_HOME.
