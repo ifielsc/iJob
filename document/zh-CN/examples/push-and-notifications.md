@@ -2,7 +2,7 @@
 
 [English](../../en/examples/push-and-notifications.md) · [手册首页](../README.md)
 
-**验证状态：配置与操作示例；本轮未完成该场景外部依赖的端到端验收。**
+**验证状态：本轮隔离环境实测，范围及未覆盖项见下文。**
 
 相关字段：[数据库结果推送到消息队列](../user-guide/plugins/push.md)。
 
@@ -11,6 +11,10 @@
 消息场景：独立 orders 三行查询，PUSH 目标为专属 Kafka topic 或 RabbitMQ exchange/routingKey；序列化 json、压缩 none，保持小批次与上限。消费端核对 3 个业务 ID 和内容，重试后按 ID 去重。
 
 通知场景另建测试邮件通道、通知规则及任务绑定；先预览收件人/语言/模板，再对本地接收器或专属邮箱发送并核对记录和实际收件。PUSH 成功不代表邮件通知成功。未运行 Broker 或邮件接收器的环境只能做配置检查，本轮不发送真实业务通知。
+
+## 本轮实测范围
+
+独立 Kafka、RabbitMQ 接收并逐条核对 3 条业务消息。消息源 ETL 写入 PostgreSQL；目标只读失败时不推进 Kafka 消费位置、RabbitMQ 消息重回队列，修复后消费成功，重放仍为 3 行/600。通知另通过隔离 SMTP 接收器核对测试邮件、任务失败和监控告警的实际 MIME，以及离线失败、恢复后手动测试投递；不宣称端到端 exactly-once，也未覆盖 SMTP TLS/认证或通知自动重试。
 
 ## 结束检查
 

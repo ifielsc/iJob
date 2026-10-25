@@ -2461,6 +2461,36 @@
       "path": "document/en/images/manual/parameter-editor.png",
       "sha256": "7914866ed104530df21f650fa3639b692c4fa426f8dba74370814a9bf214ad64",
       "reason": "Visually reviewed first-party iJob real UI capture from an independent local environment with synthetic task/resource data. No credentials, private configuration or host paths shown. Language-specific capture and provenance are recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/approval-run.png",
+      "sha256": "525b9995966008a13cdcbc6a51fd089dfca9e4107e1650db2cf517bfe83b9e74",
+      "reason": "Visually reviewed real isolated iJob event/approval/S3 transfer page captured 2026-10-26. Matching instance tree and details; synthetic fixture names/IDs and test administrator only, no credentials or business data. Source PNGs and hashes retained in runtime evidence."
+    },
+    {
+      "path": "document/en/images/manual/event-run.png",
+      "sha256": "4aa4612621a16b5a4b2918141463ad7fd5e7c6c638a58650f64861f06a0f720a",
+      "reason": "Visually reviewed real isolated iJob event/approval/S3 transfer page captured 2026-10-26. Matching instance tree and details; synthetic fixture names/IDs and test administrator only, no credentials or business data. Source PNGs and hashes retained in runtime evidence."
+    },
+    {
+      "path": "document/en/images/manual/s3-transfer-run.png",
+      "sha256": "ae45a8575779163eb191769e0198c92956d11756460db7b5eacaf5c091da1507",
+      "reason": "Visually reviewed real isolated iJob event/approval/S3 transfer page captured 2026-10-26. Matching instance tree and details; synthetic fixture names/IDs and test administrator only, no credentials or business data. Source PNGs and hashes retained in runtime evidence."
+    },
+    {
+      "path": "document/zh-CN/images/manual/approval-run.png",
+      "sha256": "121b5b7fbd3255820b2f47e73b1e3cffc52c817915e36a3e2cbf76c3c0b02d21",
+      "reason": "Visually reviewed real isolated iJob event/approval/S3 transfer page captured 2026-10-26. Matching instance tree and details; synthetic fixture names/IDs and test administrator only, no credentials or business data. Source PNGs and hashes retained in runtime evidence."
+    },
+    {
+      "path": "document/zh-CN/images/manual/event-run.png",
+      "sha256": "c8b38cfb369d61b57bd2d3d469ae7b6c8483ab70d801c1f15cdebc8692cf8b41",
+      "reason": "Visually reviewed real isolated iJob event/approval/S3 transfer page captured 2026-10-26. Matching instance tree and details; synthetic fixture names/IDs and test administrator only, no credentials or business data. Source PNGs and hashes retained in runtime evidence."
+    },
+    {
+      "path": "document/zh-CN/images/manual/s3-transfer-run.png",
+      "sha256": "06fb9f7f971a95ce1434edb22ff3ad0820ecdec469516c9f9fc0acb1d8f6fce2",
+      "reason": "Visually reviewed real isolated iJob event/approval/S3 transfer page captured 2026-10-26. Matching instance tree and details; synthetic fixture names/IDs and test administrator only, no credentials or business data. Source PNGs and hashes retained in runtime evidence."
     }
   ]
 }

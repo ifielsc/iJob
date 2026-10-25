@@ -15,7 +15,17 @@ SELECT COUNT(*), SUM(amount) FROM orders;
 -- 3, 600
 ```
 
-这证明本次全量 DATABASE→DATABASE 配置。增量扩展单独准备检查点：watermarkField=updated_at，明确其类型与初值，id 作稳定 tie breaker，SQL 的水位条件/排序与检查点一致。新增两条相同水位数据后验证不漏不重，再测试失败与重试，记录检查点推进和目标提交。文件增量、消息源及 SCD2 另需实际依赖与验证；不以本图宣称通过。
+本轮已在独立 PostgreSQL 验证全量 UPSERT 重复执行、增量检查点恢复和相同水位追加行。增量使用独立 checkpointKey、watermarkField=updated_at、watermarkType=TIMESTAMP、initialWatermark=2025-12-31T00:00:00、tieBreakerFields=[id]、initialTieBreakerValues=[0]，上界查询为 `SELECT MAX(updated_at) FROM orders`。读取 SQL 明确转换 JSON 字符串参数的类型：
+
+```sql
+SELECT id, amount, updated_at FROM orders
+WHERE (updated_at > CAST(:etlLastWatermark AS timestamp)
+   OR (updated_at = CAST(:etlLastWatermark AS timestamp) AND id > :etlLastTie1))
+  AND updated_at <= CAST(:etlUpperWatermark AS timestamp)
+ORDER BY updated_at, id;
+```
+
+首次导入三行后，在最后水位追加 id=4、amount=400；再次执行目标为 4 行、金额 1000，随后空跑保持不变。实测发现并修复了 JDBC 时间水位保存后带偏移量、再次读取解析失败的问题；新包保留原检查点后恢复成功，新保存值保留本地时间和纳秒精度。检查点与目标写入仍是不同提交边界，需要幂等目标。文件增量及 SCD2 仍另验；消息源的实际消费和失败恢复见[消息案例](push-and-notifications.md)。旧截图展示全量路径。
 
 ## 结束检查
 

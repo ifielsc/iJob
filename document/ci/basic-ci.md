@@ -64,6 +64,8 @@ Full 尚未接入本次基础工作流。它需要 Windows（包含 BAT/PowerShe
 
 本地扩展集成入口、P2 隔离环境方案和 P3 清点方法见[隔离集成与发布准备](isolated-integration.md)。保留完整 Basic 运行能力和覆盖，不以专项结果替代完整候选验收。
 
+真实消息专项 `RealMessageSourcesTest` 由 `IJOB_MQ_IT=true` 显式开启，使用本轮独立 Kafka/RabbitMQ。`IJOB_KAFKA_SERVERS` 指定 Kafka 地址；RabbitMQ 使用回环主机，`IJOB_RABBIT_PORT` 可指定独立端口（兼容默认 5672），账号、密码和 vhost 由 `IJOB_RABBIT_USER`、`IJOB_RABBIT_PASSWORD`、`IJOB_RABBIT_VHOST` 提供。不要连接或停止占用默认端口的既有服务；通过本轮隔离端口运行。未开启专项时的两项条件跳过仍须单独记录，不因另一次实测通过而改写原报告。
+
 ## 后端 IT 分组与后续覆盖
 
 基础入口明确选择 `*Test,RealSqliteMigrationIT,SqliteOfflineMigrationIT,SecurityHttpIT`，检查两个工程实际有测试执行，并要求三套 IT 有非跳过的成功用例。JUnit 汇总保留 failures/errors/skipped，跳过不会记为执行成功。Maven 的 `surefire.failIfNoSpecifiedTests=false` 仅容许不包含这些测试的子模块为空。

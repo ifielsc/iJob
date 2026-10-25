@@ -51,3 +51,5 @@ These stored keys help developers and troubleshooting; they are not a task JSON 
 | Script engine / Python interpreter | `engine / interpreter` |
 | Script content / Working directory / Environment variables | `script / workingDir / env` |
 | Script encoding / Output encoding | `scriptCharset / outputCharset` |
+
+In SSH mode, closing the connection does not guarantee remote process termination. In this round, the remote fixture completed a later write after the platform reported TIMED_OUT. Remote tasks need their own deadline, idempotency and cancellation.

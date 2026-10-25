@@ -31,6 +31,8 @@ Prepare the dedicated resources above, fill the form, save, then trigger manuall
 
 Select the actual test service resource in the form. Test connectivity, call a read-only endpoint and check response, extracted variables and business condition. Connectivity is not business success. A timeout can occur after remote commit; use idempotency or query the result before retrying.
 
+API_CALL currently ends HTTP error statuses and failed business conditions as FAILED without automatically resending them, even when task retries are configured. Request timeouts end as TIMED_OUT. Check the remote outcome before triggering another execution. An independent receiver verified no automatic resend after a 503, successful manual reexecution, and exactly one business record from two writes with the same idempotency key and body.
+
 Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
 
 ## Technical key reference (optional)

@@ -57,3 +57,11 @@ restart recreates this project using the bundle’s image locks and waits for re
 See the [unified entry](instance-launcher.md) for paths, language, defaults and upgrades. Legacy legacy/start-docker.sh / legacy/stop-docker.sh and Compose commands remain supported with consistent IJOB_HOME.
 
 For multiple instances on one host, replace `${IJOB_HTTP_PORT:-18080}` in compose.yaml web.ports with each fixed port (for example `127.0.0.1:18081:8080`), then restart through that instance entry. A temporary variable supplied only during initialization does not persist the port.
+
+## 6. Failure recovery and boot startup
+
+Generated backend/web services use `restart: unless-stopped`. Enable Docker itself at boot according to the host's operating procedures; existing containers that were not manually stopped can then recover with Docker. After this instance's `stop` command, restarting Docker or rebooting the host keeps that instance stopped until an explicit `start`. This follows the [Docker restart policy](https://docs.docker.com/engine/containers/start-containers-automatically/).
+
+Initial `start` and explicit `restart` use Compose to wait for backend health before starting web. When the Docker daemon restores existing containers, each follows its own restart policy; the Compose dependency declaration does not guarantee strict ordering at every boot. See [Compose startup order](https://docs.docker.com/compose/how-tos/startup-order/). After recovery, verify backend/web health, an actual login and a repeatable business task, then check history and data integrity.
+
+Two isolated instances in an independent Linux VM passed backend process failure recovery, Docker service restart, VM reboot and container recreation through the instance `restart` command. Login and task execution succeeded after recovery; the manually stopped instance stayed stopped across both service and VM restarts. Recreation preserved task history and instance configuration SHA-256 values. These checks do not establish transactional external writes during power loss; business writes still require their own idempotency and recovery design.

@@ -34,6 +34,8 @@ Prepare an independent orders table, save and run manually, inspect SQL results/
 
 Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
 
+In this round's PostgreSQL test, query timeout canceled the statement but the JDBC driver returned a general query-cancellation exception, producing FAILED. The shared task deadline produced TIMED_OUT. Both paths were checked for lingering active queries in PostgreSQL. A status name alone does not establish that the statement is still running; query timeouts do not guarantee TIMED_OUT across all drivers.
+
 ## Real page examples
 
 Read-only SQL, resource selection and transaction/timeout summary.

@@ -2,7 +2,7 @@
 
 [简体中文](../../zh-CN/examples/schedules-and-calendars.md) · [Manual home](../README.md)
 
-**Verification: configuration/workflow example; this round did not complete end-to-end acceptance of its external dependencies.**
+**Verification: tested in this round’s isolated environment within the scope below.**
 
 Fields: [Page reference](../user-guide/README.md).
 
@@ -11,6 +11,10 @@ Fields: [Page reference](../user-guide/README.md).
 Create a disabled docs-hello schedule with INTERVAL=3600 and preview five future candidates. Attach a calendar excluding a future date and check allowed/excluded candidates. Header display zone only changes presentation; backend scheduling settings determine business time.
 
 For actual automatic firing, enable a harmless one-time schedule in a controlled window and inspect planned time, trigger and instance. Test catch-up in a separate installation with a controlled outage, comparing SKIP/FIRE_ONCE/CATCH_UP_BOUNDED and queue deadlines. Retain grace/window/count settings and actual fires. Disable practice schedules afterward. Preview screenshots prove calculation, not execution.
+
+## Scope verified this round
+
+Calendar preview verified the excluded date. During controlled downtime an isolated instance missed three bounded interval firings. Recovery produced SKIP=0, FIRE_ONCE=1 and CATCH_UP_BOUNDED=2 (limit 2); accepted triggers and executions succeeded with Asia/Shanghai business time. All exercise schedules were then disabled. Other zones, daylight-saving transitions and queue expiry remain separate.
 
 ## Finish
 

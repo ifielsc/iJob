@@ -2414,6 +2414,12 @@
     "tools/job-package/ijob_package.py",
     "tools/job-package/test_ijob_package.py",
     "tools/repository/check-license.py",
-    "tools/repository/prepare.py"
+    "tools/repository/prepare.py",
+    "document/zh-CN/images/manual/event-run.png",
+    "document/zh-CN/images/manual/approval-run.png",
+    "document/zh-CN/images/manual/s3-transfer-run.png",
+    "document/en/images/manual/event-run.png",
+    "document/en/images/manual/approval-run.png",
+    "document/en/images/manual/s3-transfer-run.png"
   ]
 }

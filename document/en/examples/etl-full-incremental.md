@@ -15,7 +15,17 @@ SELECT COUNT(*), SUM(amount) FROM orders;
 -- 3, 600
 ```
 
-This proves this full DATABASE→DATABASE setup. For incremental extensions, use a separate checkpoint: watermarkField=updated_at with explicit type/initial value, id as a stable tie breaker and matching SQL predicates/order. Add equal-watermark rows, verify completeness/duplicates, then exercise failure/retry and record checkpoint/commit behavior. File increments, message sources and SCD2 need separate dependencies/verification.
+This round verified repeated full UPSERT, checkpoint recovery and equal-watermark additions against independent PostgreSQL. Use a separate checkpointKey, watermarkField=updated_at, watermarkType=TIMESTAMP, initialWatermark=2025-12-31T00:00:00, tieBreakerFields=[id], initialTieBreakerValues=[0], and upper-bound SQL `SELECT MAX(updated_at) FROM orders`. Cast JSON string parameters explicitly in the source query:
+
+```sql
+SELECT id, amount, updated_at FROM orders
+WHERE (updated_at > CAST(:etlLastWatermark AS timestamp)
+   OR (updated_at = CAST(:etlLastWatermark AS timestamp) AND id > :etlLastTie1))
+  AND updated_at <= CAST(:etlUpperWatermark AS timestamp)
+ORDER BY updated_at, id;
+```
+
+After importing three rows, add id=4/amount=400 at the last watermark. The next execution produced four rows totaling 1000; an empty rerun changed nothing. Testing exposed and fixed a parse failure when reloading JDBC timestamp checkpoints serialized with an offset. The new package resumed the original checkpoint successfully; new values preserve local time and nanosecond precision. Checkpoints and target writes still have separate commit boundaries and need an idempotent target. File increments and SCD2 remain separate; see [message scenarios](push-and-notifications.md) for actual message consumption and failure recovery. Existing screenshots show the full-load path.
 
 ## Finish
 

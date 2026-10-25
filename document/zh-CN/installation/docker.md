@@ -57,3 +57,11 @@ restart 使用该程序包的镜像锁重建本项目并等待就绪，不删除
 目录、语言、默认值和升级方式见[统一入口](instance-launcher.md)。旧 legacy/start-docker.sh / legacy/stop-docker.sh 和 Compose 命令仍支持；需要每次保持相同 IJOB_HOME。
 
 同机多实例请把 compose.yaml 的 web.ports 中 `${IJOB_HTTP_PORT:-18080}` 改为各实例固定端口（例如 `127.0.0.1:18081:8080`），再用本实例入口 restart。只在初始化阶段设置临时环境变量不会将端口保存下来。
+
+## 6. 异常恢复与开机启动
+
+生成的 backend/web 使用 `restart: unless-stopped`。Docker 服务本身需按宿主机的运维要求启用开机启动；已有且未手动停止的容器才能随 Docker 恢复。手动执行本实例 `stop` 后，Docker 服务重启或宿主机重启都不会自动启动该实例，需要再次执行 `start`。这是 [Docker 重启策略](https://docs.docker.com/engine/containers/start-containers-automatically/)的行为。
+
+首次 `start` 和显式 `restart` 由 Compose 等待 backend 健康后启动 web；Docker 守护进程恢复已有容器时，各容器按各自重启策略恢复，不能把 Compose 的依赖声明当作每次开机的严格启动顺序。详见 [Compose 启动顺序](https://docs.docker.com/compose/how-tos/startup-order/)。恢复后检查 backend/web 健康状态、实际登录和一项可重复的业务任务，再确认历史记录及数据完整。
+
+本轮独立 Linux VM 已实测两个隔离实例：backend 进程异常退出后恢复、Docker 服务重启、VM 重启，以及入口 `restart` 重建容器。运行实例恢复后登录和任务执行成功，手动停止的另一个实例跨服务与 VM 重启保持停止；容器重建保留任务历史，实例配置文件的 SHA-256 保持一致。此结果不代表断电时外部系统写入自动具备事务性；业务写入仍需自己的幂等与恢复方案。
