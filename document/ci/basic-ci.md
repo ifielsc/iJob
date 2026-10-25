@@ -1,6 +1,20 @@
 # 基础 CI
 
-工作流为 [ci.yml](../../.github/workflows/ci.yml)，覆盖 main 推送、指向 main 的 PR 和手动运行。正式开发使用连接 origin 的独立 Git 工作目录，机器路径见维护工作区入口。CI 不连接维护电脑、原 develop、运行数据或 QA/cluster；不推送镜像、不启动容器、不部署。
+工作流为 [ci.yml](../../.github/workflows/ci.yml)。main 推送和指向 main 的 PR 自动执行轻量 Repository checks；重型任务只通过 workflow_dispatch 的 suite 显式选择。日常修改先运行本地适用检查，按阶段候选与风险决定远端运行，不因每个小提交重复全量。唯一维护源码为工作区 iJob-repo。CI 不连接维护电脑、原 develop、运行数据或 QA/cluster；不推送镜像、不启动容器、不部署。
+
+## 选择与验收规则
+
+| suite / 触发方式 | 实际执行 |
+| --- | --- |
+| push / PR / repository | 仓库白名单、秘密扫描、许可声明、双语手册及分发契约 |
+| backend | Repository checks、完整 Backend and Agent |
+| frontend | Repository checks、完整四片 Frontend |
+| docker | Repository checks、完整 Backend and Agent、完整四片 Frontend、Docker |
+| basic | 与 docker 相同的完整七个 jobs；阶段与最终候选使用此名称明确签收 |
+
+纯说明、翻译和截图不触发重型任务。单模块修改先完成本地模块规定检查及直接受影响的集成场景；在阶段合并或本地不能覆盖时运行对应远端任务。启停/服务化/打包/跨平台变更，以及公共框架、安全、依赖、工具链或 CI 基础设施变更，在阶段候选运行完整 Basic；按影响补运行专项。最终候选还须完成 Full 七套真实后端集成及适用的运行矩阵，它们不由 Basic 自动执行。
+
+工作流绿灯只表示已选择的任务成功。未选择的 jobs 在 GitHub 显示 skipped，验收记录应标为“未执行”，与 JUnit 的预期条件跳过分别列出。不能将轻量成功或单模块成功写成完整 Basic 通过。模块内部不删用例、不减少四片覆盖；Docker 保留后端和前端依赖。失败先定位，不以反复重跑全量代替分析。若配置分支保护，日常合并检查应对应 Repository checks，完整候选另按证据签收；不能将未执行的旧必需 job 当作完整验收。
 
 ## 工具链与任务
 
@@ -13,7 +27,7 @@
 
 Node 版本由 `.node-version` 定义并精确检查；pnpm 版本取 package.json。后端、Agent wrapper 和 Maven 构建镜像统一为 3.9.11。CI 下载 Maven 后校验发布方 SHA-512；Java 主版本为 21，不声称宿主 JDK 与 Docker 内补丁号完全一致。quality profile 打开编译警告，不将所有警告当成错误。
 
-Action 固定完整提交 SHA；GITHUB_TOKEN 仅 contents:read，checkout 不持久化认证。相同分支/PR 的新运行取消旧运行。基础检查不需要仓库 Secrets、镜像仓库凭据或外部数据库账户。
+Action 固定完整提交 SHA；GITHUB_TOKEN 仅 contents:read，checkout 不持久化认证。同一分支/PR、同一 suite 的新运行取消旧运行；轻量 push/PR 不取消正在运行的手动重型 suite。基础检查不需要仓库 Secrets、镜像仓库凭据或外部数据库账户。
 
 ## 本地入口
 
@@ -48,13 +62,13 @@ Full 尚未接入本次基础工作流。它需要 Windows（包含 BAT/PowerShe
 
 浏览器基线复验同时修复通知候选翻页后下拉框焦点丢失，并将工作台、生产通知记录空状态测试从过期 CSS 类改为可访问状态角色断言，同时对齐通知投递接口；没有放宽等待断言或跳过失败用例。云端 Windows 测试按真实路径比较 SQLite 目录，兼容 runner 的短路径别名；Linux 英文认证页在较矮视口的溢出通过收紧表单间距修复，仍保留小视口滚动和所有操作入口。
 
-本地扩展集成入口、P2 隔离环境方案和 P3 清点方法见[隔离集成与发布准备](isolated-integration.md)。保持本工作流完整，不以专项结果替代 Basic。
+本地扩展集成入口、P2 隔离环境方案和 P3 清点方法见[隔离集成与发布准备](isolated-integration.md)。保留完整 Basic 运行能力和覆盖，不以专项结果替代完整候选验收。
 
 ## 后端 IT 分组与后续覆盖
 
 基础入口明确选择 `*Test,RealSqliteMigrationIT,SqliteOfflineMigrationIT,SecurityHttpIT`，检查两个工程实际有测试执行，并要求三套 IT 有非跳过的成功用例。JUnit 汇总保留 failures/errors/skipped，跳过不会记为执行成功。Maven 的 `surefire.failIfNoSpecifiedTests=false` 仅容许不包含这些测试的子模块为空。
 
-基础环境不提供 Kafka/RabbitMQ，因此 RealMessageSourcesTest 中两项由 IJOB_MQ_IT 控制的真实消息源检查允许跳过，并明确记录；其他 suite 出现跳过会使入口失败。消息源真实集成需后续独立接入，不能算在基础通过范围内。
+基础环境不提供 Kafka/RabbitMQ，因此 RealMessageSourcesTest 中两项由 IJOB_MQ_IT 控制的真实消息源检查允许跳过，并明确记录；其他 suite 出现跳过会使入口失败。2026-10-20 已有独立真实消息源验证，见隔离集成记录；它不计入本轮 Basic，也不自动证明后续源码的用户操作案例已验收。
 
 以下 IT 不在基础任务内，按专用入口编排，不能直接把所有 `*IT` 接到基础任务：
 
@@ -70,4 +84,4 @@ Docker 等待后端/Agent 和前端通过后执行。校验 images.env 与 image
 
 CI runner 的证据位于 `test/reports/<RunId>`，包括命令日志、JUnit 和前端报告/哈希、Docker 构建日志与镜像 ID。本地后端、专项和前端入口使用 `-ReportRoot`、`-TemporaryRoot` 指向仓库外 `runtime/<env-id>/runs/<run-id>/`，详见[工作区规范](../operations/workspace-and-environments.md)。后端在 Maven 失败时仍收集已生成的 JUnit；工作流 always 上传已存在报告，保留 14 天。工具安装失败发生在检查入口之前时，以 Actions 步骤日志为准。报告不包含 .m2、node_modules、临时数据库、配置目录、密码文件或整个工作区。取消/runner 丢失时报告可能不完整，不能据此签收。
 
-后续依次接入真实后端浏览器集成、容器运行冒烟、五库和双节点、SBOM/漏洞扫描及发布基线。本次基础 CI 不替代这些验收，也不改变冻结交付包。
+真实后端浏览器集成、容器运行、五库和双节点、SBOM/漏洞及发布验收按独立证据与源码版本追溯；已有历史验证见隔离集成记录，后续按变更与缺口复验。基础 CI 不替代这些验收，也不改变冻结交付包。

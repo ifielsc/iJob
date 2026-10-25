@@ -2,14 +2,14 @@
   "reviews": [
     {
       "path": ".gitignore",
-      "line": 3067,
+      "line": 3074,
       "rule": "email-address",
       "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
       "reason": "pnpm patch filename/version, not an email address."
     },
     {
       "path": ".repository/allowlist.json",
-      "line": 1690,
+      "line": 1697,
       "rule": "email-address",
       "line_sha256": "19f0e34d2de24909f3f9e4c329ff30ec56cb62c17e0373c97150ed36a4685fd4",
       "reason": "pnpm patch filename/version, not an email address."

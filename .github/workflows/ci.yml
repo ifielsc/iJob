@@ -6,12 +6,24 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Checks to run (docker includes backend and frontend prerequisites)'
+        required: true
+        default: repository
+        type: choice
+        options:
+          - repository
+          - backend
+          - frontend
+          - docker
+          - basic
 
 permissions:
   contents: read
 
 concurrency:
-  group: basic-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: basic-ci-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.suite || 'repository' }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -53,6 +65,7 @@ jobs:
 
   backend-agent:
     name: Backend and Agent
+    if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["backend", "docker", "basic"]'), inputs.suite)
     needs: repository
     runs-on: windows-2025
     timeout-minutes: 40
@@ -94,6 +107,7 @@ jobs:
 
   frontend:
     name: Frontend ${{ matrix.shard }}/4
+    if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["frontend", "docker", "basic"]'), inputs.suite)
     strategy:
       fail-fast: false
       matrix:
@@ -128,6 +142,7 @@ jobs:
 
   docker:
     name: Docker validation and build
+    if: github.event_name == 'workflow_dispatch' && contains(fromJSON('["docker", "basic"]'), inputs.suite)
     needs: [backend-agent, frontend]
     runs-on: ubuntu-24.04
     timeout-minutes: 45

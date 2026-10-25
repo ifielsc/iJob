@@ -1,0 +1,11 @@
+{
+  "version": "2.12.0",
+  "asset": "WinSW.NET4.exe",
+  "url": "https://github.com/winsw/winsw/releases/download/v2.12.0/WinSW.NET4.exe",
+  "sha256": "923111c7142b3dc783a3c722b19b8a21bcb78222d7a136ac33f0ca8a29f4cb66",
+  "bytes": 852480,
+  "license": "MIT",
+  "license_url": "https://raw.githubusercontent.com/winsw/winsw/v2.12.0/LICENSE.txt",
+  "license_sha256": "1cdf703c10a70e5973bf3acf2a5eeabe7746237155b92db2034aeae26fdf7802",
+  "verification": "SHA-256 calculated from official GitHub release download; not an upstream signature. Requires .NET Framework 4; executable is supplied separately and never committed."
+}

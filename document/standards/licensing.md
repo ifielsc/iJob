@@ -12,4 +12,4 @@
 
 前端构建生成 `THIRD_PARTY_NOTICES.txt` 和 `.vite/third-party-components.json`，按实际渲染的依赖模块和保守包含的样式输入清点。上游包遗漏全文时，只有能追溯到对应版本的许可文本才能补入 `develop/web/ijob/tools/third-party/`，并锁定来源与 SHA-256；不能用本项目版权替换第三方版权。尚未取得的全文明确记为 `missing-upstream-text`，构建可用于私有测试，但不能据此宣布再分发核验通过。
 
-标准 MIT 文本：[SPDX MIT](https://spdx.org/licenses/MIT.html)。每次候选发布，把许可清单、素材哈希、漏洞处置及制品哈希绑定同一提交；原始证据保存在工作区 `maintenance/release-preparation/<date>/runs/<run-id>`，环境资源及秘密仍放 `runtime/<env-id>`。
+标准 MIT 文本：[SPDX MIT](https://spdx.org/licenses/MIT.html)。每次候选发布，把许可清单、素材哈希、漏洞处置及制品哈希绑定同一提交；新原始证据保存在工作区 `runtime/<env-id>/runs/<run-id>/reports`，资源与秘密也遵循工作区环境规范。历史 `maintenance/release-preparation/` 证据保留原位，不迁移或覆盖。

@@ -4,12 +4,16 @@
 
 set -euo pipefail
 source "$(dirname -- "${BASH_SOURCE[0]}")/../support/native-common.sh"
+require_unmanaged
 [[ $# == 0 ]] || { echo 'Usage: ./start.sh (optional IJOB_HOME and JAVA_HOME environment variables)' >&2; exit 1; }
 select_java
 "$java" -jar "$bundle/ijob-setup-tool-1.0.0.jar" init --mode linux --bundle "$bundle" --home "$data_home"
 require_installation
 lock_control
 if owned_process; then echo "Already running (PID $native_pid)."; exit 0; fi
+[[ ! -L $data_home/.native-runtime.lock ]] || { echo 'Unexpected runtime lock symlink.' >&2; exit 1; }
+exec 7>"$data_home/.native-runtime.lock"
+flock -n 7 || { echo 'Another process owns this instance runtime.' >&2; exit 1; }
 
 vendor=$(sed -n 's/^vendor=//p' "$data_home/installation.properties")
 case "$vendor" in sqlite|mysql|postgresql|sqlserver|oracle) ;; *) echo 'Invalid database metadata.' >&2; exit 1;; esac

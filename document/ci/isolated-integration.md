@@ -1,6 +1,6 @@
 # 隔离集成与发布准备
 
-本阶段保持完整 Basic CI：原有七个 jobs、四片浏览器配置和覆盖范围不变。以下入口扩展本地验证，不把 Full 或五库运行验收混入 Basic 的成功结论。
+完整 Basic 保留七个 jobs、四片浏览器配置和覆盖范围；触发方式遵循[基础 CI 的选择规则](basic-ci.md)，push/PR 自动轻量检查，完整 Basic 按阶段手动运行。以下入口扩展本地验证，不把 Full 或五库运行验收混入 Basic 的成功结论。下文日期明确的历史结果保留其原提交/环境边界，不作为新候选自动通过的证明。
 
 ## P1：本地 HTTP/SQLite 与真实后端浏览器
 
@@ -30,7 +30,7 @@ Full 拒绝继承业务 IJOB/SPRING 配置或现成测试目录，运行前检�
 
 用户已选择全新、一次性 Linux amd64 虚拟机，当前容量规划为 8 vCPU、8 GiB 内存、初始化后至少 80 GiB 空闲磁盘；这是待实测的规划值，不是性能认证。每次只启动一个数据库产品及本阶段应用节点；Kafka/RabbitMQ 按用例另阶段运行，构建和测试错峰，复用主机和制品而不共用数据库内容。监测宿主与客体内存、OOM 和换页；容量不足时记录实测需求并与维护者确认调整，不自动增加内存或删减场景。测试主机不得挂载维护工作区、用户目录、QA/cluster 或旧发布数据，也不得获得生产网络和凭据。
 
-备选方案是按数据库分开使用 GitHub 临时 runner。官方列出的私有仓库标准 Linux runner 为 2 CPU、8 GB 内存、14 GB SSD，不能预先认定足以承担 Oracle 或双节点组合；应先测容量，不以增加超时或缩减场景替代资源核验。参见 [GitHub runner 规格](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)。现有 Basic 工作流无需改动；未来 P2 独立入口采用手动触发，记录精确源码版本。
+备选方案是按数据库分开使用 GitHub 临时 runner。历史规划使用的私有仓库标准 Linux runner 规格为 2 CPU、8 GB 内存、14 GB SSD；重新选用前核对 [GitHub runner 规格](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)并实测容量，不能预先认定足以承担 Oracle 或双节点组合，不以增加超时或缩减场景替代资源核验。P2 独立入口采用手动触发，记录精确源码版本。
 
 启动前必须形成环境清单：主机身份与生命周期、OS/架构、可用 CPU/内存/磁盘、Docker/Compose 版本、每种数据库的精确版本和镜像 digest、字符集/排序规则、数据库隔离配置、仅本轮使用的资源标签与根目录、端口表、秘密文件位置及日志脱敏策略。源码、JAR、静态文件、三镜像都绑定同一源码状态和哈希。运行秘密只在临时环境生成，不进入镜像、命令行日志或产物。
 

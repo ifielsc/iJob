@@ -12,8 +12,16 @@ case "$data_home" in /*) ;; *) echo 'IJOB_HOME must be an absolute path.' >&2; e
 case "$data_home/" in "$bundle/"*) echo 'Data must be outside the release folder.' >&2; exit 1;; esac
 [[ "$data_home" != *$'\n'* && "$data_home" != *$'\r'* ]] || { echo 'Newlines are not supported in data paths.' >&2; exit 1; }
 pid_file="$data_home/native.pid"
+require_unmanaged() {
+    if [[ -e $data_home/.service-owner || -L $data_home/.service-owner ]]; then
+        echo 'This data home is managed by a service. Use its registered control directory.' >&2
+        exit 1
+    fi
+}
 
 require_installation() {
+    require_unmanaged
+    local name
     [[ -f "$data_home/setup.complete" && -f "$data_home/installation.properties" ]] || { echo 'No completed Linux installation found.' >&2; return 1; }
     grep -qx 'mode=linux' "$data_home/installation.properties" || { echo 'This data directory is not a Linux native installation.' >&2; return 1; }
     for name in native.pid .native-control.lock logs runtime; do

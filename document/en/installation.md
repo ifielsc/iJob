@@ -33,3 +33,5 @@ Keep the data home outside source and program directories. First start prompts f
 ## Recommended daily entry point
 
 Configure the [instance control entry](installation/instance-launcher.md) once using your platform guide. All lifecycle/status/log commands then share saved paths and language. The same page documents legacy defaults and environment variables.
+
+For Windows services, systemd and autostart, complete initial operation and follow [service management](installation/services.md). Interactive setup selects instance paths; service management supervises OS processes. Platform configuration remains separate.

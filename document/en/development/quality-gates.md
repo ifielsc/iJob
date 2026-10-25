@@ -30,6 +30,8 @@ This complete gate requires a clone containing the pinned historical commit to r
 
 Current document/ci/basic-ci.md and isolated-integration.md describe local HTTP/SQLite suites, seven real-backend Full browser configurations, database matrices and container runtime acceptance. Use new environments, accounts and directories; never depend on maintainer demo or old QA services.
 
+Use appropriate local checks for daily changes. Push/PR runs only lightweight repository checks. Manual suite=backend/frontend selects the complete module; suite=basic runs all seven jobs; suite=docker includes backend/frontend prerequisites. Service management, cross-platform, shared security/dependency/toolchain and CI changes require complete Basic at the stage candidate. Final candidates also require Full and the applicable runtime matrix. Unselected jobs are unexecuted, not passes inferred from a green workflow. Complete test coverage and candidate gates remain available and required.
+
 ## Documentation and distribution checks
 
 ```sh

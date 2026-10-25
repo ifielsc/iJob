@@ -15,6 +15,36 @@ data/a/                   本实例 IJOB_HOME，可能包含秘密
 
 先在程序目录运行一次 configure，具体命令见 [Windows](windows.md)、[Linux](linux.md)、[Docker](docker.md)。configure 只创建新控制目录，不创建管理员、不初始化数据库、不启动程序；已有控制目录拒绝覆盖。已有数据目录也可登记，但首次 start 会校验其安装方式与完整性。没有创建控制入口时直接运行程序包里的 ijob start 会明确报错，不猜测原实例。
 
+## 交互设置与受控修改
+
+在完整程序包中执行以下命令，按提示选择目录与语言。Linux 还可选择 linux/docker，Windows 固定为 windows。向导先说明默认值，校验后显示程序、控制、数据目录以及语言和模式；只有输入 `yes` 才保存，空白确认默认取消。任意输入步骤使用 `!` 或结束输入均取消，不初始化数据或调用 setup。
+
+```powershell
+.\ijob.cmd configure -Interactive -Lang zh
+```
+
+```sh
+bash ./ijob.sh configure --interactive --lang zh
+```
+
+仅在交互终端中，无目录参数的 configure 自动进入向导。自动化继续使用完整参数；重定向输入时必须显式选择 Interactive/interactive，否则拒绝等待输入。默认控制目录为程序包父目录下的 ijob-instance，默认数据目录为同级 ijob-data；这些是向导建议值，旧入口的既有默认位置不变。父目录必须已经存在，目录必须互不包含；取消或校验失败不会创建半份控制目录。提示语言默认 en，与网页及通知语言无关。
+
+已有控制目录支持停机后修改程序目录和提示语言；先通过原入口 stop/status 确认停止。在控制目录执行：
+
+```powershell
+.\ijob.cmd configure -Update -Interactive
+# 非交互示例：.\ijob.cmd configure -Update -Lang zh -Bundle D:/ijob/programs/ijob-1.0.0-new
+```
+
+```sh
+./ijob.sh configure --update --interactive
+# 非交互示例：./ijob.sh configure --update --lang zh --bundle /srv/ijob/programs/ijob-1.0.0-new
+```
+
+修改前核对当前实例已停止，校验完整新包，自动将原 instance.conf 原始字节保存在控制目录的 instance.conf.backup-*，再原子替换配置。启动、停止与修改在同一控制目录互斥；修改期间不要从旧控制目录或 legacy 入口并发操作。不会移动或覆盖数据，不会改写 application.properties 或重新生成密钥。home、mode 和控制目录保持固定；数据/模式迁移应按备份恢复流程新建控制目录。恢复启动设置时先停止实例，核对备份和程序兼容性后恢复原文件；数据与应用回退仍按升级手册执行。
+
+旧版本控制脚本不因程序包更新而自动获得此功能；先按文末流程用新包创建新的控制目录。后续包构建、跨平台 VM 运行和截图各自单独验收，不以源码向导测试替代。
+
 ## 一份配置供全部命令使用
 
 instance.conf 是 UTF-8 纯文本，每项一行，不使用引号、变量展开或 shell 表达式；Linux 使用 LF 换行。由 configure 自动生成，平时无需手填。
@@ -22,9 +52,9 @@ instance.conf 是 UTF-8 纯文本，每项一行，不使用引号、变量展�
 | 配置项 | 内容与修改规则 |
 | --- | --- |
 | version | 控制文件格式，当前为 1；不手改。不是产品版本。 |
-| bundle | 完整程序目录的绝对路径；升级时停机后按升级流程修改。 |
-| home | 本实例数据目录的绝对路径；修改不会搬迁数据，按备份恢复流程处理。 |
-| lang | 启动提示语言，zh 或 en；默认 en，下一次命令读取生效。 |
+| bundle | 完整程序目录的绝对路径；停机后用 configure Update/update 受控修改，升级仍按升级流程验收。 |
+| home | 本实例数据目录的绝对路径；受控修改不变更它，数据迁移按备份恢复流程建立新控制目录。 |
+| lang | 启动提示语言，zh 或 en；默认 en，受控修改后下一次命令读取生效。 |
 | mode | Windows 为 windows；Linux 原生为 linux；Docker 为 docker。创建时选择，不通过改这一项迁移部署方式。 |
 
 同一实例的 start、stop、restart、status、logs 都读取同一个文件；控制目录可从任何工作目录调用。已保存的 home/lang 优先于终端继承的 IJOB_HOME/IJOB_LANG，避免新窗口忘记设置或沿用另一个实例。每次运行显示所选数据目录；show 只显示启动设置，不输出应用密码或密钥。

@@ -15,6 +15,7 @@ for ($item = $dataRoot; $item; $item = Split-Path -Parent $item) {
 }
 $java = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin/java.exe' } else { (Get-Command java.exe -ErrorAction Stop).Source }
 $pidPath = Join-Path $dataRoot 'native-process.json'
+if (Test-Path -LiteralPath (Join-Path $dataRoot '.service-owner')) { throw 'This data home is managed by a service. Use its registered control directory.' }
 $log = Join-Path $dataRoot 'logs/ijob.log'
 $zh = $env:IJOB_LANG -eq 'zh'
 function Say([string]$English, [string]$Chinese) { if ($zh) { Write-Host $Chinese } else { Write-Host $English } }
@@ -59,6 +60,7 @@ if (-not (Select-String -LiteralPath (Join-Path $dataRoot 'installation.properti
 if ($Action -eq 'logs') { Get-Content -LiteralPath $log -Tail 100 -Wait; exit 0 }
 $lock = [IO.File]::Open((Join-Path $dataRoot '.native-control.lock'), 'OpenOrCreate', 'ReadWrite', 'None')
 try {
+    if (Test-Path -LiteralPath (Join-Path $dataRoot '.service-owner')) { throw 'Service ownership changed; use its registered control directory.' }
     if ($Action -eq 'status') {
         $process = Get-OwnedProcess
         if ($process) { Say "RUNNING (PID $($process.ProcessId)); check logs for readiness." "正在运行（PID $($process.ProcessId)）；就绪状态请查看日志。"; exit 0 }

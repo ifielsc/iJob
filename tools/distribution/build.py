@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import tarfile
 import uuid
@@ -115,6 +116,28 @@ def copy_deployment(source, bundle):
         '`support/` contains internal helpers, not user entry points.\n\n'
         'Start with the installation guide for your platform. Keep the data home outside this '
         'directory. This package contains no credentials or database.\n', encoding='utf-8')
+
+
+def write_archives(output, bundle, target):
+    # Windows filesystem modes must not turn extracted Linux programs world-writable.
+    with zipfile.ZipFile(output / f'ijob-{VERSION}-{target}.zip', 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+        for path in sorted(p for p in bundle.rglob('*') if p.is_file()):
+            entry = zipfile.ZipInfo.from_file(path, path.relative_to(output))
+            entry.create_system = 3
+            entry.external_attr = (stat.S_IFREG | (0o755 if path.suffix == '.sh' else 0o644)) << 16
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(entry, path.read_bytes())
+
+    def safe_metadata(entry):
+        if not (entry.isfile() or entry.isdir()):
+            raise ValueError('Only regular files and directories belong in distributions')
+        entry.uid = entry.gid = 0
+        entry.uname = entry.gname = 'root'
+        entry.mode = 0o755 if entry.isdir() or entry.name.endswith('.sh') else 0o644
+        return entry
+
+    with tarfile.open(output / f'ijob-{VERSION}-{target}.tar.gz', 'w:gz') as archive:
+        archive.add(bundle, arcname=bundle.name, filter=safe_metadata)
 
 
 def native(work, bundle, reports):
@@ -234,11 +257,7 @@ def main():
     (bundle / 'MANIFEST.json').write_text(json.dumps(result, indent=2) + '\n')
     entries = sorted(p for p in bundle.rglob('*') if p.is_file())
     (bundle / 'SHA256SUMS.txt').write_text(''.join(digest(p) + '  ' + p.relative_to(bundle).as_posix() + '\n' for p in entries))
-    with zipfile.ZipFile(output / f'ijob-{VERSION}-{args.target}.zip', 'w', compression=zipfile.ZIP_DEFLATED) as archive:
-        for path in sorted(p for p in bundle.rglob('*') if p.is_file()):
-            archive.write(path, path.relative_to(output))
-    with tarfile.open(output / f'ijob-{VERSION}-{args.target}.tar.gz', 'w:gz') as archive:
-        archive.add(bundle, arcname=bundle.name)
+    write_archives(output, bundle, args.target)
     print(json.dumps({'bundle': str(bundle), 'target': args.target, 'validation': result}, ensure_ascii=False))
 
 

@@ -33,3 +33,5 @@ data/ijob-a/             IJOB_HOME：配置、密钥、数据库、日志、安�
 ## 推荐的日常入口
 
 先按平台章节配置一次[实例控制入口](installation/instance-launcher.md)，以后所有启停、状态与日志命令共用保存的目录和语言。旧脚本的默认目录和变量规则也在该页说明。
+
+需要 Windows 服务、systemd 或开机自启时，完成首次运行后进入[服务托管](installation/services.md)。交互设置与服务托管分别负责实例路径和操作系统进程管理，不代替平台参数配置。

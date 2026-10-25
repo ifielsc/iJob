@@ -44,13 +44,13 @@ class InstanceLauncherTest(unittest.TestCase):
                 'param([string]$Action)\n'
                 '[IO.File]::AppendAllText($env:LAUNCHER_TEST_RECORD, '
                 '"$env:IJOB_HOME|$env:IJOB_LANG|$Action`n")\n'
-                'if ($Action -eq "status") { exit 3 }\n', encoding='utf-8')
+                'if ($Action -eq "status") { if ($env:LAUNCHER_TEST_RUNNING) { exit 0 }; exit 3 }\n', encoding='utf-8')
         else:
             for action in ['start', 'stop', 'status', 'logs', 'start-docker', 'stop-docker']:
                 (self.bundle / 'legacy' / (action + '.sh')).write_text(
                     '#!/usr/bin/env bash\n'
                     f'printf \'%s\\n\' "$IJOB_HOME|$IJOB_LANG|{action}|$*" >> "$LAUNCHER_TEST_RECORD"\n'
-                    + ('exit 3\n' if action == 'status' else ''), encoding='utf-8')
+                    + ('[[ -z ${LAUNCHER_TEST_RUNNING:-} ]] || exit 0\nexit 3\n' if action == 'status' else ''), encoding='utf-8')
             bin_dir = self.root / 'bin'
             bin_dir.mkdir()
             docker = bin_dir / 'docker'
@@ -58,11 +58,12 @@ class InstanceLauncherTest(unittest.TestCase):
             docker.chmod(0o700)
             self.env['PATH'] = str(bin_dir) + os.pathsep + self.env['PATH']
 
-    def invoke(self, base, args, expected=0):
+    def invoke(self, base, args, expected=0, input_text=None):
         command = (['powershell.exe', '-NoProfile', '-File', str(base / 'support/instance.ps1')]
                    if WINDOWS else ['bash', str(base / 'ijob.sh')])
         result = subprocess.run(command + args, cwd=self.root, env=self.env,
-                                capture_output=True, encoding='utf-8', errors='replace', timeout=30)
+                                capture_output=True, encoding='utf-8', errors='replace', timeout=30,
+                                input=input_text)
         self.assertEqual(expected, result.returncode, result.stdout + result.stderr)
         return result.stdout
 
@@ -91,6 +92,172 @@ class InstanceLauncherTest(unittest.TestCase):
         original = (self.control / 'instance.conf').read_bytes()
         self.configure(expected=1)
         self.assertEqual(original, (self.control / 'instance.conf').read_bytes())
+
+    def test_interactive_create_previews_identity_and_preserves_existing_data(self):
+        self.home.mkdir()
+        sentinel = self.home / 'existing-data.txt'
+        sentinel.write_bytes(b'original data')
+        answers = ['zh', str(self.control), str(self.home)]
+        if not WINDOWS:
+            answers.append('linux')
+        answers.append('yes')
+        output = self.invoke(self.bundle, ['configure', '-Interactive' if WINDOWS else '--interactive'],
+                             input_text='\n'.join(answers) + '\n')
+        self.assertIn('mode=' + ('windows' if WINDOWS else 'linux'), output)
+        self.assertIn('lang=zh', self.invoke(self.control, ['show']))
+        self.assertEqual(b'original data', sentinel.read_bytes())
+        self.assertFalse(self.record.exists())
+
+    def test_interactive_cancel_and_eof_leave_no_control_directory(self):
+        for answers in ['!\n', 'en\n', 'en\n' + str(self.control) + '\n!\n']:
+            self.invoke(self.bundle, ['configure', '-Interactive' if WINDOWS else '--interactive'],
+                        1, input_text=answers)
+            self.assertFalse(self.control.exists())
+            self.assertFalse(list(self.root.glob('control space.new-*')))
+            self.assertFalse(self.home.exists())
+
+    def test_interactive_save_defaults_to_no(self):
+        answers = ['en', str(self.control), str(self.home)]
+        if not WINDOWS:
+            answers.append('linux')
+        answers.append('')
+        self.invoke(self.bundle, ['configure', '-Interactive' if WINDOWS else '--interactive'],
+                    1, input_text='\n'.join(answers) + '\n')
+        self.assertFalse(self.control.exists())
+
+    def test_update_backs_up_exact_previous_bytes_and_retains_data_identity(self):
+        self.configure()
+        original = (self.control / 'instance.conf').read_bytes()
+        args = ['configure', '-Update', '-Lang', 'en'] if WINDOWS else ['configure', '--update', '--lang', 'en']
+        self.invoke(self.control, args)
+        backups = list(self.control.glob('instance.conf.backup-*'))
+        self.assertEqual(1, len(backups))
+        self.assertEqual(original, backups[0].read_bytes())
+        output = self.invoke(self.control, ['show'])
+        self.assertIn('lang=en', output)
+        self.assertIn(str(self.home), output)
+        self.assertFalse(self.home.exists())
+
+    def test_update_refuses_running_instance_without_changing_settings(self):
+        self.configure()
+        self.home.mkdir()
+        original = (self.control / 'instance.conf').read_bytes()
+        self.env['LAUNCHER_TEST_RUNNING'] = '1'
+        args = ['configure', '-Update', '-Lang', 'en'] if WINDOWS else ['configure', '--update', '--lang', 'en']
+        self.invoke(self.control, args, 1)
+        self.assertEqual(original, (self.control / 'instance.conf').read_bytes())
+        self.assertFalse(list(self.control.glob('instance.conf.backup-*')))
+
+    def test_update_checks_stopped_instance_and_changes_bundle(self):
+        self.configure()
+        self.home.mkdir()
+        sentinel = self.home / 'existing-data.txt'
+        sentinel.write_bytes(b'original data')
+        replacement = self.root / 'replacement program'
+        shutil.copytree(self.bundle, replacement)
+        args = ['configure', '-Update', '-Bundle', str(replacement)] if WINDOWS else [
+            'configure', '--update', '--bundle', str(replacement)]
+        self.invoke(self.control, args)
+        self.assertIn(str(replacement), self.invoke(self.control, ['show']))
+        self.assertEqual(b'original data', sentinel.read_bytes())
+        self.assertEqual('status', self.record.read_text().strip().split('|')[2])
+
+    def test_update_rejects_data_migration_and_invalid_bundle(self):
+        self.configure()
+        original = (self.control / 'instance.conf').read_bytes()
+        for option in (['-Home', '-Directory', '-Bundle'] if WINDOWS else ['--home', '--directory', '--bundle']):
+            self.invoke(self.control, ['configure', '-Update' if WINDOWS else '--update',
+                                      option, str(self.root / 'missing')], 1)
+            self.assertEqual(original, (self.control / 'instance.conf').read_bytes())
+        self.assertFalse(list(self.control.glob('instance.conf.backup-*')))
+
+    def test_interactive_update_cancellation_preserves_configuration(self):
+        self.configure()
+        original = (self.control / 'instance.conf').read_bytes()
+        args = ['configure', '-Update', '-Interactive'] if WINDOWS else ['configure', '--update', '--interactive']
+        self.invoke(self.control, args, 1, input_text='en\n\nno\n')
+        self.assertEqual(original, (self.control / 'instance.conf').read_bytes())
+        self.assertFalse(list(self.control.glob('instance.conf.backup-*')))
+
+    def test_data_home_file_is_rejected_without_partial_configuration(self):
+        self.home.write_bytes(b'not a directory')
+        self.configure(expected=1)
+        self.assertEqual(b'not a directory', self.home.read_bytes())
+        self.assertFalse(self.control.exists())
+
+    def test_service_owned_home_routes_to_manager_and_preserves_status_code(self):
+        self.configure()
+        self.home.mkdir()
+        (self.home / '.service-owner').write_text('registered fixture\n')
+        if WINDOWS:
+            (self.bundle / 'support/service.ps1').write_text(
+                'param([string]$Control,[string]$Action,[switch]$Once)\n'
+                '[IO.File]::AppendAllText($env:LAUNCHER_TEST_RECORD,"service|$Control|$Action`n")\n'
+                'if ($Action -eq "status") { exit 3 }; exit 0\n', encoding='utf-8')
+        else:
+            (self.bundle / 'support/service.sh').write_text(
+                '#!/usr/bin/env bash\nprintf \'service|%s|%s\\n\' "$1" "$2" >> "$LAUNCHER_TEST_RECORD"\n'
+                '[[ $2 != status ]] || exit 3\n', encoding='utf-8')
+        for action, code in [('start', 0), ('status', 3), ('stop', 0)]:
+            self.invoke(self.control, [action], code)
+        self.invoke(self.control, ['service', 'status'], 3)
+        lines = self.record.read_text().splitlines()
+        self.assertEqual(4, len(lines))
+        self.assertTrue(all(line.startswith('service|' + str(self.control) + '|') for line in lines))
+
+    def test_service_owned_home_rejects_update_and_missing_manager(self):
+        self.configure()
+        self.home.mkdir()
+        (self.home / '.service-owner').write_text('registered fixture\n')
+        original = (self.control / 'instance.conf').read_bytes()
+        self.invoke(self.control, ['configure', '-Update' if WINDOWS else '--update'], 1)
+        self.invoke(self.control, ['start'], 1)
+        self.assertEqual(original, (self.control / 'instance.conf').read_bytes())
+        self.assertFalse(self.record.exists())
+
+    def test_service_files_remain_internal_in_complete_bundle(self):
+        for name in ['service-common.ps1', 'service.ps1', 'service-common.sh', 'service-run.sh',
+                     'service.sh', 'winsw.json', 'WinSW-LICENSE.txt']:
+            self.assertTrue((SOURCE / 'support' / name).is_file())
+
+    def test_service_configuration_rejects_invalid_paths_or_emits_safe_xml(self):
+        if WINDOWS:
+            import xml.etree.ElementTree as ET
+            helper = str(SOURCE / 'support/service-common.ps1').replace("'", "''")
+            script = ". '" + helper + "'; New-ServiceXml -Name ijobContract -Java 'D:/tools/java/bin/java.exe' " + (
+                "-DataRoot 'D:/data & literal' -Bundle 'D:/program space' -Vendor sqlite -Lang zh")
+            result = subprocess.run(['powershell.exe', '-NoProfile', '-Command', script],
+                                    capture_output=True, encoding='utf-8', errors='replace', timeout=30)
+            self.assertEqual(0, result.returncode, result.stderr)
+            root = ET.fromstring(result.stdout)
+            self.assertEqual('Manual', root.findtext('startmode'))
+            self.assertEqual('NT SERVICE', root.findtext('serviceaccount/domain'))
+            self.assertEqual('ijobContract', root.findtext('serviceaccount/user'))
+            self.assertIsNone(root.find('serviceaccount/password'))
+            self.assertIn('"-Dijob.native.home=D:\\data & literal"', root.findtext('arguments'))
+            self.assertEqual(['restart','restart','restart','none'], [e.get('action') for e in root.findall('onfailure')])
+            self.assertEqual('120 sec', root.findtext('stoptimeout'))
+            rejected = subprocess.run(['powershell.exe', '-NoProfile', '-Command',
+                                      ". '" + helper + "'; Get-ServicePath 'D:/data%PATH%'"],
+                                     capture_output=True, timeout=30)
+            self.assertNotEqual(0, rejected.returncode)
+        else:
+            self.configure()
+            self.home.mkdir()
+            (self.home / 'setup.complete').touch()
+            (self.home / 'installation.properties').write_text('mode=linux\n')
+            env = self.env.copy()
+            env['IJOB_HOME'] = str(self.home)
+            check = subprocess.run(['bash', '-c', 'source "$1"; name=ijob-contract; require_installation; printf "%s" "$name"',
+                                    'contract', str(SOURCE / 'support/native-common.sh')],
+                                   env=env, capture_output=True, timeout=30)
+            self.assertEqual(0, check.returncode, check.stderr)
+            self.assertEqual(b'ijob-contract', check.stdout)
+            (self.control / 'instance.conf').write_text((self.control / 'instance.conf').read_text() + 'mode=linux\n')
+            result = subprocess.run(['bash', str(SOURCE / 'support/service-run.sh'), str(self.control)],
+                                    capture_output=True, timeout=30)
+            self.assertNotEqual(0, result.returncode)
+            self.assertIn(b'duplicate', result.stderr)
 
     def test_missing_duplicate_and_unknown_configuration_fail_before_dispatch(self):
         self.invoke(self.bundle, ['start'], 1)

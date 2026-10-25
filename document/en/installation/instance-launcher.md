@@ -15,6 +15,36 @@ data/a/                   This instance's IJOB_HOME; may contain secrets
 
 Run configure once from the program directory; see [Windows](windows.md), [Linux](linux.md) or [Docker](docker.md). It only creates a new control directory: no administrator, database initialization or startup. Existing control directories are never overwritten. An existing data home may be registered, but start validates its installation mode/completeness. Running ijob start in an unconfigured program directory fails explicitly instead of guessing an instance.
 
+## Interactive setup and controlled updates
+
+Run these commands in a complete program bundle to select directories and language. Linux also offers linux/docker; Windows uses windows. The wizard shows defaults, validates the choices and previews program/control/data directories, language and mode. Only `yes` saves; an empty confirmation cancels. Enter `!` at any prompt or end input to cancel without initializing data or invoking setup.
+
+```powershell
+.\ijob.cmd configure -Interactive -Lang en
+```
+
+```sh
+bash ./ijob.sh configure --interactive --lang en
+```
+
+In an interactive terminal only, configure without directory arguments opens the wizard. Automation may keep using complete arguments. Redirected input requires explicit Interactive/interactive instead of implicitly waiting for input. Suggested control/data locations are ijob-instance and ijob-data beside the program bundle; legacy defaults are unchanged. Parents must already exist and the three directories cannot overlap. Cancellation or validation failure leaves no partial control directory. Prompt language defaults to en and is separate from web/notification language.
+
+To change the program directory or prompt language of an existing instance, stop it through its original entry point and verify status first. Run in the control directory:
+
+```powershell
+.\ijob.cmd configure -Update -Interactive
+# Scripted example: .\ijob.cmd configure -Update -Lang en -Bundle D:/ijob/programs/ijob-1.0.0-new
+```
+
+```sh
+./ijob.sh configure --update --interactive
+# Scripted example: ./ijob.sh configure --update --lang en --bundle /srv/ijob/programs/ijob-1.0.0-new
+```
+
+An update verifies the current instance is stopped and the replacement bundle is complete, saves the exact previous instance.conf bytes as instance.conf.backup-* in the control directory, then replaces settings atomically. Lifecycle commands and updates are mutually exclusive within that control directory; do not concurrently use legacy or other control directories during an update. Data, application.properties and secrets are unchanged. Home, mode and control directory remain fixed; follow backup/restore and create a new control directory for data/mode migrations. To restore settings, stop first, verify backup/program compatibility and restore the previous file. Application/data rollback still follows the upgrade guide.
+
+Old control scripts do not acquire this feature merely by updating a bundle. Create a new control directory from the new bundle using the process below. Package builds, cross-platform VM execution and screenshots have separate acceptance; source wizard tests do not replace them.
+
 ## Shared settings for every action
 
 instance.conf is plain UTF-8, one key per line, without quotes, variable expansion or shell expressions; use LF on Linux. configure generates it, so normal setup does not require manual editing.
@@ -22,9 +52,9 @@ instance.conf is plain UTF-8, one key per line, without quotes, variable expansi
 | Setting | Meaning and change rules |
 | --- | --- |
 | version | Control-file format, currently 1; do not edit. This is not the product version. |
-| bundle | Absolute complete-program directory; change while stopped as part of an upgrade. |
-| home | Absolute instance data directory; editing this value does not move data. Follow backup/restore procedures. |
-| lang | Launch-message language: zh or en; defaults to en, read on the next command. |
+| bundle | Absolute complete-program directory; use configure Update/update while stopped, then perform upgrade acceptance. |
+| home | Absolute instance data directory; controlled updates keep it fixed. Create a new control directory through backup/restore for data migration. |
+| lang | Launch-message language: zh or en; defaults to en, read on the next command after a controlled update. |
 | mode | windows, linux or docker, selected during creation. Editing it does not migrate an installation. |
 
 start, stop, restart, status and logs all read this file, regardless of the caller's working directory. Saved home/lang take precedence over inherited IJOB_HOME/IJOB_LANG so a fresh terminal or another instance's variables cannot silently select a different home. Commands display the selected data home; show prints launch settings without application passwords or keys.

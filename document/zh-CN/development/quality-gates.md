@@ -30,6 +30,8 @@ pnpm exec playwright test --config=playwright.production.config.ts
 
 本地 HTTP/SQLite 专项、七套真实后端浏览器 Full、五数据库及容器运行验收见当前 document/ci/basic-ci.md 和 isolated-integration.md。使用新环境、新账号、新目录；绝不依赖维护者的演示或旧 QA 服务。
 
+日常修改先做本地适用验证。push/PR 自动仅运行轻量仓库检查；手动 suite=backend/frontend 选择完整模块，suite=basic 运行完整七个 jobs，suite=docker 同时运行后端/前端前置任务。服务化、跨平台、公共安全/依赖/工具链或 CI 变更在阶段候选执行完整 Basic；最终候选再执行 Full 与适用运行矩阵。未选择任务记为未执行，不因工作流绿灯计为通过。完整用例和候选门禁保持不变。
+
 ## 文档和交付检查
 
 ```sh
