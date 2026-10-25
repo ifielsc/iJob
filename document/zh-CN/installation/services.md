@@ -47,7 +47,7 @@ sudo ./ijob.sh service disable
 
 安装器校验并写入 /etc/systemd/system/ijob-a.service，固定程序/控制/数据身份及 unit 哈希。应用以前台 Java 运行，使用注册账号；配置文件仅开放该组读取，数据目录不自动换所有者。新服务保持停止、未 enable。enable/disable 只切换下次开机自启，不隐式启动或停止。异常退出 10 秒后重启，5 分钟内最多启动 3 次；达到限制时先排障，再由管理员按 systemd 流程 reset-failed 后启动。
 
-停止发送 SIGTERM，等待 120 秒；不自动 SIGKILL。停止超时保留进程，需要检查日志，不能签为停止成功。status 展示 ActiveState/SubState/MainPID/UnitFileState；应用就绪独立核对。service logs / 统一 logs 查看本 unit 的 journal，应用文件日志仍在 home/logs/ijob.log。journal 的留存由主机 journald 配置管理。
+停止发送 SIGTERM，等待 120 秒；Java 的正常信号退出码 143 视为服务正常结束，不自动 SIGKILL。停止超时保留进程，需要检查日志，不能签为停止成功。运行中的业务任务可能因进程组终止而失败，须检查实例记录及外部副作用；服务正常停止不等于任务成功。status 展示 ActiveState/SubState/MainPID/UnitFileState；应用就绪独立核对。service logs / 统一 logs 查看本 unit 的 journal，应用文件日志仍在 home/logs/ijob.log。journal 的留存由主机 journald 配置管理。
 
 ## 升级、回退与卸载
 

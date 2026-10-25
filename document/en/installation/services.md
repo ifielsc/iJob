@@ -47,7 +47,7 @@ sudo ./ijob.sh service disable
 
 Installation validates /etc/systemd/system/ijob-a.service and binds program/control/data identities and the unit digest. Foreground Java runs as the registered account; the configuration becomes group-readable while data ownership is unchanged. New units remain stopped and disabled. Enable/disable changes boot activation only. Failure restarts wait 10 seconds, with at most three starts within five minutes; diagnose limits before administrator reset-failed and restart.
 
-Stop sends SIGTERM and waits 120 seconds without automatic SIGKILL. A timeout retains the process for diagnosis and is not successful shutdown. Status shows ActiveState/SubState/MainPID/UnitFileState; application readiness is separate. Service/unified logs use this unit's journal, while application files remain at home/logs/ijob.log. Journal retention is controlled by host journald settings.
+Stop sends SIGTERM and waits 120 seconds without automatic SIGKILL. Java's normal signal exit code 143 is classified as a successful service exit. A timeout retains the process for diagnosis and is not successful shutdown. Running business tasks may fail when their process group terminates; inspect instance records and external effects. A clean service stop does not mean task success. Status shows ActiveState/SubState/MainPID/UnitFileState; application readiness is separate. Service/unified logs use this unit's journal, while application files remain at home/logs/ijob.log. Journal retention is controlled by host journald settings.
 
 ## Upgrade, rollback and uninstall
 

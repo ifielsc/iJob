@@ -67,7 +67,7 @@ if [[ $action == install ]]; then
     {
         printf '[Unit]\nDescription=iJob instance %s\nAfter=network-online.target\nWants=network-online.target\nStartLimitIntervalSec=300\nStartLimitBurst=3\n\n[Service]\nType=exec\nUser=%s\nGroup=%s\n' "$name" "$account" "$group"
         printf 'WorkingDirectory=%s\nExecStart=/usr/bin/bash %s %s\n' "$(unit_path "$data_home/runtime")" "$(unit_quote "$bundle/support/service-run.sh" exec)" "$(unit_quote "$control" exec)"
-        printf 'Restart=on-failure\nRestartSec=10\nKillSignal=SIGTERM\nKillMode=control-group\nTimeoutStopSec=120\nSendSIGKILL=no\nUMask=0077\nNoNewPrivileges=yes\nPrivateTmp=yes\nStandardOutput=journal\nStandardError=journal\n\n[Install]\nWantedBy=multi-user.target\n'
+        printf 'Restart=on-failure\nRestartSec=10\nSuccessExitStatus=143\nKillSignal=SIGTERM\nKillMode=control-group\nTimeoutStopSec=120\nSendSIGKILL=no\nUMask=0077\nNoNewPrivileges=yes\nPrivateTmp=yes\nStandardOutput=journal\nStandardError=journal\n\n[Install]\nWantedBy=multi-user.target\n'
     } > "$work/$name.service"
     systemd-analyze verify "$work/$name.service"
     digest=$(sha256sum "$work/$name.service"); digest=${digest%% *}
