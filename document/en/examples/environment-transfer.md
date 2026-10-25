@@ -14,7 +14,7 @@ Upload .ijob.zip into B, map independent resources/channels, fill B credentials,
 
 ## Scope verified this round
 
-This round exported a current parent/child graph and harmless script from A into B with independent database, accounts and keys. New objects were disabled and verified; repeating the import after B restarted reused every object. An explicitly enabled script executed successfully, and the original plan then reported DRIFTED after that intentional change. Resource/secret remapping, partial resume and concurrent target conflicts remain separate.
+This round exported a current parent/child graph and harmless script from A into B with independent database, accounts and keys. New objects were disabled and verified; repeating the import after B restarted reused every object. An explicitly enabled script executed successfully, and the original plan then reported DRIFTED after that intentional change. A database-resource package also excluded the source password and encrypted envelope; missing target secrets produced BLOCKED. Mapping a new read-only account with a distinct target password completed and verified the import; resource IDs were remapped and an enabled SQL task executed successfully. Partial resume and concurrent target conflicts remain separate.
 
 ## Finish
 

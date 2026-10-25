@@ -14,7 +14,7 @@ Create a shared concurrency resource of capacity 1 and bind two long tasks. Trig
 
 ## Scope verified this round
 
-This round created a new PostgreSQL platform database and two CLUSTER nodes on the same VM. finance/other tasks ran under distinct system accounts; execution intervals overlapped without a shared limit and became mutually exclusive with capacity 1. An unmatched trigger waited until an eligible Worker joined; the original node configuration was then restored. ID whitelist combinations and failover remain separate. Two processes on one VM do not establish physical high availability.
+This round created a new PostgreSQL platform database and two CLUSTER nodes on the same VM. finance/other tasks ran under distinct system accounts; execution intervals overlapped without a shared limit and became mutually exclusive with capacity 1. An unmatched trigger waited until an eligible Worker joined; the original node configuration was then restored. The empty, task-only, job-only and combined ID allowlists were verified with real root triggers. An allowed job executed an unlisted descendant, while a direct trigger of that task waited. Restoring the original scope drained all synthetic queued triggers. Failover remains separate. Two processes on one VM do not establish physical high availability.
 
 ## Finish
 

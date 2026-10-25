@@ -25,7 +25,7 @@ WHERE (updated_at > CAST(:etlLastWatermark AS timestamp)
 ORDER BY updated_at, id;
 ```
 
-After importing three rows, add id=4/amount=400 at the last watermark. The next execution produced four rows totaling 1000; an empty rerun changed nothing. Testing exposed and fixed a parse failure when reloading JDBC timestamp checkpoints serialized with an offset. The new package resumed the original checkpoint successfully; new values preserve local time and nanosecond precision. Checkpoints and target writes still have separate commit boundaries and need an idempotent target. File increments and SCD2 remain separate; see [message scenarios](push-and-notifications.md) for actual message consumption and failure recovery. Existing screenshots show the full-load path.
+After importing three rows, add id=4/amount=400 at the last watermark. The next execution produced four rows totaling 1000; an empty rerun changed nothing. Testing exposed and fixed a parse failure when reloading JDBC timestamp checkpoints serialized with an offset. The new package resumed the original checkpoint successfully; new values preserve local time and nanosecond precision. Checkpoints and target writes still have separate commit boundaries and need an idempotent target. Separate PostgreSQL tables verified SCD2 initial/unchanged writes, closing and opening versions on a business change, replay, backdated-effective-time rejection and recovery. Independent SQL checked contiguous history intervals and one current version. File increments and SCD2 on other database dialects remain separate; see [message scenarios](push-and-notifications.md) for actual message consumption and failure recovery. Existing screenshots show the full-load path.
 
 ## Finish
 

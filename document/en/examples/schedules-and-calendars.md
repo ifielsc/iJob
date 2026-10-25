@@ -14,7 +14,7 @@ For actual automatic firing, enable a harmless one-time schedule in a controlled
 
 ## Scope verified this round
 
-Calendar preview verified the excluded date. During controlled downtime an isolated instance missed three bounded interval firings. Recovery produced SKIP=0, FIRE_ONCE=1 and CATCH_UP_BOUNDED=2 (limit 2); accepted triggers and executions succeeded with Asia/Shanghai business time. All exercise schedules were then disabled. Other zones, daylight-saving transitions and queue expiry remain separate.
+Calendar preview verified the excluded date. During controlled downtime an isolated instance missed three bounded interval firings. Recovery produced SKIP=0, FIRE_ONCE=1 and CATCH_UP_BOUNDED=2 (limit 2); accepted triggers and executions succeeded with Asia/Shanghai business time. All exercise schedules were then disabled. An unmatched scheduled trigger also expired as SKIPPED without creating an execution instance. Other zones and daylight-saving transitions remain separate.
 
 ## Finish
 

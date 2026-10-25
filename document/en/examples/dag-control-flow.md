@@ -16,7 +16,7 @@ Record separate run graphs for extensions; the serial screenshot does not prove 
 
 ## Scope verified this round
 
-This round verified A→B/C→D parallel join and exclusive gateway routes for amounts 101/100. Conflicting values for the same output key caused the join to fail; distinct output keys succeeded. A missing amount failed condition evaluation rather than selecting the default route. STOP/SKIP failure strategies, ALWAYS continuation and explicit guards for missing values remain separate.
+This round verified A→B/C→D parallel join and exclusive gateway routes for amounts 101/100. Conflicting values for the same output key caused the join to fail; distinct output keys succeeded. A missing amount failed condition evaluation rather than selecting the default route. STOP blocked downstream execution, SKIP + ALL_SUCCESS skipped it, and SKIP + ALWAYS executed it; all three retained a FAILED root result. Explicit guards for missing values remain separate.
 
 ## Finish
 

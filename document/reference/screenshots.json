@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "productVersion": "1.0.0",
-  "captureDate": "2026-10-24",
+  "captureDate": "2026-10-26",
   "images": [
     {
       "locale": "zh-CN",
@@ -16,7 +16,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/script-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -31,7 +32,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/sql-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -46,7 +48,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/check-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -61,7 +64,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/transfer-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -76,7 +80,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/etl-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -91,7 +96,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/etl-target.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -106,7 +112,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/job-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -121,7 +128,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/job-node.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -136,7 +144,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/script-run.png",
       "verification": "real-execution",
-      "caption_note": "UI log filter selects the hello output; full logs remain in isolated evidence."
+      "caption_note": "UI log filter selects the hello output; full logs remain in isolated evidence.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -151,7 +160,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/job-run.png",
       "verification": "real-execution",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -166,7 +176,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/etl-run.png",
       "verification": "real-execution",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -181,7 +192,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/schedule-preview.png",
       "verification": "preview-only",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "zh-CN",
@@ -196,7 +208,8 @@
       "viewport": "1440x1000",
       "path": "document/zh-CN/images/manual/parameter-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -211,7 +224,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/script-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -226,7 +240,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/sql-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -241,7 +256,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/check-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -256,7 +272,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/transfer-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -271,7 +288,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/etl-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -286,7 +304,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/etl-target.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -301,7 +320,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/job-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -316,7 +336,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/job-node.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -331,7 +352,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/script-run.png",
       "verification": "real-execution",
-      "caption_note": "UI log filter selects the hello output; full logs remain in isolated evidence."
+      "caption_note": "UI log filter selects the hello output; full logs remain in isolated evidence.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -346,7 +368,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/job-run.png",
       "verification": "real-execution",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -361,7 +384,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/etl-run.png",
       "verification": "real-execution",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -376,7 +400,8 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/schedule-preview.png",
       "verification": "preview-only",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
     },
     {
       "locale": "en-US",
@@ -391,7 +416,111 @@
       "viewport": "1440x1000",
       "path": "document/en/images/manual/parameter-editor.png",
       "verification": "saved-configuration",
-      "caption_note": "Viewport capture; scroll the live form for remaining fields."
+      "caption_note": "Viewport capture; scroll the live form for remaining fields.",
+      "captureDate": "2026-10-24"
+    },
+    {
+      "locale": "zh-CN",
+      "name": "event-run",
+      "route": "/runs/instances/153",
+      "sha256": "c8b38cfb369d61b57bd2d3d469ae7b6c8483ab70d801c1f15cdebc8692cf8b41",
+      "backendSource": "e4a66d71320b22a6b4bfa38f9ac31f19b58703ca",
+      "backendSourceManifestSha256": "d8ac1a61d492c091b62bd6593caae5edbde466c48ae828aa36c4c76d08412539",
+      "environment": "service-readiness-20261025",
+      "syntheticData": true,
+      "realBackend": true,
+      "theme": "light",
+      "viewport": "1440x1000",
+      "path": "document/zh-CN/images/manual/event-run.png",
+      "verification": "execution-result",
+      "captureDate": "2026-10-26",
+      "caption_note": "Full-page capture of matching instance identity/tree/details. External results independently verified; screenshot is not a complete protocol coverage claim."
+    },
+    {
+      "locale": "zh-CN",
+      "name": "approval-run",
+      "route": "/runs/instances/91",
+      "sha256": "121b5b7fbd3255820b2f47e73b1e3cffc52c817915e36a3e2cbf76c3c0b02d21",
+      "backendSource": "e4a66d71320b22a6b4bfa38f9ac31f19b58703ca",
+      "backendSourceManifestSha256": "d8ac1a61d492c091b62bd6593caae5edbde466c48ae828aa36c4c76d08412539",
+      "environment": "service-readiness-20261025",
+      "syntheticData": true,
+      "realBackend": true,
+      "theme": "light",
+      "viewport": "1440x1000",
+      "path": "document/zh-CN/images/manual/approval-run.png",
+      "verification": "execution-result",
+      "captureDate": "2026-10-26",
+      "caption_note": "Full-page capture of matching instance identity/tree/details. External results independently verified; screenshot is not a complete protocol coverage claim."
+    },
+    {
+      "locale": "zh-CN",
+      "name": "s3-transfer-run",
+      "route": "/runs/instances/69",
+      "sha256": "06fb9f7f971a95ce1434edb22ff3ad0820ecdec469516c9f9fc0acb1d8f6fce2",
+      "backendSource": "e4a66d71320b22a6b4bfa38f9ac31f19b58703ca",
+      "backendSourceManifestSha256": "d8ac1a61d492c091b62bd6593caae5edbde466c48ae828aa36c4c76d08412539",
+      "environment": "service-readiness-20261025",
+      "syntheticData": true,
+      "realBackend": true,
+      "theme": "light",
+      "viewport": "1440x1000",
+      "path": "document/zh-CN/images/manual/s3-transfer-run.png",
+      "verification": "execution-result",
+      "captureDate": "2026-10-26",
+      "caption_note": "Full-page capture of matching instance identity/tree/details. External results independently verified; screenshot is not a complete protocol coverage claim."
+    },
+    {
+      "locale": "en-US",
+      "name": "event-run",
+      "route": "/runs/instances/153",
+      "sha256": "4aa4612621a16b5a4b2918141463ad7fd5e7c6c638a58650f64861f06a0f720a",
+      "backendSource": "e4a66d71320b22a6b4bfa38f9ac31f19b58703ca",
+      "backendSourceManifestSha256": "d8ac1a61d492c091b62bd6593caae5edbde466c48ae828aa36c4c76d08412539",
+      "environment": "service-readiness-20261025",
+      "syntheticData": true,
+      "realBackend": true,
+      "theme": "light",
+      "viewport": "1440x1000",
+      "path": "document/en/images/manual/event-run.png",
+      "verification": "execution-result",
+      "captureDate": "2026-10-26",
+      "caption_note": "Full-page capture of matching instance identity/tree/details. External results independently verified; screenshot is not a complete protocol coverage claim."
+    },
+    {
+      "locale": "en-US",
+      "name": "approval-run",
+      "route": "/runs/instances/91",
+      "sha256": "525b9995966008a13cdcbc6a51fd089dfca9e4107e1650db2cf517bfe83b9e74",
+      "backendSource": "e4a66d71320b22a6b4bfa38f9ac31f19b58703ca",
+      "backendSourceManifestSha256": "d8ac1a61d492c091b62bd6593caae5edbde466c48ae828aa36c4c76d08412539",
+      "environment": "service-readiness-20261025",
+      "syntheticData": true,
+      "realBackend": true,
+      "theme": "light",
+      "viewport": "1440x1000",
+      "path": "document/en/images/manual/approval-run.png",
+      "verification": "execution-result",
+      "captureDate": "2026-10-26",
+      "caption_note": "Full-page capture of matching instance identity/tree/details. External results independently verified; screenshot is not a complete protocol coverage claim."
+    },
+    {
+      "locale": "en-US",
+      "name": "s3-transfer-run",
+      "route": "/runs/instances/69",
+      "sha256": "ae45a8575779163eb191769e0198c92956d11756460db7b5eacaf5c091da1507",
+      "backendSource": "e4a66d71320b22a6b4bfa38f9ac31f19b58703ca",
+      "backendSourceManifestSha256": "d8ac1a61d492c091b62bd6593caae5edbde466c48ae828aa36c4c76d08412539",
+      "environment": "service-readiness-20261025",
+      "syntheticData": true,
+      "realBackend": true,
+      "theme": "light",
+      "viewport": "1440x1000",
+      "path": "document/en/images/manual/s3-transfer-run.png",
+      "verification": "execution-result",
+      "captureDate": "2026-10-26",
+      "caption_note": "Full-page capture of matching instance identity/tree/details. External results independently verified; screenshot is not a complete protocol coverage claim."
     }
-  ]
+  ],
+  "captureDateNote": "Latest capture date; each image records its own date."
 }
