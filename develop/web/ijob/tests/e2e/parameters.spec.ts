@@ -506,9 +506,17 @@ test('template detail closes from its mask and its close button is right aligned
   await page.goto('/parameters')
   await page.getByRole('button', { name: '详情 每日处理参数', exact: true }).click()
   const drawer = page.locator('.parameter-drawer')
-  const bounds = (await drawer.boundingBox())!
-  const close = (await drawer.locator('.drawer-close-button').boundingBox())!
-  expect(bounds.x + bounds.width - close.x - close.width).toBeLessThan(40)
+  await expect(drawer.locator('.drawer-close-button')).toBeVisible()
+  await expect
+    .poll(() =>
+      drawer.evaluate((element) => {
+        // Read both rectangles in one frame while the drawer is animating.
+        const bounds = element.getBoundingClientRect()
+        const close = element.querySelector('.drawer-close-button')!.getBoundingClientRect()
+        return bounds.right - close.right
+      }),
+    )
+    .toBeLessThan(40)
   await page.locator('.n-drawer-mask').click({ position: { x: 20, y: 200 } })
   await expect(drawer).toHaveCount(0)
 })
