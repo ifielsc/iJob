@@ -47,3 +47,5 @@ Agent 是独立进程/可选镜像，不是调度 Worker。为它登记独立地
 | C246 / `services.<service>.healthcheck.timeout` | B / duration | backend/Agent 6s; web 5s | 单次健康检查超时；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 |
 | C247 / `services.<service>.healthcheck.start_period` | B / duration | backend 90s; Agent 30s; web not explicitly set | 启动探测宽限；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 |
 | C248 / `services.<service>.healthcheck.retries` | B / integer | 3 | 失败次数阈值；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 |
+
+[实例持久入口的 5 项设置（C250–C254）](../installation/instance-launcher.md)由 configure 自动生成。推荐通过该入口管理实例，已保存的目录和语言优先于终端环境变量。

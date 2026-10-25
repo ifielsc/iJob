@@ -3025,7 +3025,10 @@
 !/develop/deployment/docker/nginx.cluster.conf
 !/develop/deployment/docker/prepare.ps1
 !/develop/deployment/first-run/README.md
+!/develop/deployment/first-run/ijob.cmd
+!/develop/deployment/first-run/ijob.sh
 !/develop/deployment/first-run/initialize.cmd
+!/develop/deployment/first-run/instance.ps1
 !/develop/deployment/first-run/logging-native.xml
 !/develop/deployment/first-run/logs.cmd
 !/develop/deployment/first-run/logs.sh
@@ -3550,6 +3553,7 @@
 !/document/en/configuration/controlled.md
 !/document/en/configuration/deployment-agent.md
 !/document/en/configuration/internals.md
+!/document/en/configuration/platform-database.md
 !/document/en/configuration/plugins.md
 !/document/en/configuration/routing.md
 !/document/en/configuration/scheduling-retention.md
@@ -3590,6 +3594,7 @@
 !/document/en/images/manual/transfer-editor.png
 !/document/en/installation.md
 !/document/en/installation/docker.md
+!/document/en/installation/instance-launcher.md
 !/document/en/installation/linux.md
 !/document/en/installation/source-build.md
 !/document/en/installation/windows.md
@@ -3661,6 +3666,7 @@
 !/document/zh-CN/configuration/controlled.md
 !/document/zh-CN/configuration/deployment-agent.md
 !/document/zh-CN/configuration/internals.md
+!/document/zh-CN/configuration/platform-database.md
 !/document/zh-CN/configuration/plugins.md
 !/document/zh-CN/configuration/routing.md
 !/document/zh-CN/configuration/scheduling-retention.md
@@ -3701,6 +3707,7 @@
 !/document/zh-CN/images/manual/transfer-editor.png
 !/document/zh-CN/installation.md
 !/document/zh-CN/installation/docker.md
+!/document/zh-CN/installation/instance-launcher.md
 !/document/zh-CN/installation/linux.md
 !/document/zh-CN/installation/source-build.md
 !/document/zh-CN/installation/windows.md
@@ -3763,6 +3770,7 @@
 !/tools/distribution/docs.py
 !/tools/distribution/test_build.py
 !/tools/distribution/test_docs.py
+!/tools/distribution/test_launcher.py
 !/tools/job-package/README.md
 !/tools/job-package/ijob_package.py
 !/tools/job-package/test_ijob_package.py

@@ -17,7 +17,7 @@
 | C 受控 | 允许按指定运维流程变更；包括账号、凭据、数据库与模式切换 | 专门操作步骤、备份和恢复要求；不是禁止修改 |
 | D 内部 | 不建议作为普通用户调参入口 | 完整附录保留说明，不提供“绕过保护”的配置配方 |
 
-分级是已确认的维护建议，不是新增权限控制。settings/check-settings 覆盖 54 项格式检查，详见[配置入口](configuration.md)；不代表已经校验全部 249 项或跨参数业务约束。
+分级是已确认的维护建议，不是新增权限控制。settings/check-settings 覆盖 54 项格式检查，详见[配置入口](configuration.md)；不代表已经校验全部 254 项或跨参数业务约束。
 
 ### 默认值和生效规则
 
@@ -56,7 +56,7 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 
 ## 3. 配置目录
 
-共 **249 条**：平台属性 190、Agent 属性 8、启动/构建/锁文件入口 26、Compose 字段 25。分级 A 42、B 75、C 28、D 104。计数包含部署入口与别名，不代表 249 个独立业务功能。
+共 **254 条**：平台属性 190、Agent 属性 8、启动/构建/锁文件入口 26、Compose 字段 25、实例入口字段 5。分级 A 43、B 75、C 31、D 105。计数包含部署入口与别名，不代表 254 个独立业务功能。
 
 - [节点、分组与执行范围](#routing) — 9
 - [全部插件开关与 Local JAR](#plugins) — 17
@@ -428,6 +428,18 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | C248<br>`services.<service>.healthcheck.retries`<br>整数 | `3` (S21) | 见默认值及适用范围 | — | **B** 失败次数阈值；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
 | C249<br>`services.<service>.healthcheck.test`<br>命令 | `backend readiness; web /healthz; Agent authenticated probe` (S21) | 见默认值及适用范围 | — | **D** 镜像内健康检查命令；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
 
+## 实例持久入口（instance.conf）
+
+[配置和使用步骤](installation/instance-launcher.md)。以下 5 项属于控制目录，不写进 application.properties。
+
+| ID / 字段 | 级别 | 初始值 | 说明 |
+| --- | --- | --- | --- |
+| C250 / `instance.conf:version` | D | 1 (S33/S34) | 控制文件格式版本；当前为 1，不手动调整。 |
+| C251 / `instance.conf:bundle` | C | configure: program directory (S33/S34) | 完整程序目录；停机后按升级流程调整。 |
+| C252 / `instance.conf:home` | C | configure: required explicit data directory (S33/S34) | 本实例数据目录；覆盖继承的 IJOB_HOME，修改不会搬迁数据。 |
+| C253 / `instance.conf:lang` | A | en; zh selects Chinese (S33/S34) | 实例启动提示语言；覆盖继承的 IJOB_LANG，不改变网页语言。 |
+| C254 / `instance.conf:mode` | C | Windows: windows; Bash: linux (or explicit docker) (S33/S34) | 创建时确定的部署方式；不能只改此值迁移实例，不是 STANDALONE/CLUSTER。 |
+
 ## 源码依据与维护
 
 来源路径均相对仓库根。共享机器清单位于 `document/reference/configuration-review.json`，含双语说明、来源哈希及分类。两种语言由同一批条目生成；表内来源 ID 对应下表。Compose 中 Agent 差异还应对照 compose.agent.yaml，集群差异对照 compose.cluster.yaml；构建时按三个 Dockerfile 的探针声明核对。
@@ -466,5 +478,7 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | S30 | `develop/web/ijob/Dockerfile` |
 | S31 | `develop/api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/routing/ExecutionGroupCodes.java` |
 | S32 | `develop/api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/routing/ExecutionTargetIds.java` |
+| S33 | `develop/deployment/first-run/instance.ps1` |
+| S34 | `develop/deployment/first-run/ijob.sh` |
 
 分组、白名单和全部插件开关按已确认分级进入正文；数据库/凭据使用受控流程，内部参数保留附录。详见[配置正文](configuration.md)与[页面手册](user-guide/README.md)。

@@ -1,62 +1,62 @@
-# Windows 原生安装与启停
+# Windows 原生：配置一次与日常启停
 
 [English](../../en/installation/windows.md) · [手册首页](../README.md)
 
-## 准备
+## 1. 准备程序和目录
 
-解压完整 native 包到独立程序目录，在该目录打开终端。安装 Java 21，并设置 JAVA_HOME/PATH。使用 PowerShell；启动器调用 Windows PowerShell。
-
-```powershell
-$env:IJOB_HOME = "D:/ijob-data/a"
-$env:IJOB_LANG = "zh"
-```
-
-IJOB_HOME 使用独立绝对路径；新终端也必须指向同一个 home。它含有秘密，不放源码内。以下命令均在程序包目录执行。
-
-## 首次安装与启动
+解压完整 native 包，安装 Java 21 并设置 JAVA_HOME/PATH。在程序包目录打开 PowerShell。先创建控制目录和数据目录的父目录：
 
 ```powershell
-.\start.cmd
+New-Item -ItemType Directory -Force D:/ijob/instances, D:/ijob-data | Out-Null
 ```
 
-`start` 自动调用初始化。按提示输入新管理员账号、密码和数据库类型；入门可选 SQLite。已有安装不会被覆盖。等待就绪后访问 `http://127.0.0.1:18080`（改过端口则用新端口）。Java 在后台隐藏运行，关闭当前终端不等于停止服务。
-
-只想提前生成配置而不启动时，才单独运行：
+## 2. 为本实例配置一次
 
 ```powershell
-.\initialize.cmd
+.\ijob.cmd configure -Directory D:/ijob/instances/a -Home D:/ijob-data/a -Lang zh
 ```
 
-## 日常：查看状态
+此操作创建控制入口，不启动程序。程序位置自动记录，目录和语言保存在 `D:/ijob/instances/a/instance.conf`。无需设置 IJOB_HOME/IJOB_LANG；旧环境变量也不会覆盖这份实例设置。另一个实例使用不同控制目录和数据目录，同机还需独立端口。
+
+## 3. 首次启动
 
 ```powershell
-.\status.cmd
+cd D:/ijob/instances/a
+.\ijob.cmd start
 ```
 
-状态命令核验本安装拥有的进程身份；还要到工作台检查节点和实际业务运行。
+start 自动初始化新安装。按提示输入独立管理员账号、密码和数据库类型，入门可选 SQLite；无需先运行 initialize.cmd。已有有效安装会复用配置。默认访问 `http://127.0.0.1:18080`，改过端口则用新端口。后台隐藏运行，关闭当前终端不会停止应用。
 
-## 日常：查看日志
+## 4. 查看配置与状态
 
 ```powershell
-.\logs.cmd
+.\ijob.cmd show
+.\ijob.cmd status
 ```
 
-Ctrl+C 退出日志跟随，不停止应用。日志位于 IJOB_HOME/logs；业务实例日志在运行中心查看。
+状态会核验进程身份；仍需到工作台检查节点就绪和业务运行。已停止状态退出码为 3，供自动化区分。
 
-## 日常：停止
+## 5. 查看日志
 
 ```powershell
-.\stop.cmd
+.\ijob.cmd logs
+.\ijob.cmd logs -Once
 ```
 
-等待退出后再次查询状态。先确认维护窗口和在途业务，停止平台不能撤销已完成的外部写入。
+第一条跟随日志，Ctrl+C 退出查看；第二条输出最近 200 行后返回。应用日志在数据目录/logs，业务实例日志在运行中心。
 
-## 修改配置与重启
-
-编辑 `IJOB_HOME/application.properties`，保持一键一行，按[配置手册](../configuration.md)检查格式，然后：
+## 6. 停止、再次启动和修改配置
 
 ```powershell
-.\restart.cmd
+.\ijob.cmd stop
+.\ijob.cmd status
+.\ijob.cmd start
 ```
 
-再次启动也直接用 `start`，不必重新初始化。升级和恢复请走[运维流程](../operations.md)，不要覆盖已有 home。
+按[配置手册](../configuration.md)备份并修改数据目录中的 application.properties 后，执行：
+
+```powershell
+.\ijob.cmd restart
+```
+
+新开终端也可直接运行 `D:/ijob/instances/a/ijob.cmd status`，无需重新设置变量。目录/语言及升级规则见[统一入口](instance-launcher.md)。旧 start/initialize/stop/status/logs/restart.cmd 仍兼容，直接调用它们时遵循该页的环境变量与默认目录规则。

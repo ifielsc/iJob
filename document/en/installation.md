@@ -29,3 +29,7 @@ Keep the data home outside source and program directories. First start prompts f
 2. Run a task without external side effects using [Quick start](quickstart.md); inspect the actual instance and logs.
 3. Stop, check status and start again using the platform chapter; confirm definitions and history persist.
 4. Read [Configuration](configuration.md) before tuning. Use [Operations](operations.md) for account or runtime mode changes.
+
+## Recommended daily entry point
+
+Configure the [instance control entry](installation/instance-launcher.md) once using your platform guide. All lifecycle/status/log commands then share saved paths and language. The same page documents legacy defaults and environment variables.

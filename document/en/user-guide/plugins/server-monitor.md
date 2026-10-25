@@ -8,21 +8,35 @@ Tasks → New/Edit → plugin `SERVER_MONITOR`. Prepare the resources, permissio
 
 ## Fields and behavior
 
-| Field/action | Purpose and rules |
+| Page field/action | Purpose and rules |
 | --- | --- |
-| `resourceId` | Select a monitor-server resource; keep Agent endpoint/token in the resource. |
-| `collect.items / collect.applications` | Select required system metrics/application checks supported by the Agent. |
-| `rules.cpu / memory / disk / network / applications` | Configure thresholds/application rules for collected metrics; check units, paths and missing metrics. |
-| `notify.enabled / notifyConfigId / recovery` | Notification enable/configuration/recovery flags; preview recipients and avoid sending rehearsal messages to business contacts. |
+| Monitor server | Select a monitor-server resource; keep Agent endpoint/token in the resource. |
+| Collection items / Application collection | Select required system metrics/application checks supported by the Agent. |
+| CPU / Memory / Disk / Network / Application thresholds | Configure thresholds/application rules for collected metrics; check units, paths and missing metrics. |
+| Send monitor alerts / Notification configuration | Choose whether to send monitor alerts and the notification configuration. Recovery notifications and cross-run deduplication are not supported; disable notifications for the first exercise. |
 
 ## Minimal example and verification
 
-```text
-Resource: dedicated monitor Agent
-Collect: CPU + memory
-Notify: disabled for first exercise
-```
+Prepare the dedicated resources above, fill the form, save, then trigger manually and verify the instance, outputs and target system as described below. Saving alone does not execute.
 
-Test connectivity and collect once, checking time, freshness, metrics and rules. Collection failure, missing data and threshold alerts are different; unavailable is not zero. Verify alert/recovery separately with isolated rules, and delivery with separate evidence.
+| Setting | Value to enter |
+| --- | --- |
+| Monitor server | Select a dedicated test Agent resource |
+| Collection items | CPU, memory |
+| CPU usage → Enable / Warning / Critical | On / 80 / 95 (percent) |
+| Send monitor alerts | Off for the first exercise |
 
-Snippets require your resource IDs/paths. See the [case index](../../examples.md) for actual external-protocol verification status.
+Test connectivity and collect once, checking time, freshness, metrics and rules. Collection failure, missing data and threshold alerts are different; unavailable is not zero. Verify abnormal and healthy collection results with isolated rules. Returning to normal does not automatically send a recovery notification; message delivery requires separate evidence.
+
+Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
+
+## Technical key reference (optional)
+
+These stored keys help developers and troubleshooting; they are not a task JSON blob to paste into the UI. Automatically validated metadata is not a manual form input.
+
+| Page field/group | Stored keys |
+| --- | --- |
+| Monitor server | `resourceId` |
+| Collection items / Application collection | `collect.items / collect.applications` |
+| CPU / Memory / Disk / Network / Application thresholds | `rules.cpu / memory / disk / network / applications` |
+| Send monitor alerts / Notification configuration | `notify.enabled / notify.notifyConfigId` |

@@ -2,7 +2,7 @@
 
 [English](../en/documentation-plan.md) · [完整配置清单](configuration-catalog.md) · [当前手册](README.md)
 
-本页记录已确认的 1.0.0 文档目录、分级和维护原则。正文按此结构组织，检查器覆盖 54 项；完整配置索引保留 249 项。截图使用新登记的独立环境，GitHub 保持私密，现有演示环境不作部署或清理。
+本页记录已确认的 1.0.0 文档目录、分级和维护原则。正文按此结构组织，检查器覆盖 54 项；完整配置索引保留 254 项。截图使用新登记的独立环境，GitHub 保持私密，现有演示环境不作部署或清理。
 
 ## 1. 阅读路线
 
@@ -109,7 +109,7 @@ development/
 images/                           对应语言的真实截图，按章节分类
 ```
 
-`configuration-catalog.md` 与本页是范围索引。配置内容按上面的主题拆分，保留完整索引和可追踪条目 ID，避免 249 条挤在日常配置首页。共享机器清单 `document/reference/configuration-review.json` 保存双语定义，避免分别维护两套配置事实。
+`configuration-catalog.md` 与本页是范围索引。配置内容按上面的主题拆分，保留完整索引和可追踪条目 ID，避免 254 条挤在日常配置首页。共享机器清单 `document/reference/configuration-review.json` 保存双语定义，避免分别维护两套配置事实。
 
 ## 3. 各类页面的层次与篇幅规则
 

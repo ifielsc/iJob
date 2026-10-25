@@ -1,6 +1,6 @@
 # iJob 1.0.0 启动说明
 
-当前新用户入口：[中文完整手册](../../../document/zh-CN/README.md) / [English manual](../../../document/en/README.md)。以下保留数据库、认证和集群的详细操作契约。Windows 新交付使用 start/stop/status/logs/restart.cmd 管理后台进程。
+当前新用户入口：[中文完整手册](../../../document/zh-CN/README.md) / [English manual](../../../document/en/README.md)。以下保留数据库、认证和集群的详细操作契约。新安装推荐先配置[统一实例入口](../../../document/zh-CN/installation/instance-launcher.md)（[English](../../../document/en/installation/instance-launcher.md)）：每个实例只保存一次程序目录、数据目录和语言，随后通过该控制目录中的 ijob.cmd / ijob.sh 执行 start、stop、restart、status、logs。下文直接调用旧脚本的方式保留兼容，使用时仍须确保每次 IJOB_HOME 一致。
 
 本交付保持默认 `STATIC` 认证、`STANDALONE` 单实例。数据库向导默认 SQLite，支持选择 MySQL、PostgreSQL、SQL Server、Oracle。认证模式、数据库产品和实例模式独立配置。
 

@@ -2,7 +2,7 @@
 
 [简体中文](../zh-CN/documentation-plan.md) · [Complete configuration inventory](configuration-catalog.md) · [Current manual](README.md)
 
-This page records the approved 1.0.0 structure, classifications and maintenance principles. Manuals follow this tree; the checker covers 54 settings and the full catalog retains 249. Screenshots use newly registered independent resources. GitHub remains private and the existing demo is unchanged.
+This page records the approved 1.0.0 structure, classifications and maintenance principles. Manuals follow this tree; the checker covers 54 settings and the full catalog retains 254. Screenshots use newly registered independent resources. GitHub remains private and the existing demo is unchanged.
 
 ## 1. Reading routes
 
@@ -109,7 +109,7 @@ development/
 images/                           Real screenshots in this language, grouped by chapter
 ```
 
-The scope references are configuration-catalog.md and this page. Configuration is split by the themes above while retaining a complete index and traceable entry IDs, instead of putting 249 entries on the everyday configuration landing page. The shared machine inventory `document/reference/configuration-review.json` stores bilingual definitions so configuration facts do not diverge.
+The scope references are configuration-catalog.md and this page. Configuration is split by the themes above while retaining a complete index and traceable entry IDs, instead of putting 254 entries on the everyday configuration landing page. The shared machine inventory `document/reference/configuration-review.json` stores bilingual definitions so configuration facts do not diverge.
 
 ## 3. Page structure and length rules
 

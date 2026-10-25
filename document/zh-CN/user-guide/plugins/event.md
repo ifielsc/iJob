@@ -8,21 +8,40 @@
 
 ## 字段与作用
 
-| 字段/动作 | 用途与填写规则 |
+| 页面字段/动作 | 用途与填写规则 |
 | --- | --- |
-| `action / eventCode` | 按页面选择发布、等待、审批或文件等待动作；eventCode 区分事件类别。保存发布配置，不会立即发送事件。 |
-| `businessKey / correlationKey / idempotencyKey` | 分别表达业务关联、等待匹配和去重意图；按场景使用稳定值，不能所有业务共用一个键。 |
-| `occurredAt / summary / payload / suppressSameInbound` | 设置发生时间、摘要、载荷；默认抑制同一入站事件回发，避免回环。 |
-| `timeoutSeconds / lookbackSeconds / allowedOperatorIds` | 等待期限、历史回看（默认 0）和允许审批人；核对账号及事件权限。 |
-| `fileResourceId / filePath / filePattern / recursive` | 文件等待选择独立文件资源、路径、模式与递归；默认 *、不递归。 |
-| `minStableAgeSeconds / maxMatches / maxDepth / maxScannedEntries / scanTimeoutSeconds` | 默认 30 秒、100、16、100000、60 秒；限制扫描与不稳定文件，fileCaseSensitive 默认 true。 |
+| 事件动作、事件编码 | 按页面选择发布事件、等待事件、等待审批或文件探测动作；eventCode 区分事件类别。保存发布配置，不会立即发送事件。 |
+| 业务键、关联键、幂等键 | 分别表达业务关联、等待匹配和去重意图；按场景使用稳定值，不能所有业务共用一个键。 |
+| 发生时间、摘要、事件内容、抑制同源重复事件 | 设置发生时间、摘要、载荷；默认抑制同一入站事件回发，避免回环。 |
+| 等待超时、回看时间、审批人员 | 等待期限、历史回看（默认 0）和允许审批人；核对账号及事件权限。 |
+| 文件资源、探测目录、文件匹配、递归目录 | 文件探测选择独立文件资源、路径、模式与递归；默认 *、不递归。 |
+| 最小文件年龄、新增事件上限、最大扫描深度、扫描条目上限、扫描超时 | 默认 30 秒、100、16、100000、60 秒；限制扫描与不稳定文件，fileCaseSensitive 默认 true。 |
 
 ## 最小样例与核对
 
-```json
-{"action":"PUBLISH","eventCode":"docs.order.ready","businessKey":"order-001","summary":"Synthetic order ready","payload":{"rows":3}}
-```
+先准备上表的独立测试资源，按页面逐项填写；保存后手动执行，再按下文核对实例、输出与目标系统。保存本身不会执行。
+
+| 配置项 | 填写内容 |
+| --- | --- |
+| 事件动作 | 发布事件（PUBLISH） |
+| 事件编码 | `docs.order.ready` |
+| 业务键 | `order-001` |
+| 摘要 | 样例订单已准备好 |
+| 事件内容（JSON） | `{"rows":3}`（此输入框要求 JSON） |
 
 先用专属事件代码和样例数据，检查事件记录，再建立匹配等待。审批由具备权限的用户在审批页完成。超时、重复和不匹配事件应分别验证；不得把“等待中”当作执行失败，也不要因重复点击发布制造重复业务。
 
-样例代码是配置片段，资源 ID/路径需替换；实际外部协议验收状态见[案例索引](../../examples.md)。
+示例中的资源、路径及对象名称需替换为本环境实际值；实际外部协议验收状态见[案例索引](../../examples.md)。
+
+## 技术字段对照（按需查阅）
+
+以下是保存配置中的键名，供开发或排障定位；不是需要粘贴的任务 JSON。自动核验的元数据不作为页面手工输入。
+
+| 页面字段/分组 | 技术键名 |
+| --- | --- |
+| 事件动作、事件编码 | `action / eventCode` |
+| 业务键、关联键、幂等键 | `businessKey / correlationKey / idempotencyKey` |
+| 发生时间、摘要、事件内容、抑制同源重复事件 | `occurredAt / summary / payload / suppressSameInbound` |
+| 等待超时、回看时间、审批人员 | `timeoutSeconds / lookbackSeconds / allowedOperatorIds` |
+| 文件资源、探测目录、文件匹配、递归目录 | `fileResourceId / filePath / filePattern / recursive` |
+| 最小文件年龄、新增事件上限、最大扫描深度、扫描条目上限、扫描超时 | `minStableAgeSeconds / maxMatches / maxDepth / maxScannedEntries / scanTimeoutSeconds` |

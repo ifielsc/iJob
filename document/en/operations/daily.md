@@ -16,3 +16,7 @@ Application logs explain startup, connectivity and coordination; instance logs e
 4. Verify readiness, login, node responsibilities and a separate sample before restoring schedules.
 
 Stopping an instance, disabling a definition, disabling a schedule and stopping the platform have different effects. None reverses committed external side effects. Check the target system before retrying an uncertain result.
+
+## Recommended command entry
+
+Use this instance’s ijob.cmd or ijob.sh show/start/stop/restart/status/logs; see [Unified entry](../installation/instance-launcher.md). Avoid mixing another instance’s legacy environment variables; legacy examples require an explicitly correct home.

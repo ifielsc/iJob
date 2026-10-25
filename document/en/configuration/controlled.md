@@ -47,3 +47,7 @@ These are source/implementation defaults; see the [complete catalog](../configur
 | C229 / `services.<service>.environment` | C / compose-field | template-specific | Container environment; not automatic host-shell inheritance. Align with configuration files. |
 | C243 / `secrets.<secret>.file` | C / compose-field | advanced private config/token paths | Advanced Compose secret-file source; restrict permissions and keep outside Git. |
 | C244 / `volumes.<volume>` | C / compose-field | advanced backend-data / backend-b-data | Advanced template persistent-volume identity; do not reuse old environments or delete to reset. |
+
+## Database configuration scope
+
+spring.datasource controls the platform connection for both standalone and cluster nodes, not SQL/ETL business resources. See [Platform database](platform-database.md) for scope, schema and pool sizing.

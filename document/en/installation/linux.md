@@ -1,63 +1,57 @@
-# Linux native installation and lifecycle
+# Linux native: configure once and manage the instance
 
 [简体中文](../../zh-CN/installation/linux.md) · [Manual home](../README.md)
 
-## Preparation
+## 1. Prerequisites and one-time configuration
 
-Extract the complete native bundle into its own program directory and open a terminal there. Install Java 21 and set JAVA_HOME/PATH. Bash, flock, standard GNU tools and /proc are required; retain executable permissions on .sh files.
-
-```sh
-export IJOB_HOME=/srv/ijob-data/a
-export IJOB_LANG=en
-```
-
-Use an independent absolute IJOB_HOME path and set the same home in later terminals. It contains secrets and must stay outside source. Run all commands below in the bundle directory.
-
-## First installation and start
+Prepare Java 21, Bash, util-linux flock and a complete native bundle. Use the dedicated OS account for this instance. From the program directory:
 
 ```sh
-./start.sh
+mkdir -p /srv/ijob/instances /srv/ijob-data
+bash ./ijob.sh configure --directory /srv/ijob/instances/a --home /srv/ijob-data/a --lang en --mode linux
 ```
 
-`start` invokes initialization automatically. Enter a new administrator, password and database type; SQLite is suitable for the first walkthrough. Existing installations are preserved. After readiness, open `http://127.0.0.1:18080` or your configured port. Java runs in the background. A startup timeout may leave the process running; inspect status and logs.
+Parents must be writable by the execution account and none of the three directories may contain another. configure only creates the instance control entry and instance.conf; it does not start the application. Repeated IJOB_HOME/IJOB_LANG exports are unnecessary.
 
-To generate configuration without starting the application, use the optional command:
+## 2. First startup
 
 ```sh
-java -jar ijob-setup-tool-1.0.0.jar init --mode linux --bundle "$PWD" --home "$IJOB_HOME"
+/srv/ijob/instances/a/ijob.sh start
 ```
 
-## Daily use: status
+Initialization is interactive, followed by background startup. Enter an independent administrator/password and database type; SQLite is suitable for a single-instance introduction. Existing installations retain configuration without repeating initialization. Open `http://127.0.0.1:18080` or your configured port.
+
+## 3. Inspect settings and status
 
 ```sh
-./status.sh
+/srv/ijob/instances/a/ijob.sh show
+/srv/ijob/instances/a/ijob.sh status
 ```
 
-The command verifies the process identity owned by this installation. Also inspect nodes and actual work in the dashboard.
+status verifies the owned process and exits 3 when stopped. Also check node readiness in the workbench.
 
-## Daily use: logs
+## 4. View logs
 
 ```sh
-./logs.sh
+/srv/ijob/instances/a/ijob.sh logs
+/srv/ijob/instances/a/ijob.sh logs --once
 ```
 
-Ctrl+C exits log following without stopping the application. Application logs are in IJOB_HOME/logs; business-instance logs are in the run center.
+The first follows logs; Ctrl+C stops viewing, not the application. The second prints the latest 200 lines and returns. Native logs are under data-home/logs; business instance logs are in Runs.
 
-## Daily use: stop
+## 5. Stop, start again and apply changes
 
 ```sh
-./stop.sh
+/srv/ijob/instances/a/ijob.sh stop
+/srv/ijob/instances/a/ijob.sh start
 ```
 
-Wait for exit and check status again. Agree a maintenance window and review active work first; stopping the platform cannot undo external writes.
-
-## Change configuration and restart
-
-Edit `IJOB_HOME/application.properties`, keep each key unique, and check formats using [Configuration](../configuration.md). Then:
+After backing up and editing application.properties in the data home using [Configuration](../configuration.md):
 
 ```sh
-./stop.sh
-./start.sh
+/srv/ijob/instances/a/ijob.sh restart
 ```
 
-Later starts also use `start`; do not reinitialize. Follow [Operations](../operations.md) for upgrades/restores and preserve the existing home.
+restart stops then starts, retaining data and history. Do not switch OS accounts to take over an existing process.
+
+See the [unified entry](instance-launcher.md) for paths, language, defaults and upgrades. Legacy start.sh / stop.sh / status.sh / logs.sh remain supported with consistent IJOB_HOME.

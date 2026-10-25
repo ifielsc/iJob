@@ -7,7 +7,7 @@
 | Goal | Reading path |
 | --- | --- |
 | First install/build | [Installation](installation.md) → Windows/Linux/Docker → [Quick start](quickstart.md) |
-| Tune platform settings | [Configuration](configuration.md) → routing/plugins/capacity → [249-entry catalog](configuration-catalog.md) |
+| Tune platform settings | [Configuration](configuration.md) → routing/plugins/capacity → [254-entry catalog](configuration-catalog.md) |
 | Configure/use pages | [Page reference](user-guide/README.md) → [11 plugins](user-guide/plugins/README.md) → [16 scenarios](examples.md) |
 | Accounts, mode changes, backup/upgrades | [Operations](operations.md) → relevant workflow |
 | Source changes/release candidates | [Development](development.md) → [Follow-up](development/release-checklist.md) |

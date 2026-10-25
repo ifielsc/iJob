@@ -47,3 +47,7 @@ AES key 与 key-id 必须和已加密资源匹配；丢失原密钥无法靠重�
 | C229 / `services.<service>.environment` | C / compose-field | template-specific | 容器环境变量；不是宿主 shell 的自动继承，保持与配置文件一致。 |
 | C243 / `secrets.<secret>.file` | C / compose-field | advanced private config/token paths | 高级 Compose 秘密文件源；限制权限，不进仓库。 |
 | C244 / `volumes.<volume>` | C / compose-field | advanced backend-data / backend-b-data | 高级模板持久卷身份；勿指向旧环境或删除以重置。 |
+
+## 数据库配置的适用范围
+
+spring.datasource 同时用于单实例和集群节点的平台连接，不是 SQL/ETL 业务资源。具体配置边界、schema 与连接池说明见[平台数据库](platform-database.md)。

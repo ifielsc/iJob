@@ -1,62 +1,62 @@
-# Windows native installation and lifecycle
+# Windows native: configure once and manage the instance
 
 [简体中文](../../zh-CN/installation/windows.md) · [Manual home](../README.md)
 
-## Preparation
+## 1. Prepare the program and parent directories
 
-Extract the complete native bundle into its own program directory and open a terminal there. Install Java 21 and set JAVA_HOME/PATH. Use PowerShell; the launcher invokes Windows PowerShell.
-
-```powershell
-$env:IJOB_HOME = "D:/ijob-data/a"
-$env:IJOB_LANG = "en"
-```
-
-Use an independent absolute IJOB_HOME path and set the same home in later terminals. It contains secrets and must stay outside source. Run all commands below in the bundle directory.
-
-## First installation and start
+Extract the complete native package, install Java 21 and set JAVA_HOME/PATH. Open PowerShell in the program directory and create the control/data parents:
 
 ```powershell
-.\start.cmd
+New-Item -ItemType Directory -Force D:/ijob/instances, D:/ijob-data | Out-Null
 ```
 
-`start` invokes initialization automatically. Enter a new administrator, password and database type; SQLite is suitable for the first walkthrough. Existing installations are preserved. After readiness, open `http://127.0.0.1:18080` or your configured port. Java runs hidden in the background; closing this terminal does not stop the application.
-
-To generate configuration without starting the application, use the optional command:
+## 2. Configure this instance once
 
 ```powershell
-.\initialize.cmd
+.\ijob.cmd configure -Directory D:/ijob/instances/a -Home D:/ijob-data/a -Lang en
 ```
 
-## Daily use: status
+This creates the control entry without starting the application. The program path is recorded automatically; home/language are stored in `D:/ijob/instances/a/instance.conf`. No IJOB_HOME/IJOB_LANG setup is needed, and inherited variables cannot override saved settings. Another instance needs separate control/data directories and, on the same host, a different port.
+
+## 3. First startup
 
 ```powershell
-.\status.cmd
+cd D:/ijob/instances/a
+.\ijob.cmd start
 ```
 
-The command verifies the process identity owned by this installation. Also inspect nodes and actual work in the dashboard.
+start initializes a new installation automatically. Enter an independent administrator/password and database type; SQLite is suitable for the introduction. initialize.cmd is not a prerequisite. Existing valid installations retain configuration. Visit `http://127.0.0.1:18080` or your changed port. The hidden background process survives closing the terminal.
 
-## Daily use: logs
+## 4. Inspect settings and status
 
 ```powershell
-.\logs.cmd
+.\ijob.cmd show
+.\ijob.cmd status
 ```
 
-Ctrl+C exits log following without stopping the application. Application logs are in IJOB_HOME/logs; business-instance logs are in the run center.
+Status verifies process identity; also inspect node readiness and business runs in the workbench. A stopped native instance exits 3 for automation.
 
-## Daily use: stop
+## 5. View logs
 
 ```powershell
-.\stop.cmd
+.\ijob.cmd logs
+.\ijob.cmd logs -Once
 ```
 
-Wait for exit and check status again. Agree a maintenance window and review active work first; stopping the platform cannot undo external writes.
+The first follows logs until Ctrl+C; the second prints the latest 200 lines and returns. Application logs live in data-home/logs; business instance logs are in Runs.
 
-## Change configuration and restart
-
-Edit `IJOB_HOME/application.properties`, keep each key unique, and check formats using [Configuration](../configuration.md). Then:
+## 6. Stop, start again and apply configuration
 
 ```powershell
-.\restart.cmd
+.\ijob.cmd stop
+.\ijob.cmd status
+.\ijob.cmd start
 ```
 
-Later starts also use `start`; do not reinitialize. Follow [Operations](../operations.md) for upgrades/restores and preserve the existing home.
+After backing up and editing application.properties in the data home according to [Configuration](../configuration.md), run:
+
+```powershell
+.\ijob.cmd restart
+```
+
+A fresh terminal can directly run `D:/ijob/instances/a/ijob.cmd status` without resetting variables. See the [unified entry](instance-launcher.md) for path/language and upgrade rules. Legacy start/initialize/stop/status/logs/restart.cmd remain compatible; their environment/default-home rules are documented there.

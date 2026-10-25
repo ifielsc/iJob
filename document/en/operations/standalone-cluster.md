@@ -18,3 +18,7 @@ CLUSTER requires a supported shared service database, compatible program/protoco
 The initial default includes all four roles. After splitting roles, retain required coverage and assess load. Prepare interpreters, business files, plugins and credentials on executing nodes; a shared database does not copy local files.
 
 Two processes on one host demonstrate cooperation, not physical high availability. Execution has at-least-once semantics; use business idempotency keys for external writes. Clustering cannot guarantee exactly-once external calls. See [Mode changes](runtime-mode-change.md) for ordering and rollback boundaries.
+
+## Independent node launch settings
+
+Create a separate [control entry](../installation/instance-launcher.md) for each node, saving its own home/language. Platform connections share the same logical DB/schema; see [Database configuration](../configuration/platform-database.md). The launcher does not create a cluster or copy shared keys automatically.

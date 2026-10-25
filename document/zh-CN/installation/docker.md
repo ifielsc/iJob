@@ -1,51 +1,57 @@
-# Linux Docker 安装与启停
+# Linux Docker：配置一次与日常启停
 
 [English](../../en/installation/docker.md) · [手册首页](../README.md)
 
-## 准备与首次启动
+## 1. 准备与一次性配置
 
-本章使用 Linux Docker Engine、Compose v2 和完整 Docker 包；不把 Windows 原生脚本当成 Windows 容器部署。解压后进入程序目录，设置独立规范绝对路径（不经符号链接）：
-
-```sh
-export IJOB_HOME=/srv/ijob-data/docker-a
-export IJOB_LANG=zh
-./start-docker.sh
-```
-
-启动器加载缺失的离线镜像，校验精确镜像 ID，交互初始化，再等待 Compose 就绪。首次初始化创建管理员、AES 密钥、application.properties 和 compose.yaml。配置和 runtime 由容器 UID/GID 10001 读取/写入，保留受限权限。默认地址 `http://127.0.0.1:18080`；外部访问需独立配置入口和 TLS。
-
-## 查看状态
+准备 Linux Docker Engine、Compose v2、Bash 和完整 Docker 包。使用有权限的账号，下面示例统一使用 sudo。在程序包目录执行：
 
 ```sh
-docker compose -f "$IJOB_HOME/compose.yaml" ps
+sudo mkdir -p /srv/ijob/instances /srv/ijob-data
+sudo bash ./ijob.sh configure --directory /srv/ijob/instances/docker-a --home /srv/ijob-data/docker-a --lang zh --mode docker
 ```
 
-backend 和 web 应健康；容器启动不等于业务任务已完成。
+父目录必须可由执行账号写入；三个目录互不包含。configure 只生成本实例控制入口及 instance.conf，不启动程序。之后无需每次 export IJOB_HOME/IJOB_LANG。
 
-## 查看日志
+## 2. 首次启动
 
 ```sh
-docker compose -f "$IJOB_HOME/compose.yaml" logs --tail 200 -f backend web
+sudo /srv/ijob/instances/docker-a/ijob.sh start
 ```
 
-Ctrl+C 退出日志跟随。
+按包内镜像 ID 锁加载缺失的离线镜像，交互初始化，再等待 Compose 就绪。新建 application.properties 与 compose.yaml；容器访问的配置/runtime 归 UID/GID 10001，保留受限权限。默认访问 `http://127.0.0.1:18080`，自定义端口使用实际地址。
 
-## 停止与再次启动
-
-停止时运行：
+## 3. 查看配置与状态
 
 ```sh
-./stop-docker.sh
+sudo /srv/ijob/instances/docker-a/ijob.sh show
+sudo /srv/ijob/instances/docker-a/ijob.sh status
 ```
 
-再次启动运行 `./start-docker.sh`，已有配置和数据保留。不要用 `down -v` 当作日常停止命令。
+status 显示本实例项目的 Compose 状态；backend/web 应健康。命令返回成功不等于容器正在运行或业务任务成功。
 
-## 修改配置后重建
-
-普通平台值编辑 application.properties；宿主端口、挂载和容器资源编辑同一 home 的 compose.yaml。容器内 HTTP 保持 `0.0.0.0:8080`，修改宿主端口映射即可。完成备份与检查后：
+## 4. 查看日志
 
 ```sh
-./start-docker.sh --recreate
+sudo /srv/ijob/instances/docker-a/ijob.sh logs
+sudo /srv/ijob/instances/docker-a/ijob.sh logs --once
 ```
 
-这个入口继续使用对应包的镜像锁；重建也会重新挂载被编辑器替换的配置文件。不要只用未带镜像锁的 `compose up` 来部署新候选。第一轮生成的 Compose 与仓库高级 Compose 模板不同；如 `IJOB_HTTP_BIND` 只属于高级模板，不会自动修改已生成的 loopback 映射。详见[部署与 Agent 配置](../configuration/deployment-agent.md)。
+第一条跟随日志，Ctrl+C 退出查看，不停止应用；第二条输出最近 200 行后返回。Docker 日志来自本项目 backend/web。
+
+## 5. 停止、再次启动与配置变更
+
+```sh
+sudo /srv/ijob/instances/docker-a/ijob.sh stop
+sudo /srv/ijob/instances/docker-a/ijob.sh start
+```
+
+备份并按[配置手册](../configuration.md)修改数据目录里的 application.properties 后：
+
+```sh
+sudo /srv/ijob/instances/docker-a/ijob.sh restart
+```
+
+restart 使用该程序包的镜像锁重建本项目并等待就绪，不删除卷；Compose 中端口、挂载或资源变更也随重建应用。容器内 HTTP 保持 0.0.0.0:8080，同机各实例改独立宿主端口。不要用 down -v 作为日常停止命令。生成的 Compose 与仓库高级模板不同，IJOB_HTTP_BIND 等高级模板变量不会自动修改生成配置。
+
+目录、语言、默认值和升级方式见[统一入口](instance-launcher.md)。旧 start-docker.sh / stop-docker.sh 和 Compose 命令仍支持；需要每次保持相同 IJOB_HOME。

@@ -8,15 +8,24 @@
 
 ## 字段与作用
 
-| 字段/动作 | 用途与填写规则 |
+| 页面字段/动作 | 用途与填写规则 |
 | --- | --- |
-| `sourceResourceId / sql` | 数据库源与查询；只选择需发送的字段，避免无界查询。 |
-| `target.resourceId / type / properties` | KAFKA 使用 topic；RABBITMQ 使用 exchange/routingKey，匹配消息资源类型。 |
-| `serializer / compression` | 默认 json / none，必须与消费端契约一致。 |
-| `fetchSize / batchSize / maxInflight / publishTimeoutSeconds / retryTimes` | 默认 500 / 500 / 500 / 60 秒 / 3；插件重试与任务重试是不同层。 |
-| `maxMessageBytes / maxMessages / maxTotalPayloadBytes` | 默认 1 MiB / 1000000 / 1 GiB；同时受 Broker 限制。 |
+| 数据库资源、查询 SQL | 数据库源与查询；只选择需发送的字段，避免无界查询。 |
+| 目标资源、目标类型、主题或交换机与路由键 | KAFKA 使用 topic；RABBITMQ 使用 exchange/routingKey，匹配消息资源类型。 |
+| 序列化、消息压缩 | 默认 json / none，必须与消费端契约一致。 |
+| 读取批量、发布缓冲批量、最大发送窗口、窗口等待超时、消息发送重试次数 | 默认 500 / 500 / 500 / 60 秒 / 3；插件重试与任务重试是不同层。 |
+| 单条载荷上限、消息数量上限、总载荷上限 | 默认 1 MiB / 1000000 / 1 GiB；同时受 Broker 限制。 |
 
 ## 最小样例与核对
+
+先准备上表的独立测试资源，按页面逐项填写；保存后手动执行，再按下文核对实例、输出与目标系统。保存本身不会执行。
+
+| 配置项 | 填写内容 |
+| --- | --- |
+| 数据库资源 | 选择包含三行样例的测试库 |
+| 目标类型 / 目标资源 | KAFKA / 专属测试消息资源 |
+| 主题 | `docs-orders`（预先创建，准备测试消费者） |
+| 序列化 / 消息压缩 | json / 无 |
 
 ```sql
 SELECT id, amount FROM orders ORDER BY id;
@@ -24,4 +33,16 @@ SELECT id, amount FROM orders ORDER BY id;
 
 使用专属测试 topic/queue 和消费账号，先推送三条，核对消费端数量、业务键和内容。PUSH 是发业务消息，不是发平台邮件通知。确认/重试可能产生重复，消费端按业务键幂等；本手册不将未连接真实 Broker 的表单截图当作投递验证。
 
-样例代码是配置片段，资源 ID/路径需替换；实际外部协议验收状态见[案例索引](../../examples.md)。
+示例中的资源、路径及对象名称需替换为本环境实际值；实际外部协议验收状态见[案例索引](../../examples.md)。
+
+## 技术字段对照（按需查阅）
+
+以下是保存配置中的键名，供开发或排障定位；不是需要粘贴的任务 JSON。自动核验的元数据不作为页面手工输入。
+
+| 页面字段/分组 | 技术键名 |
+| --- | --- |
+| 数据库资源、查询 SQL | `sourceResourceId / sql` |
+| 目标资源、目标类型、主题或交换机与路由键 | `target.resourceId / type / properties` |
+| 序列化、消息压缩 | `serializer / compression` |
+| 读取批量、发布缓冲批量、最大发送窗口、窗口等待超时、消息发送重试次数 | `fetchSize / batchSize / maxInflight / publishTimeoutSeconds / retryTimes` |
+| 单条载荷上限、消息数量上限、总载荷上限 | `maxMessageBytes / maxMessages / maxTotalPayloadBytes` |

@@ -8,14 +8,23 @@
 
 ## 字段与作用
 
-| 字段/动作 | 用途与填写规则 |
+| 页面字段/动作 | 用途与填写规则 |
 | --- | --- |
-| `resourceId / script` | 选择启用的业务数据库资源，填写 SQL；不要将平台库作为练习目标。资源支持 MySQL/PostgreSQL/SQL Server/Oracle，平台 SQLite 不等于可选 SQLite 业务资源。 |
-| `delimiter / transaction` | 默认分隔符 ;、事务 true；事务能力受目标数据库和语句类型影响。 |
-| `continueOnError / queryTimeoutSeconds` | 默认 false / 600 秒；继续执行不代表失败语句成功，需核对日志和提交范围。 |
-| `minRows / maxRows / resultVariable` | 按结果行数要求设置边界；结果变量用于后续引用，不适合无限结果集。 |
+| 数据库资源、SQL 内容 | 选择启用的业务数据库资源，填写 SQL；不要将平台库作为练习目标。资源支持 MySQL/PostgreSQL/SQL Server/Oracle，平台 SQLite 不等于可选 SQLite 业务资源。 |
+| SQL 分隔符、事务 | 默认分隔符 ;、事务 true；事务能力受目标数据库和语句类型影响。 |
+| 出错后继续、查询超时（秒） | 默认 false / 600 秒；继续执行不代表失败语句成功，需核对日志和提交范围。 |
+| 最小行数、最大行数、结果变量 | 按结果行数要求设置边界；结果变量用于后续引用，不适合无限结果集。 |
 
 ## 最小样例与核对
+
+先准备上表的独立测试资源，按页面逐项填写；保存后手动执行，再按下文核对实例、输出与目标系统。保存本身不会执行。
+
+| 配置项 | 填写内容 |
+| --- | --- |
+| 数据库资源 | 选择包含 orders 表的独立测试库 |
+| 事务 | 开启 |
+| 出错后继续 | 关闭 |
+| 结果变量 | `ordersResult` |
 
 ```sql
 SELECT COUNT(*) AS total FROM orders;
@@ -23,10 +32,21 @@ SELECT COUNT(*) AS total FROM orders;
 
 准备独立 orders 表，保存任务后手动执行，查看 SQL 结果和实例日志，再在数据库查询实际写入。SQL 插件使用文本替换，不提供 SQL 参数绑定；严格校验输入并正确处理字符串引号。需要命名参数绑定的读取可查看 ETL 源配置。DDL 和非事务引擎可能不能回滚；重试 INSERT 前先做唯一键或幂等设计。
 
-样例代码是配置片段，资源 ID/路径需替换；实际外部协议验收状态见[案例索引](../../examples.md)。
+示例中的资源、路径及对象名称需替换为本环境实际值；实际外部协议验收状态见[案例索引](../../examples.md)。
 
 ## 真实页面示例
 
 只读 SQL、资源选择和事务/超时摘要。
 
 ![只读 SQL、资源选择和事务/超时摘要。](../../images/manual/sql-editor.png)
+
+## 技术字段对照（按需查阅）
+
+以下是保存配置中的键名，供开发或排障定位；不是需要粘贴的任务 JSON。自动核验的元数据不作为页面手工输入。
+
+| 页面字段/分组 | 技术键名 |
+| --- | --- |
+| 数据库资源、SQL 内容 | `resourceId / script` |
+| SQL 分隔符、事务 | `delimiter / transaction` |
+| 出错后继续、查询超时（秒） | `continueOnError / queryTimeoutSeconds` |
+| 最小行数、最大行数、结果变量 | `minRows / maxRows / resultVariable` |

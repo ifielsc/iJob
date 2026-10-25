@@ -17,7 +17,7 @@ Properties are identified by component plus key: both platform and Agent have se
 | C Controlled | Change through a specific operations procedure, including accounts, credentials, databases and mode changes | Dedicated steps, backup and recovery requirements; not a prohibition |
 | D Internal | Not recommended for routine user tuning | Complete appendix with rationale; no recipes for bypassing safeguards |
 
-These approved levels are maintenance guidance, not new access controls. settings/check-settings covers 54 format checks; see [Configuration](configuration.md). It does not validate all 249 entries or cross-setting business constraints.
+These approved levels are maintenance guidance, not new access controls. settings/check-settings covers 54 format checks; see [Configuration](configuration.md). It does not validate all 254 entries or cross-setting business constraints.
 
 ### Defaults and activation
 
@@ -56,7 +56,7 @@ This filters persistent work-queue claims for root triggers. It is not login aut
 
 ## 3. Configuration index
 
-**249 entries**: 190 platform properties, 8 Agent properties, 26 startup/build/lock entries and 25 Compose fields. Levels: A 42, B 75, C 28, D 104. Counts include deployment entry points and aliases, not 249 independent business features.
+**254 entries**: 190 platform properties, 8 Agent properties, 26 startup/build/lock entries 25 Compose fields and 5 instance-launcher fields. Levels: A 43, B 75, C 31, D 105. Counts include deployment entry points and aliases, not 254 independent business features.
 
 - [Nodes, groups and execution scope](#routing) — 9
 - [All plugin switches and Local JAR](#plugins) — 17
@@ -428,6 +428,18 @@ This filters persistent work-queue claims for root triggers. It is not login aut
 | C248<br>`services.<service>.healthcheck.retries`<br>integer | `3` (S21) | See default and scope | — | **B** Failure threshold; image defaults come from Dockerfiles. Revalidate readiness after overrides. | Docker; recreate affected containers |
 | C249<br>`services.<service>.healthcheck.test`<br>command | `backend readiness; web /healthz; Agent authenticated probe` (S21) | See default and scope | — | **D** Image health-check command; image defaults come from Dockerfiles. Revalidate readiness after overrides. | Docker; recreate affected containers |
 
+## Persistent instance launcher (instance.conf)
+
+[Configuration and usage](installation/instance-launcher.md). These five control-directory fields do not belong in application.properties.
+
+| ID / field | Level | Initial value | Description |
+| --- | --- | --- | --- |
+| C250 / `instance.conf:version` | D | 1 (S33/S34) | Control-file format version; currently 1, do not edit. |
+| C251 / `instance.conf:bundle` | C | configure: program directory (S33/S34) | Complete program directory; change while stopped through the upgrade procedure. |
+| C252 / `instance.conf:home` | C | configure: required explicit data directory (S33/S34) | Instance data directory; overrides inherited IJOB_HOME. Changing it does not migrate data. |
+| C253 / `instance.conf:lang` | A | en; zh selects Chinese (S33/S34) | Instance launcher language; overrides inherited IJOB_LANG, without changing the browser language. |
+| C254 / `instance.conf:mode` | C | Windows: windows; Bash: linux (or explicit docker) (S33/S34) | Deployment mode chosen at registration; editing it does not migrate the instance. Distinct from STANDALONE/CLUSTER. |
+
 ## Source evidence and maintenance
 
 Paths are relative to the repository root. The shared machine inventory is `document/reference/configuration-review.json`, containing bilingual descriptions, source hashes and classifications. Both languages use the same entries; source IDs refer to the table below. Compare Agent-specific Compose values with compose.agent.yaml and cluster values with compose.cluster.yaml; check probe declarations in all three Dockerfiles.
@@ -466,5 +478,7 @@ Paths are relative to the repository root. The shared machine inventory is `docu
 | S30 | `develop/web/ijob/Dockerfile` |
 | S31 | `develop/api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/routing/ExecutionGroupCodes.java` |
 | S32 | `develop/api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/routing/ExecutionTargetIds.java` |
+| S33 | `develop/deployment/first-run/instance.ps1` |
+| S34 | `develop/deployment/first-run/ijob.sh` |
 
 Groups, allowlists and all plugin switches now appear in the approved references. Databases/credentials use controlled workflows; internal parameters remain in the appendix. See [Configuration](configuration.md) and [Page reference](user-guide/README.md).

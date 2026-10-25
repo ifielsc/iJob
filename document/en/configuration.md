@@ -21,7 +21,7 @@ The external file overrides bundled defaults, but command-line arguments, JVM pr
 | C Controlled | Change through backup, implementation and verification | [Controlled settings](configuration/controlled.md) and operations workflows |
 | D Internal | Not recommended as ordinary user settings | [Internal appendix](configuration/internals.md) |
 
-The [complete catalog](configuration-catalog.md) retains 249 entries with sources, defaults and levels; users do not need to fill every entry. Setup overrides some source defaults, including native port 18080, group default and enabled scheduling. Source YAML is not the installed configuration.
+The [complete catalog](configuration-catalog.md) retains 254 entries with sources, defaults and levels; users do not need to fill every entry. Setup overrides some source defaults, including native port 18080, group default and enabled scheduling. Source YAML is not the installed configuration.
 
 ## Change one setting safely
 
@@ -35,7 +35,7 @@ java -jar ijob-setup-tool-1.0.0.jar settings --lang en
 java -jar ijob-setup-tool-1.0.0.jar check-settings --home /absolute/ijob-home --lang en
 ```
 
-Use your absolute Windows path when applicable. The checker lists/checks formats, duplicate keys and selected bounds for the following 54 settings without printing secrets. **It does not establish database connectivity, valid role coverage, routing eligibility, directory permissions or validation of all 249 entries.** Other advanced settings still require startup validation and actual exercises. See each chapter for empty-list semantics.
+Use your absolute Windows path when applicable. The checker lists/checks formats, duplicate keys and selected bounds for the following 54 settings without printing secrets. **It does not establish database connectivity, valid role coverage, routing eligibility, directory permissions or validation of all 254 entries.** Other advanced settings still require startup validation and actual exercises. See each chapter for empty-list semantics.
 
 <!-- SETTINGS_TABLE -->
 
@@ -97,3 +97,7 @@ Use your absolute Windows path when applicable. The checker lists/checks formats
 | `app.notify.email.enabled` | boolean | true | Email channel implementation switch, enabled when absent; SMTP and credentials belong in mail-channel UI. |
 
 <!-- /SETTINGS_TABLE -->
+
+## Launch settings and database connections
+
+Program/data paths and launch language belong in [instance.conf](installation/instance-launcher.md), separate from application.properties. Platform DB properties apply to standalone and cluster nodes; plugin business DBs are configured as resources. See [Platform database](configuration/platform-database.md).

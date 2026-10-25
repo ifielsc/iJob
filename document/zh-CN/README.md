@@ -7,7 +7,7 @@
 | 目标 | 阅读路线 |
 | --- | --- |
 | 首次安装/打包 | [安装入口](installation.md) → Windows/Linux/Docker → [快速入门](quickstart.md) |
-| 修改平台参数 | [配置入口](configuration.md) → 分组、插件、容量等主题 → [249 项索引](configuration-catalog.md) |
+| 修改平台参数 | [配置入口](configuration.md) → 分组、插件、容量等主题 → [254 项索引](configuration-catalog.md) |
 | 配置和使用页面 | [页面手册](user-guide/README.md) → [11 种插件](user-guide/plugins/README.md) → [16 组案例](examples.md) |
 | 管账号、切模式、备份升级 | [运维入口](operations.md) → 对应变更流程 |
 | 修改源码/准备候选 | [开发验证](development.md) → [后续事项](development/release-checklist.md) |

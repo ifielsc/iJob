@@ -1,51 +1,57 @@
-# Linux Docker installation and lifecycle
+# Linux Docker: configure once and manage the instance
 
 [简体中文](../../zh-CN/installation/docker.md) · [Manual home](../README.md)
 
-## Preparation and first start
+## 1. Prerequisites and one-time configuration
 
-Use Linux Docker Engine, Compose v2 and the complete Docker bundle. Windows native scripts are not Windows-container deployment. Extract the bundle, enter its directory, and select an independent canonical absolute path without symlinks:
-
-```sh
-export IJOB_HOME=/srv/ijob-data/docker-a
-export IJOB_LANG=en
-./start-docker.sh
-```
-
-The launcher loads missing offline images, verifies exact image IDs, initializes interactively and waits for Compose readiness. Initialization creates the administrator, AES key, application.properties and compose.yaml. Container UID/GID 10001 reads configuration and writes runtime; retain restricted permissions. Default address: `http://127.0.0.1:18080`. Configure a separate ingress and TLS for external access.
-
-## Status
+Prepare Linux Docker Engine, Compose v2, Bash and a complete Docker bundle. Use an authorized account; these examples consistently use sudo. From the program directory:
 
 ```sh
-docker compose -f "$IJOB_HOME/compose.yaml" ps
+sudo mkdir -p /srv/ijob/instances /srv/ijob-data
+sudo bash ./ijob.sh configure --directory /srv/ijob/instances/docker-a --home /srv/ijob-data/docker-a --lang en --mode docker
 ```
 
-backend and web should be healthy; started containers do not prove task completion.
+Parents must be writable by the execution account and none of the three directories may contain another. configure only creates the instance control entry and instance.conf; it does not start the application. Repeated IJOB_HOME/IJOB_LANG exports are unnecessary.
 
-## Logs
+## 2. First startup
 
 ```sh
-docker compose -f "$IJOB_HOME/compose.yaml" logs --tail 200 -f backend web
+sudo /srv/ijob/instances/docker-a/ijob.sh start
 ```
 
-Ctrl+C exits log following.
+The launcher loads missing offline images by locked image ID, initializes interactively and waits for Compose readiness. It creates application.properties and compose.yaml; container-accessible configuration/runtime belong to UID/GID 10001 with restricted permissions. Open `http://127.0.0.1:18080` or your configured port.
 
-## Stop and start again
-
-To stop:
+## 3. Inspect settings and status
 
 ```sh
-./stop-docker.sh
+sudo /srv/ijob/instances/docker-a/ijob.sh show
+sudo /srv/ijob/instances/docker-a/ijob.sh status
 ```
 
-Start again with `./start-docker.sh`; existing configuration/data are preserved. Do not use `down -v` for daily shutdown.
+status shows this instance project in Compose; backend/web should be healthy. A successful command does not prove containers are running or business execution succeeded.
 
-## Recreate after configuration changes
-
-Edit application.properties for platform settings and this home's compose.yaml for host ports, mounts and container resources. Keep internal HTTP at `0.0.0.0:8080`; change the published host mapping. After backup and validation:
+## 4. View logs
 
 ```sh
-./start-docker.sh --recreate
+sudo /srv/ijob/instances/docker-a/ijob.sh logs
+sudo /srv/ijob/instances/docker-a/ijob.sh logs --once
 ```
 
-This entry retains the bundle's image lock and remounts configuration files replaced by editors. Do not deploy a new candidate using an unlocked `compose up`. Generated first-run Compose differs from repository advanced templates: for example, `IJOB_HTTP_BIND` belongs to the advanced template and does not rewrite an existing loopback mapping. See [Deployment and Agent configuration](../configuration/deployment-agent.md).
+The first follows logs; Ctrl+C stops viewing, not the application. The second prints the latest 200 lines and returns. Docker logs come from this project’s backend/web.
+
+## 5. Stop, start again and apply changes
+
+```sh
+sudo /srv/ijob/instances/docker-a/ijob.sh stop
+sudo /srv/ijob/instances/docker-a/ijob.sh start
+```
+
+After backing up and editing application.properties in the data home using [Configuration](../configuration.md):
+
+```sh
+sudo /srv/ijob/instances/docker-a/ijob.sh restart
+```
+
+restart recreates this project using the bundle’s image locks and waits for readiness without removing volumes. Compose port/mount/resource changes are applied too. Keep container HTTP at 0.0.0.0:8080; assign separate host ports on the same machine. Do not use down -v for daily stopping. Generated Compose differs from advanced repository templates; variables such as IJOB_HTTP_BIND do not automatically modify generated configuration.
+
+See the [unified entry](instance-launcher.md) for paths, language, defaults and upgrades. Legacy start-docker.sh / stop-docker.sh and Compose commands remain supported with consistent IJOB_HOME.

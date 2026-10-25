@@ -21,7 +21,7 @@
 | C 受控 | 允许按备份、变更、验证流程调整 | [受控项](configuration/controlled.md)及运维流程 |
 | D 内部 | 不建议作为普通用户参数 | [内部附录](configuration/internals.md) |
 
-[完整清单](configuration-catalog.md)保留 249 条来源、默认值和分级；不是要求用户逐项填写。新安装会覆盖部分源码默认值，例如 native 端口 18080、分组 default、调度开启；不要直接把源码 YAML 当作安装后的配置。
+[完整清单](configuration-catalog.md)保留 254 条来源、默认值和分级；不是要求用户逐项填写。新安装会覆盖部分源码默认值，例如 native 端口 18080、分组 default、调度开启；不要直接把源码 YAML 当作安装后的配置。
 
 ## 安全地修改一项
 
@@ -35,7 +35,7 @@ java -jar ijob-setup-tool-1.0.0.jar settings --lang zh
 java -jar ijob-setup-tool-1.0.0.jar check-settings --home /absolute/ijob-home --lang zh
 ```
 
-Windows 将 --home 改为自己的绝对目录。检查器列出并检查下表 54 项的格式、重复键和部分范围；不输出配置秘密。**它不验证数据库可达、角色组合、分组能否领取任务、目录权限，也不验证全部 249 项。** 未列出的高级项仍需应用启动校验和实际验证。空白表示空集合的项按相应章节处理。
+Windows 将 --home 改为自己的绝对目录。检查器列出并检查下表 54 项的格式、重复键和部分范围；不输出配置秘密。**它不验证数据库可达、角色组合、分组能否领取任务、目录权限，也不验证全部 254 项。** 未列出的高级项仍需应用启动校验和实际验证。空白表示空集合的项按相应章节处理。
 
 <!-- SETTINGS_TABLE -->
 
@@ -97,3 +97,7 @@ Windows 将 --home 改为自己的绝对目录。检查器列出并检查下表 
 | `app.notify.email.enabled` | boolean | true | 邮件通道实现开关，缺省也启用；SMTP 连接与凭据在邮件通道页面维护。 |
 
 <!-- /SETTINGS_TABLE -->
+
+## 启动设置与数据库连接
+
+程序/数据目录、提示语言放在[instance.conf](installation/instance-launcher.md)，与 application.properties 分开。平台数据库参数同时适用于单实例和集群节点；插件业务库在资源页面配置，详见[平台数据库](configuration/platform-database.md)。
