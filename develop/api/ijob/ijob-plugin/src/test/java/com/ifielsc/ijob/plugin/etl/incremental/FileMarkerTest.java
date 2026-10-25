@@ -100,6 +100,25 @@ class FileMarkerTest {
                 () -> codec.read("{\"source\":{\"resourceId\":1.2}}", EtlTaskConfig.class, "ETL"));
     }
 
+    @Test
+    void comparesJdbcTimestampsWithPersistedOffsetsAndLocalNanosecondValues() {
+        var timestamp = java.sql.Timestamp.valueOf("2026-01-02 00:00:00.123456789");
+        var persistedOffset =
+                timestamp.toInstant().atOffset(java.time.ZoneOffset.ofHours(8)).toString();
+        assertEquals(0, EtlWatermark.compare(timestamp, persistedOffset, "TIMESTAMP"));
+        assertEquals(0, EtlWatermark.compare(persistedOffset, timestamp, "TIMESTAMP"));
+        assertEquals(
+                0,
+                EtlWatermark.compare(
+                        timestamp, timestamp.toLocalDateTime().toString(), "TIMESTAMP"));
+        assertTrue(
+                EtlWatermark.compare(timestamp, "2026-01-02T00:00:00.123456788", "TIMESTAMP") > 0);
+        assertEquals(
+                0,
+                EtlWatermark.compare(
+                        "2026-01-02T08:00:00+08:00", "2026-01-02T00:00:00Z", "TIMESTAMP"));
+    }
+
     private EtlTaskConfig.IncrementalConfig config(String type, String expression) {
         var c = new EtlTaskConfig.IncrementalConfig();
         c.setWatermarkType(type);

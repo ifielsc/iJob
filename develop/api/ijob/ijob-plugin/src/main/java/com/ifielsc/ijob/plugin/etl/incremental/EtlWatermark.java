@@ -28,8 +28,10 @@ public final class EtlWatermark {
                     new BigDecimal(left.toString()).compareTo(new BigDecimal(right.toString()));
             case "DATE" -> date(left).compareTo(date(right));
             case "TIMESTAMP" -> {
-                if (left.toString().endsWith("Z") && right.toString().endsWith("Z"))
-                    yield Instant.parse(left.toString()).compareTo(Instant.parse(right.toString()));
+                Instant leftInstant = timestampInstant(left);
+                Instant rightInstant = timestampInstant(right);
+                if (leftInstant != null && rightInstant != null)
+                    yield leftInstant.compareTo(rightInstant);
                 yield dateTime(left).compareTo(dateTime(right));
             }
             case "STRING" -> left.toString().compareTo(right.toString());
@@ -130,8 +132,23 @@ public final class EtlWatermark {
     }
 
     private static LocalDateTime dateTime(Object value) {
-        return value instanceof Timestamp t
-                ? t.toLocalDateTime()
-                : LocalDateTime.parse(value.toString());
+        if (value instanceof Timestamp timestamp) return timestamp.toLocalDateTime();
+        Instant instant = timestampInstant(value);
+        // Earlier checkpoints serialized JDBC timestamps with the JSON mapper's offset.
+        // Recover the JDBC wall time in the same JVM zone used by Timestamp.valueOf/getTimestamp.
+        return instant == null
+                ? LocalDateTime.parse(value.toString())
+                : LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    private static Instant timestampInstant(Object value) {
+        if (value instanceof Timestamp timestamp) return timestamp.toInstant();
+        if (value instanceof Instant instant) return instant;
+        if (value instanceof OffsetDateTime offset) return offset.toInstant();
+        try {
+            return OffsetDateTime.parse(value.toString()).toInstant();
+        } catch (java.time.format.DateTimeParseException ignored) {
+            return null;
+        }
     }
 }

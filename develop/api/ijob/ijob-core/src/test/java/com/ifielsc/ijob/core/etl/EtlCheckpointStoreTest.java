@@ -53,6 +53,43 @@ class EtlCheckpointStoreTest {
         assertEquals(decimal, snapshot.tieBreakers().getFirst());
     }
 
+    @Test
+    void jdbcTimestampWatermarksKeepLocalTimeAndNanosecondsAcrossReloads() {
+        AtomicReference<EtlCheckpoint> stored = new AtomicReference<>();
+        var mapper = new ObjectMapper();
+        mapper.disable(
+                com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.setTimeZone(java.util.TimeZone.getTimeZone("Pacific/Honolulu"));
+        var store = new EtlCheckpointStore(checkpointMapper(stored), instanceMapper(), mapper);
+        var initial = java.sql.Timestamp.valueOf("2026-01-01 12:34:56.123456789");
+        var next = java.sql.Timestamp.valueOf("2026-01-02 12:34:56.987654321");
+        var snapshot =
+                store.loadOrCreate(7L, "time", "a".repeat(64), "TIMESTAMP", initial, List.of(0));
+        assertEquals("2026-01-01T12:34:56.123456789", snapshot.watermark());
+        store.advance(snapshot, 7L, next, List.of(3));
+        var resumed =
+                store.loadOrCreate(7L, "time", "a".repeat(64), "TIMESTAMP", initial, List.of(0));
+        assertEquals("2026-01-02T12:34:56.987654321", resumed.watermark());
+        assertEquals(List.of(3), resumed.tieBreakers());
+    }
+
+    @Test
+    void jdbcDateWatermarksKeepTheirCalendarDate() {
+        AtomicReference<EtlCheckpoint> stored = new AtomicReference<>();
+        var store =
+                new EtlCheckpointStore(
+                        checkpointMapper(stored), instanceMapper(), new ObjectMapper());
+        var snapshot =
+                store.loadOrCreate(
+                        7L,
+                        "date",
+                        "a".repeat(64),
+                        "DATE",
+                        java.sql.Date.valueOf("2026-01-02"),
+                        List.of());
+        assertEquals("2026-01-02", snapshot.watermark());
+    }
+
     private InstanceMapper instanceMapper() {
         Instance instance = new Instance();
         instance.setTargetType(TargetType.TASK);

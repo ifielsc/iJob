@@ -70,7 +70,7 @@ public class EtlCheckpointStore {
         candidate.setCheckpointKey(checkpointKey);
         candidate.setSourceFingerprint(sourceFingerprint);
         candidate.setWatermarkType(watermarkType);
-        candidate.setWatermarkValue(serialize(initialWatermark));
+        candidate.setWatermarkValue(serializeWatermark(initialWatermark));
         candidate.setTieBreakerValue(serialize(initialTieBreakers));
         candidate.setLastInstanceId(instanceId);
         ExecutionFencePermit permit = permit(instance.getTriggerId());
@@ -114,7 +114,7 @@ public class EtlCheckpointStore {
         checkpoint.setCheckpointKey(snapshot.checkpointKey());
         checkpoint.setSourceFingerprint(snapshot.sourceFingerprint());
         checkpoint.setWatermarkType(snapshot.watermarkType());
-        checkpoint.setWatermarkValue(serialize(watermark));
+        checkpoint.setWatermarkValue(serializeWatermark(watermark));
         checkpoint.setTieBreakerValue(serialize(tieBreakers));
         checkpoint.setLastInstanceId(instanceId);
         Instance instance = instanceMapper.selectById(instanceId);
@@ -134,6 +134,17 @@ public class EtlCheckpointStore {
                 watermark,
                 List.copyOf(tieBreakers),
                 snapshot.version() + 1);
+    }
+
+    private String serializeWatermark(Object value) {
+        // JDBC local dates must not inherit the HTTP mapper's timezone or millisecond precision.
+        if (value instanceof java.sql.Timestamp timestamp) {
+            return serialize(timestamp.toLocalDateTime().toString());
+        }
+        if (value instanceof java.sql.Date date) {
+            return serialize(date.toLocalDate().toString());
+        }
+        return serialize(value);
     }
 
     private String serialize(Object value) {
