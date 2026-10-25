@@ -118,9 +118,10 @@ class RealMessageSourcesTest extends MessageTestSupport {
     @Test
     void rabbitUnconfirmedRequeuesThenCommitsAndAcknowledges() throws Exception {
         String queue = "ijob-qa-v1.etl-mq-" + UUID.randomUUID();
+        int port = Integer.parseInt(System.getenv().getOrDefault("IJOB_RABBIT_PORT", "5672"));
         var connectionFactory = new com.rabbitmq.client.ConnectionFactory();
         connectionFactory.setHost("127.0.0.1");
-        connectionFactory.setPort(5672);
+        connectionFactory.setPort(port);
         connectionFactory.setUsername(System.getenv("IJOB_RABBIT_USER"));
         connectionFactory.setPassword(System.getenv("IJOB_RABBIT_PASSWORD"));
         connectionFactory.setVirtualHost(System.getenv("IJOB_RABBIT_VHOST"));
@@ -132,7 +133,7 @@ class RealMessageSourcesTest extends MessageTestSupport {
                                         "host",
                                         "127.0.0.1",
                                         "port",
-                                        5672,
+                                        port,
                                         "username",
                                         System.getenv("IJOB_RABBIT_USER"),
                                         "password",
