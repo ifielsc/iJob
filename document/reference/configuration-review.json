@@ -57,7 +57,7 @@
     {
       "id": "S11",
       "path": "develop/deployment/first-run/manage.ps1",
-      "sha256": "db4febffb78badb39533e4dfc2ed5739ab1d7c6e4892754f08550a2eaefcd536"
+      "sha256": "1c0a4e10e21570b77286e160cba12980c88de2175486c5819a33f30e97c86991"
     },
     {
       "id": "S12",
@@ -167,7 +167,7 @@
     {
       "id": "S33",
       "path": "develop/deployment/first-run/instance.ps1",
-      "sha256": "2dc5b7e9589dc0a92376438a556d7cf4b82d9da8c9ac207744e104ecd7218311"
+      "sha256": "604158d8f962b4eb0b2c6ce66808f645eda7c32ceec72010c1225beb7b14c540"
     },
     {
       "id": "S34",

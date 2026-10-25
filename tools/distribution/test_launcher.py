@@ -19,6 +19,11 @@ class InstanceLauncherTest(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix='ijob-launcher-')
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name).resolve()
+        if WINDOWS:
+            hidden = self.root / 'hidden parent'
+            hidden.mkdir()
+            subprocess.run(['attrib', '+H', str(hidden)], check=True, capture_output=True)
+            self.root = hidden
         self.bundle = self.root / 'program space'
         self.bundle.mkdir()
         self.control = self.root / 'control space'

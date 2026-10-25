@@ -11,7 +11,7 @@ $dataRoot = if ($env:IJOB_HOME) { [IO.Path]::GetFullPath($env:IJOB_HOME) } else 
 if ($dataRoot.StartsWith($bundle + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) -or $dataRoot -eq $bundle) { throw 'IJOB_HOME must be outside the bundle.' }
 if ($dataRoot -match '[\r\n"]') { throw 'Unsupported data path.' }
 for ($item = $dataRoot; $item; $item = Split-Path -Parent $item) {
-    if ((Test-Path -LiteralPath $item) -and ((Get-Item -LiteralPath $item).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Data paths must not contain links or junctions.' }
+    if ((Test-Path -LiteralPath $item) -and ((Get-Item -Force -LiteralPath $item).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Data paths must not contain links or junctions.' }
 }
 $java = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin/java.exe' } else { (Get-Command java.exe -ErrorAction Stop).Source }
 $pidPath = Join-Path $dataRoot 'native-process.json'

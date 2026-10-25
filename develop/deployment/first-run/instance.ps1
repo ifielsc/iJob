@@ -16,7 +16,7 @@ function Absolute-Path([string]$Value) {
     $resolved = [IO.Path]::GetFullPath($Value).TrimEnd('\','/')
     if ($resolved.Length -le 2) { throw 'A drive root cannot be an instance directory.' }
     for ($item = $resolved; $item; $item = Split-Path -Parent $item) {
-        if ((Test-Path -LiteralPath $item) -and ((Get-Item -LiteralPath $item).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Instance paths must not contain links or junctions.' }
+        if ((Test-Path -LiteralPath $item) -and ((Get-Item -Force -LiteralPath $item).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Instance paths must not contain links or junctions.' }
     }
     return $resolved
 }
