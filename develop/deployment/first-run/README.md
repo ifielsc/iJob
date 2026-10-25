@@ -16,7 +16,7 @@
 
 ```powershell
 $env:IJOB_HOME = 'F:\iJobData\installation-a'
-.\start.cmd
+.\legacy\start.cmd
 ```
 
 这只设置当前窗口环境；以后启动必须继续使用相同 `IJOB_HOME`。路径必须在交付目录外，不使用符号链接或目录联接。改路径不会自动迁移已有数据。停止使用 `legacy/stop.cmd` 并等待退出；`legacy/logs.cmd` 中 Ctrl+C 只结束日志查看。
@@ -27,10 +27,10 @@ $env:IJOB_HOME = 'F:\iJobData\installation-a'
 
 ```sh
 chmod +x legacy/start.sh legacy/stop.sh legacy/status.sh legacy/logs.sh
-./start.sh
-./status.sh
-./logs.sh
-./stop.sh
+./legacy/start.sh
+./legacy/status.sh
+./legacy/logs.sh
+./legacy/stop.sh
 ```
 
 首次交互初始化，之后后台运行。`legacy/logs.sh` 中 Ctrl+C 只结束日志查看。默认数据目录为包同级 `ijob-data-linux`；可在当前终端 `export IJOB_HOME=/home/ijob/installation-a`，所有启动、停止、状态和日志命令使用同一路径。使用规范绝对路径，父目录需存在。默认监听 `127.0.0.1:18080`，远程访问可通过 SSH 转发。
@@ -41,15 +41,15 @@ chmod +x legacy/start.sh legacy/stop.sh legacy/status.sh legacy/logs.sh
 
 ```sh
 chmod +x legacy/start-docker.sh legacy/stop-docker.sh
-sudo ./start-docker.sh
-sudo ./stop-docker.sh
+sudo ./legacy/start-docker.sh
+sudo ./legacy/stop-docker.sh
 ```
 
 缺少镜像时自动加载离线归档。后端镜像为 `ijob-backend:1.0.0`，前端为 `ijob-web:1.0.0`。默认数据目录为包同级 `ijob-data-docker`，主机入口为 `127.0.0.1:18080`。
 
 ```sh
-sudo env IJOB_HOME=/home/ijob/installation-a IJOB_HTTP_PORT=18080 ./start-docker.sh
-sudo env IJOB_HOME=/home/ijob/installation-a ./stop-docker.sh
+sudo env IJOB_HOME=/home/ijob/installation-a IJOB_HTTP_PORT=18080 ./legacy/start-docker.sh
+sudo env IJOB_HOME=/home/ijob/installation-a ./legacy/stop-docker.sh
 sudo docker compose -f /home/ijob/installation-a/compose.yaml logs --tail=200 -f
 ```
 
@@ -177,7 +177,7 @@ DATABASE 且 bootstrap 关闭后，配置里的 `app.auth.username` / `app.auth.
 5. 普通双节点保留默认 `API,SCHEDULER,WORKER,MAINTENANCE` 全部角色。保持 Flyway、通知 Outbox 和运行维护开启。组名和执行白名单根据任务路由配置；默认向导的 `default` 组可在各节点一致保留。节点上的任务依赖文件、脚本和资源访问也需要准备，不能假设数据库会复制本地文件。
 6. 用各自的 `IJOB_HOME` 先启动 A，确认就绪后启动 B，检查节点登记、跨节点登录、任务执行和停止后接管。不同机器可使用相同端口；同机端口必须不同。原生默认监听 `127.0.0.1`，跨机入口需显式设置受限内网监听地址并配置访问控制；统一访问地址可由反向代理或负载均衡提供。
 
-Windows 可分别在两个 PowerShell 窗口设置各自 `$env:IJOB_HOME` 后运行 `legacy/start.cmd`；Linux 分别用 `IJOB_HOME=/path/to/node-a ./start.sh` 和 `IJOB_HOME=/path/to/node-b ./start.sh`，停止时同样指定对应目录。各节点日志和进程控制文件独立。
+Windows 可分别在两个 PowerShell 窗口设置各自 `$env:IJOB_HOME` 后运行 `legacy/start.cmd`；Linux 分别用 `IJOB_HOME=/path/to/node-a ./legacy/start.sh` 和 `IJOB_HOME=/path/to/node-b ./legacy/start.sh`，停止时同样指定对应目录。各节点日志和进程控制文件独立。
 
 Docker 每节点还需独立 Compose 项目名和绑定目录。可用向导先为 B 生成自己的安装和 Compose（只初始化、不启动），再停机同步上述共享配置；或者审阅复制后的 Compose，逐项修改项目名及两个 volume source，不能让 B 仍挂载 A 的配置/runtime。保留容器内 `server.port=8080`，同机通过不同的 `IJOB_HTTP_PORT` 映射 Web 端口。配置文件为 0600、runtime 为 0700，容器访问的文件及 runtime 归 UID/GID 10001；安装目录及 Compose 保持宿主用户权限。
 
@@ -195,7 +195,7 @@ sudo docker run --rm -it --user 0:0 --network none \
   --home "$HOME_PATH" --host-uid "$(id -u)" --host-gid "$(id -g)"
 ```
 
-初始化 B 时选择与 A 相同的数据库产品。在启动 B 之前统一账号、哈希、AES、Token 等共享配置，保留 B 的独立 Compose 路径和项目名。例如 A/B 分别用 `sudo env IJOB_HOME=/home/ijob/node-a IJOB_HTTP_PORT=18080 ./start-docker.sh` 和 `sudo env IJOB_HOME=/home/ijob/node-b IJOB_HTTP_PORT=18081 ./start-docker.sh` 启动。
+初始化 B 时选择与 A 相同的数据库产品。在启动 B 之前统一账号、哈希、AES、Token 等共享配置，保留 B 的独立 Compose 路径和项目名。例如 A/B 分别用 `sudo env IJOB_HOME=/home/ijob/node-a IJOB_HTTP_PORT=18080 ./legacy/start-docker.sh` 和 `sudo env IJOB_HOME=/home/ijob/node-b IJOB_HTTP_PORT=18081 ./legacy/start-docker.sh` 启动。
 
 已有集群的认证、哈希或 AES/Token 配置变化可能触发兼容指纹拒启，应统一停机并使用单独验证的迁移流程；本说明不要求清空指纹。任务对外部系统的副作用仍需业务幂等，多节点接管不代表外部操作天然只执行一次。
 
