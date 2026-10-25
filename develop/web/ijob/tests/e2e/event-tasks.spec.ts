@@ -127,6 +127,10 @@ async function binding(page: Page, en = false) {
   await page
     .getByRole('button', { name: (en ? 'More' : '更多') + ' Event demo', exact: true })
     .click()
+  // The popover scales in; wait for its final position before selecting a row.
+  const menu = page.locator('.n-dropdown-menu')
+  await expect(menu).toBeVisible()
+  await expect(menu).not.toHaveClass(/popover-transition-enter-/)
   await page.getByText(en ? 'Event bindings' : '事件绑定', { exact: true }).click()
   await expect(page.locator('.event-binding-drawer')).toBeVisible()
 }
