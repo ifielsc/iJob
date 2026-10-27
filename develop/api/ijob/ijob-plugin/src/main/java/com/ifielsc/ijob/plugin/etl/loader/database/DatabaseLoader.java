@@ -89,7 +89,11 @@ public final class DatabaseLoader implements Loader {
                 try (var statement = prepare("SELECT * FROM " + table + " WHERE 1=0");
                         var result = statement.executeQuery()) {
                     MessageTargetKeys.verify(
-                            connection, result.getMetaData(), config.getLogicalKeys());
+                            connection,
+                            result.getMetaData(),
+                            config.getLogicalKeys(),
+                            config.getTable(),
+                            config.getSchema());
                     messageKeysVerified = true;
                 }
             }

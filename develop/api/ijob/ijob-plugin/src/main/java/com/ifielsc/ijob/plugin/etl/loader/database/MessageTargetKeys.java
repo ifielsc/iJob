@@ -16,13 +16,41 @@ import java.util.Set;
 final class MessageTargetKeys {
     private MessageTargetKeys() {}
 
-    static void verify(Connection connection, ResultSetMetaData columns, List<String> keys)
+    static void verify(
+            Connection connection,
+            ResultSetMetaData columns,
+            List<String> keys,
+            String configuredTable,
+            String configuredSchema)
             throws SQLException {
         String table = columns.getTableName(1);
         String schema = empty(columns.getSchemaName(1));
         String catalog = empty(columns.getCatalogName(1));
-        if (table == null || table.isBlank())
-            throw new SQLException("Message target table metadata unavailable");
+        if (table == null || table.isBlank()) {
+            // Some drivers omit table identity for a forward-only SELECT. Use the same
+            // validated, quoted target as the loader, never a wildcard metadata search.
+            String[] parts = configuredTable.split("\\.");
+            var metadata = connection.getMetaData();
+            catalog = empty(connection.getCatalog());
+            if (metadata.supportsSchemasInTableDefinitions()) {
+                schema = parts.length > 1 ? parts[parts.length - 2] : empty(configuredSchema);
+                if (schema == null) schema = empty(connection.getSchema());
+                if (schema == null)
+                    throw new SQLException("Message target schema metadata unavailable");
+                if (parts.length == 3) catalog = parts[0];
+            } else if (metadata.supportsCatalogsInTableDefinitions()) {
+                if (parts.length > 2)
+                    throw new SQLException("Message target qualification is unsupported");
+                catalog = parts.length == 2 ? parts[0] : empty(configuredSchema);
+                if (catalog == null) catalog = empty(connection.getCatalog());
+                if (catalog == null)
+                    throw new SQLException("Message target catalog metadata unavailable");
+                schema = null;
+            } else {
+                throw new SQLException("Message target table metadata unavailable");
+            }
+            table = parts[parts.length - 1];
+        }
         Set<String> expected = new HashSet<>(keys);
         Set<String> primary = new HashSet<>();
         var metadata = connection.getMetaData();

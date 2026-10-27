@@ -2858,6 +2858,7 @@
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/incremental/FileMarkerTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/loader/database/AutomaticMappingTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/loader/database/DatabaseLoaderTest.java
+!/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/loader/database/MessageTargetKeysTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/loader/file/DelimitedFileLoaderTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/message/EtlMessageRunnerTest.java
 !/develop/api/ijob/ijob-plugin/src/test/java/com/ifielsc/ijob/plugin/etl/message/MessageConfigTest.java
