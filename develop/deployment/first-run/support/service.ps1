@@ -83,10 +83,7 @@ try {
         $record | ConvertTo-Json | Set-Content -LiteralPath $registration -Encoding UTF8
         Invoke-Wrapper 'install'
         $account = "NT SERVICE\$Name"
-        foreach ($entry in @(@($Control,'RX'), @($dataRoot,'M'))) {
-            & icacls.exe $entry[0] /grant ($account + ':(OI)(CI)' + $entry[1]) | Out-Null
-            if ($LASTEXITCODE -ne 0) { throw 'Service access grant failed; keep the service stopped and inspect registration.' }
-        }
+        Grant-ServiceAccess $Control $dataRoot $account
         Say "Installed $Name, stopped, autostart disabled. Use service enable and start when ready." "已安装 $Name，当前停止且未启用自启。准备好后使用 service enable 和 start。"
         exit 0
     }
@@ -102,8 +99,8 @@ try {
     if (-not $owned -or $owned.PathName.Trim('"') -ine $wrapperPath -or $owned.StartName -ine "NT SERVICE\$Name") { throw 'Windows service identity does not match this registration.' }
     switch ($Action) {
         'start' { Invoke-Wrapper 'start'; Say 'Service started; verify runtimePhase=READY in application logs.' '服务已启动；请在应用日志中确认 runtimePhase=READY。' }
-        'stop' { Invoke-Wrapper 'stop'; if ((Find-Service $Name).State -ne 'Stopped') { throw 'Service has not stopped.' } }
-        'restart' { Invoke-Wrapper 'stop'; Invoke-Wrapper 'start' }
+        'stop' { Invoke-Wrapper 'stop'; Wait-ServiceStopped $Name }
+        'restart' { Invoke-Wrapper 'stop'; Wait-ServiceStopped $Name; Invoke-Wrapper 'start' }
         'status' {
             $owned | Select-Object Name,State,StartMode,ProcessId,StartName | Format-List
             if ($owned.State -eq 'Running') { exit 0 }; exit 3

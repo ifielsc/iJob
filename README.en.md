@@ -25,4 +25,6 @@ Keep configuration, credentials and databases outside the source and program dir
 
 Before contributing, read AGENTS.md and document/standards/README.md. Full quality gates and isolated integration boundaries are documented in [development](document/en/development.md). Packaging logs distinguish checks executed from tests skipped; compilation is not release acceptance.
 
+The current Linux, Docker, Windows service and local-cache scope is collected in the [acceptance summary](document/ci/isolated-integration.md#2026-10-27-验收汇总). Two Windows instances and PostgreSQL have passed isolated VM checks. Historical matrices, tested candidates and each CI run keep separate evidence; they are not combined into one execution or a complete release approval.
+
 First-party code uses the [MIT License](LICENSE), Copyright (c) 2026 ifielsc. Third-party license and vulnerability reconciliation remains a separate public-redistribution gate. Source synchronization does not update an existing deployment or authorize public publication.

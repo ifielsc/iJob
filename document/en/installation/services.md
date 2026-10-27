@@ -4,7 +4,7 @@
 
 Configure the [instance entry](instance-launcher.md), initialize, verify startup and stop first. Service startup never prompts for accounts, invokes setup or resets secrets. Give each instance separate service/control/data identities and a port; a read-only program directory may be shared.
 
-This describes a new implementation under acceptance: local contracts and real VM results are recorded separately. Windows VM installation/reboot acceptance is pending; XML generation and local tests do not prove Windows service operation.
+An isolated Windows Server 2022 Standard Evaluation Core VM has verified native initialization, two independent SQLite instances under virtual service accounts, cross-instance file access denial, stop and child-process cleanup, recovery after Java failure, restart, and history retention after service removal and reinstallation. Two actual VM reboots verified enabled/disabled autostart in both directions. An independent PostgreSQL 18.6 Windows service and application instance also passed SQL tasks before and after both reboots, with one successful formal V1 migration. The database dependency was explicitly registered in that environment; the installer does not discover it automatically. Results bind the tested candidate and environment, not every Windows edition or database/MQ combination.
 
 An independent Linux VM has verified login and task execution in two instances, stop isolation, recovery after main-process failure, enabled/disabled autostart across two VM boots, and history retention after service removal and reinstallation. Upgrade and rollback between deployment-script candidates also passed with byte-identical application configuration and secret files. Those candidates use identical compiled code, so this does not establish database-version migration coverage. Results belong to the tested programs and environment; the final rebuilt candidate still requires verification.
 
@@ -28,6 +28,10 @@ Operate from the control directory. Names begin with ijob followed by 1–40 ASC
 Installation verifies the wrapper hash and uses the per-instance virtual account `NT SERVICE\ijobA`, without storing an account password. It grants read/execute on this control directory and modification on this data home. The account also needs read/execute access to Java and the bundle. Service paths cannot contain `%`, which WinSW expands as environment variables. Installation leaves the service stopped and manual. Enable selects autostart; disable returns to manual without stopping an active service.
 
 WinSW directly supervises foreground Java. Abnormal exits trigger retries after 10/30/60 seconds, then automatic attempts stop. One hour of normal operation resets the failure count. Normal stop first sends Ctrl+C and waits up to 120 seconds; timeout may force termination, so inspect logs and recovery rather than claiming graceful completion. Application logs use home/logs; size-limited wrapper logs use home/logs/service. Running means the process started; independently verify the current launch's runtimePhase=READY, login and task execution.
+
+Access grants include configuration files and runtime directories whose ACL inheritance was disabled by setup. Existing inheritance protection and ownership remain unchanged. The complete directory tree is checked before granting access; links and junctions are rejected.
+
+Stop and restart wait up to 150 seconds for Windows to confirm the service has stopped, because the wrapper's stop command returns after submitting the request. A timeout reports failure and preserves registration; restart does not start another process until stop completes. Stopping a service does not imply its running business tasks succeeded; inspect their records and external effects.
 
 ## Linux systemd
 

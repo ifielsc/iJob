@@ -270,6 +270,77 @@ class InstanceLauncherTest(unittest.TestCase):
             self.invoke(self.control, ['start'], 1)
             self.assertFalse(self.record.exists())
 
+    def test_windows_service_grants_protected_files_without_following_junctions(self):
+        if not WINDOWS:
+            self.skipTest('Windows protected ACL and junction regression')
+        helper = str(SOURCE / 'support/service-common.ps1').replace("'", "''")
+        root = str(self.root).replace("'", "''")
+        script = ". '" + helper + "'\n$root='" + root + "'\n" + r'''
+$ErrorActionPreference='Stop'
+$env:PSModulePath=Join-Path $PSHOME 'Modules'
+Import-Module (Join-Path $PSHOME 'Modules/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1') -ErrorAction Stop
+$control=Join-Path $root 'acl-control'; $aclHome=Join-Path $root 'acl-home'
+$runtime=Join-Path $aclHome 'runtime'; $file=Join-Path $aclHome 'application.properties'
+New-Item -ItemType Directory $control,$aclHome,$runtime | Out-Null
+[IO.File]::WriteAllText($file,'private synthetic configuration')
+$owner=[Security.Principal.WindowsIdentity]::GetCurrent().User
+foreach($path in @($aclHome,$runtime,$file)) {
+    $acl=Get-Acl -LiteralPath $path
+    $acl.SetAccessRuleProtection($true,$false)
+    $rule=New-Object Security.AccessControl.FileSystemAccessRule($owner,'FullControl','Allow')
+    $acl.SetAccessRule($rule); Set-Acl -LiteralPath $path -AclObject $acl
+}
+$original=(Get-FileHash -LiteralPath $file).Hash
+$beforeOwner=(Get-Acl -LiteralPath $file).Owner
+Grant-ServiceAccess $control $aclHome '*S-1-5-20'
+foreach($path in @($aclHome,$runtime,$file)) {
+    $acl=Get-Acl -LiteralPath $path
+    if (-not $acl.AreAccessRulesProtected) {throw 'Inheritance protection was relaxed'}
+    $rules=@($acl.GetAccessRules($true,$false,[Security.Principal.SecurityIdentifier]) |
+        Where-Object {$_.IdentityReference.Value -eq 'S-1-5-20' -and $_.AccessControlType -eq 'Allow'})
+    if (-not ($rules | Where-Object {($_.FileSystemRights -band [Security.AccessControl.FileSystemRights]::Modify) -eq [Security.AccessControl.FileSystemRights]::Modify})) {throw 'Protected path lacks explicit service modify access'}
+}
+if ((Get-FileHash -LiteralPath $file).Hash -ne $original -or (Get-Acl -LiteralPath $file).Owner -ne $beforeOwner) {throw 'Content or owner changed'}
+$badControl=Join-Path $root 'bad-control';$badHome=Join-Path $root 'bad-home';$outside=Join-Path $root 'outside'
+New-Item -ItemType Directory $badControl,$badHome,$outside | Out-Null
+New-Item -ItemType Junction -Path (Join-Path $badHome 'linked') -Target $outside | Out-Null
+$controlAcl=(Get-Acl -LiteralPath $badControl).Sddl;$homeAcl=(Get-Acl -LiteralPath $badHome).Sddl;$outsideAcl=(Get-Acl -LiteralPath $outside).Sddl
+$rejected=$false
+try {Grant-ServiceAccess $badControl $badHome '*S-1-5-20'} catch {$rejected=$_.Exception.Message -like '*links or junctions*'}
+if (-not $rejected) {throw 'Junction accepted'}
+if ((Get-Acl -LiteralPath $badControl).Sddl -ne $controlAcl -or (Get-Acl -LiteralPath $badHome).Sddl -ne $homeAcl -or (Get-Acl -LiteralPath $outside).Sddl -ne $outsideAcl) {throw 'ACL changed before complete path validation'}
+'''
+        result = subprocess.run(['powershell.exe', '-NoProfile', '-Command', script],
+                                capture_output=True, encoding='utf-8', errors='replace', timeout=45)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
+    def test_windows_service_waits_for_stop_and_rejects_timeout_or_missing_service(self):
+        if not WINDOWS:
+            self.skipTest('Windows service stop regression')
+        helper = str(SOURCE / 'support/service-common.ps1').replace("'", "''")
+        script = ". '" + helper + "'\n" + r'''
+$ErrorActionPreference='Stop'
+$script:states=@('Running','Stop Pending','Stopped');$script:reads=0
+function Get-CimInstance {param($ClassName,$Filter)
+    if ($ClassName -ne 'Win32_Service' -or $Filter -ne "Name='ijobContract'") {throw 'Wrong service queried'}
+    $state=$script:states[[Math]::Min($script:reads,$script:states.Count-1)];$script:reads++
+    if ($state) {[pscustomobject]@{State=$state}}
+}
+function Start-Sleep {param($Milliseconds)}
+Wait-ServiceStopped 'ijobContract' 5
+if ($script:reads -ne 3) {throw 'Returned before service stopped'}
+$script:states=@('Stopped');Wait-ServiceStopped 'ijobContract' 0
+$script:states=@('Stop Pending');$rejected=$false
+try {Wait-ServiceStopped 'ijobContract' 0} catch {$rejected=$_.Exception.Message -like '*timed out*'}
+if (-not $rejected) {throw 'Pending service accepted after timeout'}
+$script:states=@($null);$rejected=$false
+try {Wait-ServiceStopped 'ijobContract' 0} catch {$rejected=$_.Exception.Message -like '*disappeared*'}
+if (-not $rejected) {throw 'Missing service accepted as stopped'}
+'''
+        result = subprocess.run(['powershell.exe', '-NoProfile', '-Command', script],
+                                capture_output=True, encoding='utf-8', errors='replace', timeout=15)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
     def test_program_control_and_data_cannot_overlap(self):
         self.home = self.bundle / 'data'
         self.configure(expected=1)

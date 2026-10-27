@@ -26,6 +26,45 @@ function Read-ServiceInstance([string]$Control) {
     }
     return $values
 }
+function Grant-ServiceAccess([string]$Control, [string]$DataRoot, [string]$Account) {
+    # Setup protects both directories and individual files from inherited ACLs.
+    # Validate the entire owned tree before granting explicit per-item access;
+    # icacls /T could otherwise follow a junction outside the instance.
+    $targets = New-Object 'System.Collections.Generic.List[object]'
+    foreach ($entry in @(@($Control,'RX'), @($DataRoot,'M'))) {
+        $pending = New-Object 'System.Collections.Generic.Queue[string]'
+        $pending.Enqueue((Get-ServicePath $entry[0]))
+        while ($pending.Count -gt 0) {
+            $path = Get-ServicePath $pending.Dequeue()
+            $item = Get-Item -Force -LiteralPath $path -ErrorAction Stop
+            $targets.Add(@{path=$path; rights=$entry[1]; directory=$item.PSIsContainer})
+            if ($item.PSIsContainer) {
+                foreach ($child in Get-ChildItem -Force -LiteralPath $path -ErrorAction Stop) {
+                    # Inspect before enqueueing; never recurse through a reparse point.
+                    $pending.Enqueue((Get-ServicePath $child.FullName))
+                }
+            }
+        }
+    }
+    foreach ($entry in $targets) {
+        $path = Get-ServicePath $entry.path
+        $inherit = if ($entry.directory) { '(OI)(CI)' } else { '' }
+        & icacls.exe $path /grant ($Account + ':' + $inherit + $entry.rights) | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw 'Service access grant failed; keep the service stopped and inspect registration.' }
+    }
+}
+function Wait-ServiceStopped([string]$Name, [int]$TimeoutSeconds = 150) {
+    # WinSW 2.x stop only submits the request. Keep stop/restart serialized until
+    # SCM confirms completion, allowing the configured 120-second shutdown.
+    $elapsed = [Diagnostics.Stopwatch]::StartNew()
+    do {
+        $service = Get-CimInstance Win32_Service -Filter "Name='$Name'"
+        if (-not $service) { throw 'Service disappeared while waiting for stop; inspect registration.' }
+        if ($service.State -eq 'Stopped') { return }
+        if ($elapsed.Elapsed.TotalSeconds -ge $TimeoutSeconds) { throw 'Service stop timed out; preserve registration and inspect logs.' }
+        Start-Sleep -Milliseconds 250
+    } while ($true)
+}
 function New-ServiceXml([string]$Name, [string]$Java, [string]$DataRoot, [string]$Bundle, [string]$Vendor, [string]$Lang) {
     if ($Name -cnotmatch '^ijob[A-Za-z0-9]{1,40}$' -or $Vendor -cnotin @('sqlite','mysql','postgresql','sqlserver','oracle') -or $Lang -cnotin @('zh','en')) { throw 'Invalid service name, database vendor or language.' }
     $Java = Get-ServicePath $Java; $DataRoot = Get-ServicePath $DataRoot; $Bundle = Get-ServicePath $Bundle
