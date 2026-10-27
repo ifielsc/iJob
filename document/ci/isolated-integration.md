@@ -112,3 +112,17 @@ Windows 实测修复了初始化文件禁用 ACL 继承后服务账号缺少访�
 原始报告、候选哈希、源码差异和环境状态由维护工作区的统一验收索引串联，不入源码库。Native09 实测后的源码差异仅为验收文档与测试文件原有换行恢复；部署脚本保持字节一致。各次 CI 必须另按提交号和 run ID 记录，历史 CI 不替代新提交的结果。已有交付包不会随提交自动更新；最终统一重建候选属于后续阶段。
 
 Linux 与 Windows VM 均已关机，自有服务停止、临时验收任务及转发通道关闭；数据、账号、备份及失败证据保留。后续新 VM 先核验本地缓存，缺少的固定版本再下载，不克隆已有验收数据环境。
+
+## 2026-10-27 Windows 数据库与 MQ 补充实测
+
+在全新 Windows Server 2022 Standard Evaluation Desktop Experience VM 中，MySQL 8.0.35、PostgreSQL 18.6、SQL Server 2022 Developer RTM、Oracle Free26ai 23.26.3 分别与 Kafka 4.3.1、RabbitMQ 4.3.5/Erlang 27.3.4.17 的八个组合全部通过。每库独立账号、配置、服务及数据目录；RabbitMQ 用户/vhost 与各轮表、topic/group、queue/exchange 独立。优先核验本地缓存，仅补充缺少的固定版本官方介质；缓存不包含运行数据库或账号数据。
+
+每组验证正式 V1、SQL 更新、PUSH、消息服务重启后的独立客户端读回、ETL 消费与中文内容、续跑不重复新增；另验证 RabbitMQ 错误口令和跨 vhost 拒绝、应用/数据库重启后历史和配置秘密不变。Oracle 按现有单实例锁实现授予 schema 对 SYS.DBMS_LOCK 的 EXECUTE 权限，未授予 DBA 角色。安装器、语言匹配、脚本及独立探针的失败尝试原样保留。
+
+SQL Server 实测发现 JDBC 结果集不返回表名时，ETL 的唯一键校验错误拒绝有效目标表。提交 `2e4b232` 增加按目标限定名及当前 schema/catalog 定位的兼容分支，继续要求主键或无过滤唯一索引，并增加8个回归用例。Oracle 初次启动另发现公共 schema 默认配置只读取环境用户名，忽略初始化器已写入的数据源用户名；提交 `a8fd1ce` 修复默认值解析，保留显式 schema 优先级及旧环境变量后备，新增4个回归用例并同步双语配置表。八个组合均在源码 `a8fd1ce90a939f815f7102d3a96b7df36f3f86b5` 的新 Native 包上复验；包 SHA256 为 `60e10ed6fdf5b9a38a642c1a922b0c296e0431d68e27f7953ef618ce99cfa944`，产品/Maven 仍为1.0.0，正式数据库仍为V1。
+
+本地后端/Agent 共1,705项：1,703通过、2项真实MQ条件跳过；新包构建的前端429项通过。[完整 Basic CI](https://github.com/ifielsc/iJob/actions/runs/40494647837)的7个jobs全部成功，覆盖仓库、后端/Agent、四片浏览器及Docker。Full七套真实后端集成未在修复后重跑；之前候选的Full结果不自动覆盖新源码。
+
+范围限内部私有单节点及所列版本。Kafka 使用无外部网卡VM内的 loopback PLAINTEXT，不包含SASL验收；为Oracle安装创建的软件回环网卡没有网关/DNS。消费续跑与正常重启不等于exactly-once、生产HA或新一轮操作系统自启验收。Oracle结果不代表11g或VMware官方认证；JDK21.0.10与SQLServer2022 RTM是缓存兼容性样本，不表示补丁已达标，原许可/漏洞遗留继续保留。
+
+统一索引、制品哈希、脱敏原始报告与全部失败记录保存在独立 `windows-combinations-20261027` 环境。本轮服务、监听端口和一次性任务均已关闭或移除，VM已正常关机；数据和凭据按环境保留，旧环境未改动。仓库只保存结论与源码修复，不提交运行配置或秘密。
