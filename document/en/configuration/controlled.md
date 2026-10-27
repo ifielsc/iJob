@@ -30,8 +30,8 @@ These are source/implementation defaults; see the [complete catalog](../configur
 | C142 / `sa-token.token-name` | C / text | ${IJOB_AUTH_TOKEN_NAME:ijob-token} | Authentication header name; align clients, proxies and cluster nodes. |
 | C156 / `management.endpoints.web.exposure.include` | C / text-list | health,info,metrics | Management endpoint exposure; review access controls before adding endpoints. |
 | C159 / `management.endpoint.health.show-details` | C / enum | never | Health detail visibility; design access controls before exposing details. |
-| C167 / `spring.flyway.default-schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | Migration schema; plan migration before changing an existing installation. |
-| C168 / `app.platform-database.schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | Platform schema; configure per vendor and align JDBC and Flyway. |
+| C167 / `spring.flyway.default-schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | Migration schema; plan migration before changing an existing installation. |
+| C168 / `app.platform-database.schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | Platform schema; configure per vendor and align JDBC and Flyway. |
 | C170 / `spring.datasource.hikari.schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | Default schema; align platform/migration schemas and account permissions. |
 | C177 / `agent.token` | C / secret | ${IJOB_AGENT_TOKEN:} | Agent authentication token; align both ends, image imports a private token file. |
 | C183 / `spring.datasource.url` | C / text | generated from database selection | Platform database connection; changing database products requires migration, not only a URL edit. |

@@ -4,11 +4,11 @@ spring:
     hikari:
       connection-init-sql: "ALTER SESSION SET TIME_ZONE = 'UTC'"
   flyway:
-    default-schema: ${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}
+    default-schema: ${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}
 
 app:
   platform-database:
-    schema: ${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}
+    schema: ${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}
 
 mybatis:
   configuration:

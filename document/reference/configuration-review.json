@@ -22,7 +22,7 @@
     {
       "id": "S04",
       "path": "develop/api/ijob/ijob-starter/src/main/resources/database/oracle.yml",
-      "sha256": "c9094bc5bd3f6629c10b938dfa211736e0523c982cbec396cba2abe22081dc15"
+      "sha256": "7c4927b2253508480679a0f2b968ec059253cede8fed650aa4a114730f2b6d43"
     },
     {
       "id": "S05",
@@ -4626,7 +4626,7 @@
       "defaults": [
         {
           "source": "S04",
-          "value": "${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}"
+          "value": "${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}"
         },
         {
           "source": "S05",
@@ -4662,7 +4662,7 @@
       "defaults": [
         {
           "source": "S04",
-          "value": "${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}"
+          "value": "${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}"
         },
         {
           "source": "S05",

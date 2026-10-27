@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -392,16 +393,54 @@ class ApplicationConfigurationTest {
                                 source.getProperty("spring.datasource.hikari.connection-init-sql")),
                 () ->
                         assertEquals(
-                                "${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}",
+                                "${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}",
                                 source.getProperty("spring.flyway.default-schema")),
                 () ->
                         assertEquals(
-                                "${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}",
+                                "${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}",
                                 source.getProperty("app.platform-database.schema")),
                 () ->
                         assertEquals(
                                 "NULL",
                                 source.getProperty("mybatis.configuration.jdbc-type-for-null")));
+    }
+
+    @Test
+    void oracleSchemaUsesFirstRunDatasourceAccountInsteadOfAnUnrelatedEnvironmentDefault()
+            throws IOException {
+        var environment =
+                new MockEnvironment()
+                        .withProperty("spring.datasource.username", "WINDOWS_APP")
+                        .withProperty("IJOB_DB_USERNAME", "OTHER_ACCOUNT");
+        assertOracleSchema(environment, "WINDOWS_APP");
+    }
+
+    @Test
+    void explicitOracleSchemaStillOverridesDatasourceAccount() throws IOException {
+        var environment =
+                new MockEnvironment()
+                        .withProperty("spring.datasource.username", "WINDOWS_APP")
+                        .withProperty("IJOB_PLATFORM_DB_SCHEMA", "EXPLICIT_OWNER");
+        assertOracleSchema(environment, "EXPLICIT_OWNER");
+    }
+
+    @Test
+    void legacyOracleEnvironmentAccountRemainsSupported() throws IOException {
+        assertOracleSchema(
+                new MockEnvironment().withProperty("IJOB_DB_USERNAME", "LEGACY_OWNER"),
+                "LEGACY_OWNER");
+    }
+
+    @Test
+    void oracleUnconfiguredFallbackRemainsUnchanged() throws IOException {
+        assertOracleSchema(new MockEnvironment(), "ijob");
+    }
+
+    private void assertOracleSchema(MockEnvironment environment, String expected)
+            throws IOException {
+        environment.getPropertySources().addLast(load("database/oracle.yml"));
+        assertEquals(expected, environment.getProperty("spring.flyway.default-schema"));
+        assertEquals(expected, environment.getProperty("app.platform-database.schema"));
     }
 
     @Test

@@ -30,8 +30,8 @@ AES key 与 key-id 必须和已加密资源匹配；丢失原密钥无法靠重�
 | C142 / `sa-token.token-name` | C / text | ${IJOB_AUTH_TOKEN_NAME:ijob-token} | 认证请求头名称；须与客户端、代理及集群节点保持一致。 |
 | C156 / `management.endpoints.web.exposure.include` | C / text-list | health,info,metrics | 管理端点暴露列表；新增端点需检查访问控制，不能公开配置秘密。 |
 | C159 / `management.endpoint.health.show-details` | C / enum | never | 健康细节展示；按访问权限设计，不直接对外开放。 |
-| C167 / `spring.flyway.default-schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | 迁移 schema；已有安装变更需制定迁移方案。 |
-| C168 / `app.platform-database.schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${IJOB_DB_USERNAME:ijob}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | 平台 schema；按数据库产品配置，与 JDBC 和 Flyway 保持一致。 |
+| C167 / `spring.flyway.default-schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | 迁移 schema；已有安装变更需制定迁移方案。 |
+| C168 / `app.platform-database.schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | 平台 schema；按数据库产品配置，与 JDBC 和 Flyway 保持一致。 |
 | C170 / `spring.datasource.hikari.schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | 默认 schema；与平台 schema、迁移 schema 和账号权限共同调整。 |
 | C177 / `agent.token` | C / secret | ${IJOB_AGENT_TOKEN:} | Agent 认证令牌；部署双方一致，镜像从私有 token 文件导入。 |
 | C183 / `spring.datasource.url` | C / text | generated from database selection | 平台数据库连接；换数据库产品属于迁移，不能只改 URL。 |
