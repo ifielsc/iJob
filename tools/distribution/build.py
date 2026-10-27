@@ -150,7 +150,7 @@ def write_third_party_notices(bundle):
                             component['notices'].append({'archive_path': entry,
                                                          'file': filename, 'sha256': notice_hash})
                     supplement = supplements.get(sha256)
-                    if not component['notices'] and supplement:
+                    if supplement:
                         if supplement['filename'] != Path(name).name:
                             raise ValueError('Supplement does not match the packaged component')
                         for notice in supplement['notices']:
@@ -162,6 +162,9 @@ def write_third_party_notices(bundle):
                                 raise ValueError('Supplemental notice checksum mismatch')
                             (destination / filename).write_bytes(data)
                             component['notices'].append(dict(notice))
+                    component['license_text_status'] = 'present' if supplement or any(
+                        Path(n.get('archive_path', '')).name.lower().startswith(
+                            ('license', 'licence', 'copying')) for n in component['notices']) else 'missing'
                     components[sha256] = component
                 component['artifacts'].append(path.relative_to(bundle).as_posix())
     frontend = bundle / 'web-dist/.vite/third-party-components.json'
@@ -172,6 +175,8 @@ def write_third_party_notices(bundle):
               'redistribution_review': 'pending: component notices alone do not grant release approval',
               'components': list(components.values()),
               'missing_embedded_notices': [c['filename'] for c in components.values() if not c['notices']],
+              'missing_license_text': [c['filename'] for c in components.values()
+                                       if c['license_text_status'] != 'present'],
               'frontend_inventory': 'web-dist/.vite/third-party-components.json',
               'frontend_notices': 'web-dist/THIRD_PARTY_NOTICES.txt',
               'frontend_missing_text': [c['name'] + '@' + c['version'] for c in browser

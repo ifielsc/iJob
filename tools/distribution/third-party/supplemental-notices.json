@@ -2523,5 +2523,37 @@
         "source_commit": "a95a3b3c815ade4a072565858d55fbdac2cd9fe6"
       }
     ]
+  },
+  "e9fbee5d750274e9c99ac0d83b20dfc59a5c4ab940879abe70058c20026a0f4f": {
+    "filename": "spring-kafka-3.3.16.jar",
+    "purl": "pkg:maven/org.springframework.kafka/spring-kafka@3.3.16?type=jar",
+    "notices": [
+      {
+        "file": "bc5edcdeb7fb20154216d11fa3eb4f89da19f713962431ed68cc8e5d59802ffe.txt",
+        "sha256": "bc5edcdeb7fb20154216d11fa3eb4f89da19f713962431ed68cc8e5d59802ffe",
+        "source": "https://raw.githubusercontent.com/spring-projects/spring-kafka/87c4b047b658fa472201299e1cc4be7842c63c73/LICENCE.txt",
+        "source_tag": "v3.3.16",
+        "source_commit": "87c4b047b658fa472201299e1cc4be7842c63c73"
+      }
+    ]
+  },
+  "b1050081b14bb7a3a7e55a4d3ef01b5dcfabc453b4573a4fc019767191d5f4e0": {
+    "filename": "okhttp-4.12.0.jar",
+    "purl": "pkg:maven/com.squareup.okhttp3/okhttp@4.12.0?type=jar",
+    "notices": [
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/square/okhttp/4984568367caaf359b82c452bd28b5e192824d1c/LICENSE.txt",
+        "source_tag": "parent-4.12.0",
+        "source_commit": "4984568367caaf359b82c452bd28b5e192824d1c"
+      },
+      {
+        "file": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04.txt",
+        "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04",
+        "source": "https://www.mozilla.org/media/MPL/2.0/index.txt",
+        "applicability": "Exact binary okhttp3/internal/publicsuffix/NOTICE explicitly requires MPL 2.0 for bundled Public Suffix List"
+      }
+    ]
   }
 }

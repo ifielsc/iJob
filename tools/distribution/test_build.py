@@ -23,6 +23,7 @@ class DistributionBoundaryTest(unittest.TestCase):
             nested = io.BytesIO()
             with zipfile.ZipFile(nested, 'w') as library:
                 library.writestr('code.class', b'code')
+                library.writestr('META-INF/NOTICE', b'Attribution without full license terms')
             binary_hash = hashlib.sha256(nested.getvalue()).hexdigest()
             text = b'Exact upstream terms\n'
             notice_hash = hashlib.sha256(text).hexdigest()
@@ -45,6 +46,9 @@ class DistributionBoundaryTest(unittest.TestCase):
                         notice.write_bytes(text)
                         build.write_third_party_notices(bundle)
                         self.assertEqual(text, (bundle / 'third-party' / notice.name).read_bytes())
+                        manifest = json.loads((bundle / 'third-party/manifest.json').read_text())
+                        self.assertEqual([], manifest['missing_license_text'])
+                        self.assertEqual(2, len(manifest['components'][0]['notices']))
 
     def test_notices_preserve_actual_bytes_and_report_missing_text(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -60,14 +64,19 @@ class DistributionBoundaryTest(unittest.TestCase):
             missing = io.BytesIO()
             with zipfile.ZipFile(missing, 'w') as library:
                 library.writestr('code.class', b'code')
+            notice_only = io.BytesIO()
+            with zipfile.ZipFile(notice_only, 'w') as library:
+                library.writestr('NOTICE', b'Attribution without license text')
             with zipfile.ZipFile(bundle / 'app.jar', 'w') as application:
                 application.writestr('BOOT-INF/lib/upstream.jar', nested.getvalue())
                 application.writestr('BOOT-INF/lib/no-notice.jar', missing.getvalue())
+                application.writestr('BOOT-INF/lib/notice-only.jar', notice_only.getvalue())
             before = (bundle / 'app.jar').read_bytes()
             result = build.write_third_party_notices(bundle)
             manifest = json.loads((bundle / result['manifest']).read_text())
             self.assertEqual(before, (bundle / 'app.jar').read_bytes())
             self.assertEqual(['no-notice.jar'], manifest['missing_embedded_notices'])
+            self.assertEqual(['no-notice.jar', 'notice-only.jar'], manifest['missing_license_text'])
             self.assertEqual(['missing@1'], manifest['frontend_missing_text'])
             upstream = next(c for c in manifest['components'] if c['filename'] == 'upstream.jar')
             self.assertEqual(hashlib.sha256(nested.getvalue()).hexdigest(), upstream['sha256'])
