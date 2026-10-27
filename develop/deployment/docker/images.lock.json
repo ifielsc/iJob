@@ -10,13 +10,13 @@
     "digest": "sha256:affcab5356e1270ac35d2361ee83135af2f03e8d580eca78a6d5d6fdbf048db0"
   },
   "node": {
-    "tag": "library/node:24.14.1-bookworm-slim",
-    "image": "library/node@sha256:b506e7321f176aae77317f99d67a24b272c1f09f1d10f1761f2773447d8da26c",
-    "digest": "sha256:b506e7321f176aae77317f99d67a24b272c1f09f1d10f1761f2773447d8da26c"
+    "tag": "library/node:24.22.1-alpine3.24",
+    "image": "library/node@sha256:1200d815de24f8dcca745fbf7651d166034a35adbcad8860a8538ffff44f1420",
+    "digest": "sha256:1200d815de24f8dcca745fbf7651d166034a35adbcad8860a8538ffff44f1420"
   },
   "nginx": {
     "tag": "nginxinc/nginx-unprivileged:1.30.6-alpine",
-    "image": "nginxinc/nginx-unprivileged@sha256:782bb89768cc87b7f95c18b95baa1af250e5d451f26794f59363540161147c01",
-    "digest": "sha256:782bb89768cc87b7f95c18b95baa1af250e5d451f26794f59363540161147c01"
+    "image": "nginxinc/nginx-unprivileged@sha256:e2a8fca8aa356d66159aaf8a877a9c126773635adf210503eefaaeaffeed6ad7",
+    "digest": "sha256:e2a8fca8aa356d66159aaf8a877a9c126773635adf210503eefaaeaffeed6ad7"
   }
 }

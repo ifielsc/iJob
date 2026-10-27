@@ -4,7 +4,7 @@ Vue / TypeScript 前端。源码与后端 1.0.0 配套，首次安装使用冻�
 
 ## 开发与构建
 
-Node 24.14.1、pnpm 11.19.0，在本目录执行：
+Node 24.22.1、pnpm 11.28.8，在本目录执行：
 
 ```sh
 pnpm install --frozen-lockfile

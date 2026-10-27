@@ -4,7 +4,7 @@
 
 ## 前置条件
 
-从有访问权限的 GitHub 账号 clone，或下载指定提交的源码 ZIP，进入包含 `tools/` 的仓库根目录。原生构建工具：Python 3.11+、JDK 21、Maven 3.9.11、Node 24.14.1、pnpm 11.19.0；将工具放到 PATH，JAVA_HOME 指向 JDK。保留锁文件；首次构建需要 Maven/npm 依赖源。
+从有访问权限的 GitHub 账号 clone，或下载指定提交的源码 ZIP，进入包含 `tools/` 的仓库根目录。原生构建工具：Python 3.11+、JDK 21、Maven 3.9.11、Node 24.22.1、pnpm 11.28.8；将工具放到 PATH，JAVA_HOME 指向 JDK。保留锁文件；首次构建需要 Maven/npm 依赖源。
 
 ## 原生包：一条命令
 

@@ -73,3 +73,5 @@
 核对最新实际制品的 vdirs 许可全文溯源、MySQL/Oracle 驱动组合分发条件、嵌套库/前端/镜像 OS 层/工具链 SBOM 和 NOTICE，以及漏洞适用性与处置。历史未完成项先核查最新证据，不能无依据标为解决。容量结论绑定硬件/负载；同宿主双节点不等于物理高可用，外部写入不承诺 exactly-once。
 
 当前 GitHub 与候选继续私密；本清单不触发公开发布、镜像推送或仓库可见性修改。
+
+分发构建会把实际嵌套 JAR 的 LICENSE/NOTICE 原文按内容哈希导出到 `third-party/`，并在 `third-party/manifest.json` 记录来源 JAR 哈希、归属制品和未附带全文的组件；前端全文和组件清单仍在 `web-dist/`。这些文件是证据，不代表再分发已经获准。MySQL Connector/J 8.3.0 的 GPLv2 与 Universal FOSS Exception 1.0 要求分别核对驱动对应源码及组合软件的条件；应用 `source.zip` 不能替代驱动源码。Oracle 19.30.0.0 实际 JAR 内含 Free Distribution, Hosting, and Use Terms and Conditions，分发时保留原件与全文，不对驱动另收费；不得仅凭 POM 的 FUTC 名称覆盖实际条款。GPL 组件与非 FOSS 驱动同包/同进程的组合条件仍需单独确认。

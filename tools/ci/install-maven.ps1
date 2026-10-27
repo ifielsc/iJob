@@ -12,6 +12,20 @@ Invoke-WebRequest -Uri $url -OutFile $archive
 $expected = (Invoke-RestMethod -Uri "$url.sha512").Trim().Split(' ')[0]
 if ($expected -notmatch '^[0-9a-fA-F]{128}$' -or (Get-FileHash -LiteralPath $archive -Algorithm SHA512).Hash -ne $expected) { throw 'Maven archive checksum mismatch' }
 Expand-Archive -LiteralPath $archive -DestinationPath $Destination
+# Keep Maven 3.9.11 while fixing CVE-2025-67030 in its bundled Plexus utility.
+$mavenRoot = Join-Path $Destination "apache-maven-$version"
+$plexus = Join-Path $mavenRoot 'lib/plexus-utils-3.6.1.jar'
+Invoke-WebRequest -Uri 'https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-utils/3.6.1/plexus-utils-3.6.1.jar' -OutFile $plexus
+if ((Get-FileHash -LiteralPath $plexus -Algorithm SHA256).Hash -ne '05a63effd67e2d6b9d610cc82e2bd7473289d34802e57a529b28110f28af5679') {
+    throw 'Plexus security patch checksum mismatch'
+}
+Remove-Item -LiteralPath (Join-Path $mavenRoot 'lib/plexus-utils-3.6.0.jar')
+@{
+    maven = $version
+    component = 'org.codehaus.plexus:plexus-utils:3.6.1'
+    sha256 = '05a63effd67e2d6b9d610cc82e2bd7473289d34802e57a529b28110f28af5679'
+    reason = 'CVE-2025-67030; upstream Maven archive retained alongside the patched installation'
+} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $mavenRoot 'ijob-security-patch.json') -Encoding utf8
 $bin = Join-Path $Destination "apache-maven-$version/bin"
 $env:PATH = "$bin$([IO.Path]::PathSeparator)$env:PATH"
 if ($env:GITHUB_PATH) { $bin | Out-File -LiteralPath $env:GITHUB_PATH -Append -Encoding utf8 }

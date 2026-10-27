@@ -16,7 +16,7 @@
 | `develop/deployment` | 原生启动器、Docker 构建/Compose、配置示例 |
 | `tools/repository`、`.repository` | 入库白名单、检查和干净目录导出工具 |
 
-后端使用 JDK 21、Maven 3.9.11；前端使用 Node 24.14.1、pnpm 11.19.0。先在 `develop/api/ijob` 执行 `mvn -DskipTests install`，再在 Agent 目录执行 `mvn -DskipTests package`。构建命令跳过测试，只生成制品，不代表质量门禁通过。主工程的 starter、setup-tool、migration-tool 和 Agent 的版本均为 1.0.0。
+后端使用 JDK 21、Maven 3.9.11；前端使用 Node 24.22.1、pnpm 11.28.8。先在 `develop/api/ijob` 执行 `mvn -DskipTests install`，再在 Agent 目录执行 `mvn -DskipTests package`。构建命令跳过测试，只生成制品，不代表质量门禁通过。主工程的 starter、setup-tool、migration-tool 和 Agent 的版本均为 1.0.0。
 
 前端执行 `pnpm install --frozen-lockfile` 和 `pnpm check`；开发代理、隔离测试变量及命令见[前端说明](develop/web/ijob/README.md)。后端质量入口为 `develop/api/ijob/tools/verify-backend.ps1`，使用新 RunId；Java 格式工具为 google-java-format 1.24.0 AOSP，Windows 脚本要求 `JAVA_HOME`。其他系统可使用 Maven 的 quality profile，数据库集成测试须单独配置隔离资源。
 

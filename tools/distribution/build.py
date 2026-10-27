@@ -4,6 +4,7 @@
 """Build an auditable 1.0.0 distribution from a clone or source ZIP."""
 import argparse
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -78,7 +79,7 @@ def run(command, cwd, log, capture=False):
 def toolchains(reports):
     expected = [('java', ['-version'], 'version "21.'),
                 ('mvn', ['--version'], 'Apache Maven 3.9.11'),
-                ('node', ['--version'], 'v24.14.1'), ('pnpm', ['--version'], '11.19.0')]
+                ('node', ['--version'], 'v24.22.1'), ('pnpm', ['--version'], '11.28.8')]
     versions = {}
     for name, args, required in expected:
         executable = shutil.which(name)
@@ -116,6 +117,69 @@ def copy_deployment(source, bundle):
         '`support/` contains internal helpers, not user entry points.\n\n'
         'Start with the installation guide for your platform. Keep the data home outside this '
         'directory. This package contains no credentials or database.\n', encoding='utf-8')
+
+
+def write_third_party_notices(bundle):
+    """Expose notices from the actual shipped bytes without changing nested JARs."""
+    destination = bundle / 'third-party'
+    destination.mkdir()
+    supplement_root = ROOT / 'tools/distribution/third-party'
+    supplements = json.loads((supplement_root / 'supplemental-notices.json').read_text(encoding='utf-8'))
+    components = {}
+    for path in sorted(bundle.rglob('*.jar')):
+        with zipfile.ZipFile(path) as application:
+            for name in sorted(application.namelist()):
+                if not name.startswith('BOOT-INF/lib/') or not name.endswith('.jar'):
+                    continue
+                data = application.read(name)
+                sha256 = hashlib.sha256(data).hexdigest()
+                component = components.get(sha256)
+                if component is None:
+                    component = {'filename': Path(name).name, 'sha256': sha256,
+                                 'artifacts': [], 'notices': []}
+                    with zipfile.ZipFile(io.BytesIO(data)) as library:
+                        for entry in sorted(library.namelist()):
+                            if entry.endswith('/') or not Path(entry).name.lower().startswith(
+                                    ('license', 'licence', 'notice', 'copying')):
+                                continue
+                            notice = library.read(entry)
+                            notice_hash = hashlib.sha256(notice).hexdigest()
+                            # Content-addressed names avoid unsafe paths and duplicate notices.
+                            filename = notice_hash + '.txt'
+                            (destination / filename).write_bytes(notice)
+                            component['notices'].append({'archive_path': entry,
+                                                         'file': filename, 'sha256': notice_hash})
+                    supplement = supplements.get(sha256)
+                    if not component['notices'] and supplement:
+                        if supplement['filename'] != Path(name).name:
+                            raise ValueError('Supplement does not match the packaged component')
+                        for notice in supplement['notices']:
+                            filename = notice['sha256'] + '.txt'
+                            if notice['file'] != filename:
+                                raise ValueError('Invalid supplemental notice path')
+                            data = (supplement_root / filename).read_bytes()
+                            if hashlib.sha256(data).hexdigest() != notice['sha256']:
+                                raise ValueError('Supplemental notice checksum mismatch')
+                            (destination / filename).write_bytes(data)
+                            component['notices'].append(dict(notice))
+                    components[sha256] = component
+                component['artifacts'].append(path.relative_to(bundle).as_posix())
+    frontend = bundle / 'web-dist/.vite/third-party-components.json'
+    if not frontend.is_file():
+        raise ValueError('Missing actual frontend component inventory')
+    browser = json.loads(frontend.read_text(encoding='utf-8'))['components']
+    result = {'scope': 'Actual nested JAR bytes and rendered frontend component inventory',
+              'redistribution_review': 'pending: component notices alone do not grant release approval',
+              'components': list(components.values()),
+              'missing_embedded_notices': [c['filename'] for c in components.values() if not c['notices']],
+              'frontend_inventory': 'web-dist/.vite/third-party-components.json',
+              'frontend_notices': 'web-dist/THIRD_PARTY_NOTICES.txt',
+              'frontend_missing_text': [c['name'] + '@' + c['version'] for c in browser
+                                        if c['licenseTextStatus'] != 'present']}
+    (destination / 'manifest.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
+    return {'manifest': 'third-party/manifest.json',
+            'manifest_sha256': digest(destination / 'manifest.json'),
+            'redistribution_review': result['redistribution_review']}
 
 
 def write_archives(output, bundle, target):
@@ -251,6 +315,7 @@ def main():
         provenance = {'source_base_commit': commit, 'source_has_local_changes': not matches}
     copy_deployment(work, bundle)
     result = native(work, bundle, reports) if args.target == 'native' else docker(work, bundle, reports)
+    result['third_party_notices'] = write_third_party_notices(bundle)
     result.update(version=VERSION, target=args.target, public_release_approved=False,
                   source_manifest_sha256=digest(bundle / 'source-manifest.json'))
     result.update(provenance)

@@ -1,0 +1,263 @@
+Source: https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3-sources.jar!/module-info.java, org/hsqldb/cmdline/SqlFile.java, org/hsqldb/cmdline/SqlTool.java, org/hsqldb/cmdline/SqlToolSprayer.java, org/hsqldb/cmdline/SqltoolRB.java, org/hsqldb/cmdline/package-info.java, org/hsqldb/lib/HsqlConsoleHandler.java, org/hsqldb/lib/tar/TarFileInputStream.java, org/hsqldb/lib/tar/TarGeneratorMain.java, org/hsqldb/lib/tar/TarReaderMain.java, org/hsqldb/util/preprocessor/BasicResolver.java, org/hsqldb/util/preprocessor/Document.java, org/hsqldb/util/preprocessor/Line.java, org/hsqldb/util/preprocessor/LineType.java, org/hsqldb/util/preprocessor/Tokenizer.java
+
+/* Copyright (c) 2001-2022, The HSQL Development Group
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the HSQL Development Group nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL HSQL DEVELOPMENT GROUP, HSQLDB.ORG,
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3-sources.jar!/org/hsqldb/ClientConnection.java, org/hsqldb/ClientConnectionHTTP.java, org/hsqldb/ColumnBase.java, org/hsqldb/ColumnSchema.java, org/hsqldb/Constraint.java, org/hsqldb/Database.java, org/hsqldb/DatabaseManager.java, org/hsqldb/DatabaseType.java, org/hsqldb/DatabaseURL.java, org/hsqldb/Expression.java, org/hsqldb/ExpressionAccessor.java, org/hsqldb/ExpressionAggregate.java, org/hsqldb/ExpressionArithmetic.java, org/hsqldb/ExpressionArrayAggregate.java, org/hsqldb/ExpressionBoolean.java, org/hsqldb/ExpressionColumn.java, org/hsqldb/ExpressionColumnAccessor.java, org/hsqldb/ExpressionJSON.java, org/hsqldb/ExpressionLike.java, org/hsqldb/ExpressionLogical.java, org/hsqldb/ExpressionOp.java, org/hsqldb/ExpressionOrderBy.java, org/hsqldb/ExpressionPeriod.java, org/hsqldb/ExpressionPeriodOp.java, org/hsqldb/ExpressionTable.java, org/hsqldb/ExpressionValue.java, org/hsqldb/FunctionCustom.java, org/hsqldb/FunctionSQL.java, org/hsqldb/FunctionSQLInvoked.java, org/hsqldb/GroupSet.java, org/hsqldb/HsqlException.java, org/hsqldb/HsqlNameManager.java, org/hsqldb/NumberSequence.java, org/hsqldb/OpTypes.java, org/hsqldb/ParserBase.java, org/hsqldb/ParserCommand.java, org/hsqldb/ParserDDL.java, org/hsqldb/ParserDML.java, org/hsqldb/ParserDQL.java, org/hsqldb/ParserRoutine.java, org/hsqldb/ParserTable.java, org/hsqldb/PeriodDefinition.java, org/hsqldb/QueryExpression.java, org/hsqldb/QuerySpecification.java, org/hsqldb/RangeVariable.java, org/hsqldb/RangeVariableJoined.java, org/hsqldb/RangeVariableResolver.java, org/hsqldb/ReferenceObject.java, org/hsqldb/Routine.java, org/hsqldb/RoutineSchema.java, org/hsqldb/RowAVLDiskData.java, org/hsqldb/RowAVLDiskLarge.java, org/hsqldb/RowAction.java, org/hsqldb/RowActionBase.java, org/hsqldb/RowDiskDataChange.java, org/hsqldb/Scanner.java, org/hsqldb/Schema.java, org/hsqldb/SchemaManager.java, org/hsqldb/SchemaObject.java, org/hsqldb/SchemaObjectSet.java, org/hsqldb/Session.java, org/hsqldb/SessionContext.java, org/hsqldb/SessionData.java, org/hsqldb/SessionInterface.java, org/hsqldb/SessionManager.java, org/hsqldb/SetFunctionValueAggregate.java, org/hsqldb/SetFunctionValueArray.java, org/hsqldb/SetFunctionValueUser.java, org/hsqldb/SortAndSlice.java, org/hsqldb/SqlInvariants.java, org/hsqldb/Statement.java, org/hsqldb/StatementCommand.java, org/hsqldb/StatementCompound.java, org/hsqldb/StatementCursor.java, org/hsqldb/StatementDML.java, org/hsqldb/StatementDMQL.java, org/hsqldb/StatementExpression.java, org/hsqldb/StatementHandler.java, org/hsqldb/StatementInsert.java, org/hsqldb/StatementManager.java, org/hsqldb/StatementProcedure.java, org/hsqldb/StatementQuery.java, org/hsqldb/StatementResultUpdate.java, org/hsqldb/StatementSchema.java, org/hsqldb/StatementSchemaDefinition.java, org/hsqldb/StatementSession.java, org/hsqldb/StatementSet.java, org/hsqldb/StatementSignal.java, org/hsqldb/StatementSimple.java, org/hsqldb/StatementTypes.java, org/hsqldb/Table.java, org/hsqldb/TableBase.java, org/hsqldb/TableDerived.java, org/hsqldb/TablePeriodWorks.java, org/hsqldb/TableUtil.java, org/hsqldb/TableWorks.java, org/hsqldb/TextTable.java, org/hsqldb/Token.java, org/hsqldb/Tokens.java, org/hsqldb/TransactionManager.java, org/hsqldb/TransactionManager2PL.java, org/hsqldb/TransactionManagerCommon.java, org/hsqldb/TransactionManagerMV2PL.java, org/hsqldb/TransactionManagerMVCC.java, org/hsqldb/TriggerDef.java, org/hsqldb/TriggerDefSQL.java, org/hsqldb/TypeInvariants.java, org/hsqldb/View.java, org/hsqldb/auth/AuthBeanMultiplexer.java, org/hsqldb/auth/AuthUtils.java, org/hsqldb/auth/DenyException.java, org/hsqldb/auth/HsqldbSlaveAuthBean.java, org/hsqldb/auth/JaasAuthBean.java, org/hsqldb/auth/LdapAuthBean.java, org/hsqldb/auth/LdapAuthBeanTester.java, org/hsqldb/dbinfo/DITableInfo.java, org/hsqldb/dbinfo/DatabaseInformation.java, org/hsqldb/dbinfo/DatabaseInformationFull.java, org/hsqldb/dbinfo/DatabaseInformationMain.java, org/hsqldb/error/Error.java, org/hsqldb/error/ErrorCode.java, org/hsqldb/index/Index.java, org/hsqldb/index/IndexAVLCheck.java, org/hsqldb/index/IndexStats.java, org/hsqldb/index/NodeAVLDiskLarge.java, org/hsqldb/jdbc/JDBCArray.java, org/hsqldb/jdbc/JDBCArrayBasic.java, org/hsqldb/jdbc/JDBCBlob.java, org/hsqldb/jdbc/JDBCBlobClient.java, org/hsqldb/jdbc/JDBCBlobFile.java, org/hsqldb/jdbc/JDBCCallableStatement.java, org/hsqldb/jdbc/JDBCClob.java, org/hsqldb/jdbc/JDBCClobClient.java, org/hsqldb/jdbc/JDBCClobFile.java, org/hsqldb/jdbc/JDBCColumnMetaData.java, org/hsqldb/jdbc/JDBCCommonDataSource.java, org/hsqldb/jdbc/JDBCConnection.java, org/hsqldb/jdbc/JDBCDataSource.java, org/hsqldb/jdbc/JDBCDataSourceFactory.java, org/hsqldb/jdbc/JDBCDatabaseMetaData.java, org/hsqldb/jdbc/JDBCDriver.java, org/hsqldb/jdbc/JDBCNClob.java, org/hsqldb/jdbc/JDBCParameterMetaData.java, org/hsqldb/jdbc/JDBCPool.java, org/hsqldb/jdbc/JDBCPreparedStatement.java, org/hsqldb/jdbc/JDBCResultSet.java, org/hsqldb/jdbc/JDBCResultSetMetaData.java, org/hsqldb/jdbc/JDBCRowId.java, org/hsqldb/jdbc/JDBCSQLXML.java, org/hsqldb/jdbc/JDBCSavepoint.java, org/hsqldb/jdbc/JDBCStatement.java, org/hsqldb/jdbc/JDBCStatementBase.java, org/hsqldb/jdbc/JDBCUtil.java, org/hsqldb/jdbc/pool/JDBCPooledConnection.java, org/hsqldb/jdbc/pool/JDBCPooledDataSource.java, org/hsqldb/jdbc/pool/JDBCXAConnection.java, org/hsqldb/jdbc/pool/JDBCXAConnectionWrapper.java, org/hsqldb/jdbc/pool/JDBCXADataSource.java, org/hsqldb/jdbc/pool/JDBCXAResource.java, org/hsqldb/jdbc/pool/JDBCXID.java, org/hsqldb/lib/AbstractReadOnlyCollection.java, org/hsqldb/lib/AppendableException.java, org/hsqldb/lib/ArrayCounter.java, org/hsqldb/lib/ArrayListIdentity.java, org/hsqldb/lib/ArraySort.java, org/hsqldb/lib/ArrayUtil.java, org/hsqldb/lib/AsciiInputStream.java, org/hsqldb/lib/AsciiOutputStream.java, org/hsqldb/lib/BaseList.java, org/hsqldb/lib/BasicTextJdkLogFormatter.java, org/hsqldb/lib/CharArrayWriter.java, org/hsqldb/lib/ClosableByteArrayOutputStream.java, org/hsqldb/lib/ClosableCharArrayWriter.java, org/hsqldb/lib/Collection.java, org/hsqldb/lib/CountUpDownLatch.java, org/hsqldb/lib/CountdownInputStream.java, org/hsqldb/lib/DataOutputStream.java, org/hsqldb/lib/DoubleIntIndex.java, org/hsqldb/lib/DoubleLongIndex.java, org/hsqldb/lib/EventLogInterface.java, org/hsqldb/lib/FileAccess.java, org/hsqldb/lib/FileAccessRes.java, org/hsqldb/lib/FileArchiver.java, org/hsqldb/lib/FileUtil.java, org/hsqldb/lib/FilteredIterator.java, org/hsqldb/lib/FrameworkLogger.java, org/hsqldb/lib/HashMap.java, org/hsqldb/lib/HashSet.java, org/hsqldb/lib/HsqlArrayHeap.java, org/hsqldb/lib/HsqlArrayList.java, org/hsqldb/lib/HsqlByteArrayInputStream.java, org/hsqldb/lib/HsqlByteArrayOutputStream.java, org/hsqldb/lib/HsqlDeque.java, org/hsqldb/lib/HsqlHeap.java, org/hsqldb/lib/HsqlTaskQueue.java, org/hsqldb/lib/HsqlThreadFactory.java, org/hsqldb/lib/HsqlTimer.java, org/hsqldb/lib/InOutUtil.java, org/hsqldb/lib/InputStreamInterface.java, org/hsqldb/lib/InputStreamWrapper.java, org/hsqldb/lib/IntHashSet.java, org/hsqldb/lib/IntIndex.java, org/hsqldb/lib/IntKeyHashMap.java, org/hsqldb/lib/IntKeyHashMapConcurrent.java, org/hsqldb/lib/IntKeyIntValueHashMap.java, org/hsqldb/lib/IntKeyLongValueHashMap.java, org/hsqldb/lib/IntValueHashMap.java, org/hsqldb/lib/Iterator.java, org/hsqldb/lib/KMPSearchAlgorithm.java, org/hsqldb/lib/LineGroupReader.java, org/hsqldb/lib/LineReader.java, org/hsqldb/lib/LongDeque.java, org/hsqldb/lib/LongKeyHashMap.java, org/hsqldb/lib/LongKeyIntValueHashMap.java, org/hsqldb/lib/LongKeyLongValueHashMap.java, org/hsqldb/lib/LongLookup.java, org/hsqldb/lib/LongValueHashMap.java, org/hsqldb/lib/Map.java, org/hsqldb/lib/MapEntry.java, org/hsqldb/lib/MultiValueHashMap.java, org/hsqldb/lib/ObjectComparator.java, org/hsqldb/lib/OrderedHashMap.java, org/hsqldb/lib/OrderedHashSet.java, org/hsqldb/lib/OrderedIntHashSet.java, org/hsqldb/lib/OrderedIntKeyHashMap.java, org/hsqldb/lib/OrderedLongHashSet.java, org/hsqldb/lib/OrderedLongKeyHashMap.java, org/hsqldb/lib/ReaderInputStream.java, org/hsqldb/lib/RefCapablePropertyResourceBundle.java, org/hsqldb/lib/ScannerSearchAlgorithm.java, org/hsqldb/lib/SimpleLog.java, org/hsqldb/lib/StopWatch.java, org/hsqldb/lib/StringComparator.java, org/hsqldb/lib/StringInputStream.java, org/hsqldb/lib/StringUtil.java, org/hsqldb/lib/ThreadFactory.java, org/hsqldb/lib/ValidatingResourceBundle.java, org/hsqldb/lib/WrapperIterator.java, org/hsqldb/lib/java/JavaSystem.java, org/hsqldb/lib/java/package-info.java, org/hsqldb/lib/tar/DbBackup.java, org/hsqldb/lib/tar/DbBackupMain.java, org/hsqldb/lib/tar/PIFData.java, org/hsqldb/lib/tar/PIFGenerator.java, org/hsqldb/lib/tar/TarFileOutputStream.java, org/hsqldb/lib/tar/TarGenerator.java, org/hsqldb/lib/tar/TarReader.java, org/hsqldb/map/BaseHashMap.java, org/hsqldb/map/BitMap.java, org/hsqldb/map/HashIndex.java, org/hsqldb/map/ValuePool.java, org/hsqldb/map/ValuePoolHashMap.java, org/hsqldb/navigator/RowSetNavigator.java, org/hsqldb/navigator/RowSetNavigatorClient.java, org/hsqldb/navigator/RowSetNavigatorData.java, org/hsqldb/navigator/RowSetNavigatorDataChange.java, org/hsqldb/navigator/RowSetNavigatorDataChangeMemory.java, org/hsqldb/navigator/RowSetNavigatorDataTable.java, org/hsqldb/persist/BlockObjectStore.java, org/hsqldb/persist/Cache.java, org/hsqldb/persist/CachedObjectBase.java, org/hsqldb/persist/Crypto.java, org/hsqldb/persist/DataFileCache.java, org/hsqldb/persist/DataFileCacheSession.java, org/hsqldb/persist/DataFileDefrag.java, org/hsqldb/persist/DataSpaceManager.java, org/hsqldb/persist/DataSpaceManagerBlocks.java, org/hsqldb/persist/DataSpaceManagerSimple.java, org/hsqldb/persist/DoubleIntArrayCachedObject.java, org/hsqldb/persist/HsqlDatabaseProperties.java, org/hsqldb/persist/HsqlProperties.java, org/hsqldb/persist/LobManager.java, org/hsqldb/persist/LobStore.java, org/hsqldb/persist/LobStoreInJar.java, org/hsqldb/persist/LobStoreMem.java, org/hsqldb/persist/LobStoreRAFile.java, org/hsqldb/persist/LockFile.java, org/hsqldb/persist/Log.java, org/hsqldb/persist/Logger.java, org/hsqldb/persist/PersistentStore.java, org/hsqldb/persist/PersistentStoreCollectionDatabase.java, org/hsqldb/persist/PersistentStoreCollectionSession.java, org/hsqldb/persist/RAFile.java, org/hsqldb/persist/RAFileHybrid.java, org/hsqldb/persist/RAFileInJar.java, org/hsqldb/persist/RAFileNIO.java, org/hsqldb/persist/RAFileSimple.java, org/hsqldb/persist/RAShadowFile.java, org/hsqldb/persist/RowInsertSimple.java, org/hsqldb/persist/RowInsertVersioning.java, org/hsqldb/persist/RowStoreAVL.java, org/hsqldb/persist/RowStoreAVLDisk.java, org/hsqldb/persist/RowStoreAVLDiskData.java, org/hsqldb/persist/RowStoreAVLHybrid.java, org/hsqldb/persist/RowStoreAVLHybridExtended.java, org/hsqldb/persist/RowStoreAVLMemory.java, org/hsqldb/persist/RowStoreDataChange.java, org/hsqldb/persist/ScriptLoader.java, org/hsqldb/persist/ScriptRunner.java, org/hsqldb/persist/SimpleStore.java, org/hsqldb/persist/TableSpaceManager.java, org/hsqldb/persist/TableSpaceManagerBlocks.java, org/hsqldb/persist/TableSpaceManagerSimple.java, org/hsqldb/persist/TextCache.java, org/hsqldb/persist/TextFileOps.java, org/hsqldb/persist/TextFileReader16.java, org/hsqldb/persist/TextFileReader8.java, org/hsqldb/persist/TextFileSettings.java, org/hsqldb/persist/TextTableStorageManager.java, org/hsqldb/resources/ResourceBundleHandler.java, org/hsqldb/result/Result.java, org/hsqldb/result/ResultConstants.java, org/hsqldb/result/ResultLob.java, org/hsqldb/result/ResultMetaData.java, org/hsqldb/result/ResultProperties.java, org/hsqldb/rights/GrantConstants.java, org/hsqldb/rights/Grantee.java, org/hsqldb/rights/GranteeManager.java, org/hsqldb/rights/Right.java, org/hsqldb/rights/User.java, org/hsqldb/rights/UserManager.java, org/hsqldb/rowio/RowInputBase.java, org/hsqldb/rowio/RowInputBinary.java, org/hsqldb/rowio/RowInputBinaryDecode.java, org/hsqldb/rowio/RowInputText.java, org/hsqldb/rowio/RowInputTextLog.java, org/hsqldb/rowio/RowInputTextQuoted.java, org/hsqldb/rowio/RowOutputBase.java, org/hsqldb/rowio/RowOutputBinary.java, org/hsqldb/rowio/RowOutputBinaryEncode.java, org/hsqldb/rowio/RowOutputInterface.java, org/hsqldb/rowio/RowOutputText.java, org/hsqldb/rowio/RowOutputTextLog.java, org/hsqldb/rowio/RowOutputTextQuoted.java, org/hsqldb/scriptio/ScriptReaderDecode.java, org/hsqldb/scriptio/ScriptReaderText.java, org/hsqldb/scriptio/ScriptWriterBase.java, org/hsqldb/scriptio/ScriptWriterEncode.java, org/hsqldb/scriptio/ScriptWriterText.java, org/hsqldb/scriptio/ScriptWriterTextColumnNames.java, org/hsqldb/server/HsqlServerFactory.java, org/hsqldb/server/HsqlSocketFactory.java, org/hsqldb/server/HsqlSocketFactorySecure.java, org/hsqldb/server/HsqlSocketRequestHandler.java, org/hsqldb/server/OdbcPacketInputStream.java, org/hsqldb/server/OdbcPacketOutputStream.java, org/hsqldb/server/OdbcPreparedStatement.java, org/hsqldb/server/OdbcUtil.java, org/hsqldb/server/PgType.java, org/hsqldb/server/RecoverableOdbcFailure.java, org/hsqldb/server/Server.java, org/hsqldb/server/ServerAcl.java, org/hsqldb/server/ServerConfiguration.java, org/hsqldb/server/ServerConstants.java, org/hsqldb/server/ServerProperties.java, org/hsqldb/server/StatementPortal.java, org/hsqldb/server/WebServer.java, org/hsqldb/server/WebServerConnection.java, org/hsqldb/trigger/Trigger.java, org/hsqldb/types/ArrayType.java, org/hsqldb/types/BinaryData.java, org/hsqldb/types/BinaryType.java, org/hsqldb/types/BinaryUUIDType.java, org/hsqldb/types/BitType.java, org/hsqldb/types/BlobData.java, org/hsqldb/types/BlobDataID.java, org/hsqldb/types/BlobInputStream.java, org/hsqldb/types/BlobType.java, org/hsqldb/types/BooleanType.java, org/hsqldb/types/CharacterType.java, org/hsqldb/types/Charset.java, org/hsqldb/types/ClobData.java, org/hsqldb/types/ClobDataID.java, org/hsqldb/types/ClobInputStream.java, org/hsqldb/types/ClobType.java, org/hsqldb/types/Collation.java, org/hsqldb/types/DTIType.java, org/hsqldb/types/DateFormat.java, org/hsqldb/types/DateTimeType.java, org/hsqldb/types/HsqlDateTime.java, org/hsqldb/types/IntervalMonthData.java, org/hsqldb/types/IntervalSecondData.java, org/hsqldb/types/IntervalType.java, org/hsqldb/types/NullType.java, org/hsqldb/types/NumberFormat.java, org/hsqldb/types/NumberType.java, org/hsqldb/types/OtherType.java, org/hsqldb/types/RowType.java, org/hsqldb/types/TimeData.java, org/hsqldb/types/TimestampData.java, org/hsqldb/types/Type.java, org/hsqldb/types/Types.java, org/hsqldb/types/UserTypeModifier.java, org/hsqldb/util/CSVWriter.java, org/hsqldb/util/CommonSwing.java, org/hsqldb/util/ConnectionDialog.java, org/hsqldb/util/ConnectionDialogCommon.java, org/hsqldb/util/ConnectionDialogSwing.java, org/hsqldb/util/ConnectionSetting.java, org/hsqldb/util/DataAccessPoint.java, org/hsqldb/util/DatabaseManager.java, org/hsqldb/util/DatabaseManagerSwing.java, org/hsqldb/util/FontDialogSwing.java, org/hsqldb/util/GridSwing.java, org/hsqldb/util/HsqldbTransferHelper.java, org/hsqldb/util/InformixTransferHelper.java, org/hsqldb/util/JDBCTypes.java, org/hsqldb/util/MainInvoker.java, org/hsqldb/util/McKoiTransferHelper.java, org/hsqldb/util/OracleTransferHelper.java, org/hsqldb/util/PostgresTransferHelper.java, org/hsqldb/util/RCData.java, org/hsqldb/util/SqlServerTransferHelper.java, org/hsqldb/util/TransferDb.java, org/hsqldb/util/TransferHelper.java, org/hsqldb/util/TransferResultSet.java, org/hsqldb/util/TransferSQLText.java, org/hsqldb/util/package-info.java, org/hsqldb/util/preprocessor/Defines.java, org/hsqldb/util/preprocessor/Preprocessor.java, org/hsqldb/util/preprocessor/package-info.java
+
+/* Copyright (c) 2001-2024, The HSQL Development Group
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the HSQL Development Group nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL HSQL DEVELOPMENT GROUP, HSQLDB.ORG,
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3-sources.jar!/org/hsqldb/Like.java, org/hsqldb/RowAVL.java, org/hsqldb/RowAVLDisk.java, org/hsqldb/index/IndexAVL.java, org/hsqldb/index/IndexAVLMemory.java, org/hsqldb/index/NodeAVL.java, org/hsqldb/index/NodeAVLDisk.java, org/hsqldb/lib/StringConverter.java, org/hsqldb/server/ServerConnection.java, org/hsqldb/util/CodeSwitcher.java, org/hsqldb/util/DatabaseManagerCommon.java, org/hsqldb/util/Grid.java, org/hsqldb/util/SQLStatements.java, org/hsqldb/util/Transfer.java, org/hsqldb/util/TransferCommon.java, org/hsqldb/util/TransferTable.java, org/hsqldb/util/Tree.java
+
+/*
+ * For work developed by the HSQL Development Group:
+ *
+ * Copyright (c) 2001-2024, The HSQL Development Group
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the HSQL Development Group nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL HSQL DEVELOPMENT GROUP, HSQLDB.ORG,
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *
+ *
+ * For work originally developed by the Hypersonic SQL Group:
+ *
+ * Copyright (c) 1995-2000, The Hypersonic SQL Group.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the Hypersonic SQL Group nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE HYPERSONIC SQL GROUP,
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * on behalf of the Hypersonic SQL Group.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3-sources.jar!/org/hsqldb/RangeGroup.java, org/hsqldb/Server.java, org/hsqldb/SetFunction.java, org/hsqldb/Trigger.java, org/hsqldb/auth/AuthFunctionBean.java, org/hsqldb/auth/package-info.java, org/hsqldb/cmdline/SqlToolError.java, org/hsqldb/cmdline/sqltool/Calculator.java, org/hsqldb/cmdline/sqltool/FileRecordReader.java, org/hsqldb/cmdline/sqltool/Token.java, org/hsqldb/cmdline/sqltool/TokenList.java, org/hsqldb/cmdline/sqltool/TokenSource.java, org/hsqldb/jdbcDriver.java, org/hsqldb/jdbc/JDBCConnectionEventListener.java, org/hsqldb/jdbc/package-info.java, org/hsqldb/jdbc/pool/package-info.java, org/hsqldb/lib/IntLookup.java, org/hsqldb/lib/List.java, org/hsqldb/lib/Notified.java, org/hsqldb/lib/PrimitiveIterator.java, org/hsqldb/lib/ReadWriteLockDummy.java, org/hsqldb/lib/RefCapableRBInterface.java, org/hsqldb/lib/Set.java, org/hsqldb/lib/package-info.java, org/hsqldb/lib/tar/RB.java, org/hsqldb/lib/tar/TarHeaderField.java, org/hsqldb/lib/tar/TarMalformatException.java, org/hsqldb/lib/tar/package-info.java, org/hsqldb/navigator/RangeIterator.java, org/hsqldb/navigator/RowIterator.java, org/hsqldb/package-info.java, org/hsqldb/persist/BitMapCachedObject.java, org/hsqldb/persist/CachedObject.java, org/hsqldb/persist/DirectoryBlockCachedObject.java, org/hsqldb/persist/IntArrayCachedObject.java, org/hsqldb/persist/PersistentStoreCollection.java, org/hsqldb/persist/RandomAccessInterface.java, org/hsqldb/persist/RowInsertInterface.java, org/hsqldb/persist/TextFileReader.java, org/hsqldb/rowio/RowInputInterface.java, org/hsqldb/scriptio/ScriptReaderBase.java, org/hsqldb/scriptio/StatementLineTypes.java, org/hsqldb/server/package-info.java, org/hsqldb/trigger/package-info.java, org/hsqldb/types/JavaObjectData.java, org/hsqldb/types/JavaObjectDataInternal.java, org/hsqldb/types/LobData.java, org/hsqldb/types/LongPair.java, org/hsqldb/types/TypedComparator.java, org/hsqldb/util/DataAccessPointException.java, org/hsqldb/util/HelperFactory.java, org/hsqldb/util/Traceable.java
+
+/* Copyright (c) 2001-2021, The HSQL Development Group
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the HSQL Development Group nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL HSQL DEVELOPMENT GROUP, HSQLDB.ORG,
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3-sources.jar!/org/hsqldb/Row.java
+
+/* Copyright (c) 2001-2023, The HSQL Development Group
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the HSQL Development Group nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL HSQL DEVELOPMENT GROUP, HSQLDB.ORG,
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3-sources.jar!/org/hsqldb/util/TableSorter.java
+
+/*
+ * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *   - Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *   - Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ *   - Neither the name of Oracle or the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3-sources.jar!/org/hsqldb/util/preprocessor/IResolver.java, org/hsqldb/util/preprocessor/Option.java, org/hsqldb/util/preprocessor/Parser.java, org/hsqldb/util/preprocessor/PreprocessorException.java, org/hsqldb/util/preprocessor/Token.java
+
+/* Copyright (c) 2001-2007, The HSQL Development Group
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of the HSQL Development Group nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL HSQL DEVELOPMENT GROUP, HSQLDB.ORG,
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */

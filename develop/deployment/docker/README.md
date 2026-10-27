@@ -9,7 +9,7 @@
 ## 文件与构建
 
 - 后端：[Dockerfile](../../api/ijob/Dockerfile)，构建上下文 `develop/api/ijob`；JDK 21、Maven 3.9.11，多阶段构建，运行 UID/GID 10001。
-- 前端：[Dockerfile](../../web/ijob/Dockerfile)，上下文 `develop/web/ijob`；Node 24.14.1、pnpm 11.19.0、frozen lockfile 和 pnpm 补丁；运行 nginx 非 root UID/GID 101，端口 8080。
+- 前端：[Dockerfile](../../web/ijob/Dockerfile)，上下文 `develop/web/ijob`；Node 24.22.1、pnpm 11.28.8、frozen lockfile 和 pnpm 补丁；运行 nginx 非 root UID/GID 101，端口 8080。
 - Agent：[Dockerfile](../../api/ijob-monitor-agent/Dockerfile)，上下文 `develop/api`，先构建本地 common/contract，再独立构建 Agent；运行 UID/GID 10001。
 - 三个上下文均使用 `.dockerignore` 白名单；不允许把工作区根目录、backup、outputs、local-secrets、数据库、构建缓存或真实配置作为构建上下文。运行镜像只复制 JAR/静态文件和健康检查类，测试源码不进入运行镜像。
 
@@ -71,3 +71,9 @@ MySQL 示例要求服务器证书验证，PostgreSQL 为 verify-full，SQL Serve
 MySQL 短时容量基线使用后端 4 CPU/2GiB、Hikari 48、`app.runtime.work-queue.max-inflight-roots=64`，trigger/job/task 的 core-size/max-size 各 64、queue-capacity 各 1000。20 个提交客户端下验证 50 同时任务及约 20 触发/秒；新库低数据量 API 20 并发 p95 194.804ms/p99 244.493ms。这个配置是明确记录的单次基线，不自动替换默认上限，也不是 SQLite 或所有业务的容量保证。生产需依据实际任务时长、历史数据量和数据库可承受连接数配置。
 
 正式 HTTPS 入口的剪贴板功能需浏览器安全上下文；测试使用自签证书并仅在测试浏览器忽略证书错误，不向生产提供这一设置。SQLite 恢复测得 50.578 秒仅代表停写隔离演练；生产的 RPO≤15min/RTO≤30min 仍需备份调度和目标主库实演。
+
+## 依赖安全更新与复扫
+
+Node 构建输入固定为 24.22.1；后端和 Agent 的 `build-base`、`runtime-base` 阶段使用 SHA-256 固定的 Temurin 21.0.13+9 官方归档替换旧 Java，并更新发行版系统包。Maven 保持 3.9.11。Web 的构建与运行基础阶段使用 Alpine，并更新系统包；构建阶段直接安装 SHA-256 固定的 pnpm 11.28.8，移除不使用的 npm/Yarn，减少构建工具的遗留漏洞。原始基础镜像的扫描结果不代表补丁后阶段；应导出并扫描实际阶段和最终运行镜像。
+
+`JDK_ARCHIVE_URL` / `JRE_ARCHIVE_URL` / `PLEXUS_UTILS_URL` / `PNPM_ARCHIVE_URL` 可在 `docker build --build-arg` 中指向本环境的只读缓存中转，校验和保持固定；不要将账号、口令或带签名凭据的地址放入参数。未提供时从官方上游下载。固定镜像摘要和 Java 校验和不冻结 apt/apk 仓库内容：每次候选保留解析后的包版本、镜像 ID、扫描库时间与测试结果，不将一次扫描当作永久零漏洞。补丁阶段需在发行版仓库可访问时构建，完成后保存镜像供本地复用。

@@ -1,0 +1,1132 @@
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/ARMOptions.java
+
+/*
+ * ARMOptions
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/ARMThumbOptions.java
+
+/*
+ * ARMThumbOptions
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/ArrayCache.java
+
+/*
+ * ArrayCache
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/BCJCoder.java
+
+/*
+ * BCJCoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/BCJDecoder.java
+
+/*
+ * BCJDecoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/BCJEncoder.java
+
+/*
+ * BCJEncoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/BCJOptions.java
+
+/*
+ * BCJOptions
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/BasicArrayCache.java
+
+/*
+ * BasicArrayCache
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/BlockInputStream.java
+
+/*
+ * BlockInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/BlockOutputStream.java
+
+/*
+ * BlockOutputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/CloseIgnoringInputStream.java
+
+/*
+ * CloseIgnoringInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/CorruptedInputException.java
+
+/*
+ * CorruptedInputException
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/CountingInputStream.java
+
+/*
+ * CountingInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/CountingOutputStream.java
+
+/*
+ * CountingOutputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/DeltaCoder.java, org/tukaani/xz/delta/DeltaCoder.java
+
+/*
+ * DeltaCoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/DeltaDecoder.java, org/tukaani/xz/delta/DeltaDecoder.java
+
+/*
+ * DeltaDecoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/DeltaEncoder.java, org/tukaani/xz/delta/DeltaEncoder.java
+
+/*
+ * DeltaEncoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/DeltaInputStream.java
+
+/*
+ * DeltaInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/DeltaOptions.java
+
+/*
+ * DeltaOptions
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/DeltaOutputStream.java
+
+/*
+ * DeltaOutputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/FilterCoder.java
+
+/*
+ * FilterCoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/FilterDecoder.java
+
+/*
+ * FilterDecoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/FilterEncoder.java
+
+/*
+ * FilterEncoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/FilterOptions.java
+
+/*
+ * FilterOptions
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/FinishableOutputStream.java
+
+/*
+ * FinishableOutputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/FinishableWrapperOutputStream.java
+
+/*
+ * FinishableWrapperOutputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/IA64Options.java
+
+/*
+ * IA64Options
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/IndexIndicatorException.java
+
+/*
+ * IndexIndicatorException
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/LZMA2Coder.java
+
+/*
+ * LZMA2Coder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/LZMA2Decoder.java
+
+/*
+ * LZMA2Decoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/LZMA2Encoder.java
+
+/*
+ * LZMA2Encoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/LZMA2InputStream.java
+
+/*
+ * LZMA2InputStream
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/LZMA2Options.java
+
+/*
+ * LZMA2Options
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/LZMA2OutputStream.java
+
+/*
+ * LZMA2OutputStream
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/LZMAInputStream.java
+
+/*
+ * LZMAInputStream
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/LZMAOutputStream.java
+
+/*
+ * LZMAOutputStream
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/MemoryLimitException.java
+
+/*
+ * MemoryLimitException
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/PowerPCOptions.java
+
+/*
+ * PowerPCOptions
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/RawCoder.java
+
+/*
+ * RawCoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/ResettableArrayCache.java
+
+/*
+ * ResettableArrayCache
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/SPARCOptions.java
+
+/*
+ * SPARCOptions
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/SeekableFileInputStream.java
+
+/*
+ * SeekableFileInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/SeekableInputStream.java
+
+/*
+ * SeekableInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/SeekableXZInputStream.java
+
+/*
+ * SeekableXZInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/SimpleInputStream.java
+
+/*
+ * SimpleInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/SimpleOutputStream.java
+
+/*
+ * SimpleOutputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/SingleXZInputStream.java
+
+/*
+ * SingleXZInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/UncompressedLZMA2OutputStream.java
+
+/*
+ * UncompressedLZMA2OutputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/UnsupportedOptionsException.java
+
+/*
+ * UnsupportedOptionsException
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/X86Options.java
+
+/*
+ * X86Options
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/XZ.java
+
+/*
+ * XZ
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/XZFormatException.java
+
+/*
+ * XZFormatException
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/XZIOException.java
+
+/*
+ * XZIOException
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/XZInputStream.java
+
+/*
+ * XZInputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/XZOutputStream.java
+
+/*
+ * XZOutputStream
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/check/CRC32.java
+
+/*
+ * CRC32
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/check/CRC64.java
+
+/*
+ * CRC64
+ *
+ * Authors: Brett Okken <brett.okken.os@gmail.com>
+ *          Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/check/Check.java
+
+/*
+ * Check
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/check/None.java
+
+/*
+ * None
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/check/SHA256.java
+
+/*
+ * SHA256
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/common/DecoderUtil.java
+
+/*
+ * DecoderUtil
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/common/EncoderUtil.java
+
+/*
+ * EncoderUtil
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/common/StreamFlags.java
+
+/*
+ * StreamFlags
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/common/Util.java
+
+/*
+ * Util
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/index/BlockInfo.java
+
+/*
+ * BlockInfo
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/index/IndexBase.java
+
+/*
+ * IndexBase
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/index/IndexDecoder.java
+
+/*
+ * IndexDecoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/index/IndexEncoder.java
+
+/*
+ * IndexEncoder
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/index/IndexHash.java
+
+/*
+ * IndexHash
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/index/IndexRecord.java
+
+/*
+ * IndexRecord
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lz/BT4.java
+
+/*
+ * Binary Tree match finder with 2-, 3-, and 4-byte hashing
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lz/CRC32Hash.java
+
+/*
+ * CRC32Hash
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lz/HC4.java
+
+/*
+ * Hash Chain match finder with 2-, 3-, and 4-byte hashing
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lz/Hash234.java
+
+/*
+ * 2-, 3-, and 4-byte hashing
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lz/LZDecoder.java
+
+/*
+ * LZDecoder
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lz/LZEncoder.java
+
+/*
+ * LZEncoder
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lz/Matches.java
+
+/*
+ * Matches
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lzma/LZMACoder.java
+
+/*
+ * LZMACoder
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lzma/LZMADecoder.java
+
+/*
+ * LZMADecoder
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lzma/LZMAEncoder.java
+
+/*
+ * LZMAEncoder
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lzma/LZMAEncoderFast.java
+
+/*
+ * LZMAEncoderFast
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lzma/LZMAEncoderNormal.java
+
+/*
+ * LZMAEncoderNormal
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lzma/Optimum.java
+
+/*
+ * Optimum
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/lzma/State.java
+
+/*
+ * State
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/package-info.java
+
+/*
+ * package-info
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/rangecoder/RangeCoder.java
+
+/*
+ * RangeCoder
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/rangecoder/RangeDecoder.java
+
+/*
+ * RangeDecoder
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/rangecoder/RangeDecoderFromBuffer.java
+
+/*
+ * RangeDecoderFromBuffer
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/rangecoder/RangeDecoderFromStream.java
+
+/*
+ * RangeDecoderFromStream
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/rangecoder/RangeEncoder.java
+
+/*
+ * RangeEncoder
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/rangecoder/RangeEncoderToBuffer.java
+
+/*
+ * RangeEncoderToBuffer
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/rangecoder/RangeEncoderToStream.java
+
+/*
+ * RangeEncoderToStream
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/simple/ARM.java
+
+/*
+ * BCJ filter for little endian ARM instructions
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/simple/ARMThumb.java
+
+/*
+ * BCJ filter for little endian ARM-Thumb instructions
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/simple/IA64.java
+
+/*
+ * BCJ filter for Itanium (IA-64) instructions
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/simple/PowerPC.java
+
+/*
+ * BCJ filter for big endian PowerPC instructions
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/simple/SPARC.java
+
+/*
+ * BCJ filter for SPARC instructions
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/simple/SimpleFilter.java
+
+/*
+ * BCJ filter for little endian ARM instructions
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/org/tukaani/xz/simple/X86.java
+
+/*
+ * BCJ filter for x86 instructions
+ *
+ * Authors: Lasse Collin <lasse.collin@tukaani.org>
+ *          Igor Pavlov <http://7-zip.org/>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */
+
+Source: https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar!/META-INF/versions/9/module-info.java
+
+/*
+ * module-info
+ *
+ * Author: Lasse Collin <lasse.collin@tukaani.org>
+ *
+ * This file has been put into the public domain.
+ * You can do whatever you want with this file.
+ */

@@ -4,7 +4,7 @@
 
 Installers with a complete bundle do not need this chapter. Developers/release maintainers use these checks to assess candidates: compilation proves buildability, tests prove their coverage, and runtime acceptance proves specified environments/scenarios. Skipped/unexecuted checks are not passes.
 
-Source builds use Python 3.11+, JDK 21, Maven 3.9.11, Node 24.14.1 and pnpm 11.19.0. Begin development with root AGENTS.md and document/standards/README.md; this guide does not replace maintained engineering standards.
+Source builds use Python 3.11+, JDK 21, Maven 3.9.11, Node 24.22.1 and pnpm 11.28.8. Begin development with root AGENTS.md and document/standards/README.md; this guide does not replace maintained engineering standards.
 
 ## Quality entry points
 

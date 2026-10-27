@@ -4,7 +4,7 @@
 
 安装者拿到完整包无需执行本章。开发者/发布维护者用这些检查判断候选是否可交付：编译成功只证明能构建；自动化测试证明相应覆盖；运行验收证明指定环境与场景。跳过和未执行不能记为通过。
 
-源码构建按安装说明使用 Python 3.11+、JDK 21、Maven 3.9.11、Node 24.14.1、pnpm 11.19.0。开发从根 AGENTS.md 和 document/standards/README.md 开始；本文不是替代当前工程规范的新规则集。
+源码构建按安装说明使用 Python 3.11+、JDK 21、Maven 3.9.11、Node 24.22.1、pnpm 11.28.8。开发从根 AGENTS.md 和 document/standards/README.md 开始；本文不是替代当前工程规范的新规则集。
 
 ## 检查入口
 

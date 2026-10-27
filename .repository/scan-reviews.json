@@ -2309,6 +2309,797 @@
       "rule": "email-address",
       "line_sha256": "c44f4dd721f527b382534de3950149e80f438edf84442d1b9aba067369964df6",
       "reason": "Compressed bytes in visually reviewed real UI PNG incidentally match email syntax; not a text email or credential. Image SHA-256/provenance reviewed separately."
+    },
+    {
+      "path": ".gitignore",
+      "line": 3076,
+      "rule": "email-address",
+      "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
+      "reason": "pnpm patch filename/version, not an email address."
+    },
+    {
+      "path": "tools/distribution/third-party/3ccc1db51e8aa9b52466d46f0710e4772a04c875d3dae5ac9a0ffc4e075f0ab5.txt",
+      "line": 3,
+      "rule": "email-address",
+      "line_sha256": "ff7c0f7df22110b36cd9375be73cf500b751b6aba666365c218ca35f16295b0a",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/57776475e939d8e50a663de0eb1b74a4e250d87e778475acc62f4a6908a27d1d.txt",
+      "line": 3,
+      "rule": "email-address",
+      "line_sha256": "b062f381f723c7858e6e0d241ad457823f474e55b9aa64b0939724c9d189a668",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 6,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 17,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 28,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 39,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 50,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 61,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 72,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 83,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 94,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 105,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 116,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 127,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 138,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 149,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 160,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 171,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 182,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 193,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 204,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 215,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 226,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 237,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 248,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 259,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 271,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 282,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 293,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 304,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 315,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 326,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 337,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 348,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 360,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 371,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 383,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 395,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 407,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 418,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 429,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 440,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 451,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 462,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 473,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 484,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 495,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 506,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 517,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 528,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 539,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 550,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 561,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 572,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 583,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 594,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 605,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 616,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 627,
+      "rule": "email-address",
+      "line_sha256": "31e1b7f74909a0aedf52d7bb8060a076e412a19804c7c7e74dfed3081161fe0d",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 628,
+      "rule": "email-address",
+      "line_sha256": "ba608042efc1e70d116d442cae63f65af6754980e52828acaf7fc2f3773d718a",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 639,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 650,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 661,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 672,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 683,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 694,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 705,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 716,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 727,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 738,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 749,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 760,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 771,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 782,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 794,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 806,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 818,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 830,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 842,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 854,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 866,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 878,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 890,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 902,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 914,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 926,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 938,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 950,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 961,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 973,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 985,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 997,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1009,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1021,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1033,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1045,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1057,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1069,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1081,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1093,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1105,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1116,
+      "rule": "email-address",
+      "line_sha256": "8ec4b5b1aed5e73351d47f8ad4de2181631c98ca3ded039dc2decc69477d0aa2",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+      "line": 1128,
+      "rule": "email-address",
+      "line_sha256": "cc070bf28572764f5e722cea539a71eb174d559cb2e893fb04566658de77d550",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/c3d14ae01705f0d1e9a5caf7b39c9205d9da62d377c7488061fb853536df665e.txt",
+      "line": 12,
+      "rule": "email-address",
+      "line_sha256": "c8de42275f516cf1de622ab55c322d630fb2d61605d8ab0d6157bc84db2242b4",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 588,
+      "rule": "email-address",
+      "line_sha256": "b40faa9fc0c6d41772d60e4da1bbb622bb04efb0338409148a948ae0c991a136",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 672,
+      "rule": "email-address",
+      "line_sha256": "841229a90e1fa67bd8fbc67a624d7999afaaba7483cfae74271c1d3c341a18ef",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 902,
+      "rule": "email-address",
+      "line_sha256": "ef59968c04e5c23c91e14c9de88d9d133bf96c1cf562fbc9d97d60c017a1caaf",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 1132,
+      "rule": "email-address",
+      "line_sha256": "3c3071be5106e7ef3bc041b898c7f50e0ac84c354fae8dbf43864b19b0bd9212",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 1362,
+      "rule": "email-address",
+      "line_sha256": "d1edfe8b6679485ae3411becd02a7754fe5d578dff925de8f3e4b44c4f12232b",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 1592,
+      "rule": "email-address",
+      "line_sha256": "f5d74a9ee999d936be2ed8e871442075d80d72c0da72729fa5b14345aec1e7e4",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 1822,
+      "rule": "email-address",
+      "line_sha256": "19a0732c4ae36c635b334a09d3995df8465a8eccfd7be656e65faa770e2ff952",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 2052,
+      "rule": "email-address",
+      "line_sha256": "8976267dc9b8e5d6c0efe76a88446d43f746e1bf7919f7901c14ffb7c267e592",
+      "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
     }
   ],
   "binary_reviews": [

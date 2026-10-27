@@ -3,7 +3,23 @@
 
 ARG MAVEN_IMAGE
 ARG JRE_IMAGE
-FROM ${MAVEN_IMAGE} AS build
+FROM ${MAVEN_IMAGE} AS build-base
+ARG JDK_ARCHIVE_URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.13_9.tar.gz
+ADD --checksum=sha256:d7f5d5cf865a2902b70ff549b97586a7d3f234e016f041ab447ea740c7d66d1c ${JDK_ARCHIVE_URL} /tmp/ijob-java.tar.gz
+RUN rm -rf /opt/java/openjdk \
+    && mkdir -p /opt/java/openjdk \
+    && tar -xzf /tmp/ijob-java.tar.gz -C /opt/java/openjdk --strip-components=1 \
+    && rm /tmp/ijob-java.tar.gz \
+    && apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
+ENV JAVA_VERSION=jdk-21.0.13+9
+
+ARG PLEXUS_UTILS_URL=https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-utils/3.6.1/plexus-utils-3.6.1.jar
+ADD --checksum=sha256:05a63effd67e2d6b9d610cc82e2bd7473289d34802e57a529b28110f28af5679 ${PLEXUS_UTILS_URL} /usr/share/maven/lib/plexus-utils-3.6.1.jar
+RUN rm /usr/share/maven/lib/plexus-utils-3.6.0.jar
+
+FROM build-base AS build
 WORKDIR /build
 COPY . .
 RUN --mount=type=cache,id=ijob-maven-v1,target=/root/.m2/repository \
@@ -11,7 +27,19 @@ RUN --mount=type=cache,id=ijob-maven-v1,target=/root/.m2/repository \
     mvn -B -ntp -Pquality -DskipTests package \
     && javac -d /health tools/docker/HealthProbe.java
 
-FROM ${JRE_IMAGE} AS runtime
+FROM ${JRE_IMAGE} AS runtime-base
+ARG JRE_ARCHIVE_URL=https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jre_x64_linux_hotspot_21.0.13_9.tar.gz
+ADD --checksum=sha256:a535a1df9c6284d9618872984e026ae0352d1f7e9e0605425c0e6114f47351dd ${JRE_ARCHIVE_URL} /tmp/ijob-java.tar.gz
+RUN rm -rf /opt/java/openjdk \
+    && mkdir -p /opt/java/openjdk \
+    && tar -xzf /tmp/ijob-java.tar.gz -C /opt/java/openjdk --strip-components=1 \
+    && rm /tmp/ijob-java.tar.gz \
+    && apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
+ENV JAVA_VERSION=jdk-21.0.13+9
+
+FROM runtime-base AS runtime
 RUN groupadd --gid 10001 ijob \
     && useradd --uid 10001 --gid 10001 --no-create-home ijob \
     && mkdir -p /opt/ijob /var/lib/ijob \

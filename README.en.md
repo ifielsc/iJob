@@ -10,7 +10,7 @@ Start with [installation](document/en/installation.md), then [your first task](d
 python tools/distribution/build.py --target native --output ../ijob-build-001
 ```
 
-Build prerequisites are Python 3.11+, JDK 21, Maven 3.9.11, Node 24.14.1 and pnpm 11.19.0. A native runtime needs Java 21 and its platform's launcher dependencies, not the frontend build tools. For container builds use --target docker with a Linux amd64 Docker engine; see the manual for setup and lifecycle commands.
+Build prerequisites are Python 3.11+, JDK 21, Maven 3.9.11, Node 24.22.1 and pnpm 11.28.8. A native runtime needs Java 21 and its platform's launcher dependencies, not the frontend build tools. For container builds use --target docker with a Linux amd64 Docker engine; see the manual for setup and lifecycle commands.
 
 | Location | Purpose |
 | --- | --- |

@@ -1,0 +1,2527 @@
+{
+  "709f378c05756280939ce50fc1b1f1a53bb8e1899dc1b249f21f12703640b48b": {
+    "filename": "HikariCP-6.3.3.jar",
+    "purl": "pkg:maven/com.zaxxer/HikariCP@6.3.3?type=jar",
+    "notices": [
+      {
+        "file": "73ba74dfaa520b49a401b5d21459a8523a146f3b7518a833eea5efa85130bf68.txt",
+        "sha256": "73ba74dfaa520b49a401b5d21459a8523a146f3b7518a833eea5efa85130bf68",
+        "source": "https://raw.githubusercontent.com/brettwooldridge/HikariCP/ea81bfb5852216dbfcb1f219742f91b5abceb81b/LICENSE",
+        "source_tag": "HikariCP-6.3.3",
+        "source_commit": "ea81bfb5852216dbfcb1f219742f91b5abceb81b"
+      }
+    ]
+  },
+  "a32a9ffa06b2f4e01c5360f8f9df7bc5d9454a5d373cd8f361347fa5a57165ec": {
+    "filename": "LatencyUtils-2.0.3.jar",
+    "purl": "pkg:maven/org.latencyutils/LatencyUtils@2.0.3?type=jar",
+    "notices": [
+      {
+        "file": "50b43424ea5a8855c49f89e4d3a00fd55fb572ecd0c872f4215f63f654983c6c.txt",
+        "sha256": "50b43424ea5a8855c49f89e4d3a00fd55fb572ecd0c872f4215f63f654983c6c",
+        "source": "https://raw.githubusercontent.com/LatencyUtils/LatencyUtils/fa856f73028cd6f05d6f99477c13b248cfadc7f7/LICENSE",
+        "source_tag": "LatencyUtils-2.0.3",
+        "source_commit": "fa856f73028cd6f05d6f99477c13b248cfadc7f7"
+      }
+    ]
+  },
+  "f76b85adb0c00721ae267b7cfde4da7f71d3121cc2160c9fc00c0c89f8c53c8a": {
+    "filename": "SparseBitSet-1.3.jar",
+    "purl": "pkg:maven/com.zaxxer/SparseBitSet@1.3?type=jar",
+    "notices": [
+      {
+        "file": "977abb22c66dec2147faca33904213ccf767e44c6c546c64ba9c00171a01fbc3.txt",
+        "sha256": "977abb22c66dec2147faca33904213ccf767e44c6c546c64ba9c00171a01fbc3",
+        "source": "https://raw.githubusercontent.com/brettwooldridge/SparseBitSet/46c1f7412b992aa8c72f5ce4601013b9160110a4/LICENSE",
+        "source_tag": "SparseBitSet-1.3",
+        "source_commit": "46c1f7412b992aa8c72f5ce4601013b9160110a4"
+      }
+    ]
+  },
+  "9b8a7bc43861d6156c021166d941fb7dddbe4463e2fa5ee88077e4b01452a836": {
+    "filename": "accessors-smart-2.5.2.jar",
+    "purl": "pkg:maven/net.minidev/accessors-smart@2.5.2?type=jar",
+    "notices": [
+      {
+        "file": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08.txt",
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+        "source": "https://raw.githubusercontent.com/netplex/json-smart-v2/d4f7fa4f31e20145d20393c5e79c6255954cb81e/LICENSE",
+        "source_tag": "2.5.2",
+        "source_commit": "d4f7fa4f31e20145d20393c5e79c6255954cb81e"
+      }
+    ]
+  },
+  "b27134820890c5e56ed57d27cc50b70742fa2c31b36a6e9e28e14a43f34ff96f": {
+    "filename": "amqp-client-5.37.0.jar",
+    "purl": "pkg:maven/com.rabbitmq/amqp-client@5.37.0?type=jar",
+    "notices": [
+      {
+        "file": "c3d14ae01705f0d1e9a5caf7b39c9205d9da62d377c7488061fb853536df665e.txt",
+        "sha256": "c3d14ae01705f0d1e9a5caf7b39c9205d9da62d377c7488061fb853536df665e",
+        "source": "https://raw.githubusercontent.com/rabbitmq/rabbitmq-java-client/002777578d9138a9921ddfc4f9fb70556f8d4807/LICENSE",
+        "source_tag": "v5.37.0",
+        "source_commit": "002777578d9138a9921ddfc4f9fb70556f8d4807"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/rabbitmq/rabbitmq-java-client/002777578d9138a9921ddfc4f9fb70556f8d4807/LICENSE-APACHE2",
+        "source_tag": "v5.37.0",
+        "source_commit": "002777578d9138a9921ddfc4f9fb70556f8d4807"
+      },
+      {
+        "file": "ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6.txt",
+        "sha256": "ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6",
+        "source": "https://raw.githubusercontent.com/rabbitmq/rabbitmq-java-client/002777578d9138a9921ddfc4f9fb70556f8d4807/LICENSE-GPL2",
+        "source_tag": "v5.37.0",
+        "source_commit": "002777578d9138a9921ddfc4f9fb70556f8d4807"
+      },
+      {
+        "file": "41fdff11588fe7690fb392e2c81913d894fcd19466245d6a85553272c49882b5.txt",
+        "sha256": "41fdff11588fe7690fb392e2c81913d894fcd19466245d6a85553272c49882b5",
+        "source": "https://raw.githubusercontent.com/rabbitmq/rabbitmq-java-client/002777578d9138a9921ddfc4f9fb70556f8d4807/LICENSE-MPL-RabbitMQ",
+        "source_tag": "v5.37.0",
+        "source_commit": "002777578d9138a9921ddfc4f9fb70556f8d4807"
+      }
+    ]
+  },
+  "ace2a10dc8e2d5fd34925ecac03e4988b2c0f851650c94b8cef49ba1bd111478": {
+    "filename": "annotations-13.0.jar",
+    "purl": "pkg:maven/org.jetbrains/annotations@13.0?type=jar",
+    "notices": [
+      {
+        "file": "9d63f7df064b913b2f4b0c84c3dec7109e58d02b7a56909a1e85841d139c5fca.txt",
+        "sha256": "9d63f7df064b913b2f4b0c84c3dec7109e58d02b7a56909a1e85841d139c5fca",
+        "source": "https://repo.maven.apache.org/maven2/org/jetbrains/annotations/13.0/annotations-13.0-sources.jar",
+        "source_archive_sha256": "42a5e144b8e81d50d6913d1007b695e62e614705268d8cf9f13dbdc478c2c68e",
+        "extraction": "Verbatim leading license/copyright comments from the exact-version source JAR; duplicate texts grouped with original paths"
+      },
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+        "applicability": "Exact-version source headers explicitly reference Apache License 2.0"
+      }
+    ]
+  },
+  "8cadd43ac5eb6d09de05faecca38b917a040bb9139c7edeb4cc81c740b713281": {
+    "filename": "asm-9.7.1.jar",
+    "purl": "pkg:maven/org.ow2.asm/asm@9.7.1?type=jar",
+    "notices": [
+      {
+        "file": "01b9a1d01ac0fcc7ebbd32953a4a71ca50adfff1202fae3d8a2eb516b96d9b99.txt",
+        "sha256": "01b9a1d01ac0fcc7ebbd32953a4a71ca50adfff1202fae3d8a2eb516b96d9b99",
+        "source": "https://repo.maven.apache.org/maven2/org/ow2/asm/asm/9.7.1/asm-9.7.1-sources.jar",
+        "source_archive_sha256": "22e9507b0c494daaedb33b8148c30cd618c6dacc3992be8b50eaaafeb6a8ba8d",
+        "extraction": "Verbatim leading license/copyright comments from the exact-version source JAR; duplicate texts grouped with original paths"
+      }
+    ]
+  },
+  "ad95b08b8bbf9d7d17e5e00814898fa23324f32bc5b62f1a37801e6a56ce0079": {
+    "filename": "curvesapi-1.08.jar",
+    "purl": "pkg:maven/com.github.virtuald/curvesapi@1.08?type=jar",
+    "notices": [
+      {
+        "file": "41d082bdc9a223799e90d6e0bf4da4cdc2da2babf361985ea7bfcdc587154f21.txt",
+        "sha256": "41d082bdc9a223799e90d6e0bf4da4cdc2da2babf361985ea7bfcdc587154f21",
+        "source": "https://raw.githubusercontent.com/virtuald/curvesapi/a39c6d234bd1b70a324a8cf4f5a2b0e1f2780c7f/license.txt",
+        "source_tag": "1.08",
+        "source_commit": "a39c6d234bd1b70a324a8cf4f5a2b0e1f2780c7f"
+      }
+    ]
+  },
+  "48272e75c16e1f7bdc7bd19529ccacd5ee170404701d7f5a23441bb5847957f5": {
+    "filename": "error_prone_annotations-2.43.0.jar",
+    "purl": "pkg:maven/com.google.errorprone/error_prone_annotations@2.43.0?type=jar",
+    "notices": [
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/google/error-prone/abec9b6a08ae48bb9ac7cb6978e8a9796408afbc/COPYING",
+        "source_tag": "v2.43.0",
+        "source_commit": "abec9b6a08ae48bb9ac7cb6978e8a9796408afbc"
+      }
+    ]
+  },
+  "0c37d8e696117f02c302191b8110b0d0eb20fa412fce34c3a269ec73c16ce822": {
+    "filename": "eventstream-1.0.1.jar",
+    "purl": "pkg:maven/software.amazon.eventstream/eventstream@1.0.1?type=jar",
+    "notices": [
+      {
+        "file": "a472f3edcf8d4e078eff9a90951425a11a6d9685bb057895fb3bae501e19e7ec.txt",
+        "sha256": "a472f3edcf8d4e078eff9a90951425a11a6d9685bb057895fb3bae501e19e7ec",
+        "source": "https://repo.maven.apache.org/maven2/software/amazon/eventstream/eventstream/1.0.1/eventstream-1.0.1-sources.jar",
+        "source_archive_sha256": "8953ddf1af1680008d7ae96877df9fcfff9b8d909998d5c52519dbd583215636",
+        "extraction": "Verbatim leading license/copyright comments from the exact-version source JAR; duplicate texts grouped with original paths"
+      },
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+        "applicability": "Exact-version source headers explicitly reference Apache License 2.0"
+      }
+    ]
+  },
+  "a66f60f8c7c1f5550bb17778e8eb3093809f21c6a871cee4a61bbf911b9f8337": {
+    "filename": "flyway-database-oracle-11.7.2.jar",
+    "purl": "pkg:maven/org.flywaydb/flyway-database-oracle@11.7.2?type=jar",
+    "notices": [
+      {
+        "file": "d297225511d7dfbb44165c7cd0657b645a0e65971bb2460f61e03fbdebfef318.txt",
+        "sha256": "d297225511d7dfbb44165c7cd0657b645a0e65971bb2460f61e03fbdebfef318",
+        "source": "https://raw.githubusercontent.com/flyway/flyway/df872358db793c9e55d11fca866300748c3a5303/LICENSE.md",
+        "source_tag": "flyway-11.7.2",
+        "source_commit": "df872358db793c9e55d11fca866300748c3a5303"
+      },
+      {
+        "file": "73332bc915a16b4ca4bb913d4a55b66e865c6ef0d5feb289063248556fab48b8.txt",
+        "sha256": "73332bc915a16b4ca4bb913d4a55b66e865c6ef0d5feb289063248556fab48b8",
+        "source": "https://raw.githubusercontent.com/flyway/flyway/df872358db793c9e55d11fca866300748c3a5303/LICENSE.txt",
+        "source_tag": "flyway-11.7.2",
+        "source_commit": "df872358db793c9e55d11fca866300748c3a5303"
+      }
+    ]
+  },
+  "1d586e14ea772c75613df2c27ddc20f5c065e8a32283815338611af82e48f9a2": {
+    "filename": "flyway-database-postgresql-11.7.2.jar",
+    "purl": "pkg:maven/org.flywaydb/flyway-database-postgresql@11.7.2?type=jar",
+    "notices": [
+      {
+        "file": "d297225511d7dfbb44165c7cd0657b645a0e65971bb2460f61e03fbdebfef318.txt",
+        "sha256": "d297225511d7dfbb44165c7cd0657b645a0e65971bb2460f61e03fbdebfef318",
+        "source": "https://raw.githubusercontent.com/flyway/flyway/df872358db793c9e55d11fca866300748c3a5303/LICENSE.md",
+        "source_tag": "flyway-11.7.2",
+        "source_commit": "df872358db793c9e55d11fca866300748c3a5303"
+      },
+      {
+        "file": "73332bc915a16b4ca4bb913d4a55b66e865c6ef0d5feb289063248556fab48b8.txt",
+        "sha256": "73332bc915a16b4ca4bb913d4a55b66e865c6ef0d5feb289063248556fab48b8",
+        "source": "https://raw.githubusercontent.com/flyway/flyway/df872358db793c9e55d11fca866300748c3a5303/LICENSE.txt",
+        "source_tag": "flyway-11.7.2",
+        "source_commit": "df872358db793c9e55d11fca866300748c3a5303"
+      }
+    ]
+  },
+  "16b6b74800dfcbae21b7d7539c108ad573ead462840e357fc9ffd9fb7129bdb3": {
+    "filename": "flyway-mysql-11.7.2.jar",
+    "purl": "pkg:maven/org.flywaydb/flyway-mysql@11.7.2?type=jar",
+    "notices": [
+      {
+        "file": "d297225511d7dfbb44165c7cd0657b645a0e65971bb2460f61e03fbdebfef318.txt",
+        "sha256": "d297225511d7dfbb44165c7cd0657b645a0e65971bb2460f61e03fbdebfef318",
+        "source": "https://raw.githubusercontent.com/flyway/flyway/df872358db793c9e55d11fca866300748c3a5303/LICENSE.md",
+        "source_tag": "flyway-11.7.2",
+        "source_commit": "df872358db793c9e55d11fca866300748c3a5303"
+      },
+      {
+        "file": "73332bc915a16b4ca4bb913d4a55b66e865c6ef0d5feb289063248556fab48b8.txt",
+        "sha256": "73332bc915a16b4ca4bb913d4a55b66e865c6ef0d5feb289063248556fab48b8",
+        "source": "https://raw.githubusercontent.com/flyway/flyway/df872358db793c9e55d11fca866300748c3a5303/LICENSE.txt",
+        "source_tag": "flyway-11.7.2",
+        "source_commit": "df872358db793c9e55d11fca866300748c3a5303"
+      }
+    ]
+  },
+  "f475905cc1c543ce4cef8c8d14aec42d76ed1715bc454c7d8f5c2efe4e620ea4": {
+    "filename": "flyway-sqlserver-11.7.2.jar",
+    "purl": "pkg:maven/org.flywaydb/flyway-sqlserver@11.7.2?type=jar",
+    "notices": [
+      {
+        "file": "d297225511d7dfbb44165c7cd0657b645a0e65971bb2460f61e03fbdebfef318.txt",
+        "sha256": "d297225511d7dfbb44165c7cd0657b645a0e65971bb2460f61e03fbdebfef318",
+        "source": "https://raw.githubusercontent.com/flyway/flyway/df872358db793c9e55d11fca866300748c3a5303/LICENSE.md",
+        "source_tag": "flyway-11.7.2",
+        "source_commit": "df872358db793c9e55d11fca866300748c3a5303"
+      },
+      {
+        "file": "73332bc915a16b4ca4bb913d4a55b66e865c6ef0d5feb289063248556fab48b8.txt",
+        "sha256": "73332bc915a16b4ca4bb913d4a55b66e865c6ef0d5feb289063248556fab48b8",
+        "source": "https://raw.githubusercontent.com/flyway/flyway/df872358db793c9e55d11fca866300748c3a5303/LICENSE.txt",
+        "source_tag": "flyway-11.7.2",
+        "source_commit": "df872358db793c9e55d11fca866300748c3a5303"
+      }
+    ]
+  },
+  "8dae62d22db8982c3dcb3826edb9c727c5d302063a67eef7d63d82de401f07d3": {
+    "filename": "h2-2.3.232.jar",
+    "purl": "pkg:maven/com.h2database/h2@2.3.232?type=jar",
+    "notices": [
+      {
+        "file": "827b84bb8f84dbd60d1a8955cefab142d65cc17d267e32996db400138a1e0fcf.txt",
+        "sha256": "827b84bb8f84dbd60d1a8955cefab142d65cc17d267e32996db400138a1e0fcf",
+        "source": "https://raw.githubusercontent.com/h2database/h2database/2e46a1c9680089098d756435ae94193ee72c1334/LICENSE.txt",
+        "source_tag": "version-2.3.232",
+        "source_commit": "2e46a1c9680089098d756435ae94193ee72c1334"
+      }
+    ]
+  },
+  "6f2f77eedbe75cfbe26bf30d73b13de0cc57fb7cdb27a92ed8c1a012f0e2363a": {
+    "filename": "hsqldb-2.7.3.jar",
+    "purl": "pkg:maven/org.hsqldb/hsqldb@2.7.3?type=jar",
+    "notices": [
+      {
+        "file": "85e299051dfaf0378ff1fa3425e6b6d29e43f8eaa3836152e231daa118c783a3.txt",
+        "sha256": "85e299051dfaf0378ff1fa3425e6b6d29e43f8eaa3836152e231daa118c783a3",
+        "source": "https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.3/hsqldb-2.7.3-sources.jar",
+        "source_archive_sha256": "2ce6047abe9dc92ce27dfaaf06c8280c0385ef24ee2961d07ad9c4610902aaf9",
+        "extraction": "Verbatim leading license/copyright comments from the exact-version source JAR; duplicate texts grouped with original paths"
+      }
+    ]
+  },
+  "277ccb3477d32d7dfff4c86c51ac93b4fd1118dc241a988da52f41131859ab89": {
+    "filename": "hutool-all-5.8.26.jar",
+    "purl": "pkg:maven/cn.hutool/hutool-all@5.8.26?type=jar",
+    "notices": [
+      {
+        "file": "d7136cebc1c0c2a50e02013928fc283b8d69cb805a994e21e6a8cc3983f45131.txt",
+        "sha256": "d7136cebc1c0c2a50e02013928fc283b8d69cb805a994e21e6a8cc3983f45131",
+        "source": "https://raw.githubusercontent.com/dromara/hutool/96b486bb5ab5c2690c7b907a3fc67e25eab3c991/LICENSE",
+        "source_tag": "5.8.26",
+        "source_commit": "96b486bb5ab5c2690c7b907a3fc67e25eab3c991"
+      }
+    ]
+  },
+  "26cfe53ed217dc6672a6b7d167a490903ff633a3030ec2e0b655ab94a90cbd20": {
+    "filename": "jackcess-5.1.5.jar",
+    "purl": "pkg:maven/io.github.spannm/jackcess@5.1.5?type=jar",
+    "notices": [
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/spannm/jackcess/9c8cef1206999be9d05b3484dfc4b75ad7b5e4c5/LICENSE.txt",
+        "source_tag": "jackcess-5.1.5",
+        "source_commit": "9c8cef1206999be9d05b3484dfc4b75ad7b5e4c5"
+      }
+    ]
+  },
+  "c034eb1afb158987dbb53a5fea0cadf611c8dae8daadd59c44d9d5ab70129cef": {
+    "filename": "jakarta.servlet-api-6.0.0.jar",
+    "purl": "pkg:maven/jakarta.servlet/jakarta.servlet-api@6.0.0?type=jar",
+    "notices": [
+      {
+        "file": "6e1f002892b81cbe0647019b150c8a056efc1add565671a4f8af629b6cd2cc7b.txt",
+        "sha256": "6e1f002892b81cbe0647019b150c8a056efc1add565671a4f8af629b6cd2cc7b",
+        "source": "https://raw.githubusercontent.com/jakartaee/servlet/63d2d7e17b91e7a8c44e21607c550cf55e5e69eb/LICENSE.md",
+        "source_tag": "6.0.0-RELEASE",
+        "source_commit": "63d2d7e17b91e7a8c44e21607c550cf55e5e69eb"
+      },
+      {
+        "file": "dc367b4a1a4c321c4f90001646c182d904583b410339fa22caef27b75eaeff47.txt",
+        "sha256": "dc367b4a1a4c321c4f90001646c182d904583b410339fa22caef27b75eaeff47",
+        "source": "https://raw.githubusercontent.com/jakartaee/servlet/63d2d7e17b91e7a8c44e21607c550cf55e5e69eb/NOTICE.md",
+        "source_tag": "6.0.0-RELEASE",
+        "source_commit": "63d2d7e17b91e7a8c44e21607c550cf55e5e69eb"
+      },
+      {
+        "file": "dd0601498b58dad63b8826b6bad2676cbb31031ede7312ca49a741503659e516.txt",
+        "sha256": "dd0601498b58dad63b8826b6bad2676cbb31031ede7312ca49a741503659e516",
+        "source": "https://raw.githubusercontent.com/jakartaee/servlet/63d2d7e17b91e7a8c44e21607c550cf55e5e69eb/copyright-exclude",
+        "source_tag": "6.0.0-RELEASE",
+        "source_commit": "63d2d7e17b91e7a8c44e21607c550cf55e5e69eb"
+      }
+    ]
+  },
+  "11a9ee6f88bb31f1450108d1cf6441377dec84aca075eb6bb2343be157575bea": {
+    "filename": "json-path-2.9.0.jar",
+    "purl": "pkg:maven/com.jayway.jsonpath/json-path@2.9.0?type=jar",
+    "notices": [
+      {
+        "file": "d3346dad7c1ff0401bb877512bde9eebdc8aa573a0b8b1b18856357ae0a61ad7.txt",
+        "sha256": "d3346dad7c1ff0401bb877512bde9eebdc8aa573a0b8b1b18856357ae0a61ad7",
+        "source": "https://raw.githubusercontent.com/json-path/JsonPath/af7e516c69df680a6584fca7180ef082eb67c96c/LICENSE",
+        "source_tag": "json-path-2.9.0",
+        "source_commit": "af7e516c69df680a6584fca7180ef082eb67c96c"
+      }
+    ]
+  },
+  "4fbdedb0105cedc7f766b95c297d2e88fb6a560da48f3bbaa0cc538ea8b7bf71": {
+    "filename": "json-smart-2.5.2.jar",
+    "purl": "pkg:maven/net.minidev/json-smart@2.5.2?type=jar",
+    "notices": [
+      {
+        "file": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08.txt",
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+        "source": "https://raw.githubusercontent.com/netplex/json-smart-v2/d4f7fa4f31e20145d20393c5e79c6255954cb81e/LICENSE",
+        "source_tag": "2.5.2",
+        "source_commit": "d4f7fa4f31e20145d20393c5e79c6255954cb81e"
+      }
+    ]
+  },
+  "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab": {
+    "filename": "jspecify-1.0.0.jar",
+    "purl": "pkg:maven/org.jspecify/jspecify@1.0.0?type=jar",
+    "notices": [
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/jspecify/jspecify/b2a10e14bb81c1b7cb6e488c112fe55cb2218d7d/LICENSE",
+        "source_tag": "v1.0.0",
+        "source_commit": "b2a10e14bb81c1b7cb6e488c112fe55cb2218d7d"
+      }
+    ]
+  },
+  "9d25de1d79a669352f0d535daee906c2e35e8162e6894d82ea3f0aad8545655e": {
+    "filename": "jsqlparser-4.7.jar",
+    "purl": "pkg:maven/com.github.jsqlparser/jsqlparser@4.7?type=jar",
+    "notices": [
+      {
+        "file": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1.txt",
+        "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+        "source": "https://raw.githubusercontent.com/JSQLParser/JSqlParser/8929981ce4bdb27d690db80ae173c9a4265b6194/LICENSE_APACHEV2",
+        "source_tag": "jsqlparser-4.7",
+        "source_commit": "8929981ce4bdb27d690db80ae173c9a4265b6194"
+      },
+      {
+        "file": "9b872a8a070b8ad329c4bd380fb1bf0000f564c75023ec8e1e6803f15364b9e9.txt",
+        "sha256": "9b872a8a070b8ad329c4bd380fb1bf0000f564c75023ec8e1e6803f15364b9e9",
+        "source": "https://raw.githubusercontent.com/JSQLParser/JSqlParser/8929981ce4bdb27d690db80ae173c9a4265b6194/LICENSE_LGPLV21",
+        "source_tag": "jsqlparser-4.7",
+        "source_commit": "8929981ce4bdb27d690db80ae173c9a4265b6194"
+      }
+    ]
+  },
+  "f9cdcdbff1f5de85380ae526977e683726c2aa42db1ed6e6e50ae89e496e95fd": {
+    "filename": "kotlin-stdlib-1.9.25.jar",
+    "purl": "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib@1.9.25?type=jar",
+    "notices": [
+      {
+        "file": "74ac3f60f19f7a88510f72d59f70b03b6a91c025364aa921e1b0df2058bd0017.txt",
+        "sha256": "74ac3f60f19f7a88510f72d59f70b03b6a91c025364aa921e1b0df2058bd0017",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/COPYRIGHT.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "97dce00ca628c83039b628553ae8f8b4ee886f13b2c2fbbd6e223ff80b2f64a5.txt",
+        "sha256": "97dce00ca628c83039b628553ae8f8b4ee886f13b2c2fbbd6e223ff80b2f64a5",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/COPYRIGHT_HEADER.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/LICENSE.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "ea7099352103ade6a6918bc7efb00f8bcd43db0e76b2da2e83237c0bc0ff1b19.txt",
+        "sha256": "ea7099352103ade6a6918bc7efb00f8bcd43db0e76b2da2e83237c0bc0ff1b19",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/NOTICE.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "e94988712da5f1bd474be1ceea184b267db0674e98e620639097e80cf849ce52.txt",
+        "sha256": "e94988712da5f1bd474be1ceea184b267db0674e98e620639097e80cf849ce52",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/README.md",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      }
+    ]
+  },
+  "8202e7f032c8dc6698d00c62867701546a7c12c4731ebddfb8eec0788e2eeee4": {
+    "filename": "kotlin-stdlib-common-1.9.25.jar",
+    "purl": "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-common@1.9.25?type=jar",
+    "notices": [
+      {
+        "file": "74ac3f60f19f7a88510f72d59f70b03b6a91c025364aa921e1b0df2058bd0017.txt",
+        "sha256": "74ac3f60f19f7a88510f72d59f70b03b6a91c025364aa921e1b0df2058bd0017",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/COPYRIGHT.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "97dce00ca628c83039b628553ae8f8b4ee886f13b2c2fbbd6e223ff80b2f64a5.txt",
+        "sha256": "97dce00ca628c83039b628553ae8f8b4ee886f13b2c2fbbd6e223ff80b2f64a5",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/COPYRIGHT_HEADER.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/LICENSE.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "ea7099352103ade6a6918bc7efb00f8bcd43db0e76b2da2e83237c0bc0ff1b19.txt",
+        "sha256": "ea7099352103ade6a6918bc7efb00f8bcd43db0e76b2da2e83237c0bc0ff1b19",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/NOTICE.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "e94988712da5f1bd474be1ceea184b267db0674e98e620639097e80cf849ce52.txt",
+        "sha256": "e94988712da5f1bd474be1ceea184b267db0674e98e620639097e80cf849ce52",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/README.md",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      }
+    ]
+  },
+  "fb5373dd761b4e93e3f538c5e853bba38a71143a181536e8f193ed6e4eddb3b8": {
+    "filename": "kotlin-stdlib-jdk7-1.9.25.jar",
+    "purl": "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk7@1.9.25?type=jar",
+    "notices": [
+      {
+        "file": "74ac3f60f19f7a88510f72d59f70b03b6a91c025364aa921e1b0df2058bd0017.txt",
+        "sha256": "74ac3f60f19f7a88510f72d59f70b03b6a91c025364aa921e1b0df2058bd0017",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/COPYRIGHT.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "97dce00ca628c83039b628553ae8f8b4ee886f13b2c2fbbd6e223ff80b2f64a5.txt",
+        "sha256": "97dce00ca628c83039b628553ae8f8b4ee886f13b2c2fbbd6e223ff80b2f64a5",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/COPYRIGHT_HEADER.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/LICENSE.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "ea7099352103ade6a6918bc7efb00f8bcd43db0e76b2da2e83237c0bc0ff1b19.txt",
+        "sha256": "ea7099352103ade6a6918bc7efb00f8bcd43db0e76b2da2e83237c0bc0ff1b19",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/NOTICE.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "e94988712da5f1bd474be1ceea184b267db0674e98e620639097e80cf849ce52.txt",
+        "sha256": "e94988712da5f1bd474be1ceea184b267db0674e98e620639097e80cf849ce52",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/README.md",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      }
+    ]
+  },
+  "f94fdf78390ce9be30383bf039c5a935caea33b11f037fc7f86bbcee19287e5a": {
+    "filename": "kotlin-stdlib-jdk8-1.9.25.jar",
+    "purl": "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk8@1.9.25?type=jar",
+    "notices": [
+      {
+        "file": "74ac3f60f19f7a88510f72d59f70b03b6a91c025364aa921e1b0df2058bd0017.txt",
+        "sha256": "74ac3f60f19f7a88510f72d59f70b03b6a91c025364aa921e1b0df2058bd0017",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/COPYRIGHT.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "97dce00ca628c83039b628553ae8f8b4ee886f13b2c2fbbd6e223ff80b2f64a5.txt",
+        "sha256": "97dce00ca628c83039b628553ae8f8b4ee886f13b2c2fbbd6e223ff80b2f64a5",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/COPYRIGHT_HEADER.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/LICENSE.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "ea7099352103ade6a6918bc7efb00f8bcd43db0e76b2da2e83237c0bc0ff1b19.txt",
+        "sha256": "ea7099352103ade6a6918bc7efb00f8bcd43db0e76b2da2e83237c0bc0ff1b19",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/NOTICE.txt",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      },
+      {
+        "file": "e94988712da5f1bd474be1ceea184b267db0674e98e620639097e80cf849ce52.txt",
+        "sha256": "e94988712da5f1bd474be1ceea184b267db0674e98e620639097e80cf849ce52",
+        "source": "https://raw.githubusercontent.com/JetBrains/kotlin/870720e57422ff0586dd251030fdd9dfaa445d4b/license/README.md",
+        "source_tag": "v1.9.25",
+        "source_commit": "870720e57422ff0586dd251030fdd9dfaa445d4b"
+      }
+    ]
+  },
+  "b65e05076a5c1aadb659b4fe4bc5fee31cb26cd70390292eb03e4a7a24cff10f": {
+    "filename": "logback-classic-1.5.34.jar",
+    "purl": "pkg:maven/ch.qos.logback/logback-classic@1.5.34?type=jar",
+    "notices": [
+      {
+        "file": "f1eedf4f2cb9e901d6ae549a06d0c20dcde0136d37e38b50adaf51d4673f66d2.txt",
+        "sha256": "f1eedf4f2cb9e901d6ae549a06d0c20dcde0136d37e38b50adaf51d4673f66d2",
+        "source": "https://raw.githubusercontent.com/qos-ch/logback/e62272ac152469aec1ede056c3c7d0d7314e7bfe/LICENSE.txt",
+        "source_tag": "v_1.5.34",
+        "source_commit": "e62272ac152469aec1ede056c3c7d0d7314e7bfe"
+      }
+    ]
+  },
+  "42eda264c0c650c2bec59e66151a88b708a8663dc1b49d788202d53e78b8caae": {
+    "filename": "logback-core-1.5.34.jar",
+    "purl": "pkg:maven/ch.qos.logback/logback-core@1.5.34?type=jar",
+    "notices": [
+      {
+        "file": "f1eedf4f2cb9e901d6ae549a06d0c20dcde0136d37e38b50adaf51d4673f66d2.txt",
+        "sha256": "f1eedf4f2cb9e901d6ae549a06d0c20dcde0136d37e38b50adaf51d4673f66d2",
+        "source": "https://raw.githubusercontent.com/qos-ch/logback/e62272ac152469aec1ede056c3c7d0d7314e7bfe/LICENSE.txt",
+        "source_tag": "v_1.5.34",
+        "source_commit": "e62272ac152469aec1ede056c3c7d0d7314e7bfe"
+      }
+    ]
+  },
+  "58c8e0b813960d2a248e050c353baea73139b48a2ffc55382d42c69707e17325": {
+    "filename": "lz4-java-1.11.4.jar",
+    "purl": "pkg:maven/at.yawk.lz4/lz4-java@1.11.4?type=jar",
+    "notices": [
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/yawkat/lz4-java/4af910bc99c2f021f0cd56f6ca7f7600f4dda4a0/LICENSE.txt",
+        "source_tag": "v1.11.4",
+        "source_commit": "4af910bc99c2f021f0cd56f6ca7f7600f4dda4a0"
+      }
+    ]
+  },
+  "e36f5237c1267983e5b88dc2169f6b9d7e50eceec6dc1ca31018e3877e14af66": {
+    "filename": "mssql-jdbc-13.4.0.jre11.jar",
+    "purl": "pkg:maven/com.microsoft.sqlserver/mssql-jdbc@13.4.0.jre11?type=jar",
+    "notices": [
+      {
+        "file": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "source": "https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/13.4.0.jre11/mssql-jdbc-13.4.0.jre11-sources.jar!/mssql/googlecode/concurrentlinkedhashmap/LICENSE",
+        "source_archive_sha256": "20cc22b65833951b86849177e1c8e714aaeef6833a771e291ca8b6e6626aaac9"
+      },
+      {
+        "file": "59732a3d036e04fd21fc99a60a1ed0c2587a0793853540d8ef603aa4a5c9436a.txt",
+        "sha256": "59732a3d036e04fd21fc99a60a1ed0c2587a0793853540d8ef603aa4a5c9436a",
+        "source": "https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/13.4.0.jre11/mssql-jdbc-13.4.0.jre11-sources.jar!/mssql/googlecode/cityhash/NOTICE",
+        "source_archive_sha256": "20cc22b65833951b86849177e1c8e714aaeef6833a771e291ca8b6e6626aaac9"
+      },
+      {
+        "file": "2187c7441a15d99ef64e99bb2782f2f9f399f5143553f807315a0f7202a9e0bd.txt",
+        "sha256": "2187c7441a15d99ef64e99bb2782f2f9f399f5143553f807315a0f7202a9e0bd",
+        "source": "https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/13.4.0.jre11/mssql-jdbc-13.4.0.jre11-sources.jar!/mssql/googlecode/concurrentlinkedhashmap/NOTICE",
+        "source_archive_sha256": "20cc22b65833951b86849177e1c8e714aaeef6833a771e291ca8b6e6626aaac9"
+      },
+      {
+        "file": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "source": "https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/13.4.0.jre11/mssql-jdbc-13.4.0.jre11-sources.jar!/mssql/googlecode/cityhash/LICENSE",
+        "source_archive_sha256": "20cc22b65833951b86849177e1c8e714aaeef6833a771e291ca8b6e6626aaac9"
+      }
+    ]
+  },
+  "b4aab3e93ac4f5082d8060198d2e4c35be25d76dbb2f3e556e35b8f1b6056924": {
+    "filename": "mybatis-spring-boot-autoconfigure-3.0.4.jar",
+    "purl": "pkg:maven/org.mybatis.spring.boot/mybatis-spring-boot-autoconfigure@3.0.4?type=jar",
+    "notices": [
+      {
+        "file": "9818ec66553209eebf329d4bf4bc6c992e1ac340bd3314c25ee478b8ce2a7bac.txt",
+        "sha256": "9818ec66553209eebf329d4bf4bc6c992e1ac340bd3314c25ee478b8ce2a7bac",
+        "source": "https://raw.githubusercontent.com/mybatis/spring-boot-starter/b2f19484522d5559d78be677ee479ae2c73506cc/LICENSE",
+        "source_tag": "mybatis-spring-boot-3.0.4",
+        "source_commit": "b2f19484522d5559d78be677ee479ae2c73506cc"
+      },
+      {
+        "file": "2f31b42c76d4499205c27f192cd4f8a60f907e0c3118433bea3b953eb32c9583.txt",
+        "sha256": "2f31b42c76d4499205c27f192cd4f8a60f907e0c3118433bea3b953eb32c9583",
+        "source": "https://raw.githubusercontent.com/mybatis/spring-boot-starter/b2f19484522d5559d78be677ee479ae2c73506cc/LICENSE_HEADER",
+        "source_tag": "mybatis-spring-boot-3.0.4",
+        "source_commit": "b2f19484522d5559d78be677ee479ae2c73506cc"
+      },
+      {
+        "file": "305d0c943c6d7bd5ebda181a54d33b0285fd04caedf0cf1264aa7428342216b0.txt",
+        "sha256": "305d0c943c6d7bd5ebda181a54d33b0285fd04caedf0cf1264aa7428342216b0",
+        "source": "https://raw.githubusercontent.com/mybatis/spring-boot-starter/b2f19484522d5559d78be677ee479ae2c73506cc/NOTICE",
+        "source_tag": "mybatis-spring-boot-3.0.4",
+        "source_commit": "b2f19484522d5559d78be677ee479ae2c73506cc"
+      }
+    ]
+  },
+  "c4ad5690dd58ad94bbb385dace45e7dafe7c4252f3849ffca8be0819cbfdc590": {
+    "filename": "mybatis-spring-boot-starter-3.0.4.jar",
+    "purl": "pkg:maven/org.mybatis.spring.boot/mybatis-spring-boot-starter@3.0.4?type=jar",
+    "notices": [
+      {
+        "file": "9818ec66553209eebf329d4bf4bc6c992e1ac340bd3314c25ee478b8ce2a7bac.txt",
+        "sha256": "9818ec66553209eebf329d4bf4bc6c992e1ac340bd3314c25ee478b8ce2a7bac",
+        "source": "https://raw.githubusercontent.com/mybatis/spring-boot-starter/b2f19484522d5559d78be677ee479ae2c73506cc/LICENSE",
+        "source_tag": "mybatis-spring-boot-3.0.4",
+        "source_commit": "b2f19484522d5559d78be677ee479ae2c73506cc"
+      },
+      {
+        "file": "2f31b42c76d4499205c27f192cd4f8a60f907e0c3118433bea3b953eb32c9583.txt",
+        "sha256": "2f31b42c76d4499205c27f192cd4f8a60f907e0c3118433bea3b953eb32c9583",
+        "source": "https://raw.githubusercontent.com/mybatis/spring-boot-starter/b2f19484522d5559d78be677ee479ae2c73506cc/LICENSE_HEADER",
+        "source_tag": "mybatis-spring-boot-3.0.4",
+        "source_commit": "b2f19484522d5559d78be677ee479ae2c73506cc"
+      },
+      {
+        "file": "305d0c943c6d7bd5ebda181a54d33b0285fd04caedf0cf1264aa7428342216b0.txt",
+        "sha256": "305d0c943c6d7bd5ebda181a54d33b0285fd04caedf0cf1264aa7428342216b0",
+        "source": "https://raw.githubusercontent.com/mybatis/spring-boot-starter/b2f19484522d5559d78be677ee479ae2c73506cc/NOTICE",
+        "source_tag": "mybatis-spring-boot-3.0.4",
+        "source_commit": "b2f19484522d5559d78be677ee479ae2c73506cc"
+      }
+    ]
+  },
+  "5bef3ea2b9e80c5e8d03151ca1609bd75fd1e264863bf3e2f8d538392c0f2c38": {
+    "filename": "netty-buffer-4.1.138.Final.jar",
+    "purl": "pkg:maven/io.netty/netty-buffer@4.1.138.Final?type=jar",
+    "notices": [
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/LICENSE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1.txt",
+        "sha256": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/NOTICE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df.txt",
+        "sha256": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.aalto-xml.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954.txt",
+        "sha256": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.base64.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f.txt",
+        "sha256": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.bouncycastle.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7.txt",
+        "sha256": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.brotli4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.caliper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-lang.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-logging.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd.txt",
+        "sha256": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.compress-lzf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f.txt",
+        "sha256": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.dnsinfo.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3.txt",
+        "sha256": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed.txt",
+        "sha256": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hyper-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290.txt",
+        "sha256": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jboss-marshalling.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9.txt",
+        "sha256": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jbzip2.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jctools.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d.txt",
+        "sha256": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jfastlz.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb.txt",
+        "sha256": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jsr166y.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1.txt",
+        "sha256": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jzlib.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541.txt",
+        "sha256": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.libdivsufsort.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.log4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lz4.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lzma-java.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.mvn-wrapper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a.txt",
+        "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.nghttp2-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093.txt",
+        "sha256": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.protobuf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106.txt",
+        "sha256": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.slf4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1.txt",
+        "sha256": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.snappy.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046.txt",
+        "sha256": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.webbit.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133.txt",
+        "sha256": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.zstd-jni.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a.txt",
+        "sha256": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/NOTICE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      }
+    ]
+  },
+  "21b9b7717da9ed7034c7a9ef4fcea4a08825e8f52d775da4d898364edf99327f": {
+    "filename": "netty-codec-4.1.138.Final.jar",
+    "purl": "pkg:maven/io.netty/netty-codec@4.1.138.Final?type=jar",
+    "notices": [
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/LICENSE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1.txt",
+        "sha256": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/NOTICE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df.txt",
+        "sha256": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.aalto-xml.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954.txt",
+        "sha256": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.base64.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f.txt",
+        "sha256": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.bouncycastle.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7.txt",
+        "sha256": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.brotli4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.caliper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-lang.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-logging.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd.txt",
+        "sha256": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.compress-lzf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f.txt",
+        "sha256": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.dnsinfo.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3.txt",
+        "sha256": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed.txt",
+        "sha256": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hyper-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290.txt",
+        "sha256": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jboss-marshalling.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9.txt",
+        "sha256": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jbzip2.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jctools.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d.txt",
+        "sha256": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jfastlz.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb.txt",
+        "sha256": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jsr166y.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1.txt",
+        "sha256": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jzlib.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541.txt",
+        "sha256": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.libdivsufsort.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.log4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lz4.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lzma-java.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.mvn-wrapper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a.txt",
+        "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.nghttp2-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093.txt",
+        "sha256": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.protobuf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106.txt",
+        "sha256": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.slf4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1.txt",
+        "sha256": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.snappy.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046.txt",
+        "sha256": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.webbit.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133.txt",
+        "sha256": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.zstd-jni.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a.txt",
+        "sha256": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/NOTICE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      }
+    ]
+  },
+  "b4ebb8fa44cd5790731928a83fd0f25a530e41c407c093bef4a0196db30b693f": {
+    "filename": "netty-common-4.1.138.Final.jar",
+    "purl": "pkg:maven/io.netty/netty-common@4.1.138.Final?type=jar",
+    "notices": [
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/LICENSE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1.txt",
+        "sha256": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/NOTICE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df.txt",
+        "sha256": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.aalto-xml.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954.txt",
+        "sha256": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.base64.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f.txt",
+        "sha256": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.bouncycastle.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7.txt",
+        "sha256": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.brotli4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.caliper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-lang.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-logging.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd.txt",
+        "sha256": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.compress-lzf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f.txt",
+        "sha256": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.dnsinfo.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3.txt",
+        "sha256": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed.txt",
+        "sha256": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hyper-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290.txt",
+        "sha256": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jboss-marshalling.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9.txt",
+        "sha256": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jbzip2.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jctools.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d.txt",
+        "sha256": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jfastlz.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb.txt",
+        "sha256": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jsr166y.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1.txt",
+        "sha256": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jzlib.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541.txt",
+        "sha256": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.libdivsufsort.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.log4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lz4.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lzma-java.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.mvn-wrapper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a.txt",
+        "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.nghttp2-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093.txt",
+        "sha256": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.protobuf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106.txt",
+        "sha256": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.slf4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1.txt",
+        "sha256": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.snappy.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046.txt",
+        "sha256": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.webbit.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133.txt",
+        "sha256": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.zstd-jni.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a.txt",
+        "sha256": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/NOTICE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      }
+    ]
+  },
+  "a79fb814e029db17da82baea25a0340172af2c59f107fd20b394c1fa28680f21": {
+    "filename": "netty-handler-4.1.138.Final.jar",
+    "purl": "pkg:maven/io.netty/netty-handler@4.1.138.Final?type=jar",
+    "notices": [
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/LICENSE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1.txt",
+        "sha256": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/NOTICE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df.txt",
+        "sha256": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.aalto-xml.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954.txt",
+        "sha256": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.base64.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f.txt",
+        "sha256": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.bouncycastle.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7.txt",
+        "sha256": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.brotli4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.caliper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-lang.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-logging.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd.txt",
+        "sha256": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.compress-lzf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f.txt",
+        "sha256": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.dnsinfo.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3.txt",
+        "sha256": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed.txt",
+        "sha256": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hyper-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290.txt",
+        "sha256": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jboss-marshalling.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9.txt",
+        "sha256": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jbzip2.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jctools.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d.txt",
+        "sha256": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jfastlz.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb.txt",
+        "sha256": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jsr166y.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1.txt",
+        "sha256": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jzlib.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541.txt",
+        "sha256": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.libdivsufsort.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.log4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lz4.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lzma-java.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.mvn-wrapper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a.txt",
+        "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.nghttp2-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093.txt",
+        "sha256": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.protobuf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106.txt",
+        "sha256": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.slf4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1.txt",
+        "sha256": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.snappy.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046.txt",
+        "sha256": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.webbit.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133.txt",
+        "sha256": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.zstd-jni.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a.txt",
+        "sha256": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/NOTICE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      }
+    ]
+  },
+  "50c338a0e5c9997513e738f0fcb47d579a9e8852d317ba367f5d141e210187c0": {
+    "filename": "netty-resolver-4.1.138.Final.jar",
+    "purl": "pkg:maven/io.netty/netty-resolver@4.1.138.Final?type=jar",
+    "notices": [
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/LICENSE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1.txt",
+        "sha256": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/NOTICE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df.txt",
+        "sha256": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.aalto-xml.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954.txt",
+        "sha256": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.base64.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f.txt",
+        "sha256": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.bouncycastle.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7.txt",
+        "sha256": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.brotli4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.caliper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-lang.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-logging.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd.txt",
+        "sha256": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.compress-lzf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f.txt",
+        "sha256": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.dnsinfo.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3.txt",
+        "sha256": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed.txt",
+        "sha256": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hyper-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290.txt",
+        "sha256": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jboss-marshalling.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9.txt",
+        "sha256": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jbzip2.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jctools.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d.txt",
+        "sha256": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jfastlz.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb.txt",
+        "sha256": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jsr166y.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1.txt",
+        "sha256": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jzlib.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541.txt",
+        "sha256": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.libdivsufsort.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.log4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lz4.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lzma-java.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.mvn-wrapper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a.txt",
+        "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.nghttp2-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093.txt",
+        "sha256": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.protobuf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106.txt",
+        "sha256": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.slf4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1.txt",
+        "sha256": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.snappy.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046.txt",
+        "sha256": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.webbit.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133.txt",
+        "sha256": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.zstd-jni.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a.txt",
+        "sha256": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/NOTICE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      }
+    ]
+  },
+  "6c064c1cae4d410b920abfc07959a49db1b4778a9547614373e97d31cab0cad6": {
+    "filename": "netty-transport-4.1.138.Final.jar",
+    "purl": "pkg:maven/io.netty/netty-transport@4.1.138.Final?type=jar",
+    "notices": [
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/LICENSE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1.txt",
+        "sha256": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/NOTICE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df.txt",
+        "sha256": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.aalto-xml.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954.txt",
+        "sha256": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.base64.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f.txt",
+        "sha256": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.bouncycastle.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7.txt",
+        "sha256": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.brotli4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.caliper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-lang.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-logging.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd.txt",
+        "sha256": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.compress-lzf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f.txt",
+        "sha256": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.dnsinfo.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3.txt",
+        "sha256": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed.txt",
+        "sha256": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hyper-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290.txt",
+        "sha256": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jboss-marshalling.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9.txt",
+        "sha256": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jbzip2.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jctools.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d.txt",
+        "sha256": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jfastlz.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb.txt",
+        "sha256": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jsr166y.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1.txt",
+        "sha256": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jzlib.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541.txt",
+        "sha256": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.libdivsufsort.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.log4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lz4.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lzma-java.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.mvn-wrapper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a.txt",
+        "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.nghttp2-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093.txt",
+        "sha256": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.protobuf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106.txt",
+        "sha256": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.slf4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1.txt",
+        "sha256": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.snappy.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046.txt",
+        "sha256": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.webbit.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133.txt",
+        "sha256": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.zstd-jni.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a.txt",
+        "sha256": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/NOTICE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      }
+    ]
+  },
+  "8d1ada8f185d6f6da4cd79f9daeef39f1db49908cfec8bc2a1fb602458aa2341": {
+    "filename": "netty-transport-native-unix-common-4.1.138.Final.jar",
+    "purl": "pkg:maven/io.netty/netty-transport-native-unix-common@4.1.138.Final?type=jar",
+    "notices": [
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/LICENSE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1.txt",
+        "sha256": "64e368e79be71463922ebb102b33088667cf975edeed8df7f68efe9f89835ca1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/NOTICE.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df.txt",
+        "sha256": "2dca650805d8e96b8fcd3c2ac8bd17a8813fee479caefce929c75528710f35df",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.aalto-xml.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954.txt",
+        "sha256": "922754f715103e9366d1099f85bfea7df192d3d457cd7e222786321c9ab01954",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.base64.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f.txt",
+        "sha256": "3ad769df48f54692f561debc1be6134efb95b63b6e5031b8167f821bd82a204f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.bouncycastle.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7.txt",
+        "sha256": "c1b9df1275e769f3dbab000d1e457a2d4b0f28eb5da6c77e48dc37eeba202ed7",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.brotli4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.caliper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-lang.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.commons-logging.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd.txt",
+        "sha256": "95eab05f6010cc64dedb668523c01fc9f48665cded448de86404b14a7a557ddd",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.compress-lzf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f.txt",
+        "sha256": "f0bdf5682bf317b1f85c80ed32cb4c7bf77b5a231dee485aa92d983673b7c58f",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.dnsinfo.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3.txt",
+        "sha256": "62fb8a3a9621dc2388174caaabe9c2317b694bb9a1d46c98bcf5655b68f51be3",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed.txt",
+        "sha256": "763a9342a04df62046c9dc748a5287934eb0a5331c6863b3ca0aee20e18cb4ed",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.hyper-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290.txt",
+        "sha256": "ff420781e0005270cd1894a265e526dec4eb332f99df62a481b06672db202290",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jboss-marshalling.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9.txt",
+        "sha256": "77edfb9953d4a58f573c40280f9703df301b1f28e68b556914a561b03559c5e9",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jbzip2.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jctools.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d.txt",
+        "sha256": "06c1bf4cd5304c64bb72a6e03b461c389c35af26d623e3add7d828c398482e1d",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jfastlz.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb.txt",
+        "sha256": "17869cb6184447de9663a752a7663c118a9ed0d4ce0a2208986afc75206e1bbb",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jsr166y.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1.txt",
+        "sha256": "2ce9cdc96c015e5bb03fb1b565f33ffc7590c35ff2a33abe923e299135c01ce1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.jzlib.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541.txt",
+        "sha256": "a801f489b279d91b8afc67d41e3769ec4df476fda218d63f4326c005db881541",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.libdivsufsort.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e.txt",
+        "sha256": "3e4af21da9cb8a50d6a8f32225d7630fbf94a263e89945489d4863585f4aca4e",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.log4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lz4.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.lzma-java.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe.txt",
+        "sha256": "aac73b3148f6d1d7111dbca32099f68d26c644c6813ae1e4f05f6579aa2663fe",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.mvn-wrapper.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a.txt",
+        "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.nghttp2-hpack.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093.txt",
+        "sha256": "8fa16eae6ec99dfa982ab552ecbf9e98421bf5062356538cac4cd0c7bacd0093",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.protobuf.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106.txt",
+        "sha256": "e45deaad2824e38410545e2ed8ced91eccd13bc03b41643a4bd79c96e106e106",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.slf4j.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1.txt",
+        "sha256": "38139f9e51ce002fccec3b6cf2011a24e18e5096b8e6ad715f718828fa0b57d1",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.snappy.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046.txt",
+        "sha256": "9a746c7a218e6ee1ef719a39a0a66454c82ada93c60f06f9f819b505f6401046",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.webbit.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133.txt",
+        "sha256": "101b8b218e3784b326bcbf7fb4a6b0138f63e8df53242d9b10eb80a0056a1133",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/LICENSE.zstd-jni.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      },
+      {
+        "file": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a.txt",
+        "sha256": "9cea0d3fe0550735946cec78eaf6cfccce153ae06bdcdf17fa3b9f8d9b22196a",
+        "source": "https://raw.githubusercontent.com/netty/netty/26e68a2c3935e459b374891c87760f6d6c5e2550/license/NOTICE.harmony.txt",
+        "source_tag": "netty-4.1.138.Final",
+        "source_commit": "26e68a2c3935e459b374891c87760f6d6c5e2550"
+      }
+    ]
+  },
+  "8e63292e5c53bb93c4a6b0c213e79f15990fed250c1340f1c343880e1c9c39b5": {
+    "filename": "okio-3.6.0.jar",
+    "purl": "pkg:maven/com.squareup.okio/okio@3.6.0?type=jar",
+    "notices": [
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/square/okio/0b9ace50635c9256cfa66db20a911b2c63c0deb6/LICENSE.txt",
+        "source_tag": "parent-3.6.0",
+        "source_commit": "0b9ace50635c9256cfa66db20a911b2c63c0deb6"
+      }
+    ]
+  },
+  "67543f0736fc422ae927ed0e504b98bc5e269fda0d3500579337cb713da28412": {
+    "filename": "okio-jvm-3.6.0.jar",
+    "purl": "pkg:maven/com.squareup.okio/okio-jvm@3.6.0?type=jar",
+    "notices": [
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://raw.githubusercontent.com/square/okio/0b9ace50635c9256cfa66db20a911b2c63c0deb6/LICENSE.txt",
+        "source_tag": "parent-3.6.0",
+        "source_commit": "0b9ace50635c9256cfa66db20a911b2c63c0deb6"
+      }
+    ]
+  },
+  "88ff09d298c40d3c6207157cf987bb2e9d3dd755851018de208f8b4944bd1926": {
+    "filename": "pagehelper-6.1.1.jar",
+    "purl": "pkg:maven/com.github.pagehelper/pagehelper@6.1.1?type=jar",
+    "notices": [
+      {
+        "file": "3ccc1db51e8aa9b52466d46f0710e4772a04c875d3dae5ac9a0ffc4e075f0ab5.txt",
+        "sha256": "3ccc1db51e8aa9b52466d46f0710e4772a04c875d3dae5ac9a0ffc4e075f0ab5",
+        "source": "https://raw.githubusercontent.com/pagehelper/Mybatis-PageHelper/4db191cd241904e8c63cc9c2413a4ca74c2fd662/LICENSE",
+        "source_tag": "6.1.1",
+        "source_commit": "4db191cd241904e8c63cc9c2413a4ca74c2fd662"
+      }
+    ]
+  },
+  "42b4d6de089fb10c6f616fac155b915dbad1e97e3b27af651960b81c6984df3c": {
+    "filename": "pagehelper-spring-boot-autoconfigure-2.1.1.jar",
+    "purl": "pkg:maven/com.github.pagehelper/pagehelper-spring-boot-autoconfigure@2.1.1?type=jar",
+    "notices": [
+      {
+        "file": "57776475e939d8e50a663de0eb1b74a4e250d87e778475acc62f4a6908a27d1d.txt",
+        "sha256": "57776475e939d8e50a663de0eb1b74a4e250d87e778475acc62f4a6908a27d1d",
+        "source": "https://raw.githubusercontent.com/pagehelper/pagehelper-spring-boot/6d8f41d7c88b4315964db8f83697c565c5c0ae27/LICENSE",
+        "source_tag": "2.1.1",
+        "source_commit": "6d8f41d7c88b4315964db8f83697c565c5c0ae27"
+      }
+    ]
+  },
+  "bd0bdf3297cebf003921b3bb42caf4571726c7fa18adb33b95cf27d83b56b6f8": {
+    "filename": "pagehelper-spring-boot-starter-2.1.1.jar",
+    "purl": "pkg:maven/com.github.pagehelper/pagehelper-spring-boot-starter@2.1.1?type=jar",
+    "notices": [
+      {
+        "file": "57776475e939d8e50a663de0eb1b74a4e250d87e778475acc62f4a6908a27d1d.txt",
+        "sha256": "57776475e939d8e50a663de0eb1b74a4e250d87e778475acc62f4a6908a27d1d",
+        "source": "https://raw.githubusercontent.com/pagehelper/pagehelper-spring-boot/6d8f41d7c88b4315964db8f83697c565c5c0ae27/LICENSE",
+        "source_tag": "2.1.1",
+        "source_commit": "6d8f41d7c88b4315964db8f83697c565c5c0ae27"
+      }
+    ]
+  },
+  "72bdb32eb38cafb7dcd288262c29a34d57cba2e19101af9685155ba8c0a56008": {
+    "filename": "protobuf-java-3.25.8.jar",
+    "purl": "pkg:maven/com.google.protobuf/protobuf-java@3.25.8?type=jar",
+    "notices": [
+      {
+        "file": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d.txt",
+        "sha256": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d",
+        "source": "https://raw.githubusercontent.com/protocolbuffers/protobuf/a4cbdd3ed0042e8f9b9c30e8b0634096d9532809/LICENSE",
+        "source_tag": "v25.8",
+        "source_commit": "a4cbdd3ed0042e8f9b9c30e8b0634096d9532809"
+      }
+    ]
+  },
+  "f75ca597789b3dac58f61857b9ac2e1034a68fa672db35055a8fb4509e325f28": {
+    "filename": "reactive-streams-1.0.4.jar",
+    "purl": "pkg:maven/org.reactivestreams/reactive-streams@1.0.4?type=jar",
+    "notices": [
+      {
+        "file": "96a3b2d45af72054d0676e8eb9a944a096812a7f8ff1b71bd82dadbc60ce0444.txt",
+        "sha256": "96a3b2d45af72054d0676e8eb9a944a096812a7f8ff1b71bd82dadbc60ce0444",
+        "source": "https://raw.githubusercontent.com/reactive-streams/reactive-streams-jvm/944163a4b2477a2bebaaada86b0ba910b6302f2f/LICENSE",
+        "source_tag": "v1.0.4",
+        "source_commit": "944163a4b2477a2bebaaada86b0ba910b6302f2f"
+      }
+    ]
+  },
+  "39dede10e9a811141d4629dd9ecf23ad0981aeb4c6dfc4bea75ba4998a64cc78": {
+    "filename": "sa-token-core-1.45.0.jar",
+    "purl": "pkg:maven/cn.dev33/sa-token-core@1.45.0?type=jar",
+    "notices": [
+      {
+        "file": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56.txt",
+        "sha256": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56",
+        "source": "https://raw.githubusercontent.com/dromara/Sa-Token/ad837c9640bd6e8d332ca06a6e0b22923f7a6278/LICENSE",
+        "source_tag": "v1.45.0",
+        "source_commit": "ad837c9640bd6e8d332ca06a6e0b22923f7a6278"
+      }
+    ]
+  },
+  "2746218f3e38226d36c92b48c7ac2f13c9d45d7618b122e39991ea60c7c703b0": {
+    "filename": "sa-token-jackson-1.45.0.jar",
+    "purl": "pkg:maven/cn.dev33/sa-token-jackson@1.45.0?type=jar",
+    "notices": [
+      {
+        "file": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56.txt",
+        "sha256": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56",
+        "source": "https://raw.githubusercontent.com/dromara/Sa-Token/ad837c9640bd6e8d332ca06a6e0b22923f7a6278/LICENSE",
+        "source_tag": "v1.45.0",
+        "source_commit": "ad837c9640bd6e8d332ca06a6e0b22923f7a6278"
+      }
+    ]
+  },
+  "3c6542c71f428f9302c62a95f1be769b4accf096cdf43f44cd2d098369aa837e": {
+    "filename": "sa-token-jakarta-servlet-1.45.0.jar",
+    "purl": "pkg:maven/cn.dev33/sa-token-jakarta-servlet@1.45.0?type=jar",
+    "notices": [
+      {
+        "file": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56.txt",
+        "sha256": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56",
+        "source": "https://raw.githubusercontent.com/dromara/Sa-Token/ad837c9640bd6e8d332ca06a6e0b22923f7a6278/LICENSE",
+        "source_tag": "v1.45.0",
+        "source_commit": "ad837c9640bd6e8d332ca06a6e0b22923f7a6278"
+      }
+    ]
+  },
+  "f5d1192673e3ddec5a8be913d76dd1a91e516e45c533831d2e0764278d952295": {
+    "filename": "sa-token-spring-boot-webmvc-reactor-v2v3v4-common-1.45.0.jar",
+    "purl": "pkg:maven/cn.dev33/sa-token-spring-boot-webmvc-reactor-v2v3v4-common@1.45.0?type=jar",
+    "notices": [
+      {
+        "file": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56.txt",
+        "sha256": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56",
+        "source": "https://raw.githubusercontent.com/dromara/Sa-Token/ad837c9640bd6e8d332ca06a6e0b22923f7a6278/LICENSE",
+        "source_tag": "v1.45.0",
+        "source_commit": "ad837c9640bd6e8d332ca06a6e0b22923f7a6278"
+      }
+    ]
+  },
+  "30c3d5fbaa566f870275a70a0d382d310b02d30469ec36ecad7d0d9c847240bf": {
+    "filename": "sa-token-spring-boot-webmvc-v3v4-common-1.45.0.jar",
+    "purl": "pkg:maven/cn.dev33/sa-token-spring-boot-webmvc-v3v4-common@1.45.0?type=jar",
+    "notices": [
+      {
+        "file": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56.txt",
+        "sha256": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56",
+        "source": "https://raw.githubusercontent.com/dromara/Sa-Token/ad837c9640bd6e8d332ca06a6e0b22923f7a6278/LICENSE",
+        "source_tag": "v1.45.0",
+        "source_commit": "ad837c9640bd6e8d332ca06a6e0b22923f7a6278"
+      }
+    ]
+  },
+  "5bae4495bb9c51edcca4f3996c8ee688f8767a095ee0349e7691f2a91625765d": {
+    "filename": "sa-token-spring-boot3-starter-1.45.0.jar",
+    "purl": "pkg:maven/cn.dev33/sa-token-spring-boot3-starter@1.45.0?type=jar",
+    "notices": [
+      {
+        "file": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56.txt",
+        "sha256": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56",
+        "source": "https://raw.githubusercontent.com/dromara/Sa-Token/ad837c9640bd6e8d332ca06a6e0b22923f7a6278/LICENSE",
+        "source_tag": "v1.45.0",
+        "source_commit": "ad837c9640bd6e8d332ca06a6e0b22923f7a6278"
+      }
+    ]
+  },
+  "ef779af5d29a9dde8cc70ce0341f5c6f7735e23edff9685ceaa9d35359b7bb7f": {
+    "filename": "snakeyaml-2.4.jar",
+    "purl": "pkg:maven/org.yaml/snakeyaml@2.4?type=jar",
+    "notices": [
+      {
+        "file": "c76ff8baa25f94fb807e9429eb3fe7ec188ab503cd3a7fcbccb1bb340ff3a312.txt",
+        "sha256": "c76ff8baa25f94fb807e9429eb3fe7ec188ab503cd3a7fcbccb1bb340ff3a312",
+        "source": "https://repo.maven.apache.org/maven2/org/yaml/snakeyaml/2.4/snakeyaml-2.4-sources.jar",
+        "source_archive_sha256": "0a3c537e86cbb13a9a31ab138c13cee0b2c2cedc17dba38e0dc1f24a2053d8af",
+        "extraction": "Verbatim leading license/copyright comments from the exact-version source JAR; duplicate texts grouped with original paths"
+      },
+      {
+        "file": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+        "applicability": "Exact-version source headers explicitly reference Apache License 2.0"
+      }
+    ]
+  },
+  "0f3f1857ed33116583f480b4df5c0218836c47bfbc9c6221c0d73f356decf37b": {
+    "filename": "snappy-java-1.1.10.5.jar",
+    "purl": "pkg:maven/org.xerial.snappy/snappy-java@1.1.10.5?type=jar",
+    "notices": [
+      {
+        "file": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5.txt",
+        "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+        "source": "https://raw.githubusercontent.com/xerial/snappy-java/08abfa4f85b3a39c5fe8fa2f43b482440bedb5a3/LICENSE",
+        "source_tag": "v1.1.10.5",
+        "source_commit": "08abfa4f85b3a39c5fe8fa2f43b482440bedb5a3"
+      },
+      {
+        "file": "396e5ff756e04da010095628e43cdc9c0b49bd4fd9319e7c52423db6d3cdf00c.txt",
+        "sha256": "396e5ff756e04da010095628e43cdc9c0b49bd4fd9319e7c52423db6d3cdf00c",
+        "source": "https://raw.githubusercontent.com/xerial/snappy-java/08abfa4f85b3a39c5fe8fa2f43b482440bedb5a3/NOTICE",
+        "source_tag": "v1.1.10.5",
+        "source_commit": "08abfa4f85b3a39c5fe8fa2f43b482440bedb5a3"
+      }
+    ]
+  },
+  "211b306cfc44f8f96df3a0a3ddaf75ba8c5289eed77d60d72f889bb855f535e5": {
+    "filename": "xz-1.9.jar",
+    "purl": "pkg:maven/org.tukaani/xz@1.9?type=jar",
+    "notices": [
+      {
+        "file": "5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13.txt",
+        "sha256": "5b8d4f01ff167f27ca86d33dea8aa2648dfc0794cf14e19e9e0a10698529ce13",
+        "source": "https://repo.maven.apache.org/maven2/org/tukaani/xz/1.9/xz-1.9-sources.jar",
+        "source_archive_sha256": "5befa47f06b90e752f035191dde7f2deb59f36000f1ca6cc77d2362a82b6f462",
+        "extraction": "Verbatim leading license/copyright comments from the exact-version source JAR; duplicate texts grouped with original paths"
+      }
+    ]
+  },
+  "793ca8734aa15687e7e64564eab8b6ae9ee2720eae27aa663074682144b1c386": {
+    "filename": "zstd-jni-1.5.6-4.jar",
+    "purl": "pkg:maven/com.github.luben/zstd-jni@1.5.6-4?type=jar",
+    "notices": [
+      {
+        "file": "c6a6a8926f2f1732603e4b75779a5f6ce79238eb79bc36dcc5b7feb509bc6cd9.txt",
+        "sha256": "c6a6a8926f2f1732603e4b75779a5f6ce79238eb79bc36dcc5b7feb509bc6cd9",
+        "source": "https://raw.githubusercontent.com/luben/zstd-jni/76acf0fe88613c68ae1a8f4f0d8b2280f22a5f63/LICENSE",
+        "source_tag": "v1.5.6-4",
+        "source_commit": "76acf0fe88613c68ae1a8f4f0d8b2280f22a5f63"
+      }
+    ]
+  },
+  "94ed084848c5e086a386bc8113fb3a228c36cb1416a43d956d9f2bb55c71de4b": {
+    "filename": "oshi-core-6.6.6.jar",
+    "purl": "pkg:maven/com.github.oshi/oshi-core@6.6.6?type=jar",
+    "notices": [
+      {
+        "file": "e5936ec705d2fb0515b0d3e9a76acb52c1eef3e8ff88c7b9f80269b7909c959c.txt",
+        "sha256": "e5936ec705d2fb0515b0d3e9a76acb52c1eef3e8ff88c7b9f80269b7909c959c",
+        "source": "https://raw.githubusercontent.com/oshi/oshi/a95a3b3c815ade4a072565858d55fbdac2cd9fe6/LICENSE",
+        "source_tag": "oshi-parent-6.6.6",
+        "source_commit": "a95a3b3c815ade4a072565858d55fbdac2cd9fe6"
+      }
+    ]
+  }
+}

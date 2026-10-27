@@ -126,7 +126,7 @@ jobs:
       - name: Install pinned pnpm and dependencies
         working-directory: develop/web/ijob
         run: |
-          npm install --global pnpm@11.19.0
+          npm install --global pnpm@11.28.8
           pnpm install --frozen-lockfile
           pnpm exec playwright install --with-deps chromium
       - name: Static, unit, build and browser checks

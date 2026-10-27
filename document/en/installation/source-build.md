@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-Clone with an authorized GitHub account or extract the source ZIP of a specific commit. Work in the repository root containing `tools/`. Native builds require Python 3.11+, JDK 21, Maven 3.9.11, Node 24.14.1 and pnpm 11.19.0 on PATH; point JAVA_HOME to the JDK. Preserve lockfiles. The first build needs Maven/npm dependency access.
+Clone with an authorized GitHub account or extract the source ZIP of a specific commit. Work in the repository root containing `tools/`. Native builds require Python 3.11+, JDK 21, Maven 3.9.11, Node 24.22.1 and pnpm 11.28.8 on PATH; point JAVA_HOME to the JDK. Preserve lockfiles. The first build needs Maven/npm dependency access.
 
 ## Native bundle: one command
 

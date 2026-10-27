@@ -15,7 +15,7 @@ pwsh -File test/tools/verify-frontend.ps1 -RunId frontend-full-001 -Suite Full -
 
 第一个入口精确选择 13 类专项：ConcurrencyHttpIT、DataCheckHttpIT、DiagnosticsHttpIT、EtlFileIncrementalIT、FilesHttpIT、InstanceLogSnapshotIT、PushHttpIT、SecurityCompletionIT、Stage9cLifecycleHttpIT、TableIdMigrationIT、TriggerBusinessTimeMigrationIT、UnifiedExperienceHttpIT、WorkbenchHttpIT。它明确使用 SQLite，为 Java 临时文件创建独立根目录；SecurityCompletionIT 的审计 fixture 显式设置 SQLite，防止缺参数而跳过。报告必须是本轮新生成的，每类均有用例、零失败、零错误、零跳过。Maven 失败时仍保留已生成的 JUnit，临时 fixture 目录保留供排查，不归档数据库。
 
-Full 依次执行 Basic 和 security、batch-etl、diagnostics、etl、localjar、monitor、workbench 七套真实后端浏览器配置。Windows、JDK 21、Maven 3.9.11、Node 24.14.1、pnpm 11.19.0 和 Chromium 按基础入口要求准备；还须显式提供以下独立工具路径：
+Full 依次执行 Basic 和 security、batch-etl、diagnostics、etl、localjar、monitor、workbench 七套真实后端浏览器配置。Windows、JDK 21、Maven 3.9.11、Node 24.22.1、pnpm 11.28.8 和 Chromium 按基础入口要求准备；还须显式提供以下独立工具路径：
 
 - `IJOB_TEST_PYTHON`：已安装 Paramiko 4.0.0 的 Python。
 - `IJOB_TEST_SH`：Git Shell 的 sh 可执行文件。

@@ -22,7 +22,7 @@
 | --- | --- | --- |
 | Repository checks | Ubuntu 24.04、Python 3.12 | Git 实际文件与逐项白名单相等；敏感信息扫描及已有审查记录 |
 | Backend and Agent | Windows 2025、JDK 21、Maven 3.9.11、Python 3.12/Paramiko 4.0.0 | google-java-format 1.24.0 AOSP/既有 CRLF、quality 编译、单测、指定 SQLite/安全 IT、打包；先安装主工程，再测试 Agent |
-| Frontend | Ubuntu 24.04、Node 24.14.1、pnpm 11.19.0、Playwright Chromium | runtime/typecheck/lint/boundaries/format/unit/build/bundle；普通 E2E 和 production 配置 |
+| Frontend | Ubuntu 24.04、Node 24.22.1、pnpm 11.28.8、Playwright Chromium | runtime/typecheck/lint/boundaries/format/unit/build/bundle；普通 E2E 和 production 配置 |
 | Docker validation and build | Ubuntu 24.04、Docker/Compose、Python 3.12 | 五库单机/四库双节点 Compose 模板语法；后端、前端、Agent 三镜像 Linux amd64 构建和镜像 ID |
 
 Node 版本由 `.node-version` 定义并精确检查；pnpm 版本取 package.json。后端、Agent wrapper 和 Maven 构建镜像统一为 3.9.11。CI 下载 Maven 后校验发布方 SHA-512；Java 主版本为 21，不声称宿主 JDK 与 Docker 内补丁号完全一致。quality profile 打开编译警告，不将所有警告当成错误。
