@@ -10,7 +10,7 @@
 | backend | Repository checks、完整 Backend and Agent |
 | frontend | Repository checks、完整四片 Frontend |
 | docker | Repository checks、完整 Backend and Agent、完整四片 Frontend、Docker |
-| basic | 与 docker 相同的完整七个 jobs；阶段与最终候选使用此名称明确签收 |
+| basic | 与 docker 相同的完整七个验证 jobs，成功后另执行报告保留任务；阶段与最终候选使用此名称明确签收 |
 
 纯说明、翻译和截图不触发重型任务。单模块修改先完成本地模块规定检查及直接受影响的集成场景；在阶段合并或本地不能覆盖时运行对应远端任务。启停/服务化/打包/跨平台变更，以及公共框架、安全、依赖、工具链或 CI 基础设施变更，在阶段候选运行完整 Basic；按影响补运行专项。最终候选还须完成 Full 七套真实后端集成及适用的运行矩阵，它们不由 Basic 自动执行。
 
@@ -27,7 +27,9 @@
 
 Node 版本由 `.node-version` 定义并精确检查；pnpm 版本取 package.json。后端、Agent wrapper 和 Maven 构建镜像统一为 3.9.11。CI 下载 Maven 后校验发布方 SHA-512；Java 主版本为 21，不声称宿主 JDK 与 Docker 内补丁号完全一致。quality profile 打开编译警告，不将所有警告当成错误。
 
-Action 固定完整提交 SHA；GITHUB_TOKEN 仅 contents:read，checkout 不持久化认证。同一分支/PR、同一 suite 的新运行取消旧运行；轻量 push/PR 不取消正在运行的手动重型 suite。基础检查不需要仓库 Secrets、镜像仓库凭据或外部数据库账户。
+Action 固定完整提交 SHA；验证任务的 GITHUB_TOKEN 仅 contents:read，checkout 不持久化认证。独立的报告保留任务另有 actions:write，仅用于清理本工作流的旧 Artifact。同一分支/PR、同一 suite 的新运行取消旧运行；轻量 push/PR 不取消正在运行的手动重型 suite。基础检查不需要仓库 Secrets、镜像仓库凭据或外部数据库账户。
+
+按维护者要求，后续只保留最新一套完整 CI 报告。main 上手动 basic/docker 的七个验证任务全部成功且七份 Artifact 均可用后，独立清理任务才删除本工作流更早已结束运行的 Artifact；同一次重跑的重复报告每类只保留最新一份。失败或部分验证不取代上一套完整报告；更新的运行、仍在执行的运行以及其他工作流均不清理。清理任务串行执行，保留删除 ID 日志，不删除 workflow run、日志、Git 历史或本地证据；Artifact 仍受原 14 天到期限制。该规则不是永久归档服务，必要证据应另行保存。清理逻辑的失败、缺报告、并发和分页边界由 tools/ci 单元测试覆盖。
 
 ## 本地入口
 

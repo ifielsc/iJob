@@ -55,6 +55,7 @@ jobs:
         run: |
           python tools/distribution/docs.py --check
           python -m unittest discover -s tools/distribution -p "test_*.py"
+          python -m unittest discover -s tools/ci -p "test_*.py"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -162,3 +163,27 @@ jobs:
           path: test/reports/docker-*
           retention-days: 14
           if-no-files-found: warn
+
+  retain-latest:
+    name: Retain latest complete CI reports
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && contains(fromJSON('["docker", "basic"]'), inputs.suite)
+    needs: [repository, backend-agent, frontend, docker]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: write
+    concurrency:
+      group: basic-ci-artifact-retention
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Remove superseded workflow artifacts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python tools/ci/prune-artifacts.py

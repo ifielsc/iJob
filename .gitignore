@@ -3790,7 +3790,9 @@
 !/tools/ci/install-maven.ps1
 !/tools/ci/inventory-dependencies.py
 !/tools/ci/prepare-legacy-db.py
+!/tools/ci/prune-artifacts.py
 !/tools/ci/requirements.txt
+!/tools/ci/test_prune_artifacts.py
 !/tools/ci/verify-docker.py
 !/tools/ci/verify-local-integration.ps1
 !/tools/distribution/build.py
