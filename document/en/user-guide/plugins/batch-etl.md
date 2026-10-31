@@ -1,48 +1,141 @@
 # Batch ETL
 
-[简体中文](../../../zh-CN/user-guide/plugins/batch-etl.md) · [Manual home](../../README.md)
+[简体中文](../../../zh-CN/user-guide/plugins/batch-etl.md) · [Manual](../../README.md)
 
-## Entry and prerequisites
+Applies to **1.0.0**. Tasks → New/Edit → plugin `BATCH_ETL`.
 
-Tasks → New/Edit → plugin `BATCH_ETL`. Prepare the resources, permissions and execution-node dependencies listed below. See [Tasks](../tasks.md) for shared timeout/retry/publication behavior.
+## Before you start
 
-## Fields and behavior
+Use ADMIN to create, configure and save tasks. ADMIN or OPERATOR can execute published definitions; ADMIN reads detailed logs and input/output variables. Resources must be enabled and reachable from the execution node. See [tasks](../tasks.md) for common timeout, retry and version settings, and the [permission matrix](../users-audits.md).
 
-| Page field/action | Purpose and rules |
+## Field reference
+
+“Default” means the **initial value of a new 1.0.0 form**. An empty value means the field has not been filled in; required fields still need a value. Visibility follows the selected branch; conditional requirements apply only to that branch.
+
+### Tables and write settings
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Source database | Required | None | Always | Current task version |
+| Target database | Required | None | Always | Current task version |
+| Source schema (optional) | Optional | Empty | Always | Current task version |
+| Target schema (optional) | Optional | Empty | Always | Current task version |
+| Tables | Required | Empty list | Always | Current task version |
+| Logical keys | Conditionally required | Empty list | Non-APPEND writes or incremental extraction | Current task version |
+| Extraction mode | Select | FULL | Always | Current task version |
+| Write mode | Select | UPSERT | Always | Current task version |
+| Null policy | Select | OVERWRITE | Always | Current task version |
+| Target prefix (optional) | Optional | Empty | Always | Current task version |
+| Target suffix (optional) | Optional | Empty | Always | Current task version |
+| Marker column | Conditionally required | Empty | INCREMENTAL | Current task version |
+| Marker type | Select | TIMESTAMP | INCREMENTAL | Current task version |
+| Initial marker value | Conditionally required | Empty | INCREMENTAL | Current task version |
+| Initial logical key values | Conditionally required | Empty list | INCREMENTAL | Current task version |
+| Clear before import | Optional | false | FULL | Current task version |
+| Clear mode | Select | DELETE | FULL with Clear before import enabled | Current task version |
+| I understand: deletion and batch commits can leave partial results | Selection required conditionally | false | DELETE clearing mode | Current task version |
+| I understand: TRUNCATE may commit implicitly and cannot be fully rolled back | Selection required conditionally | false | TRUNCATE clearing mode | Current task version |
+| I understand: automatic retries with append can duplicate data | Selection required conditionally | false | APPEND with task retries greater than 0 | Current task version |
+
+- **Source database**: Provide the source database connection for batch reads.
+- **Target database**: Provide the target database connection for batch writes.
+- **Source schema (optional)**: Select the schema containing source tables.
+- **Target schema (optional)**: Select the schema containing target tables.
+- **Tables**: List tables to synchronize without duplicates.
+- **Logical keys**: Match target records and break incremental ties; every table must contain these columns.
+- **Extraction mode**: Choose full or incremental extraction.
+- **Write mode**: Choose append, insert, update or upsert behavior for target tables.
+- **Null policy**: Choose whether source nulls overwrite or preserve existing target values.
+- **Target prefix (optional)**: Prefix added when deriving target table names.
+- **Target suffix (optional)**: Suffix added when deriving target table names.
+- **Marker column**: Column used to track incremental progress in every table.
+- **Marker type**: Type used to interpret and compare incremental markers.
+- **Initial marker value**: Starting marker used when no checkpoint exists.
+- **Initial logical key values**: Initial tie-break values in the same order as logical keys.
+- **Clear before import**: Clear target tables before a full import.
+- **Clear mode**: Choose DELETE or TRUNCATE for clearing tables.
+- **I understand: deletion and batch commits can leave partial results**: Acknowledge that deletion followed by batch commits can leave partial results on failure.
+- **I understand: TRUNCATE may commit implicitly and cannot be fully rolled back**: Acknowledge that TRUNCATE may commit implicitly and prevent complete rollback.
+- **I understand: automatic retries with append can duplicate data**: Explicitly accept possible duplicate writes when retrying append operations.
+
+### Execution limits
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Fetch batch rows | Has a default | 2000 | Advanced settings | Current task version |
+| Write batch rows | Has a default | 1000 | Advanced settings | Current task version |
+| Query timeout (seconds) | Has a default | 300 | Advanced settings | Current task version |
+| Maximum tables | Has a default | 500 | Advanced settings | Current task version |
+| Maximum rows per table | Has a default | 10000000 | Advanced settings | Current task version |
+| Maximum total rows | Has a default | 50000000 | Advanced settings | Current task version |
+
+- **Fetch batch rows**: 1–100000。
+- **Write batch rows**: 1–100000。
+- **Query timeout (seconds)**: 1–86400。
+- **Maximum tables**: 1–500。
+- **Maximum rows per table**: 1–9223372036854775807。
+- **Maximum total rows**: 1–9223372036854775807。
+
+## Behavior and boundaries
+
+- At most 500 tables; table and logical-key lists cannot contain duplicates.
+- Incremental mode forbids APPEND; every table must contain the configured watermark column and logical keys.
+- Tables have independent commit boundaries; a failure does not imply rollback of tables already committed.
+
+## Typical configuration: Synchronize orders and order_items
+
+Fill in the form below, replacing resource names with your enabled resources. This is a configuration guide, not importable JSON. Follow the tutorial linked below for data preparation and execution.
+
+Prepare three rows each in source orders and order_items; create target copy_orders and copy_order_items with id primary keys.
+
+| Setting | Value |
 | --- | --- |
-| Source database / Source schema / Target database / Target schema / Tables | Source/target DB resources, optional schemas and explicit table list; start with one or two small tables. |
-| Logical keys / Extraction mode / Incremental rules | Default FULL; INCREMENTAL requires watermarkColumn/type/initialWatermark/initialLogicalKeyValues. Verify required columns in every table. |
-| Load mode / Null policy / Target name prefix and suffix | Defaults UPSERT / OVERWRITE; target prefix/suffix default empty and do not rename sources. |
-| Clear before import / Clear mode | No pre-clear by default; clearMode DELETE. TRUNCATE may be nontransactional. |
-| Nontransactional truncate / Partial commit / Non-idempotent retry acknowledgements | Explicit risk acknowledgments, not automatic safety; default false. |
-| Batch and execution limits | Defaults fetchSize 2000, writeBatchSize 1000, timeout 300 seconds, 500 tables, 10 million rows/table and 50 million rows total. |
+| Source database | Isolated source database |
+| Target database | Isolated target database |
+| Tables | ["orders","order_items"] |
+| Logical keys | ["id"] |
+| Extraction mode | FULL |
+| Write mode | UPSERT |
+| Clear before import | false |
+| Target prefix (optional) | copy_ |
 
-## Minimal example and verification
+**Expected result:** copy_orders has three rows totaling 600; copy_order_items has three rows with qty totaling 6. Keys and totals remain unchanged after a repeat run.
 
-Prepare the dedicated resources above, fill the form, save, then trigger manually and verify the instance, outputs and target system as described below. Saving alone does not execute.
+[Follow the full tutorial](../../examples/batch-etl.md). Save the definition before running it; inspect execution state and business results separately.
 
-| Setting | Value to enter |
+## Configuration keys
+
+Use these keys when inspecting imported configuration, API payloads or errors. `[]` denotes a collection item; the form does not require you to enter key names.
+
+| Category / field | Configuration key |
 | --- | --- |
-| Source / Target database | Select independent test resources |
-| Tables | `orders`, `order_items` |
-| Logical keys | `id` (must exist in both tables) |
-| Extraction mode | Full (FULL) |
-| Load mode | Upsert (UPSERT) |
-| Clear before import | Off |
+| Tables and write settings / Source database | `sourceResourceId` |
+| Tables and write settings / Target database | `targetResourceId` |
+| Tables and write settings / Source schema (optional) | `sourceSchema` |
+| Tables and write settings / Target schema (optional) | `targetSchema` |
+| Tables and write settings / Tables | `tables` |
+| Tables and write settings / Logical keys | `logicalKeys` |
+| Tables and write settings / Extraction mode | `extractMode` |
+| Tables and write settings / Write mode | `loadMode` |
+| Tables and write settings / Null policy | `nullPolicy` |
+| Tables and write settings / Target prefix (optional) | `targetNaming.prefix` |
+| Tables and write settings / Target suffix (optional) | `targetNaming.suffix` |
+| Tables and write settings / Marker column | `incremental.watermarkColumn` |
+| Tables and write settings / Marker type | `incremental.watermarkType` |
+| Tables and write settings / Initial marker value | `incremental.initialWatermark` |
+| Tables and write settings / Initial logical key values | `incremental.initialLogicalKeyValues` |
+| Tables and write settings / Clear before import | `clearBeforeImport` |
+| Tables and write settings / Clear mode | `clearMode` |
+| Tables and write settings / I understand: deletion and batch commits can leave partial results | `acknowledgePartialCommit` |
+| Tables and write settings / I understand: TRUNCATE may commit implicitly and cannot be fully rolled back | `acknowledgeNonTransactionalTruncate` |
+| Tables and write settings / I understand: automatic retries with append can duplicate data | `allowNonIdempotentRetry` |
+| Execution limits / Fetch batch rows | `execution.fetchSize` |
+| Execution limits / Write batch rows | `execution.writeBatchSize` |
+| Execution limits / Query timeout (seconds) | `execution.queryTimeoutSeconds` |
+| Execution limits / Maximum tables | `execution.maxTables` |
+| Execution limits / Maximum rows per table | `execution.maxRowsPerTable` |
+| Execution limits / Maximum total rows | `execution.maxTotalRows` |
 
-Ensure both tables have suitable logical keys and target schemas. Preview selected tables, target names and mappings; verify counts, keys and totals per table. One successful table does not prove whole-batch success. Review committed tables before retrying; exercise clearing only on independent copies with restorable backups.
+## Related pages
 
-Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
-
-## Technical key reference (optional)
-
-These stored keys help developers and troubleshooting; they are not a task JSON blob to paste into the UI. Automatically validated metadata is not a manual form input.
-
-| Page field/group | Stored keys |
-| --- | --- |
-| Source database / Source schema / Target database / Target schema / Tables | `sourceResourceId / sourceSchema / targetResourceId / targetSchema / tables` |
-| Logical keys / Extraction mode / Incremental rules | `logicalKeys / extractMode / incremental` |
-| Load mode / Null policy / Target name prefix and suffix | `loadMode / nullPolicy / targetNaming` |
-| Clear before import / Clear mode | `clearBeforeImport / clearMode` |
-| Nontransactional truncate / Partial commit / Non-idempotent retry acknowledgements | `acknowledgeNonTransactionalTruncate / acknowledgePartialCommit / allowNonIdempotentRetry` |
-| Batch and execution limits | `execution` |
+[Tasks and versions](../tasks.md) · [Parameters and expressions](../../reference/variables.md) · [Scenario tutorials](../../examples.md)

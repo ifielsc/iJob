@@ -4,6 +4,9 @@
 !pnpm-workspace.yaml
 !patches/
 !patches/**
+!packages/
+!packages/ui-directives/
+!packages/ui-directives/**
 !index.html
 !tsconfig*.json
 !vite.config.ts

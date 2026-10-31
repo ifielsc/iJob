@@ -4,7 +4,7 @@
 
 ## 1. 准备与一次性配置
 
-准备 Linux Docker Engine、Compose v2、Bash 和完整 Docker 包。使用有权限的账号，下面示例统一使用 sudo。在程序包目录执行：
+准备 Linux Docker Engine、提供 `docker compose` 命令的 Compose 插件、Bash 和完整 Docker 包。先运行 `docker version` 与 `docker compose version` 核对已安装版本。使用有权限的账号，下面示例统一使用 sudo。在程序包目录执行：
 
 ```sh
 sudo mkdir -p /srv/ijob/instances /srv/ijob-data
@@ -64,4 +64,5 @@ restart 使用该程序包的镜像锁重建本项目并等待就绪，不删除
 
 首次 `start` 和显式 `restart` 由 Compose 等待 backend 健康后启动 web；Docker 守护进程恢复已有容器时，各容器按各自重启策略恢复，不能把 Compose 的依赖声明当作每次开机的严格启动顺序。详见 [Compose 启动顺序](https://docs.docker.com/compose/how-tos/startup-order/)。恢复后检查 backend/web 健康状态、实际登录和一项可重复的业务任务，再确认历史记录及数据完整。
 
-本轮独立 Linux VM 已实测两个隔离实例：backend 进程异常退出后恢复、Docker 服务重启、VM 重启，以及入口 `restart` 重建容器。运行实例恢复后登录和任务执行成功，手动停止的另一个实例跨服务与 VM 重启保持停止；容器重建保留任务历史，实例配置文件的 SHA-256 保持一致。此结果不代表断电时外部系统写入自动具备事务性；业务写入仍需自己的幂等与恢复方案。
+恢复或重建容器后，确认本实例的定义、历史和配置仍在；同时检查同宿主其他实例的启停状态未受影响。对于恢复前正在执行的写入任务，核对目标系统中的实际结果，再决定是否重试。容器恢复不能自动保证外部写入的事务性，业务仍需幂等与恢复设计。
+MySQL/Oracle 需要用户自备 JDBC 驱动，见[驱动安装](../installation.md#jdbc-驱动)。PostgreSQL、SQL Server、SQLite 驱动继续随包提供。

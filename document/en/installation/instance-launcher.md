@@ -43,7 +43,7 @@ To change the program directory or prompt language of an existing instance, stop
 
 An update verifies the current instance is stopped and the replacement bundle is complete, saves the exact previous instance.conf bytes as instance.conf.backup-* in the control directory, then replaces settings atomically. Lifecycle commands and updates are mutually exclusive within that control directory; do not concurrently use legacy or other control directories during an update. Data, application.properties and secrets are unchanged. Home, mode and control directory remain fixed; follow backup/restore and create a new control directory for data/mode migrations. To restore settings, stop first, verify backup/program compatibility and restore the previous file. Application/data rollback still follows the upgrade guide.
 
-Old control scripts do not acquire this feature merely by updating a bundle. Create a new control directory from the new bundle using the process below. Package builds, cross-platform VM execution and screenshots have separate acceptance; source wizard tests do not replace them.
+Old control scripts do not acquire this feature merely by updating a bundle. Create a new control directory from the new bundle using the process below. Then check that `show`, `status`, startup and shutdown select the intended instance and that its data home, configuration and history remain correct.
 
 ## Shared settings for every action
 
@@ -52,7 +52,7 @@ instance.conf is plain UTF-8, one key per line, without quotes, variable expansi
 | Setting | Meaning and change rules |
 | --- | --- |
 | version | Control-file format, currently 1; do not edit. This is not the product version. |
-| bundle | Absolute complete-program directory; use configure Update/update while stopped, then perform upgrade acceptance. |
+| bundle | Absolute complete-program directory; use configure Update/update while stopped, then follow the upgrade checks for readiness, login and data. |
 | home | Absolute instance data directory; controlled updates keep it fixed. Create a new control directory through backup/restore for data migration. |
 | lang | Launch-message language: zh or en; defaults to en, read on the next command after a controlled update. |
 | mode | windows, linux or docker, selected during creation. Editing it does not migrate an installation. |

@@ -12,6 +12,6 @@
 | 单机与集群：前提和职责 | [进入](operations/standalone-cluster.md) |
 | 运行模式变更与回退 | [进入](operations/runtime-mode-change.md) |
 | 备份与独立恢复 | [进入](operations/backup-restore.md) |
-| 升级候选与回退 | [进入](operations/upgrade-rollback.md) |
+| 升级与回退 | [进入](operations/upgrade-rollback.md) |
 | 生产入口与服务托管 | [进入](operations/production.md) |
 | 按现象排障 | [进入](operations/troubleshooting.md) |

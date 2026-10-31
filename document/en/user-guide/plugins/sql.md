@@ -1,54 +1,90 @@
 # SQL execution
 
-[简体中文](../../../zh-CN/user-guide/plugins/sql.md) · [Manual home](../../README.md)
+[简体中文](../../../zh-CN/user-guide/plugins/sql.md) · [Manual](../../README.md)
 
-## Entry and prerequisites
+Applies to **1.0.0**. Tasks → New/Edit → plugin `SQL`.
 
-Tasks → New/Edit → plugin `SQL`. Prepare the resources, permissions and execution-node dependencies listed below. See [Tasks](../tasks.md) for shared timeout/retry/publication behavior.
+## Before you start
 
-## Fields and behavior
+Use ADMIN to create, configure and save tasks. ADMIN or OPERATOR can execute published definitions; ADMIN reads detailed logs and input/output variables. Resources must be enabled and reachable from the execution node. See [tasks](../tasks.md) for common timeout, retry and version settings, and the [permission matrix](../users-audits.md).
 
-| Page field/action | Purpose and rules |
+## Field reference
+
+“Default” means the **initial value of a new 1.0.0 form**. An empty value means the field has not been filled in; required fields still need a value. Visibility follows the selected branch; conditional requirements apply only to that branch.
+
+### SQL execution
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Database resource | Required | None | Always | Current task version |
+| SQL | Required | Empty | Always | Current task version |
+| SQL delimiter | Has a default | ; | Advanced settings | Current task version |
+| Transaction | Has a default | true | Advanced settings | Current task version |
+| Continue on error | Has a default | false | Can be enabled after transactions are disabled | Current task version |
+| Query timeout (seconds) | Has a default | 600 | Advanced settings | Current task version |
+| Minimum rows (optional) | Optional | None | Advanced settings | Current task version |
+| Maximum rows (optional) | Optional | None | Advanced settings | Current task version |
+| Result variable (optional) | Optional | Empty | Advanced settings | Current task version |
+
+- **Database resource**: Business database resource.
+- **SQL**: At most 1000000 characters.
+- **SQL delimiter**: 1–16 characters; variable expressions are not accepted.
+- **Transaction**: Transaction behavior depends on the database and statements.
+- **Continue on error**: Continue on error is forbidden when transactions are enabled.
+- **Query timeout (seconds)**: 1–86400 seconds.
+- **Minimum rows (optional)**: Nonnegative integer, no greater than the maximum row count.
+- **Maximum rows (optional)**: Nonnegative integer.
+- **Result variable (optional)**: At most 128 characters; variable expressions are not valid names.
+
+## Behavior and boundaries
+
+- The SQL plugin uses ${...} text replacement without named parameter binding; constrain input types and handle quoting.
+- Query timeout and overall task timeout apply at different levels and may produce different terminal states.
+
+## Typical configuration: Read the total order count
+
+Fill in the form below, replacing resource names with your enabled resources. This is a configuration guide, not importable JSON. Follow the tutorial linked below for data preparation and execution.
+
+Create the three-row orders dataset in an isolated business database using the linked tutorial.
+
+| Setting | Value |
 | --- | --- |
-| Database resource / SQL content | Choose an enabled business database resource and SQL. Do not practice against the platform DB. Resources support MySQL/PostgreSQL/SQL Server/Oracle; platform SQLite does not imply a SQLite business-resource type. |
-| SQL delimiter / Transaction | Default delimiter ; and transaction=true; transaction behavior depends on the DB and statement types. |
-| Continue on error / Query timeout (seconds) | Defaults false / 600 seconds; continuing does not make failed statements successful. Inspect logs/commit scope. |
-| Minimum rows / Maximum rows / Result variable | Set result-row bounds as needed; use a result variable for downstream references, not unbounded result sets. |
+| Database resource | Business database resource containing orders |
+| SQL | See code below |
+| Transaction | true |
+| Continue on error | false |
+| Result variable (optional) | ordersResult |
 
-## Minimal example and verification
-
-Prepare the dedicated resources above, fill the form, save, then trigger manually and verify the instance, outputs and target system as described below. Saving alone does not execute.
-
-| Setting | Value to enter |
-| --- | --- |
-| Database resource | Select the dedicated test DB containing orders |
-| Transaction | On |
-| Continue on error | Off |
-| Result variable | `ordersResult` |
+SQL：
 
 ```sql
 SELECT COUNT(*) AS total FROM orders;
 ```
 
-Prepare an independent orders table, save and run manually, inspect SQL results/logs and query actual writes in the database. This SQL plugin uses text substitution, not SQL parameter binding; validate inputs and handle string quoting explicitly. For reads with named binding, see the ETL source configuration. DDL/nontransactional engines may not roll back; design unique keys/idempotency before retrying INSERT.
+**Expected result:** The query succeeds and output variable ordersResult is the scalar number 3.
 
-Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
+[Follow the full tutorial](../../examples/sql-and-validation.md). Save the definition before running it; inspect execution state and business results separately.
 
-In this round's PostgreSQL test, query timeout canceled the statement but the JDBC driver returned a general query-cancellation exception, producing FAILED. The shared task deadline produced TIMED_OUT. Both paths were checked for lingering active queries in PostgreSQL. A status name alone does not establish that the statement is still running; query timeouts do not guarantee TIMED_OUT across all drivers.
-
-## Real page examples
-
-Read-only SQL, resource selection and transaction/timeout summary.
+## Actual interface
 
 ![Read-only SQL, resource selection and transaction/timeout summary.](../../images/manual/sql-editor.png)
 
-## Technical key reference (optional)
+## Configuration keys
 
-These stored keys help developers and troubleshooting; they are not a task JSON blob to paste into the UI. Automatically validated metadata is not a manual form input.
+Use these keys when inspecting imported configuration, API payloads or errors. `[]` denotes a collection item; the form does not require you to enter key names.
 
-| Page field/group | Stored keys |
+| Category / field | Configuration key |
 | --- | --- |
-| Database resource / SQL content | `resourceId / script` |
-| SQL delimiter / Transaction | `delimiter / transaction` |
-| Continue on error / Query timeout (seconds) | `continueOnError / queryTimeoutSeconds` |
-| Minimum rows / Maximum rows / Result variable | `minRows / maxRows / resultVariable` |
+| SQL execution / Database resource | `resourceId` |
+| SQL execution / SQL | `script` |
+| SQL execution / SQL delimiter | `delimiter` |
+| SQL execution / Transaction | `transaction` |
+| SQL execution / Continue on error | `continueOnError` |
+| SQL execution / Query timeout (seconds) | `queryTimeoutSeconds` |
+| SQL execution / Minimum rows (optional) | `minRows` |
+| SQL execution / Maximum rows (optional) | `maxRows` |
+| SQL execution / Result variable (optional) | `resultVariable` |
+
+## Related pages
+
+[Tasks and versions](../tasks.md) · [Parameters and expressions](../../reference/variables.md) · [Scenario tutorials](../../examples.md)

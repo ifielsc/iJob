@@ -1,6 +1,6 @@
 # Java 与插件规范
 
-Java 根包为 `com.ifielsc.ijob`，Maven groupId 为 `com.ifielsc`。主工程、SPI、setup/migration 工具和 Agent 均保持 1.0.0。使用 JDK 21、Maven 3.9.11（构建工具的 Plexus Utils 3.6.1 安全补丁见 tools/ci/install-maven.ps1）；Java 格式由 google-java-format 1.24.0 AOSP 与现有换行规则统一执行，禁止通配符 import。业务源码中名为 `target` 的包不得被构建产物过滤规则误删。
+Java 根包为 `com.ifielsc.ijob`，Maven groupId 为 `com.ifielsc`。主工程、SPI、setup 工具和 Agent 均保持 1.0.0。使用 JDK 21、Maven 3.9.11（构建工具的 Plexus Utils 3.6.1 与 Guava 33.7.2-jre 安全补丁见 tools/ci/install-maven.ps1）；Java 格式由 google-java-format 1.24.0 AOSP 与现有换行规则统一执行，禁止通配符 import。业务源码中名为 `target` 的包不得被构建产物过滤规则误删。
 
 保持现有模块依赖方向；API 负责边界校验与安全投影，业务规则进入相应业务模块，不把数据库访问、远程调用与权限判断散落在控制器。错误使用稳定错误码和国际化消息；日志与响应不得包含凭据、连接秘密或完整密钥。取消、超时和关闭路径必须释放本轮拥有的资源。
 

@@ -2,48 +2,61 @@
 
 [English](README.en.md) · [中文用户手册](document/zh-CN/README.md) · [English manual](document/en/README.md)
 
-新用户请从[安装与打包](document/zh-CN/installation.md)和[快速入门](document/zh-CN/quickstart.md)开始。源码 ZIP 与 Git clone 都可通过 `python tools/distribution/build.py --target native --output ../ijob-build-001` 生成完整交付包；Docker 路径见手册。
+iJob 是一个任务调度与执行平台，提供任务配置、可视化作业编排、定时与事件触发、运行监控和执行日志。包含 Java 后端、Vue 前端、可选监控 Agent，以及首次初始化工具。
 
-任务调度与执行平台，包含 Java 后端、Vue 前端、监控 Agent、首次初始化和离线迁移工具。私有仓库 [ifielsc/iJob](https://github.com/ifielsc/iJob)，默认分支 `main`。开发前阅读[规范入口](document/standards/README.md)与[工作区和环境规则](document/operations/workspace-and-environments.md)；日常同步见[维护说明](document/repository/private-repository.md)。
+## 发布状态
 
-## 源码与工具链
+**1.0.0 正在准备正式发布，成品包下载尚未开放。** 官网正式地址、GitHub Release 和公共反馈入口将在可用后补充。源码 ZIP 是构建输入，不是可直接启动的完整运行包；本地构建成功也不代表已通过正式发布验收。
+
+暂不提供独立在线演示，也未安排开放时间。可以通过[场景教程](document/zh-CN/examples.md)和手册中的真实界面截图了解使用流程。
+
+## 从这里开始
+
+1. 阅读[核心概念](document/zh-CN/concepts.md)与[部署条件和兼容性](document/zh-CN/installation/requirements.md)。
+2. 选择[安装方式](document/zh-CN/installation.md)，完成[首次初始化与登录](document/zh-CN/installation/first-start.md)。
+3. 跟做[快速入门](document/zh-CN/quickstart.md)，再查看[场景教程](document/zh-CN/examples.md)。
+
+任务能力包括 SQL、脚本、HTTP API、文件传输、ETL、批量同步、数据校验、通知与 Local JAR；具体参数、前提和限制见[用户指南](document/zh-CN/user-guide/README.md)。运维与配置分别见[运维手册](document/zh-CN/operations.md)和[配置说明](document/zh-CN/configuration.md)。
+
+## 从源码构建
+
+前提：Python 3.11+、JDK 21、Maven 3.9.11、Node 24.22.1、pnpm 11.28.8。使用仓库或源码 ZIP，在根目录执行，输出路径必须是源码树之外的全新目录：
+
+```sh
+python tools/distribution/build.py --target native --output ../ijob-build-001
+```
+
+构建器组装后端、前端、Agent、启动工具、文档、源码及校验文件。Native 运行不需要前端构建工具，但需要 Java 21 和对应平台的启动器依赖。Docker 构建使用 `--target docker`，需要 Linux amd64 Docker 引擎；详见[源码构建](document/zh-CN/installation/source-build.md)。
+
+打包过程会执行前端检查，但 Maven 打包跳过后端测试，浏览器及真实环境验收需单独执行。构建日志和 MANIFEST 明确记录执行范围；没有通过的门禁不能记作通过。
+
+## 部署边界
+
+- 配置、密钥和数据库放在源码及程序目录之外。首次初始化创建部署者自己的管理员和密钥，不附带通用默认账号密码。
+- SQLite 仅支持单实例；服务器数据库与集群需按文档显式准备。同一宿主上的多个进程不等于物理高可用。
+- 停止、超时和重试不会自动回滚外部系统的副作用；写入任务需要幂等设计与业务结果核对。
+- 可配置的数据库或协议不代表任意版本和组合均已验证；以[兼容性说明](document/zh-CN/installation/requirements.md)和实际发行说明为准。
+- 当前产品版本为 1.0.0，Local JAR 协议为 1，正式新装数据库迁移为 V1。
+
+## 源码与开发
 
 | 目录 | 内容 |
 | --- | --- |
-| `develop/api/ijob` | Maven 主工程及 setup / migration 工具 |
-| `develop/api/ijob-monitor-agent` | 独立监控 Agent |
-| `develop/web/ijob` | 前端源码、单元/浏览器/集成测试、依赖锁和补丁 |
-| `develop/deployment` | 原生启动器、Docker 构建/Compose、配置示例 |
-| `tools/repository`、`.repository` | 入库白名单、检查和干净目录导出工具 |
+| `develop/api/ijob` | 后端、插件 SPI、首次初始化工具 |
+| `develop/api/ijob-monitor-agent` | 可选监控 Agent |
+| `develop/web/ijob` | Vue 前端、依赖锁和自动化测试 |
+| `develop/deployment` | Native 启动器、Docker 模板及配置示例 |
+| `document/zh-CN`、`document/en` | 双语用户与运维手册 |
+| `tools/distribution` | 分发包构建与文档检查 |
 
-后端使用 JDK 21、Maven 3.9.11；前端使用 Node 24.22.1、pnpm 11.28.8。先在 `develop/api/ijob` 执行 `mvn -DskipTests install`，再在 Agent 目录执行 `mvn -DskipTests package`。构建命令跳过测试，只生成制品，不代表质量门禁通过。主工程的 starter、setup-tool、migration-tool 和 Agent 的版本均为 1.0.0。
+开发前阅读 [AGENTS.md](AGENTS.md)、[规范入口](document/standards/README.md)和[开发说明](document/zh-CN/development.md)。[CI 说明](document/ci/basic-ci.md)区分当前文件检查、Basic、Full 和适用运行矩阵；历史测试不能自动替代最终候选验收。维护流程见[仓库维护说明](document/repository/private-repository.md)。
 
-前端执行 `pnpm install --frozen-lockfile` 和 `pnpm check`；开发代理、隔离测试变量及命令见[前端说明](develop/web/ijob/README.md)。后端质量入口为 `develop/api/ijob/tools/verify-backend.ps1`，使用新 RunId；Java 格式工具为 google-java-format 1.24.0 AOSP，Windows 脚本要求 `JAVA_HOME`。其他系统可使用 Maven 的 quality profile，数据库集成测试须单独配置隔离资源。
+## 问题反馈与安全
 
-## 源码与交付的区别
+普通问题、一般缺陷和功能建议使用 **GitHub Issues**；安全漏洞使用 **GitHub Private vulnerability reporting（私密漏洞报告）**，不另设报告邮箱。仓库公开且相应功能启用后开放入口，目前尚不可用。
 
-基础 GitHub Actions 与本地统一检查入口见 [CI 说明](document/ci/basic-ci.md)。工作流只检查和构建，不推送镜像或部署；真实后端浏览器集成、容器运行及五库验收另行接入。
-
-Linux、Docker、Windows 服务与本地缓存的当前验收范围见[验收汇总](document/ci/isolated-integration.md#2026-10-27-验收汇总)。Windows 双实例和 PostgreSQL 已完成独立 VM 实测；历史矩阵、当前候选和每次 CI 的结果分别绑定证据，不合并为一次执行或完整发布批准。
-
-后续开发在连接 `origin` 的 Git 工作目录中进行，以 `git rev-parse --show-toplevel` 确认根目录。维护电脑上的精确路径记在外层工作区入口；旧外层 develop 树、冻结 release 包和数据目录不作为日常开发位置。
-
-当前完整交付包名称仍为 `release-1.0.0-20261017-setup-guide`，保存在原工作区的 outputs 下，具体位置由新工作区的归档索引记录，没有上传为 GitHub Release。源码更新不会自动更新其中 JAR、镜像、静态文件和源码压缩包；重新发布必须另建候选、执行对应门禁并记录提交号。
-
-## 启动与数据库
-
-完整交付包的初始化、STATIC / DATABASE 切换、MySQL 等数据库和多实例步骤见[首次启动说明](develop/deployment/first-run/README.md)。源码仓库不附带交付二进制和运行数据，不能把克隆目录直接当作已组装的 release 包；Docker 从源码构建见[Docker 说明](develop/deployment/docker/README.md)。
-
-默认认证保持 STATIC，`app.auth.bootstrap-enabled=false`。真实配置由初始化器生成到源码树外，或由部署者按模板在受限目录准备；源码中的 `application-local.yml` 明确排除，没有随仓库分发的默认账户/密码。生产连接、AES 密钥和 Agent token 不进入源码或镜像构建上下文。
-
-首次安装使用冻结 V1；旧迁移链已归档，通过固定提交与哈希清单恢复到仓库外供专项测试和离线迁移工具使用，具体构建方式见[数据库规范](document/standards/database.md)。不能通过改写历史 SQL 或随意 baseline 绕过版本边界。服务器数据库可按文档配置 CLUSTER，SQLite 仅单实例；同宿主双进程不等于物理高可用。
-
-## 入库边界
-
-[私有仓库维护说明](document/repository/private-repository.md)列出入库范围、排除项、扫描和复验命令。根 `.gitignore` 按逐文件白名单生成；新增文件必须先审查再登记，禁止强制添加被忽略的运行资料。
-
-历史备份、验收证据、发布包和本机环境清单保留在维护工作区，不纳入初始源码。
+普通反馈请提供版本、操作系统、部署方式、复现步骤、预期与实际结果及脱敏日志。安全漏洞请通过仓库 **Security and quality → Report a vulnerability** 私密提交，说明受影响版本、影响与复现方法；不要在公开 Issue、PR 或评论中披露漏洞细节，也不要提交真实密码、令牌、私钥、数据库或完整配置。具体流程和当前状态见 [安全报告政策](SECURITY.md)。
 
 ## 版权与许可
 
-自有代码采用 [MIT License](LICENSE)，Copyright (c) 2026 ifielsc。自有源码使用简短版权声明和 SPDX 标识；第三方组件保留各自许可与版权，具体边界见[许可与素材规范](document/standards/licensing.md)。MIT 的采用不改变仓库私有状态，也不表示第三方素材或数据库驱动已完成全部再分发核验。
+iJob 自有代码采用 [MIT License](LICENSE)，Copyright (c) 2026 ifielsc。第三方组件保留各自的版权与许可；实际发行包的 LICENSE、NOTICE、组件清单和适用条件共同说明分发范围。源码许可、仓库公开与成品包再分发分别审查，详见[许可与素材规范](document/standards/licensing.md)。

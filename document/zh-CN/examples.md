@@ -1,26 +1,66 @@
-# 经典案例与验证范围
+# 场景教程：从业务目标开始
 
 [English](../en/examples.md) · [手册首页](README.md)
 
-案例分 16 组。先运行无外部副作用样例，再扩展读写、自动触发和恢复。截图来自独立真实实例；配置表单截图不代表外部投递、消费或所有协议都已验证。
+选择一个结果明确的小场景，按步骤配置、执行并核对目标系统。预计时间从环境已准备好开始计算，是阅读和操作估计，不包含安装外部服务。
 
-| 案例 | 本轮状态 |
-| --- | --- |
-| [脚本成功、失败、停止与重试](examples/script-lifecycle.md) | 基础路径实测；扩展另验 |
-| [SSH 远程脚本](examples/remote-script.md) | 隔离实测；详见各案例范围与待验项 |
-| [HTTP、参数与结果提取](examples/api-and-parameters.md) | 隔离实测；详见各案例范围与待验项 |
-| [SQL 与数据质量门禁](examples/sql-and-validation.md) | 基础路径实测；扩展另验 |
-| [本地与远端文件传输](examples/file-transfer.md) | 隔离实测；详见各案例范围与待验项 |
-| [全量、增量与 ETL 检查点](examples/etl-full-incremental.md) | 隔离实测；详见各案例范围与待验项 |
-| [多表 ETL 与目标命名](examples/batch-etl.md) | 隔离实测；详见各案例范围与待验项 |
-| [串行、并行、汇合与条件分支](examples/dag-control-flow.md) | 隔离实测；详见各案例范围与待验项 |
-| [子作业与发布引用](examples/subjobs-and-versions.md) | 隔离实测；详见各案例范围与待验项 |
-| [时区、工作日与错过补发](examples/schedules-and-calendars.md) | 隔离实测；详见各案例范围与待验项 |
-| [事件等待、审批与恢复](examples/events-and-approval.md) | 隔离实测；详见各案例范围与待验项 |
-| [业务消息与运行结果通知](examples/push-and-notifications.md) | 隔离实测；详见各案例范围与待验项 |
-| [监控采集、阈值与恢复](examples/monitoring.md) | 隔离实测；详见各案例范围与待验项 |
-| [可信扩展的部署与调用](examples/local-jar.md) | 隔离实测；详见各案例范围与待验项 |
-| [节点路由与共享并发](examples/routing-and-concurrency.md) | 隔离实测；详见各案例范围与待验项 |
-| [两个环境间配置迁移](examples/environment-transfer.md) | 隔离实测；详见各案例范围与待验项 |
+## 公共准备
 
-本轮基础数据：orders 三行，金额 100/200/300；数据库样例使用独立 PostgreSQL，平台自身使用独立 SQLite。文件样例使用独立 LOCAL 目录。失败/停止是预期演练结果，不能统计为任务业务成功。
+- 完成[快速入门](quickstart.md)，理解[定义、触发与实例](concepts.md)。
+- 使用自己新建的演练数据与资源；业务数据库和平台数据库分开。路径、端口和账号按本环境填写。
+- 整篇跟做建议使用 ADMIN，以便配置、发布和查看日志/变量；OPERATOR 可执行已配置任务和部分运行控制。审批还需允许操作人条件，见[权限矩阵](user-guide/users-audits.md)。
+- 文中的“副本”指通过“新增”创建不同名称的对象，并按样例重新填写配置；当前任务和作业列表没有一键复制动作。
+- 先手动执行再启用自动调度。外部写入需要幂等；停止或重试不会自动撤销已完成写入。
+- 每篇只清理该教程新建的对象。密码、token、密钥保留在资源和私有配置中。
+
+## 选择教程
+
+建议先完成“从第一个任务开始”，再按业务目标选择后续教程。完整订单案例另有[环境准备页](examples/order-reconciliation-setup.md)，可先准备数据和接收端，再进入编排步骤。
+
+“适用范围”说明正文覆盖的版本与环境，不表示所有扩展协议或新组合链路均已运行。
+
+### 从第一个任务开始
+
+| 场景 | 你会得到什么 | 所需环境 | 难度 / 预计时间 | 适用范围 |
+| --- | --- | --- | --- | --- |
+| [运行脚本，识别成功、失败和停止](examples/script-lifecycle.md) | 通过成功、失败、停止和超时四个脚本变体，理解触发受理与实际执行结果的区别。 | Windows PowerShell Worker | 入门 / 10 分钟 | 1.0.0 · 本地 Worker |
+| [查询订单，并设置数据质量门禁](examples/sql-and-validation.md) | 查询三行订单，用标量检查发现不满足预期的记录数。 | PostgreSQL | 入门 / 15 分钟 | 1.0.0 · PostgreSQL |
+| [复制订单文件并核对内容](examples/file-transfer.md) | 将CSV复制到独立目录，核对文件内容、哈希和源文件保留情况。 | 两个专属文件目录 | 入门 / 10 分钟 | 1.0.0 · 两个专属文件目录 |
+
+### 同步数据与连接系统
+
+| 场景 | 你会得到什么 | 所需环境 | 难度 / 预计时间 | 适用范围 |
+| --- | --- | --- | --- | --- |
+| [同步订单增量，并处理相同水位](examples/etl-full-incremental.md) | 先同步三行订单，再同步相同时间水位上的新订单，重复运行保持结果不变。 | 源/目标 PostgreSQL | 中级 / 25 分钟 | 1.0.0 · 源/目标 PostgreSQL |
+| [同步两张表，并控制目标命名](examples/batch-etl.md) | 批量同步orders与order_items，逐表核对映射和目标数据。 | 源/目标 PostgreSQL | 中级 / 20 分钟 | 1.0.0 · 源/目标 PostgreSQL |
+| [调用订单接口并提取结果变量](examples/api-and-parameters.md) | 向只读接口传入日期和数量参数，再提取total与amount供后续使用。 | Python HTTP 样例服务 | 中级 / 15 分钟 | 1.0.0 · Python HTTP 样例服务 |
+| [发布三条订单消息，并单独配置运行通知](examples/push-and-notifications.md) | 在消费端核对订单消息，再区分业务消息与平台邮件通知。 | PostgreSQL、Kafka；邮件需 SMTP | 中级 / 25 分钟 | 1.0.0 · PostgreSQL、Kafka；邮件需 SMTP |
+
+### 编排与控制业务流程
+
+| 场景 | 你会得到什么 | 所需环境 | 难度 / 预计时间 | 适用范围 |
+| --- | --- | --- | --- | --- |
+| [编排并行汇合与条件分支](examples/dag-control-flow.md) | 先让两个分支完成后汇合，再按金额选择一个后续分支。 | 本地 Worker | 中级 / 20 分钟 | 1.0.0 · 本地 Worker |
+| [更新子任务后，控制父作业采用的版本](examples/subjobs-and-versions.md) | 观察父作业固定引用旧版本，并通过逐层发布采用新版本。 | 本地 Worker | 中级 / 15 分钟 | 1.0.0 · 本地 Worker |
+| [等待业务事件或审批后继续运行](examples/events-and-approval.md) | 让实例等待匹配事件，或等待指定用户批准，再观察同一实例继续。 | DATABASE 账号模式 | 中级 / 20 分钟 | 1.0.0 · DATABASE 账号模式 |
+
+### 部署、运行与扩展
+
+| 场景 | 你会得到什么 | 所需环境 | 难度 / 预计时间 | 适用范围 |
+| --- | --- | --- | --- | --- |
+| [通过SSH执行远程脚本](examples/remote-script.md) | 在远端输出一条消息和一个变量，核对远端路径与执行结果。 | 独立 SSH 主机 | 中级 / 15 分钟 | 1.0.0 · 独立 SSH 主机 |
+| [采集监控指标并理解阈值告警](examples/monitoring.md) | 查看新鲜内存指标，通过调整练习阈值观察健康状态变化。 | Monitor Agent | 中级 / 15 分钟 | 1.0.0 · Monitor Agent |
+| [预览调度，并理解停机后的补发](examples/schedules-and-calendars.md) | 先核对时区与日历，再在专属安装比较三种错过触发策略。 | 可停机演练实例 | 中级 / 25 分钟 | 1.0.0 · 可停机演练实例 |
+| [按分组路由任务，并限制共享并发](examples/routing-and-concurrency.md) | 将任务交给匹配Worker，再让两条任务串行使用同一个并发许可。 | 独立 Worker / 分组 | 进阶 / 25 分钟 | 1.0.0 · 独立 Worker / 分组 |
+| [部署可信Local JAR并执行一次调用](examples/local-jar.md) | 使用协议1的最小扩展输出hello-localjar与rows=3。 | Java 21、可信 SPI JAR | 进阶 / 25 分钟 | 1.0.0 · Java 21、可信 SPI JAR |
+| [将配置迁移到另一个环境](examples/environment-transfer.md) | 将一个无副作用任务导入独立目标，核对停用状态、资源映射与后续执行。 | 两套独立实例 | 中级 / 20 分钟 | 1.0.0 · 两套独立实例 |
+
+### 完整业务流程
+
+| 场景 | 你会得到什么 | 所需环境 | 难度 / 预计时间 | 适用范围 |
+| --- | --- | --- | --- | --- |
+| [每日订单对账与报表交付](examples/order-reconciliation.md) | 同步12笔订单，校验并对账，按差异分支审批后交付CSV和回执。 | PostgreSQL、独立HTTP接收端 | 中级 / 45–60分钟 | 1.0.0 · 正常、质量失败、审批后交付 |
+
+## 结果如何核对
+
+平台状态与业务结果一起检查：行数、金额、文件哈希、接口响应、消费者消息或审批后的节点状态。各页的预期结果表给出具体数值；失败和停止演练按该步骤定义判断。

@@ -4,6 +4,7 @@
 package com.ifielsc.ijob.monitor.agent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,6 +47,47 @@ class AgentStartupTest {
                 var client =
                         HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build()) {
             assertTrue(context.getBeansOfType(DataSource.class).isEmpty());
+            assertTrue(
+                    context.getBeansOfType(org.springframework.web.servlet.view.xslt.XsltView.class)
+                            .isEmpty());
+            assertTrue(
+                    context.getBeansOfType(
+                                    org.springframework.web.servlet.view.xslt.XsltViewResolver
+                                            .class)
+                            .isEmpty());
+            var mappings =
+                    context.getBean(
+                                    "requestMappingHandlerMapping",
+                                    org.springframework.web.servlet.mvc.method.annotation
+                                            .RequestMappingHandlerMapping.class)
+                            .getHandlerMethods();
+            long applicationRoutes = 0;
+            for (var entry : mappings.entrySet()) {
+                var method = entry.getValue();
+                if (!method.getBeanType().getName().startsWith("com.ifielsc.ijob.")) continue;
+                applicationRoutes++;
+                assertTrue(
+                        org.springframework.core.annotation.AnnotatedElementUtils.hasAnnotation(
+                                method.getBeanType(),
+                                org.springframework.web.bind.annotation.RestController.class),
+                        method.toString());
+                String returns = method.getMethod().getGenericReturnType().getTypeName();
+                assertFalse(
+                        returns.contains("FragmentsRendering")
+                                || returns.contains("SseEmitter")
+                                || returns.contains("ServerSentEvent")
+                                || returns.contains("ModelAndView"),
+                        method.toString());
+                assertFalse(
+                        entry.getKey().getProducesCondition().getProducibleMediaTypes().stream()
+                                .anyMatch(
+                                        type ->
+                                                type.isCompatibleWith(
+                                                        org.springframework.http.MediaType
+                                                                .TEXT_EVENT_STREAM)),
+                        method.toString());
+            }
+            assertTrue(applicationRoutes > 0);
             int port = ((ServletWebServerApplicationContext) context).getWebServer().getPort();
             URI ping = URI.create("http://127.0.0.1:" + port + "/api/monitor/ping");
             var anonymous =

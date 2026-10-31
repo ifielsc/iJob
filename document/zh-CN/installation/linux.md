@@ -55,3 +55,5 @@ status 核验本实例拥有的进程；已停止时退出码为 3。还需核�
 restart 先停止再启动，保留数据与历史。不要切换操作系统账号接管现有进程。
 
 目录、语言、默认值和升级方式见[统一入口](instance-launcher.md)。旧 legacy/start.sh / legacy/stop.sh / legacy/status.sh / legacy/logs.sh 仍支持；直接调用时需保持相同 IJOB_HOME。
+
+MySQL/Oracle 需要用户自备 JDBC 驱动，见[驱动安装](../installation.md#jdbc-驱动)。PostgreSQL、SQL Server、SQLite 驱动继续随包提供。

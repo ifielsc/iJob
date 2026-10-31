@@ -8,6 +8,6 @@ Mapper 外部值使用参数绑定，禁止直接拼接用户输入；列表使�
 
 117 份历史 SQL 及 1 份配套 Flyway 配置已退出当前应用源码树，按原始字节归档。仓库 `.repository/legacy-db.json` 固定历史提交、路径、长度与 SHA-256；`tools/ci/prepare-legacy-db.py --destination <仓库外全新目录>` 从该提交提取并逐一验证。完整 Git 历史或保留该提交的本地 bundle 是恢复来源，不依赖旧数据库。脚本拒绝现成目录与仓库内部目录。
 
-历史专项使用 `-Dijob.legacy.resources=<上述目录>` 将旧 SQL 加入测试 classpath。需要旧库离线转换时，也用这一参数构建 migration-tool，使其独立制品包含已验证的历史资源；默认构建不包含旧链，工具会在接触目标库前拒绝缺少资源的转换。新应用启动不能指向历史库，不能改写历史 SQL、伪造 release 状态或随意 baseline。
+历史专项仍使用 `-Dijob.legacy.resources=<上述目录>` 将已验证旧 SQL 加入测试 classpath，保留历史兼容与拒绝旧库直接启动的覆盖。当前产品从正式 V1 开始，已移除旧 V27 离线迁移及开发 V35/V38 转 V1 的独立工具；新空库由应用 Flyway 初始化。历史工具源码和原始证据仅作归档，不属于当前产品模块或分发资产。新应用启动不能指向历史库，不能改写历史 SQL、伪造 release 状态或随意 baseline。
 
 数据库配置和资源身份先登记于 `runtime/<env-id>/resources.md`、`environment.yaml`，真实连接秘密留在该环境受限的 `secrets/`。每套测试使用新库/账号/数据目录，重建测试只允许作用于本轮资源。DROP 类专项必须核验独立实例身份，名称正则不能代替隔离。字段、索引、UTC 时间与 ID 规则沿用冻结 V1 和当前 mapper 契约，五库差异由对应迁移与集成验证覆盖。

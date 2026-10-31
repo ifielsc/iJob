@@ -116,6 +116,48 @@ class SecurityHttpIT {
     }
 
     @Test
+    @Order(0)
+    void registeredApplicationRoutesDoNotEnableXsltOrSseViewFragments() {
+        assertTrue(
+                context.getBeansOfType(org.springframework.web.servlet.view.xslt.XsltView.class)
+                        .isEmpty());
+        assertTrue(
+                context.getBeansOfType(
+                                org.springframework.web.servlet.view.xslt.XsltViewResolver.class)
+                        .isEmpty());
+        var mappings =
+                context.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class)
+                        .getHandlerMethods();
+        long count = 0;
+        for (var entry : mappings.entrySet()) {
+            var method = entry.getValue();
+            if (!method.getBeanType().getName().startsWith("com.ifielsc.ijob.")) continue;
+            count++;
+            assertTrue(
+                    org.springframework.core.annotation.AnnotatedElementUtils.hasAnnotation(
+                            method.getBeanType(),
+                            org.springframework.web.bind.annotation.RestController.class),
+                    method.toString());
+            String returns = method.getMethod().getGenericReturnType().getTypeName();
+            assertFalse(
+                    returns.contains("FragmentsRendering")
+                            || returns.contains("SseEmitter")
+                            || returns.contains("ServerSentEvent")
+                            || returns.contains("ModelAndView"),
+                    method.toString());
+            assertFalse(
+                    entry.getKey().getProducesCondition().getProducibleMediaTypes().stream()
+                            .anyMatch(
+                                    type ->
+                                            type.isCompatibleWith(
+                                                    org.springframework.http.MediaType
+                                                            .TEXT_EVENT_STREAM)),
+                    method.toString());
+        }
+        assertTrue(count >= 158);
+    }
+
+    @Test
     @Order(1)
     void allRegisteredApiMethodsDeclareAccessAndEveryCommandDeclaresAudit() {
         var mappings =

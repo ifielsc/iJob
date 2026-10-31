@@ -41,7 +41,7 @@
 | C153 / `logging.level.root` | B / enum | INFO | 全局日志级别；排障临时调整后恢复，评估日志量。 |
 | C154 / `logging.level.com.ifielsc.ijob` | B / enum | INFO | iJob 日志级别；不要输出含凭据的配置来排障。 |
 | C172 / `spring.datasource.hikari.data-source-properties.busy_timeout` | B / milliseconds | ${IJOB_SQLITE_BUSY_TIMEOUT_MS:5000} | 锁繁忙等待毫秒数；仅 SQLite，评估并发和持久性影响。 |
-| C182 / `server.address` | A / text | generated: native=127.0.0.1; docker=0.0.0.0 | 原生监听地址；Docker 内部必须与健康检查和代理保持一致。 |
+| C182 / `server.address` | A / text | 安装时生成：原生为 `127.0.0.1`；Docker 为 `0.0.0.0` | 原生监听地址；Docker 内部必须与健康检查和代理保持一致。 |
 | C194 / `ijob.logging.max-file-size` | A / size | 10MB | 原生日志单文件滚动大小。 |
 | C195 / `ijob.logging.max-history` | A / days | 14 | 原生日志归档保留天数。 |
 | C196 / `ijob.logging.total-size-cap` | A / size | 200MB | 原生日志归档总容量，可能先于天数触发清理。 |

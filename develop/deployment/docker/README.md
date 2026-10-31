@@ -22,11 +22,11 @@
 以下命令供构建环境使用。prepare.ps1 默认只验证配置，`-Build` 只构建，不 up、push、清理或部署：
 
 ```powershell
-./prepare.ps1 -Database mysql -ConfigPath C:/private/ijob/application.yaml
-./prepare.ps1 -Database postgresql -ConfigPath C:/private/ijob/application.yaml -Cluster -Build
+./prepare.ps1 -Database mysql -ConfigPath C:/private/ijob/application.yaml -DriversDirectory C:/private/ijob/drivers
+./prepare.ps1 -Database postgresql -ConfigPath C:/private/ijob/application.yaml -DriversDirectory C:/private/ijob/drivers -Cluster -Build
 ```
 
-Linux 可使用相同 Compose 文件与 `--env-file images.env`，设置 `IJOB_CONFIG_PATH`、`IJOB_PLATFORM_DB`，执行 `docker compose ... config --quiet` / `build`。Linux 对应路径必须是 Linux 主机可访问的私有路径；当前 Windows JDBC/文件路径不能直接复制进容器。模板不含数据库服务，不把现有数据库生命周期绑定到 Compose。
+Linux 可使用相同 Compose 文件与 `--env-file images.env`，设置 `IJOB_CONFIG_PATH`、`IJOB_PLATFORM_DB`、`IJOB_JDBC_DRIVERS_DIR`，执行 `docker compose ... config --quiet` / `build`。Linux 对应路径必须是 Linux 主机可访问的私有路径；当前 Windows JDBC/文件路径不能直接复制进容器。模板不含数据库服务，不把现有数据库生命周期绑定到 Compose。
 
 ## 运行契约
 
@@ -77,3 +77,5 @@ MySQL 短时容量基线使用后端 4 CPU/2GiB、Hikari 48、`app.runtime.work-
 Node 构建输入固定为 24.22.1；后端和 Agent 的 `build-base`、`runtime-base` 阶段使用 SHA-256 固定的 Temurin 21.0.13+9 官方归档替换旧 Java，并更新发行版系统包。Maven 保持 3.9.11。Web 的构建与运行基础阶段使用 Alpine，并更新系统包；构建阶段直接安装 SHA-256 固定的 pnpm 11.28.8，移除不使用的 npm/Yarn，减少构建工具的遗留漏洞。原始基础镜像的扫描结果不代表补丁后阶段；应导出并扫描实际阶段和最终运行镜像。
 
 `JDK_ARCHIVE_URL` / `JRE_ARCHIVE_URL` / `PLEXUS_UTILS_URL` / `PNPM_ARCHIVE_URL` 可在 `docker build --build-arg` 中指向本环境的只读缓存中转，校验和保持固定；不要将账号、口令或带签名凭据的地址放入参数。未提供时从官方上游下载。固定镜像摘要和 Java 校验和不冻结 apt/apk 仓库内容：每次候选保留解析后的包版本、镜像 ID、扫描库时间与测试结果，不将一次扫描当作永久零漏洞。补丁阶段需在发行版仓库可访问时构建，完成后保存镜像供本地复用。
+
+MySQL/Oracle 驱动由用户自备，不打入镜像。设置 `IJOB_JDBC_DRIVERS_DIR` 为源码外的绝对目录（其他数据库可为空目录），只读挂载到 `/opt/ijob/drivers`；`prepare.ps1` 需传入 `-DriversDirectory`。详见[驱动安装](../../../document/zh-CN/installation.md#jdbc-驱动)。

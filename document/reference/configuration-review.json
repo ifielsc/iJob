@@ -2,7 +2,7 @@
   "schema": 1,
   "status": "approved-classification",
   "baseline_commit": "525070ea2a61919fd92dad4837f1ee8b5a8894a8",
-  "scope": "All property keys in the listed platform/Agent runtime sources, plus selected startup/build/Compose controls. Excludes the full Spring/JVM/OS/Nginx option universe, test-only settings, historical migration-tool inputs, generated installation metadata and UI business schemas.",
+  "scope": "All property keys in the listed platform/Agent runtime sources, plus selected startup/build/Compose controls. Excludes the full Spring/JVM/OS/Nginx option universe, test-only settings, generated installation metadata and UI business schemas.",
   "sources": [
     {
       "id": "S01",

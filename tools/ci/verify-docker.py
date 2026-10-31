@@ -60,6 +60,9 @@ def main():
         config.write_text("{}\n")
         token.touch()
         env["IJOB_CONFIG_PATH"] = str(config)
+        drivers = Path(temporary) / "drivers"
+        drivers.mkdir()
+        env["IJOB_JDBC_DRIVERS_DIR"] = str(drivers)
         env["IJOB_AGENT_TOKEN_PATH"] = str(token)
         base = ["docker", "compose", "--project-name", "ijob-" + args.run_id,
                 "--env-file", "images.env", "-f", "compose.yaml",

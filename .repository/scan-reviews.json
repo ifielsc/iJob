@@ -2,7 +2,7 @@
   "reviews": [
     {
       "path": ".gitignore",
-      "line": 3077,
+      "line": 3083,
       "rule": "email-address",
       "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
       "reason": "pnpm patch filename/version, not an email address."
@@ -3100,6 +3100,111 @@
       "rule": "email-address",
       "line_sha256": "8976267dc9b8e5d6c0efe76a88446d43f746e1bf7919f7901c14ffb7c267e592",
       "reason": "Verbatim upstream attribution/contact address in a SHA-256-pinned third-party license or notice; not a private iJob contact or credential."
+    },
+    {
+      "path": ".gitignore",
+      "line": 3092,
+      "rule": "email-address",
+      "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
+      "reason": "Reviewed scoped npm patch filename, not an email address; line moved by the independent UI directives package allowlist."
+    },
+    {
+      "path": ".repository/allowlist.json",
+      "line": 1703,
+      "rule": "email-address",
+      "line_sha256": "19f0e34d2de24909f3f9e4c329ff30ec56cb62c17e0373c97150ed36a4685fd4",
+      "reason": "Reviewed scoped npm patch filename, not an email address; line moved by the independent UI directives package allowlist."
+    },
+    {
+      "path": ".gitignore",
+      "line": 3090,
+      "rule": "email-address",
+      "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
+      "reason": "pnpm patch filename/version, not an email address. Identical content moved by private website exclusion."
+    },
+    {
+      "path": "tools/repository/prepare.py",
+      "line": 74,
+      "rule": "personal-path",
+      "line_sha256": "ad33dbda456bf47cd8cb1a392910086154d6d6dd90682fb8037d02adeba1a32e",
+      "reason": "Explicit forbidden-file name in repository guard; no account-file content. Identical content moved by private website exclusion."
+    },
+    {
+      "path": ".repository/allowlist.json",
+      "line": 1705,
+      "rule": "email-address",
+      "line_sha256": "19f0e34d2de24909f3f9e4c329ff30ec56cb62c17e0373c97150ed36a4685fd4",
+      "reason": "pnpm patch filename/version, not an email address."
+    },
+    {
+      "path": "develop/api/ijob/ijob-setup-tool/src/main/java/com/ifielsc/ijob/setup/SetupTool.java",
+      "line": 374,
+      "rule": "credential-literal",
+      "line_sha256": "a215ce9367b1ddd4b607476dac3e468e97a496eca7e5b74fb64f7a59684f9132",
+      "reason": "User-facing password prompt in the setup translation catalog, not a credential value."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 684,
+      "rule": "email-address",
+      "line_sha256": "841229a90e1fa67bd8fbc67a624d7999afaaba7483cfae74271c1d3c341a18ef",
+      "reason": "Reviewed Maven package URL coordinate, not an email address; exact bytes unchanged."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 914,
+      "rule": "email-address",
+      "line_sha256": "ef59968c04e5c23c91e14c9de88d9d133bf96c1cf562fbc9d97d60c017a1caaf",
+      "reason": "Reviewed Maven package URL coordinate, not an email address; exact bytes unchanged."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 1144,
+      "rule": "email-address",
+      "line_sha256": "3c3071be5106e7ef3bc041b898c7f50e0ac84c354fae8dbf43864b19b0bd9212",
+      "reason": "Reviewed Maven package URL coordinate, not an email address; exact bytes unchanged."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 1374,
+      "rule": "email-address",
+      "line_sha256": "d1edfe8b6679485ae3411becd02a7754fe5d578dff925de8f3e4b44c4f12232b",
+      "reason": "Reviewed Maven package URL coordinate, not an email address; exact bytes unchanged."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 1604,
+      "rule": "email-address",
+      "line_sha256": "f5d74a9ee999d936be2ed8e871442075d80d72c0da72729fa5b14345aec1e7e4",
+      "reason": "Reviewed Maven package URL coordinate, not an email address; exact bytes unchanged."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 1834,
+      "rule": "email-address",
+      "line_sha256": "19a0732c4ae36c635b334a09d3995df8465a8eccfd7be656e65faa770e2ff952",
+      "reason": "Reviewed Maven package URL coordinate, not an email address; exact bytes unchanged."
+    },
+    {
+      "path": "tools/distribution/third-party/supplemental-notices.json",
+      "line": 2064,
+      "rule": "email-address",
+      "line_sha256": "8976267dc9b8e5d6c0efe76a88446d43f746e1bf7919f7901c14ffb7c267e592",
+      "reason": "Reviewed Maven package URL coordinate, not an email address; exact bytes unchanged."
+    },
+    {
+      "path": ".gitignore",
+      "line": 3029,
+      "rule": "email-address",
+      "line_sha256": "63944178dca2dd2e1aafcd78c3c80624f9dae770bff00f9ad193bac2a69aede9",
+      "reason": "pnpm patch filename/version, not an email address."
+    },
+    {
+      "path": ".repository/allowlist.json",
+      "line": 1676,
+      "rule": "email-address",
+      "line_sha256": "19f0e34d2de24909f3f9e4c329ff30ec56cb62c17e0373c97150ed36a4685fd4",
+      "reason": "pnpm patch filename/version, not an email address."
     }
   ],
   "binary_reviews": [
@@ -3282,6 +3387,166 @@
       "path": "document/zh-CN/images/manual/s3-transfer-run.png",
       "sha256": "06fb9f7f971a95ce1434edb22ff3ad0820ecdec469516c9f9fc0acb1d8f6fce2",
       "reason": "Visually reviewed real isolated iJob event/approval/S3 transfer page captured 2026-10-26. Matching instance tree and details; synthetic fixture names/IDs and test administrator only, no credentials or business data. Source PNGs and hashes retained in runtime evidence."
+    },
+    {
+      "path": "document/en/images/manual/showcase-approval.jpg",
+      "sha256": "06b52425d8bf2a7c30bf60b3f0e4c992a18e133482df539f316cfe8986d73742",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-editor.jpg",
+      "sha256": "e5ff31f190661cfbd3e8a8e5dda7fb5c8c01d7cc7550e0aad22d064ccd19c2a9",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-health.jpg",
+      "sha256": "b6d0c4f69110ac21865ff59d7fc0f82475ccc53ae901bc440eaaf0eae376ebbb",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-integration.jpg",
+      "sha256": "63c5c193517c7781af3e4c874d3132ab7b4c85633a4137c0104fb7a4c7feaad1",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-logs.jpg",
+      "sha256": "5d3ee4f8807a972ec576e0623e49fee17059e3b0cae6444779fdc86808460402",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-operations.jpg",
+      "sha256": "9512ec90112f95d6a0eb0a6c220274bb86102a1cb414075a8e542b3198db1099",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-quality.jpg",
+      "sha256": "69f8d1c40eb50315b7a25faedcc4a48b45f2dba2c4aa01116add2d7db883a6bd",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-reference.jpg",
+      "sha256": "a2e1717f2a02a37026f8d90e31fd7c28f8a4c01026864f250dc44c3dea2a6b1e",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-run.jpg",
+      "sha256": "eb8a911db2a5b4ef3122875f09ff8b21702dae911f2f92802df24413cada0a82",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-subjob.jpg",
+      "sha256": "4d7ae91649b40864095d6895bcd156c5443f1c03d5bf0214c79ee0174c96d58f",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-variables.jpg",
+      "sha256": "d6e2ac0f4da412f456c52a273f4ea10257fa0492c87ddba45838e99ad43d75a1",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/en/images/manual/showcase-waiting.jpg",
+      "sha256": "1941a5e0eb363adb6e7114728058ad680d4fd6ae2a18786090b3b50555cd294a",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-approval.jpg",
+      "sha256": "9b7ffe78a90ca2078bc6e5d888c80c87c215c7d97960a690eccbca26601651fa",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-editor.jpg",
+      "sha256": "5095de8aad8e28292dbf3645f5169da5b491315f903c65235272c2bfab1e936a",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-health.jpg",
+      "sha256": "bfa6464daf4f8c3711ed0be9ba46b378f5f2ba480378aa135c031b8cf462bd67",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-integration.jpg",
+      "sha256": "e985c6e09219f88968bfcdc5912045bc40fb084fb7c212b4eec97dca618568ed",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-logs.jpg",
+      "sha256": "a58c8ffc2a068f219bbc7af47d782265865f28f1d74757848c7795e03675789c",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-operations.jpg",
+      "sha256": "c3db2ba7b7d603154b55c51a05d7587de3bd3b5e33ecf88396538723b8d051aa",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-quality.jpg",
+      "sha256": "8a134033956e9dd73cee459e2398b2af3d4db4c4b53a22b5921a5cd9903bbbb3",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-reference.jpg",
+      "sha256": "42824a5b8c2edf528d4e87b95de39c80ef6c3daff19ebb6fc8adfd2e2de802cf",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-run.jpg",
+      "sha256": "559f5b314c731d4a2dd02662296e7049d1cc3dbb1e92afd6ae0708fd8ca9bd74",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-subjob.jpg",
+      "sha256": "59928142ae6b7a96021d67549fd1541ab24f1ae66d271185919bbb3ac8fdd7e5",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-variables.jpg",
+      "sha256": "045172d46994575d5bb7d2d27826e42f01bb358a4b9dd32a21d3aedd111c46c8",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/showcase-waiting.jpg",
+      "sha256": "97303b732d77d8bc4f1d876fe2ac2a423982449280e6e177f35ccfb98d449178",
+      "reason": "Visually reviewed original iJob viewport capture from independent site-showcase-20261030. Synthetic orders and dedicated example account only; no secrets, personal records or runtime paths. Source identity is recorded in document/reference/screenshots.json."
+    },
+    {
+      "path": "document/zh-CN/images/manual/tutorial-push.jpg",
+      "sha256": "3867a62307143f4e52f5a2a45ea596fd108bb5f87a92cdc9dc918488bf3160d4",
+      "reason": "Visually reviewed original 2026-10-31 local tutorial UI capture. Synthetic showcase data, no credentials or production data; actual output and logs match named environment evidence."
+    },
+    {
+      "path": "document/zh-CN/images/manual/tutorial-localjar.jpg",
+      "sha256": "cb1f98e7693d062fb1b621d7a808f88470853ea400f72d2293796bdaf1700443",
+      "reason": "Visually reviewed original 2026-10-31 local tutorial UI capture. Synthetic showcase data, no credentials or production data; actual output and logs match named environment evidence."
+    },
+    {
+      "path": "document/zh-CN/images/manual/tutorial-ssh.jpg",
+      "sha256": "225e81575e73c035a3e8d189684268240c0aa5f661ed7bae5c3844aa1ea9c5d1",
+      "reason": "Visually reviewed original 2026-10-31 local tutorial UI capture. Synthetic showcase data, no credentials or production data; actual output and logs match named environment evidence."
+    },
+    {
+      "path": "document/zh-CN/images/manual/tutorial-monitor.jpg",
+      "sha256": "cd0ad872377b6f5e979be9739550b00a3f4fedfc5a0c125233d45e2d87f50b1b",
+      "reason": "Visually reviewed original 2026-10-31 local tutorial UI capture. Synthetic showcase data, no credentials or production data; actual output and logs match named environment evidence."
+    },
+    {
+      "path": "document/en/images/manual/tutorial-push.jpg",
+      "sha256": "02285059bda4de517848ce7001c06710797475452613dfe65fab69def2a15634",
+      "reason": "Visually reviewed original 2026-10-31 local tutorial UI capture. Synthetic showcase data, no credentials or production data; actual output and logs match named environment evidence."
+    },
+    {
+      "path": "document/en/images/manual/tutorial-localjar.jpg",
+      "sha256": "4cae3f9ae27fb8392fcd40ed93cba23f52abf0aa2ce5d8b8ba5b92022b8f8469",
+      "reason": "Visually reviewed original 2026-10-31 local tutorial UI capture. Synthetic showcase data, no credentials or production data; actual output and logs match named environment evidence."
+    },
+    {
+      "path": "document/en/images/manual/tutorial-ssh.jpg",
+      "sha256": "88f1c6bd6beeca82873afe3dde91349783eaf26b93af96645cebdc0a5f2e5430",
+      "reason": "Visually reviewed original 2026-10-31 local tutorial UI capture. Synthetic showcase data, no credentials or production data; actual output and logs match named environment evidence."
+    },
+    {
+      "path": "document/en/images/manual/tutorial-monitor.jpg",
+      "sha256": "e7f5225c327f083e909dd7fbad06c16fc48407a3f8918a86c973ff82ab0d17a7",
+      "reason": "Visually reviewed original 2026-10-31 local tutorial UI capture. Synthetic showcase data, no credentials or production data; actual output and logs match named environment evidence."
     }
   ]
 }

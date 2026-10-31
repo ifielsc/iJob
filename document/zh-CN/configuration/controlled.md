@@ -34,19 +34,19 @@ AES key 与 key-id 必须和已加密资源匹配；丢失原密钥无法靠重�
 | C168 / `app.platform-database.schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:${spring.datasource.username:${IJOB_DB_USERNAME:ijob}}}; ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | 平台 schema；按数据库产品配置，与 JDBC 和 Flyway 保持一致。 |
 | C170 / `spring.datasource.hikari.schema` | C / text | ${IJOB_PLATFORM_DB_SCHEMA:public}; ${IJOB_PLATFORM_DB_SCHEMA:dbo} | 默认 schema；与平台 schema、迁移 schema 和账号权限共同调整。 |
 | C177 / `agent.token` | C / secret | ${IJOB_AGENT_TOKEN:} | Agent 认证令牌；部署双方一致，镜像从私有 token 文件导入。 |
-| C183 / `spring.datasource.url` | C / text | generated from database selection | 平台数据库连接；换数据库产品属于迁移，不能只改 URL。 |
-| C184 / `spring.datasource.username` | C / text | user input; empty for SQLite | 数据库连接账号；与权限和数据库口令一起维护。 |
-| C185 / `spring.datasource.password` | C / secret | private input; empty for SQLite | 数据库口令；在受限文件中轮换并验证连接。 |
-| C206 / `IJOB_CONFIG_PATH` | C / path | required; no default | 高级 Compose 私有 YAML 路径；首次安装包使用 IJOB_HOME/application.properties。 |
-| C207 / `IJOB_AGENT_TOKEN_PATH` | C / path | required; no default | Agent 私有令牌文件路径，不是令牌值。 |
-| C209 / `IJOB_PLATFORM_DB` | C / enum | setup selects vendor; repository YAML fallback mysql | 原生启动器从安装元数据传入；Docker 需在 backend environment 中一致配置。 |
-| C210 / `IJOB_PLATFORM_DB_SCHEMA` | C / text | PostgreSQL public; SQL Server dbo; Oracle IJOB_DB_USERNAME or ijob | 数据库专用配置的 schema 占位符；对齐 JDBC、平台及迁移 schema。 |
-| C211 / `IJOB_DB_USERNAME` | C / text | ijob for Oracle schema fallback only | 在 Oracle 模板中仅作为 schema 回退，不会替代 spring.datasource.username。 |
-| C225 / `name` | C / compose-field | setup-generated project; advanced ijob-v1-candidate | 项目身份；恢复或多实例必须使用独立项目名。 |
-| C228 / `services.<service>.volumes` | C / compose-field | setup config/runtime binds; advanced named data volumes | 私有配置、数据和插件挂载；恢复时逐项检查源目录及权限。 |
-| C229 / `services.<service>.environment` | C / compose-field | template-specific | 容器环境变量；不是宿主 shell 的自动继承，保持与配置文件一致。 |
-| C243 / `secrets.<secret>.file` | C / compose-field | advanced private config/token paths | 高级 Compose 秘密文件源；限制权限，不进仓库。 |
-| C244 / `volumes.<volume>` | C / compose-field | advanced backend-data / backend-b-data | 高级模板持久卷身份；勿指向旧环境或删除以重置。 |
+| C183 / `spring.datasource.url` | C / text | 根据所选数据库生成 | 平台数据库连接；换数据库产品属于迁移，不能只改 URL。 |
+| C184 / `spring.datasource.username` | C / text | 用户输入；SQLite 为空 | 数据库连接账号；与权限和数据库口令一起维护。 |
+| C185 / `spring.datasource.password` | C / secret | 私密输入；SQLite 为空 | 数据库口令；在受限文件中轮换并验证连接。 |
+| C206 / `IJOB_CONFIG_PATH` | C / path | 必填，无默认值 | 高级 Compose 私有 YAML 路径；首次安装包使用 IJOB_HOME/application.properties。 |
+| C207 / `IJOB_AGENT_TOKEN_PATH` | C / path | 必填，无默认值 | Agent 私有令牌文件路径，不是令牌值。 |
+| C209 / `IJOB_PLATFORM_DB` | C / enum | 初始化器选择数据库产品；仓库 YAML 的回退值为 `mysql` | 原生启动器从安装元数据传入；Docker 需在 backend 服务的 environment 配置中保持一致。 |
+| C210 / `IJOB_PLATFORM_DB_SCHEMA` | C / text | PostgreSQL 为 `public`；SQL Server 为 `dbo`；Oracle 使用 `IJOB_DB_USERNAME`，未提供时回退到 `ijob` | 数据库专用配置的 schema 占位符；对齐 JDBC、平台及迁移 schema。 |
+| C211 / `IJOB_DB_USERNAME` | C / text | `ijob`，仅用作 Oracle schema 的回退值 | 在 Oracle 模板中仅作为 schema 回退，不会替代 spring.datasource.username。 |
+| C225 / `name` | C / compose-field | 初始化器生成项目名；高级模板使用 `ijob-v1-candidate` | 项目身份；恢复或多实例必须使用独立项目名。 |
+| C228 / `services.<service>.volumes` | C / compose-field | 初始化配置绑定 config/runtime 目录；高级模板使用命名数据卷 | 私有配置、数据和插件挂载；恢复时逐项检查源目录及权限。 |
+| C229 / `services.<service>.environment` | C / compose-field | 由所用模板决定 | 容器环境变量；不是宿主 shell 的自动继承，保持与配置文件一致。 |
+| C243 / `secrets.<secret>.file` | C / compose-field | 高级模板使用的私有配置与 token 文件路径 | 高级 Compose 秘密文件源；限制权限，不进仓库。 |
+| C244 / `volumes.<volume>` | C / compose-field | 高级模板使用 `backend-data` / `backend-b-data` | 高级模板持久卷身份；勿指向旧环境或删除以重置。 |
 
 ## 数据库配置的适用范围
 

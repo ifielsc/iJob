@@ -5,9 +5,9 @@
     "digest": "sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237"
   },
   "jre": {
-    "tag": "library/eclipse-temurin:21.0.12.1_1-jre-jammy",
-    "image": "library/eclipse-temurin@sha256:affcab5356e1270ac35d2361ee83135af2f03e8d580eca78a6d5d6fdbf048db0",
-    "digest": "sha256:affcab5356e1270ac35d2361ee83135af2f03e8d580eca78a6d5d6fdbf048db0"
+    "tag": "library/eclipse-temurin:21.0.13_9-jre-noble",
+    "image": "library/eclipse-temurin@sha256:03fedab2c0d7355868b5ba5330d64088b956a0bfac48f904e5c57207e261e2c9",
+    "digest": "sha256:03fedab2c0d7355868b5ba5330d64088b956a0bfac48f904e5c57207e261e2c9"
   },
   "node": {
     "tag": "library/node:24.22.1-alpine3.24",

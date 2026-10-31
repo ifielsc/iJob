@@ -17,6 +17,8 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 VERSION = '1.0.0'
+SOURCE_ARCHIVE = f'ijob-{VERSION}-source.zip'
+THIRD_PARTY_SOURCE_ARCHIVE = f'ijob-{VERSION}-third-party-sources.zip'
 
 
 def digest(path):
@@ -38,10 +40,37 @@ def external_destination(path):
 def source_files():
     names = json.loads((ROOT / '.repository/allowlist.json').read_text(encoding='utf-8'))['files']
     for name in names:
+        normalized = name.replace('\\', '/').casefold()
+        if any(normalized == prefix or normalized.startswith(prefix + '/')
+               for prefix in ('tools/public-site', 'website', 'website-private')):
+            raise ValueError('Private website sources cannot enter product distributions: ' + name)
         path = ROOT / name
         if not path.resolve().is_relative_to(ROOT) or path.is_symlink() or not path.is_file():
             raise ValueError('Missing or unsafe source file: ' + name)
     return sorted(names)
+
+
+def prepare_source(output, work, names):
+    """Create one deterministic, standalone source asset for both runtime targets."""
+    manifest = {}
+    with zipfile.ZipFile(output / SOURCE_ARCHIVE, 'x', compression=zipfile.ZIP_DEFLATED) as archive:
+        for name in sorted(names):
+            source = ROOT / name
+            data = source.read_bytes()
+            manifest[name] = hashlib.sha256(data).hexdigest()
+            destination = work / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(data)
+            executable = source.suffix == '.sh' or source.name == 'mvnw'
+            destination.chmod(0o755 if executable else 0o644)
+            entry = zipfile.ZipInfo(f'ijob-{VERSION}-source/{name}', date_time=(1980, 1, 1, 0, 0, 0))
+            entry.create_system = 3
+            entry.external_attr = (stat.S_IFREG | (0o755 if executable else 0o644)) << 16
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(entry, data)
+            if digest(destination) != manifest[name] or digest(source) != manifest[name]:
+                raise RuntimeError('Source changed while copying: ' + name)
+    return manifest
 
 
 def git_source():
@@ -117,6 +146,18 @@ def copy_deployment(source, bundle):
         '`support/` contains internal helpers, not user entry points.\n\n'
         'Start with the installation guide for your platform. Keep the data home outside this '
         'directory. This package contains no credentials or database.\n', encoding='utf-8')
+    with (bundle / 'README.md').open('a', encoding='utf-8') as readme:
+        readme.write('\n源码独立下载 / Separate source download: `' + SOURCE_ARCHIVE + '`.\n\n'
+                     '安装与运行无需源码包。/ The source archive is not required to install or run.\n\n'
+                     '`MANIFEST.json` records its filename and SHA-256; `source-manifest.json` '
+                     'contains file hashes only. Keep LICENSE and third-party notices with this bundle.\n')
+        readme.write('\n第三方对应源码 / Third-party corresponding source: `'
+                     + THIRD_PARTY_SOURCE_ARCHIVE + '`.\n\n'
+                     '从同一发行版本的下载位置取得，包含相关组件的原始许可、源码和构建资料。'
+                     '再分发时须同时提供匹配版本的源码下载。\n\n'
+                     'Obtain this companion archive from the same release download location. '
+                     'It contains applicable original licenses, corresponding sources and build materials. '
+                     'Redistributors must provide the matching source download alongside the binaries.\n')
 
 
 def write_third_party_notices(bundle):
@@ -132,6 +173,8 @@ def write_third_party_notices(bundle):
                 if not name.startswith('BOOT-INF/lib/') or not name.endswith('.jar'):
                     continue
                 data = application.read(name)
+                if Path(name).name.lower().startswith(('mysql-connector-', 'ojdbc', 'orai18n')):
+                    raise ValueError('User-supplied JDBC drivers must not be bundled: ' + name)
                 sha256 = hashlib.sha256(data).hexdigest()
                 component = components.get(sha256)
                 if component is None:
@@ -139,7 +182,7 @@ def write_third_party_notices(bundle):
                                  'artifacts': [], 'notices': []}
                     with zipfile.ZipFile(io.BytesIO(data)) as library:
                         for entry in sorted(library.namelist()):
-                            if entry.endswith('/') or not Path(entry).name.lower().startswith(
+                            if entry.endswith(('/', '.class')) or not Path(entry).name.lower().startswith(
                                     ('license', 'licence', 'notice', 'copying')):
                                 continue
                             notice = library.read(entry)
@@ -173,6 +216,7 @@ def write_third_party_notices(bundle):
     browser = json.loads(frontend.read_text(encoding='utf-8'))['components']
     result = {'scope': 'Actual nested JAR bytes and rendered frontend component inventory',
               'redistribution_review': 'pending: component notices alone do not grant release approval',
+              'corresponding_source_archive': THIRD_PARTY_SOURCE_ARCHIVE,
               'components': list(components.values()),
               'missing_embedded_notices': [c['filename'] for c in components.values() if not c['notices']],
               'missing_license_text': [c['filename'] for c in components.values()
@@ -207,6 +251,37 @@ def write_archives(output, bundle, target):
 
     with tarfile.open(output / f'ijob-{VERSION}-{target}.tar.gz', 'w:gz') as archive:
         archive.add(bundle, arcname=bundle.name, filter=safe_metadata)
+
+
+def finalize_distribution(output, bundle, target, result):
+    """Bind the external source asset and checksum only explicit release downloads."""
+    forbidden = {'source', 'source.zip', SOURCE_ARCHIVE, 'build-source', '.git', 'develop', 'tools'}
+    if any(path.name in forbidden for path in bundle.iterdir()):
+        raise ValueError('Runtime bundle must not contain the source archive or source tree')
+    manifest = json.loads((bundle / 'source-manifest.json').read_text(encoding='utf-8'))
+    prefix = f'ijob-{VERSION}-source/'
+    with zipfile.ZipFile(output / SOURCE_ARCHIVE) as archive:
+        names = archive.namelist()
+        if len(names) != len(set(names)) or set(names) != {prefix + name for name in manifest}:
+            raise ValueError('Source archive does not match the source manifest')
+        for name, expected in manifest.items():
+            if hashlib.sha256(archive.read(prefix + name)).hexdigest() != expected:
+                raise ValueError('Source archive checksum mismatch: ' + name)
+    result.update(version=VERSION, target=target, public_release_approved=False,
+                  source_manifest_sha256=digest(bundle / 'source-manifest.json'),
+                  source_archive={'filename': SOURCE_ARCHIVE,
+                                  'sha256': digest(output / SOURCE_ARCHIVE),
+                                  'bundled': False})
+    (bundle / 'MANIFEST.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
+    entries = sorted(p for p in bundle.rglob('*') if p.is_file() and p != bundle / 'SHA256SUMS.txt')
+    (bundle / 'SHA256SUMS.txt').write_text(''.join(
+        digest(p) + '  ' + p.relative_to(bundle).as_posix() + '\n' for p in entries), encoding='utf-8')
+    write_archives(output, bundle, target)
+    assets = [output / SOURCE_ARCHIVE, output / f'ijob-{VERSION}-{target}.zip',
+              output / f'ijob-{VERSION}-{target}.tar.gz']
+    (output / 'SHA256SUMS.txt').write_text(''.join(
+        digest(p) + '  ' + p.name + '\n' for p in assets), encoding='utf-8')
+    return [p.name for p in assets]
 
 
 def native(work, bundle, reports):
@@ -299,17 +374,8 @@ def main():
               key in {'JAVA_TOOL_OPTIONS', 'JDK_JAVA_OPTIONS', '_JAVA_OPTIONS', 'MAVEN_ARGS', 'MAVEN_OPTS'}]
     if unsafe:
         raise ValueError('Remove inherited application/JVM configuration before building: ' + ', '.join(unsafe))
-    manifest = {name: digest(ROOT / name) for name in names}
-    with zipfile.ZipFile(bundle / 'source.zip', 'w', compression=zipfile.ZIP_DEFLATED) as archive:
-        for name in names:
-            source = ROOT / name
-            destination = work / name
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source, destination)
-            archive.write(source, name)
-            if digest(destination) != manifest[name] or digest(source) != manifest[name]:
-                raise RuntimeError('Source changed while copying: ' + name)
-    (bundle / 'source-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    manifest = prepare_source(output, work, names)
+    (bundle / 'source-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     provenance = {}
     if commit:
         matches = set(git_files) == set(names)
@@ -321,14 +387,10 @@ def main():
     copy_deployment(work, bundle)
     result = native(work, bundle, reports) if args.target == 'native' else docker(work, bundle, reports)
     result['third_party_notices'] = write_third_party_notices(bundle)
-    result.update(version=VERSION, target=args.target, public_release_approved=False,
-                  source_manifest_sha256=digest(bundle / 'source-manifest.json'))
     result.update(provenance)
-    (bundle / 'MANIFEST.json').write_text(json.dumps(result, indent=2) + '\n')
-    entries = sorted(p for p in bundle.rglob('*') if p.is_file())
-    (bundle / 'SHA256SUMS.txt').write_text(''.join(digest(p) + '  ' + p.relative_to(bundle).as_posix() + '\n' for p in entries))
-    write_archives(output, bundle, args.target)
-    print(json.dumps({'bundle': str(bundle), 'target': args.target, 'validation': result}, ensure_ascii=False))
+    assets = finalize_distribution(output, bundle, args.target, result)
+    print(json.dumps({'bundle': str(bundle), 'target': args.target,
+                      'assets': assets, 'validation': result}, ensure_ascii=False))
 
 
 if __name__ == '__main__':

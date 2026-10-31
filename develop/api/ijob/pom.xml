@@ -28,7 +28,6 @@
         <module>ijob-starter</module>
         <module>ijob-api</module>
         <module>ijob-plugin</module>
-        <module>ijob-migration-tool</module>
         <module>ijob-setup-tool</module>
     </modules>
 
@@ -57,6 +56,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>1.1.10.10</version>
+            </dependency>
             <dependency>
                 <groupId>io.github.spannm</groupId>
                 <artifactId>ucanaccess</artifactId>

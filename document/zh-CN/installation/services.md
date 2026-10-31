@@ -4,13 +4,13 @@
 
 先按[统一入口](instance-launcher.md)配置实例，完成首次初始化、启动检查和停止。服务启动不询问账号、不调用 setup，也不重置已有秘密。每个实例使用独立服务名、控制目录、数据目录和端口；程序目录可只读共享。
 
-隔离的 Windows Server 2022 Standard Evaluation Core VM 已完成原生初始化、两个独立 SQLite 实例的虚拟服务账号运行、跨实例文件访问拒绝、停止及子进程清理、Java 异常退出恢复、restart 和卸载重装后的历史保留。两次实际 VM 重启分别验证启用/禁用自启的双向切换；独立 PostgreSQL 18.6 Windows 服务及应用实例在重启前后均通过 SQL 任务，正式迁移记录只有成功的 V1。数据库服务依赖在该环境中显式登记，不是安装器自动发现。结论绑定实测候选和环境，不代表所有 Windows 版本或数据库/MQ 组合均已验收。
+服务托管只负责应用进程。使用独立数据库或其他外部服务时，需另行配置它们的启动依赖，并确认连接就绪；安装器不会自动发现数据库服务。每个实例还应具备独立的文件访问权限，避免一个实例访问另一实例的数据目录。
 
-Linux 独立 VM 已验证双实例登录和任务执行、停止隔离、主进程异常重启、两次 VM 重启中的启用/禁用自启，以及卸载重装后的历史保留。部署脚本候选之间的升级和回退也已实测，应用配置与秘密文件逐字节保持一致；这些候选的编译代码相同，不能据此声称已验证数据库版本迁移。结果绑定本轮程序与环境，最终重建候选仍需复验。
+调整服务配置、替换程序包和迁移数据库是不同操作。修改服务托管方式不会自动迁移数据；更换程序包前仍需完成备份并检查兼容性。升级和回退步骤见本页末尾。
 
 ## Windows
 
-使用 Java 21 和 .NET Framework 4。服务宿主固定为 [WinSW 2.12.0 的 WinSW.NET4.exe](https://github.com/winsw/winsw/releases/tag/v2.12.0)，MIT 许可全文随包保存在 support/WinSW-LICENSE.txt。可执行文件单独下载，不进源码；从 support/winsw.json 核对官方地址、长度和 SHA-256。当前 SHA-256 为 `923111c7142b3dc783a3c722b19b8a21bcb78222d7a136ac33f0ca8a29f4cb66`，这是官方 HTTPS 下载字节的固定摘要，不是上游签名；该文件未带 Authenticode 签名。
+使用 Java 21 和 .NET Framework 4。服务宿主固定为 [WinSW 2.12.0 的 WinSW.NET4.exe](https://github.com/winsw/winsw/releases/tag/v2.12.0)，MIT 许可全文随包保存在 support/WinSW-LICENSE.txt。服务包装器需单独准备；从 support/winsw.json 核对官方地址、长度和 SHA-256。当前 SHA-256 为 `923111c7142b3dc783a3c722b19b8a21bcb78222d7a136ac33f0ca8a29f4cb66`，这是官方 HTTPS 下载字节的固定摘要，不是上游签名；该文件未带 Authenticode 签名。
 
 从控制目录操作。服务名以 ijob 开头，后接 1–40 个英文字母或数字。可先生成不安装服务的 XML 预览；实际管理使用管理员终端：
 
@@ -51,14 +51,14 @@ sudo ./ijob.sh service disable
 
 安装器校验并写入 /etc/systemd/system/ijob-a.service，固定程序/控制/数据身份及 unit 哈希。应用以前台 Java 运行，使用注册账号；配置文件仅开放该组读取，数据目录不自动换所有者。新服务保持停止、未 enable。enable/disable 只切换下次开机自启，不隐式启动或停止。异常退出 10 秒后重启，5 分钟内最多启动 3 次；达到限制时先排障，再由管理员按 systemd 流程 reset-failed 后启动。
 
-停止发送 SIGTERM，等待 120 秒；Java 的正常信号退出码 143 视为服务正常结束，不自动 SIGKILL。停止超时保留进程，需要检查日志，不能签为停止成功。运行中的业务任务可能因进程组终止而失败，须检查实例记录及外部副作用；服务正常停止不等于任务成功。status 展示 ActiveState/SubState/MainPID/UnitFileState；应用就绪独立核对。service logs / 统一 logs 查看本 unit 的 journal，应用文件日志仍在 home/logs/ijob.log。journal 的留存由主机 journald 配置管理。
+停止发送 SIGTERM，等待 120 秒；Java 的正常信号退出码 143 视为服务正常结束，不自动 SIGKILL。停止超时保留进程，需要检查日志并确认进程状态，不能当作已停止。运行中的业务任务可能因进程组终止而失败，须检查实例记录及外部副作用；服务正常停止不等于任务成功。status 展示 ActiveState/SubState/MainPID/UnitFileState；应用就绪独立核对。service logs / 统一 logs 查看本 unit 的 journal，应用文件日志仍在 home/logs/ijob.log。journal 的留存由主机 journald 配置管理。
 
 ## 升级、回退与卸载
 
 统一 start/stop/restart/status/logs 自动识别托管实例并转交服务管理器。旧 legacy 入口遇到本数据目录的服务归属标记会拒绝争抢。不要删除标记来绕开检查；旧版本程序不具备新保护，不能并发使用。
 
-服务登记存在时 configure Update/update 拒绝修改程序路径。按顺序停止并核对进程退出、备份数据和配置、service uninstall、受控更新 bundle、重新 service install、恢复原自启选择、启动并验收。回退同理，保留原程序包和控制配置；涉及数据库变化仍遵循[升级回退](../operations/upgrade-rollback.md)。
+服务登记存在时 configure Update/update 拒绝修改程序路径。按顺序停止并核对进程退出、备份数据和配置、service uninstall、受控更新 bundle、重新 service install、恢复原自启选择、启动并检查就绪、登录和历史记录。回退同理，保留原程序包和控制配置；涉及数据库变化仍遵循[升级回退](../operations/upgrade-rollback.md)。
 
-卸载命令：Windows `.\ijob.cmd service uninstall`，Linux `sudo ./ijob.sh service uninstall`。必须先停止；卸载保留数据、应用账号、OS 账号/ACL 授权、instance.conf 和服务登记备份。服务名冲突、配置/包装器/unit 哈希变化、实例身份不符时拒绝管理。部分安装失败也保留归属记录，先定位本轮服务状态和失败点再修复，不覆盖其他服务。
+卸载命令：Windows `.\ijob.cmd service uninstall`，Linux `sudo ./ijob.sh service uninstall`。必须先停止；卸载保留数据、应用账号、OS 账号/ACL 授权、instance.conf 和服务登记备份。服务名冲突、配置/包装器/unit 哈希变化、实例身份不符时拒绝管理。部分安装失败也保留归属记录，先定位当前实例的服务状态和失败点再修复，不覆盖其他服务。
 
-开机自启验收在隔离 VM 进行，分别检查启用和禁用、异常恢复、账号/历史保留与 A/B 实例互不影响。Docker 使用 Compose restart policy 与 Docker daemon 自启，不安装上述原生服务进行重复托管。
+启用开机自启前，先在测试环境检查启用/禁用后的启动行为、异常恢复以及账号和历史记录保留。多实例部署还应检查实例之间互不影响。Docker 使用 Compose 重启策略和 Docker 服务自启，无需再为同一容器安装上述原生服务。

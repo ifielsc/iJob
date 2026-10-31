@@ -47,7 +47,7 @@ try {
         $name = Split-Path $project -Leaf
         try {
             $selection = @()
-            if ($project -eq $main) { $selection = @('-Dtest=*Test,RealSqliteMigrationIT,SqliteOfflineMigrationIT,SecurityHttpIT', '-Dsurefire.failIfNoSpecifiedTests=false') }
+            if ($project -eq $main) { $selection = @('-Dtest=*Test,RealSqliteMigrationIT,SecurityHttpIT', '-Dsurefire.failIfNoSpecifiedTests=false') }
             try {
                 & mvn @network -B -ntp -Pquality @selection "-Dijob.legacy.resources=$legacy" "-Djava.io.tmpdir=$temporary" clean install *> (Join-Path $evidence "$name-build.log")
                 if ($LASTEXITCODE -ne 0) { throw "Build/tests failed: $name; inspect evidence log" }
@@ -69,7 +69,7 @@ try {
             $unexpectedSkips = @($actual | Where-Object { $_.skipped -gt 0 -and -not $_.suite.EndsWith('.RealMessageSourcesTest') })
             if ($unexpectedSkips.Count) { throw 'Unexpected skipped tests; inspect junit-summary.json' }
             if ($project -eq $main) {
-                foreach ($required in @('RealSqliteMigrationIT','SqliteOfflineMigrationIT','SecurityHttpIT')) {
+                foreach ($required in @('RealSqliteMigrationIT','SecurityHttpIT')) {
                     if (-not ($actual | Where-Object { $_.suite.EndsWith(".$required") -and $_.tests -gt $_.skipped -and $_.failures -eq 0 -and $_.errors -eq 0 })) { throw "Required integration suite did not pass: $required" }
                 }
             }

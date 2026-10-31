@@ -4,17 +4,35 @@
 
 ## Entry and workflow
 
-Run center → trigger/instance details. Actions depend on account permissions; identify the object and environment first.
+Run center → trigger/instance details. All three roles can read run summaries. Stop, pause, resume and retry require ADMIN or OPERATOR and an instance state that allows the action. Logs and input/output details require ADMIN. See the [role matrix](users-audits.md) for all actions.
 
 ## Configuration and actions
 
-| Field/action | Purpose and rules |
-| --- | --- |
-| `触发与实例` | Acceptance means a request exists; wait for its root instance and inspect final state. |
-| `版本/节点/时间` | Check actual definition version, Worker, start/end/duration; current edits are not the run snapshot. |
-| `状态` | SUCCESS, FAILED and STOPPED are distinct outcomes; keep observing waiting/queued/paused work. |
-| `日志/变量/拓扑` | Select root/node scope for logs, output and dependency states; sensitive fields are permission-controlled. |
-| `停止/重试` | Stop is a request requiring result verification. Retry can repeat external actions; check idempotency/target data first. |
+### Run information
+
+| Display | Meaning | Shown when |
+| --- | --- | --- |
+| Trigger ID | Identifies a request. Acceptance does not imply an instance exists or execution succeeded. | Always |
+| Root instance ID | Identifies a root run; retries reuse it. | Root instance has been created |
+| Task definition ID | Task definition snapshot used by this run, not the current draft. | Task instance summary |
+| Job definition ID | Job definition snapshot and fixed references used by this run. | Job instance summary |
+| Started | Actual execution start time; may be absent while waiting. | Always |
+| Ended | Time when execution reached a terminal state. | Always |
+| Duration (ms) | Recorded elapsed time in milliseconds. | Always |
+| Status | Distinguish waiting, running, paused and terminal states. SUCCESS still requires business verification. | Always |
+| Logs | Read context for the selected root or node; the view contains up to the latest 5000 lines. | ADMIN; logs are readable for the selected instance |
+| Input variables | Inputs used by this run, not later template defaults. | ADMIN; Variables tab |
+| Output variables | Selected-node outputs. Redaction, truncation and unavailable notices mean the preview is not complete raw data. | ADMIN; Variables tab |
+| Instance tree | Relationship of root, node and child instances; selection changes the information scope. | Always |
+
+### Instance controls
+
+| Action | Roles | Available when | Result |
+| --- | --- | --- | --- |
+| Pause | ADMIN / OPERATOR | Root instance is RUNNING | Submit a pause command, effective at execution checkpoints. |
+| Resume | ADMIN / OPERATOR | Root instance is PAUSED | Continue the same root run. |
+| Stop | ADMIN / OPERATOR | Root instance is nonterminal, such as waiting, running, paused or waiting for an event | Request stop and verify final status. Already completed external writes are not undone. |
+| Retry | ADMIN / OPERATOR | Root instance is FAILED or TIMED_OUT | Reuse the original version and root instance. The server selects failed job branches; external operations may repeat. |
 
 ## Use and verify
 

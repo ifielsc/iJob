@@ -1,30 +1,108 @@
-# Script success, failure, stop and retry
+# Run a script and distinguish success, failure and stop
 
 [简体中文](../../zh-CN/examples/script-lifecycle.md) · [Manual home](../README.md)
 
-**Verification: the baseline path was exercised in isolation; extensions do not inherit that result.**
+Use three harmless scripts to distinguish trigger acceptance from actual execution results.
 
-Fields: [Script](../user-guide/plugins/script.md).
+## Audience and outcome
 
-## Prepare, configure and run
+For first-time script users who need to distinguish success, nonzero exit, stop and timeout.
 
-Use an independent Worker with BAT on Windows or SHELL on Linux. Save docs-hello with 0 retries and a 60-second timeout:
+## Before you start
 
-```sh
-echo hello-ijob
+Complete the [shared preparation](../examples.md), then prepare the resources below.
+
+| Resource | Requirement |
+| --- | --- |
+| Worker | The main steps use Windows PowerShell with the POWERSHELL engine. BAT and Linux SHELL require their own syntax and interpreter. |
+
+## Configuration
+
+| Field / setting | Example value |
+| --- | --- |
+| Execution mode | LOCAL |
+| Retries / timeout | 0 / 60 seconds |
+| Success script | Use the copyable code below |
+
+## Steps
+
+### 1. Create and publish the success task
+
+Create SCRIPT named docs-hello with LOCAL execution and the POWERSHELL engine. Set script/output encoding to UTF-8, retries to 0 and timeout to 60 seconds:
+
+```powershell
+Write-Output 'hello-ijob'
+Write-Output '__VAR__:greeting=hello'
 exit 0
 ```
 
-Run manually and verify SUCCESS, executing node and STDOUT. Copy to docs-failure, replace exit 0 with exit 7 and expect FAILED. HTTP trigger acceptance is not script success. For a long task use `ping -n 31 127.0.0.1 > nul` on Windows or `sleep 30` on Linux, request stop while running and wait for STOPPED.
+Saving publishes a version without running it. Values emitted with `__VAR__:` are strings; this example produces `greeting="hello"`. For BAT or Linux SHELL, use the corresponding `echo hello-ijob` and `exit 0` syntax and check that interpreter separately.
 
-Extensions: use a separate copy with a 2-second timeout, then one retry and count attempts. Verify these variants separately on the target node; success/stop screenshots do not prove them. Disable practice schedules afterward and retain failed instances for diagnosis.
+### 2. Run manually and inspect logs
 
-## Finish
+Trigger manually and confirm the input dialog. Open the run center, wait for SUCCESS and find hello-ijob in STDOUT plus the actual Worker.
 
-Retain inputs, definition versions, trigger/instance IDs, sanitized logs and target checks. Stop only processes/schedules owned by this case; other environments and historical evidence are not cleanup targets.
+### 3. Observe a nonzero exit
 
-## Real page examples
+Create docs-failure with POWERSHELL, retries 0 and timeout 60 seconds:
 
-Filtered real output for the successful path; failure and stop have separate instance records.
+```powershell
+Write-Output 'tutorial-failure'
+exit 7
+```
 
-![Filtered real output for the successful path; failure and stop have separate instance records.](../images/manual/script-run.png)
+Save/publish and run manually. Expect FAILED; trigger acceptance and script success are separate results.
+
+### 4. Stop a long-running task
+
+Create docs-stop with POWERSHELL, retries 0 and timeout 120 seconds:
+
+```powershell
+Write-Output 'started'
+Start-Sleep -Seconds 45
+Write-Output 'finished'
+```
+
+Save/publish and run. Once the instance is running and the log contains `started`, request stop. Wait for STOPPED and check that this run did not print `finished`; acceptance of the stop request is not completion.
+
+### 5. Optional: inspect timeout and retries
+
+In a separate copy, use `Start-Sleep -Seconds 10`, a task timeout of 2 seconds and retries 0. Run it and check TIMED_OUT.
+
+Retries are a separate optional extension: set the nonzero-exit copy to one retry and inspect its attempts. Eligibility depends on the plugin result and cannot be inferred for HTTP errors from a script run.
+
+## Expected results
+
+| Check | Expected value |
+| --- | --- |
+| Success | SUCCESS, hello-ijob in logs, and greeting as the string hello |
+| Failure | FAILED with a nonzero exit |
+| Stop | STOPPED after started; no finished output |
+| Timeout copy | A 10-second wait with a 2-second task timeout reaches TIMED_OUT |
+
+## Common failures
+
+| Symptom | Action |
+| --- | --- |
+| No instance | Inspect the trigger, Worker readiness and routing groups before retriggering. |
+| Writes after stop | Stopping does not undo completed external effects; these scripts do not write business data. |
+
+## Safety and cleanup
+
+Disable tutorial schedules if created, and remove unwanted practice tasks after active instances finish.
+
+## Version and limitations
+
+Applies to 1.0.0. The main path uses Windows PowerShell for success, exit code 7, stop and a 2-second task timeout. BAT/Linux SHELL and automatic retries are separate extensions to check on their own interpreters.
+
+## Interface reference
+
+These are actual interface references for this capability. Names and instance IDs may differ from your run; follow the steps and expected results for extensions.
+
+![Interface reference: script-run](../images/manual/script-run.png)
+
+## Related pages
+
+- [Script](../user-guide/plugins/script.md)
+
+- [Run center, logs, graphs and stop](../user-guide/runs.md)

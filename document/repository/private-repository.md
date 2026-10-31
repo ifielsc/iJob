@@ -10,7 +10,7 @@
 
 用 `git rev-parse --show-toplevel`、`git remote -v` 确认位置和远程。旧外层 develop 树是导入前保留副本，不能与本仓库同时作为编辑入口，也不能整目录复制覆盖本仓库。历史报告和机器专用路径留在外层工作区索引。
 
-当前冻结交付名为 `release-1.0.0-20261017-setup-guide`，位于原工作区 outputs，由新工作区归档索引记录。源码仓库不含 outputs、用户数据或发布二进制，也没有创建 GitHub Release。提交/推送不会更新已交付 JAR 或部署应用。
+历史冻结交付名为 `release-1.0.0-20261017-setup-guide`，位于原工作区 outputs，由新工作区归档索引记录。源码仓库不含 outputs、用户数据或发布二进制，也没有创建 GitHub Release。提交/推送不会更新已交付 JAR 或部署应用。
 
 ## 日常同步 GitHub
 

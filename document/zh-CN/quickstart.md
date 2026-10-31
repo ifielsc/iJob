@@ -4,11 +4,11 @@
 
 ## 准备
 
-按[安装](installation.md)启动独立实例并登录。默认管理员可完成本章；只读账号不能创建或执行。先确认工作台存在可用 Worker。示例不访问业务系统。
+先阅读[核心概念](concepts.md)，按[安装](installation.md)和[首次初始化](installation/first-start.md)启动独立实例并登录。使用自己创建的 ADMIN 完成本章；OPERATOR 可执行已有定义，但不能创建任务，VIEWER 不能执行。先确认工作台存在可用 Worker。示例不访问业务系统。
 
 ## 1. 创建并保存脚本任务
 
-任务 → 新增，名称 `docs-hello`，插件 SCRIPT，执行方式 LOCAL。Windows 选 BAT；Linux 选 SHELL，解释器 `/bin/sh`。高级配置保持重试 0、间隔 1、超时 60 秒；初次不限制分组。
+任务 → 新增，名称 `docs-hello`，插件 SCRIPT，执行方式 LOCAL。Windows 选 BAT；Linux 选 SHELL。本例将高级配置设为重试 0 次、重试间隔 1 秒、超时 60 秒；初次不限制分组。
 
 ```sh
 echo hello-ijob
@@ -22,7 +22,7 @@ exit 0
 
 ## 2. 执行并查看结果
 
-列表点击执行，确认参数弹窗。触发受理后进入运行中心，选择实例，打开本次 docs-hello。应看到 SUCCESS；日志页有 `[STDOUT] hello-ijob`。输出变量 rows=3 在变量页核对，变量声明行在日志中隐藏值。stdout/stderr 会记录，但有大小上限，不作为文件输出存储。
+列表点击执行，确认参数弹窗。触发受理后进入运行中心，选择实例，打开本次 docs-hello。应看到 SUCCESS；日志页有 `[STDOUT] hello-ijob`。在变量页核对输出 rows 为字符串 `"3"`；变量声明行在日志中隐藏值。stdout/stderr 会记录，但有大小上限，不作为文件输出存储。
 
 日志截图使用页面搜索过滤到 hello 输出，完整日志仍保留。
 

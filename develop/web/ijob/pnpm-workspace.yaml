@@ -9,5 +9,9 @@ allowBuilds:
 patchedDependencies:
   '@vue/devtools-kit@8.2.1': patches/@vue__devtools-kit@8.2.1.patch
 overrides:
+  # Security fixes for transitive lint/test tooling; validated by the full Basic gate.
+  glob@13.0.6: 14.0.2
+  minimatch@10.2.6: 11.0.1
+  vdirs: file:./packages/ui-directives
   ini@<1.3.6: 1.3.8
   source-map-js@<1.2.2: 1.2.2

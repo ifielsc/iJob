@@ -77,7 +77,7 @@ try {
     }
     New-Item -ItemType Directory -Path (Join-Path $dataRoot 'logs') -Force | Out-Null
     $session = [guid]::NewGuid().ToString('N')
-    $arguments = @("-Dijob.native.home=$dataRoot",'-jar',(Join-Path $bundle 'ijob-starter-1.0.0.jar'),
+    $arguments = @("-Dijob.native.home=$dataRoot", ('-Dloader.path=' + ([uri](Join-Path $dataRoot 'drivers/')).AbsoluteUri),'-jar',(Join-Path $bundle 'ijob-starter-1.0.0.jar'),
         '--spring.profiles.active=release,native-background',
         ('--spring.config.additional-location=' + ([uri](Join-Path $dataRoot 'application.properties')).AbsoluteUri),
         ('--app.web.directory=' + (Join-Path $bundle 'web-dist')),

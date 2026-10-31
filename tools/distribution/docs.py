@@ -23,7 +23,10 @@ def table(language):
     rows = ['| ' + ' | '.join(heading) + ' |', '| --- | --- | --- | --- |']
     for entry in entries:
         assert entry['en'] and entry['zh'], entry['key']
-        values = ['`' + entry['key'] + '`', entry['type'], entry['default'], entry['zh' if language == 'zh-CN' else 'en']]
+        default = entry['default']
+        if language == 'zh-CN':
+            default = {'generated': '安装时生成', 'empty': '空'}.get(default, default)
+        values = ['`' + entry['key'] + '`', entry['type'], default, entry['zh' if language == 'zh-CN' else 'en']]
         rows.append('| ' + ' | '.join(value.replace('|', '\\|') for value in values) + ' |')
     return START + '\n\n' + '\n'.join(rows) + '\n\n' + END
 

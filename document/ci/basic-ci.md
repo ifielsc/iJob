@@ -68,7 +68,7 @@ Full 尚未接入本次基础工作流。它需要 Windows（包含 BAT/PowerShe
 
 ## 后端 IT 分组与后续覆盖
 
-基础入口明确选择 `*Test,RealSqliteMigrationIT,SqliteOfflineMigrationIT,SecurityHttpIT`，检查两个工程实际有测试执行，并要求三套 IT 有非跳过的成功用例。JUnit 汇总保留 failures/errors/skipped，跳过不会记为执行成功。Maven 的 `surefire.failIfNoSpecifiedTests=false` 仅容许不包含这些测试的子模块为空。
+基础入口明确选择 `*Test,RealSqliteMigrationIT,SecurityHttpIT`，检查两个工程实际有测试执行，并要求两套 IT 有非跳过的成功用例。JUnit 汇总保留 failures/errors/skipped，跳过不会记为执行成功。Maven 的 `surefire.failIfNoSpecifiedTests=false` 仅容许不包含这些测试的子模块为空。
 
 基础环境不提供 Kafka/RabbitMQ，因此 RealMessageSourcesTest 中两项由 IJOB_MQ_IT 控制的真实消息源检查允许跳过，并明确记录；其他 suite 出现跳过会使入口失败。2026-10-20 已有独立真实消息源验证，见隔离集成记录；它不计入本轮 Basic，也不自动证明后续源码的用户操作案例已验收。
 

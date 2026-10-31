@@ -1,12 +1,12 @@
 # Complete configuration inventory
 
-[简体中文](../zh-CN/configuration-catalog.md) · [Documentation plan](documentation-plan.md) · [Current manual](README.md)
+[简体中文](../zh-CN/configuration-catalog.md) · [Manual home](README.md)
 
-Status: structure and A/B/C/D levels are approved. Runtime defaults remain unchanged; the checker covers 54 settings. Configuration baseline: 1.0.0 / `525070ea2a61919fd92dad4837f1ee8b5a8894a8`; current source hashes are in the shared inventory.
+Applies to **iJob 1.0.0**. This inventory groups configuration sources, defaults, and change procedures by A/B/C/D level. The settings/check-settings tool covers 54 entries. Source defaults and fresh-install values are described separately; configuration sources are listed at the end.
 
 ## 1. Scope and reading guide
 
-This inventory covers platform and Agent properties declared in the listed sources, plus startup variables, image locks and common Compose controls. It does not enumerate every Spring, JVM, OS or Nginx option. Test-only settings, historical migration-tool inputs and generated installation.properties/PID markers are not user tuning options. UI business fields for tasks/jobs/resources/notifications belong in the operations reference, separately from application.properties.
+This inventory covers platform and Agent properties declared in the listed sources, plus startup variables, image locks and common Compose controls. It does not enumerate every Spring, JVM, OS or Nginx option. Test-only settings, generated installation.properties/PID markers are not user tuning options. UI business fields for tasks/jobs/resources/notifications belong in the operations reference, separately from application.properties.
 
 Properties are identified by component plus key: both platform and Agent have server.port. Environment aliases are entry points for the same property, not separate features. `<service>` in Compose rows is a template placeholder, not a literal service name.
 
@@ -17,21 +17,21 @@ Properties are identified by component plus key: both platform and Agent have se
 | C Controlled | Change through a specific operations procedure, including accounts, credentials, databases and mode changes | Dedicated steps, backup and recovery requirements; not a prohibition |
 | D Internal | Not recommended for routine user tuning | Complete appendix with rationale; no recipes for bypassing safeguards |
 
-These approved levels are maintenance guidance, not new access controls. settings/check-settings covers 54 format checks; see [Configuration](configuration.md). It does not validate all 254 entries or cross-setting business constraints.
+A/B/C/D levels describe configuration purpose and change requirements; they do not grant server or page permissions. settings/check-settings covers 54 format checks; see [Configuration](configuration.md). It does not validate all 254 entries or cross-setting business constraints.
 
 ### Defaults and activation
 
 - Source declarations preserve expressions such as `${VARIABLE:fallback}`. A declaration does not apply unless its file is loaded. Database-specific values apply only to the selected vendor. The mail-profile declaration applies when that profile loads, while the email implementation itself is enabled when the switch is absent.
 - Fresh-install overrides distinguish setup and deployment modes. No extra override means the loaded configuration/implementation default applies; not every implicit framework default is enumerated. Java field initializers are not automatically installation defaults.
-- Restart the installation after platform application.properties changes. For Docker, use the corresponding bundle's legacy/start-docker.sh --recreate to refresh mounts and configuration. Restart Agent for Agent changes. Build variables apply only when rebuilding images/frontend.
+- Restart the installation after platform application.properties changes. For Docker, use the corresponding instance’s ijob.sh restart to refresh mounts and configuration. Restart Agent for Agent changes. Build variables apply only when rebuilding images/frontend.
 - Some IJOB_* names are YAML placeholder inputs or script inputs, so they do not universally override external files. Explicit launch arguments, system properties and directly bound environment variables also influence effective values. Avoid maintaining competing copies.
-- Secret entries show only variable names or generation rules, never live values. Ordinary configuration edits require no program rebuild. Existing production and demonstration environments remain unchanged.
+- Secret entries show only variable names or generation rules, never live values. Ordinary runtime-configuration edits require no program rebuild. After saving the configuration, follow the relevant chapter to restart or recreate the affected process or containers.
 
 ### Types
 
 duration includes a unit; seconds/milliseconds/days use their stated units; bytes is a byte count; size uses implementation-supported capacity units. Follow each row for enums/lists. Normalized groups allow at most 16 entries matching `[a-z0-9][a-z0-9._-]{0,63}`. Task/job lists each allow at most 100 positive IDs. Startup validation still enforces relational constraints; a type alone is not a complete range specification.
 
-## 2. Behavior requiring explicit review
+## 2. Behavior and scope
 
 ### Groups and task/job allowlists
 
@@ -369,7 +369,7 @@ This filters persistent work-queue claims for root triggers. It is not login aut
 
 | ID / key / type | Source declaration | Fresh installation / override | Environment aliases | Recommendation and purpose | Scope / activation |
 | --- | --- | --- | --- | --- | --- |
-| C199<br>`IJOB_HOME`<br>path | `Windows: sibling ijob-data; Linux: sibling ijob-data-linux; Docker: sibling ijob-data-docker` (S14) | See default and scope | — | **A** Installation data root; use consistently for all commands. Changing it does not migrate data. | Launch environment; next relevant command |
+| C199<br>`IJOB_HOME`<br>path | `Legacy launcher defaults: Windows uses sibling ijob-data; Linux uses sibling ijob-data-linux; Docker uses sibling ijob-data-docker` (S14) | See default and scope | — | **A** Installation data root; use consistently for all commands. Changing it does not migrate data. | Launch environment; next relevant command |
 | C200<br>`IJOB_LANG`<br>enum | `en; zh selects Chinese` (S15) | See default and scope | — | **A** Setup/management language, distinct from UI preference and notification locale. | Launch environment; next relevant command |
 | C201<br>`JAVA_HOME`<br>path | `unset: resolve Java from PATH` (S11) | See default and scope | — | **A** Java 21 installation directory for native launch. | Native; restart installation |
 | C202<br>`IJOB_START_TIMEOUT`<br>seconds | `120` (S16) | See default and scope | — | **B** Readiness wait in seconds, range 1–600; Linux scripts only, Windows waits are currently fixed. | Linux native scripts only |
@@ -436,11 +436,11 @@ This filters persistent work-queue claims for root triggers. It is not login aut
 | --- | --- | --- | --- |
 | C250 / `instance.conf:version` | D | 1 (S33/S34) | Control-file format version; currently 1, do not edit. |
 | C251 / `instance.conf:bundle` | C | configure: program directory (S33/S34) | Complete program directory; change while stopped through the upgrade procedure. |
-| C252 / `instance.conf:home` | C | configure: required explicit data directory (S33/S34) | Instance data directory; overrides inherited IJOB_HOME. Changing it does not migrate data. |
+| C252 / `instance.conf:home` | C | configure: selected data directory (S33/S34) | Instance data directory; overrides inherited IJOB_HOME. Changing it does not migrate data. |
 | C253 / `instance.conf:lang` | A | en; zh selects Chinese (S33/S34) | Instance launcher language; overrides inherited IJOB_LANG, without changing the browser language. |
 | C254 / `instance.conf:mode` | C | Windows: windows; Bash: linux (or explicit docker) (S33/S34) | Deployment mode chosen at registration; editing it does not migrate the instance. Distinct from STANDALONE/CLUSTER. |
 
-## Source evidence and maintenance
+## Configuration sources
 
 Paths are relative to the repository root. The shared machine inventory is `document/reference/configuration-review.json`, containing bilingual descriptions, source hashes and classifications. Both languages use the same entries; source IDs refer to the table below. Compare Agent-specific Compose values with compose.agent.yaml and cluster values with compose.cluster.yaml; check probe declarations in all three Dockerfiles.
 
@@ -481,4 +481,4 @@ Paths are relative to the repository root. The shared machine inventory is `docu
 | S33 | `develop/deployment/first-run/support/instance.ps1` |
 | S34 | `develop/deployment/first-run/ijob.sh` |
 
-Groups, allowlists and all plugin switches now appear in the approved references. Databases/credentials use controlled workflows; internal parameters remain in the appendix. See [Configuration](configuration.md) and [Page reference](user-guide/README.md).
+Use [Configuration](configuration.md) to choose routing, plugin, capacity, and other topics. Follow the corresponding operations procedure for database or credential changes. Business settings for tasks, resources, and other pages are covered in the [Page reference](user-guide/README.md).

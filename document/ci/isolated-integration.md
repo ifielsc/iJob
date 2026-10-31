@@ -86,6 +86,8 @@ python tools/ci/inventory-dependencies.py --input test/reports/DEPENDENCY_RUN --
 
 2026-10-20 自有源码 MIT 文件头、根 LICENSE、13 份包内 LICENSE 及元数据已落地。最终 JAR 清点补齐构建注入项；前端按实际输出及保守样式输入生成 49 个组件的告知。四个品牌图片按维护者的 ChatGPT 来源声明登记哈希，具体生成日期、模型未记录。构建/测试工具链和运行镜像的 OS 层分别生成清单，不混为产品依赖。
 
+2026-11-01 品牌素材来源署名统一为“ifielsc 个人创建”，历史 ChatGPT 辅助生成声明继续作为创作过程记录保留，见[许可与素材](../standards/licensing.md)。系统包审查按[安全与配置](../standards/security-and-configuration.md)区分用户宿主、测试/构建环境与实际分发镜像；Ubuntu 镜像用户空间的命中不等于要求用户使用 Ubuntu。
+
 当前仍有公开再分发门禁：vdirs 0.1.8 缺可追溯的许可全文；MySQL Connector/J 与 Oracle JDBC/NLS 的组合分发条件尚未签收。漏洞记录保留原始发现和适用性：前端 npm 审计本轮零已知发现；运行镜像中未修复 OS 项和 Spring 条件性不适用判断不能表述为零漏洞。固定构建镜像中亦存在 HIGH/CRITICAL 发现，工具链更新和复核是后续发布前待办。当前交付范围是私有源码同步与测试准备，不包含公开仓库、发布镜像或完整再分发批准。
 
 ## 2026-10-26 服务就绪复验

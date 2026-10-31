@@ -108,7 +108,7 @@ app.http.read-timeout=60s
 
 这两个键在当前源码中存在，内置值分别为 5s 和 30s。示例是按需覆盖，不改变当前交付的默认配置。它们作用于使用平台统一 HTTP 客户端配置的调用，不代表所有插件或外部系统的全部超时。
 
-确认支持的键、类型与单位时，查阅对应发布版本的 [application.yml](../../api/ijob/ijob-starter/src/main/resources/application.yml)、其导入的 database 配置及 [AppProperties](../../api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/config/AppProperties.java)。其他配置类、Spring Boot/组件配置、日志 XML 也可能提供配置入口，不能只按生成文件判断是否支持。完整二进制交付中可查随包源码归档；不要用未来分支新增的键配置旧 JAR。任意自造键不会自动增加功能，拼写错误可能被忽略。
+确认支持的键、类型与单位时，查阅对应发布版本的 [application.yml](../../api/ijob/ijob-starter/src/main/resources/application.yml)、其导入的 database 配置及 [AppProperties](../../api/ijob/ijob-common/src/main/java/com/ifielsc/ijob/common/config/AppProperties.java)。其他配置类、Spring Boot/组件配置、日志 XML 也可能提供配置入口，不能只按生成文件判断是否支持。完整二进制交付不包含源码归档；可下载同版本独立的 `ijob-1.0.0-source.zip`，按包内 `MANIFEST.json` 的 `source_archive` 核对文件名与 SHA-256；不要用未来分支新增的键配置旧 JAR。任意自造键不会自动增加功能，拼写错误可能被忽略。
 
 操作步骤：确认当前安装的 IJOB_HOME → 停机并保留配置/数据/原密钥的备份 → 添加或修改已支持的键 → 按原方式启动 → 核对日志、实际功能与预期值。普通外部文件修改不支持自动热加载；不要为检查配置把包含秘密的完整配置或 env 端点公开。
 
@@ -205,4 +205,4 @@ sudo docker run --rm -it --user 0:0 --network none \
 
 Windows 和 Linux 原生均后台运行，通过 logs 命令查看文件日志。原生日志位于 `IJOB_HOME/logs/ijob.log`，按 UTC 日期/10 MB 滚动并压缩，同一天归档序号 `.0`、`.1`、`.2` 递增。归档最多保留 14 天、200 MB，容量限制可能提前移除旧归档；当前文件另计，清理异步。可通过 `ijob.logging.max-file-size`、`ijob.logging.max-history`、`ijob.logging.total-size-cap` 调整并重启。Docker 每容器沿用 10 MB × 5 份日志。
 
-`support/logging-native.xml`、完整 legacy/support 目录与新入口、两个 JAR 和 `web-dist` 应完整复制。升级保留整个数据目录和 AES 密钥；原安装配置不会自动覆盖。源码归档、`source-manifest.json`、`MANIFEST.json`、`SHA256SUMS.txt` 和隔离验证证据随交付包提供。当前功能默认及使用流程以本说明为准，旧报告保留其历史验证范围。
+`support/logging-native.xml`、完整 legacy/support 目录与新入口、两个 JAR 和 `web-dist` 应完整复制。升级保留整个数据目录和 AES 密钥；原安装配置不会自动覆盖。Native 与 Docker 均将 `ijob-1.0.0-source.zip` 作为独立下载，不放入成品目录；安装启动不需要源码 ZIP。成品内保留 `source-manifest.json`（仅文件哈希）、`MANIFEST.json`、`SHA256SUMS.txt`、LICENSE 和第三方告知。输出目录另有 `SHA256SUMS.txt` 校验源码包与成品归档；构建日志和隔离验证证据独立保留，不打入成品。当前功能默认及使用流程以本说明为准，旧报告保留其历史验证范围。

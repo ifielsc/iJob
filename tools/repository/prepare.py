@@ -57,6 +57,10 @@ def safe_path(root, relative):
 def forbidden(relative):
     p = PurePosixPath(relative)
     segments = set(p.parts)
+    normalized = relative.replace("\\", "/").casefold()
+    if any(normalized == prefix or normalized.startswith(prefix + "/")
+           for prefix in ("tools/public-site", "website", "website-private")):
+        return True
     if p.parts[0] in {"backup", "outputs", "output", "local-secrets", ".m2", "UI风格参考"}:
         return True
     if segments & {".git", ".idea", "node_modules", "dist", "__pycache__", "_secrets"}:

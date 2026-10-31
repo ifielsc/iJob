@@ -78,7 +78,7 @@ function New-ServiceXml([string]$Name, [string]$Java, [string]$DataRoot, [string
     Add-Value 'name' "iJob $Name"
     Add-Value 'description' "iJob native instance: $DataRoot"
     Add-Value 'executable' $Java
-    $arguments = @("-Dijob.native.home=$DataRoot", '-jar', (Join-Path $Bundle 'ijob-starter-1.0.0.jar'),
+    $arguments = @("-Dijob.native.home=$DataRoot", ('-Dloader.path=' + ([uri](Join-Path $DataRoot 'drivers/')).AbsoluteUri), '-jar', (Join-Path $Bundle 'ijob-starter-1.0.0.jar'),
         '--spring.profiles.active=release,native-background',
         ('--spring.config.additional-location=' + ([uri](Join-Path $DataRoot 'application.properties')).AbsoluteUri),
         ('--app.web.directory=' + (Join-Path $Bundle 'web-dist')),

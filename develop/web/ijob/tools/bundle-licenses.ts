@@ -109,7 +109,15 @@ export function bundleLicenses(): Plugin {
       }
       // Style extraction is separate from JavaScript lengths; retain imported styles conservatively.
       for (const id of this.getModuleIds()) {
+        // Inspect all resolved modules, even ones eliminated by tree shaking.
+        // An alias spelling alone does not prove which implementation is shipped.
+        if (packageFor(id)?.info.name === 'vdirs') {
+          throw new Error('Original vdirs resolved; use the local @ijob/ui-directives override')
+        }
         if (/\.(css|scss|sass|less)(\?|$)/.test(id)) record(id)
+      }
+      if (!records.has('@ijob/ui-directives@1.0.0')) {
+        throw new Error('Missing rendered @ijob/ui-directives@1.0.0 implementation')
       }
       const components = [...records.values()]
         .sort((a, b) => `${a.name}@${a.version}`.localeCompare(`${b.name}@${b.version}`))

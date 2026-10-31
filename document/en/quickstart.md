@@ -4,11 +4,11 @@
 
 ## Prepare
 
-Start an independent installation and log in using [Installation](installation.md). The default administrator can complete this chapter; a viewer cannot create or execute. Confirm an eligible Worker in the dashboard. The example does not access business systems.
+Read the [core concepts](concepts.md), then follow [installation](installation.md) and [initialization](installation/first-start.md) to start an independent instance. Use the ADMIN account you created to complete this chapter. OPERATOR can execute existing definitions but cannot create tasks; VIEWER cannot execute. Confirm an eligible Worker in the dashboard. The example does not access business systems.
 
 ## 1. Create and save a script task
 
-Tasks → New: name `docs-hello`, plugin SCRIPT, execution LOCAL. Choose BAT on Windows or SHELL with `/bin/sh` on Linux. Keep 0 retries, interval 1 and timeout 60 seconds; initially leave groups unrestricted.
+Tasks → New: name `docs-hello`, plugin SCRIPT, execution LOCAL. Choose BAT on Windows or SHELL on Linux. For this example, set 0 retries, a retry interval of 1 second and a timeout of 60 seconds; initially leave groups unrestricted.
 
 ```sh
 echo hello-ijob
@@ -22,7 +22,7 @@ Saving publishes the first version and **does not run the task**. This real scre
 
 ## 2. Run and inspect the result
 
-Click Run and confirm the parameter dialog. After trigger acceptance, open Run center → Instances and this docs-hello instance. Expect SUCCESS and `[STDOUT] hello-ijob` in Logs. Verify output rows=3 in Variables; the declaration value is redacted in logs. stdout/stderr are recorded with size bounds, not as file-output storage.
+Click Run and confirm the parameter dialog. After trigger acceptance, open Run center → Instances and this docs-hello instance. Expect SUCCESS and `[STDOUT] hello-ijob` in Logs. Verify that output rows is the string `"3"` in Variables; the declaration value is redacted in logs. stdout/stderr are recorded with size bounds, not as file-output storage.
 
 The screenshot uses the UI search to show the hello output; complete logs are retained.
 

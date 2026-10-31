@@ -89,30 +89,30 @@ D 级项用于框架、协调协议、数据库方言/迁移和实现边界。�
 | C175 / `spring.datasource.hikari.data-source-properties.transaction_mode` | D / enum | IMMEDIATE | IMMEDIATE 事务模式；仅 SQLite，评估并发和持久性影响。 |
 | C176 / `spring.application.name` | D / text | ijob-monitor-agent | Agent 应用标识。 |
 | C186 / `spring.profiles.active` | D / text-list | release | 启动器选择 release/native-background 或容器配置，非日常功能开关。 |
-| C187 / `app.web.enabled` | D / boolean | native=true; docker uses separate web service | 原生静态前端托管开关；由安装方式决定，Docker 使用独立 Web 容器。 |
-| C188 / `app.web.directory` | D / path | native=<bundle>/web-dist | 前端资源目录；原生启动器按当前包传入，换目录不会重建前端。 |
-| C189 / `spring.config.additional-location` | D / uri | launcher: external private configuration URI | 启动器指定私有外部配置的位置，勿同时维护多个冲突入口。 |
-| C190 / `logging.config` | D / uri | launcher: <bundle>/support/logging-native.xml | 原生日志配置资源位置，由启动器设置。 |
-| C191 / `ijob.native.home` | D / path | launcher: IJOB_HOME process identity | 进程身份校验标记；启动器生成，不可冒用或独立改写。 |
-| C192 / `ijob.native.log-directory` | D / path | launcher: <IJOB_HOME>/logs | 日志目录由 IJOB_HOME 派生，随安装目录管理。 |
-| C193 / `ijob.native.log-session` | D / text | launcher-generated unique launch identity | 本次启动的就绪日志标记，由启动器生成。 |
-| C198 / `spring.config.import` | D / uri | configtree:/run/secrets/ in image | 镜像私有 agent.token 文件导入方式，保留与挂载一致。 |
+| C187 / `app.web.enabled` | D / boolean | 原生为 `true`；Docker 使用独立 Web 服务 | 原生静态前端托管开关；由安装方式决定，Docker 使用独立 Web 容器。 |
+| C188 / `app.web.directory` | D / path | 原生为 `<bundle>/web-dist` | 前端资源目录；原生启动器按当前包传入，换目录不会重建前端。 |
+| C189 / `spring.config.additional-location` | D / uri | 启动器指定的外部私有配置 URI | 启动器指定私有外部配置的位置，勿同时维护多个冲突入口。 |
+| C190 / `logging.config` | D / uri | 启动器指定 `<bundle>/support/logging-native.xml` | 原生日志配置资源位置，由启动器设置。 |
+| C191 / `ijob.native.home` | D / path | 启动器使用 `IJOB_HOME` 标记进程身份 | 进程身份校验标记；启动器生成，不可冒用或独立改写。 |
+| C192 / `ijob.native.log-directory` | D / path | 启动器指定 `<IJOB_HOME>/logs` | 日志目录由 IJOB_HOME 派生，随安装目录管理。 |
+| C193 / `ijob.native.log-session` | D / text | 启动器为每次启动生成唯一标识 | 本次启动的就绪日志标记，由启动器生成。 |
+| C198 / `spring.config.import` | D / uri | 镜像中为 `configtree:/run/secrets/` | 镜像私有 agent.token 文件导入方式，保留与挂载一致。 |
 | C208 / `IJOB_IMAGE_TAG` | D / text | 1.0.0 | 仅高级 Compose 标签；交付包按镜像 ID 锁启动，标签不替代来源校验。 |
-| C212 / `IJOB_MAVEN_IMAGE` | D / image | pinned in develop/deployment/docker/images.env | 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 |
-| C213 / `IJOB_JRE_IMAGE` | D / image | pinned in develop/deployment/docker/images.env | 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 |
-| C214 / `IJOB_NODE_IMAGE` | D / image | pinned in develop/deployment/docker/images.env | 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 |
-| C215 / `IJOB_NGINX_IMAGE` | D / image | pinned in develop/deployment/docker/images.env | 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 |
-| C218 / `SPRING_PROFILES_ACTIVE` | D / text | backend image container; first-run override release | 由镜像/启动器选择配置 profile；不当作普通环境开关。 |
-| C219 / `SPRING_CONFIG_ADDITIONAL_LOCATION` | D / uri | image /run/secrets/ijob.yaml; first-run /run/secrets/application.properties | Docker 外部配置挂载读取位置，必须与实际挂载一致。 |
-| C220 / `SPRING_CONFIG_IMPORT` | D / uri | agent image configtree:/run/secrets/ | Agent 镜像通过配置树读取私有 token 文件。 |
-| C221 / `SERVER_PORT` | D / port | Agent image 8081 | Agent 镜像设置内部端口；需要与探针和连接配置同步。 |
-| C222 / `IJOB_BACKEND_IMAGE` | D / image-id | generated sha256 image ID in docker-images.lock | 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 |
-| C223 / `IJOB_WEB_IMAGE` | D / image-id | generated sha256 image ID in docker-images.lock | 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 |
-| C224 / `IJOB_AGENT_IMAGE` | D / image-id | generated sha256 image ID in docker-images.lock | 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 |
-| C226 / `services.<service>.image` | D / compose-field | distribution exact image ID override | 精确镜像锁归包管理；不要只改固定 1.0.0 标签升级。 |
+| C212 / `IJOB_MAVEN_IMAGE` | D / image | 固定在 `develop/deployment/docker/images.env` | 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 |
+| C213 / `IJOB_JRE_IMAGE` | D / image | 固定在 `develop/deployment/docker/images.env` | 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 |
+| C214 / `IJOB_NODE_IMAGE` | D / image | 固定在 `develop/deployment/docker/images.env` | 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 |
+| C215 / `IJOB_NGINX_IMAGE` | D / image | 固定在 `develop/deployment/docker/images.env` | 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 |
+| C218 / `SPRING_PROFILES_ACTIVE` | D / text | backend 镜像使用 `container`；首次初始化覆盖为 `release` | 由镜像/启动器选择配置 profile；不当作普通环境开关。 |
+| C219 / `SPRING_CONFIG_ADDITIONAL_LOCATION` | D / uri | 镜像使用 `/run/secrets/ijob.yaml`；首次初始化使用 `/run/secrets/application.properties` | Docker 外部配置挂载读取位置，必须与实际挂载一致。 |
+| C220 / `SPRING_CONFIG_IMPORT` | D / uri | Agent 镜像使用 `configtree:/run/secrets/` | Agent 镜像通过配置树读取私有 token 文件。 |
+| C221 / `SERVER_PORT` | D / port | Agent 镜像使用 `8081` | Agent 镜像设置内部端口；需要与探针和连接配置同步。 |
+| C222 / `IJOB_BACKEND_IMAGE` | D / image-id | 生成并写入 `docker-images.lock` 的 sha256 镜像 ID | 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 |
+| C223 / `IJOB_WEB_IMAGE` | D / image-id | 生成并写入 `docker-images.lock` 的 sha256 镜像 ID | 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 |
+| C224 / `IJOB_AGENT_IMAGE` | D / image-id | 生成并写入 `docker-images.lock` 的 sha256 镜像 ID | 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 |
+| C226 / `services.<service>.image` | D / compose-field | 发行包按精确镜像 ID 覆盖 | 精确镜像锁归包管理；不要只改固定 1.0.0 标签升级。 |
 | C238 / `services.<service>.read_only` | D / compose-field | true | 只读容器根文件系统约束，使用明确的数据挂载。 |
 | C239 / `services.<service>.cap_drop` | D / compose-field | ALL | 保留最小容器权限，不为业务能力直接放开。 |
 | C240 / `services.<service>.security_opt` | D / compose-field | no-new-privileges:true | 保留禁止提权约束。 |
-| C241 / `services.<service>.init` | D / compose-field | backend/agent true; web not set | 容器进程信号与回收处理，保持经过验证的入口。 |
-| C242 / `services.web.depends_on` | D / compose-field | backend health; cluster also backend-b health | 启动就绪依赖；不等于持续流量健康管理。 |
-| C249 / `services.<service>.healthcheck.test` | D / command | backend readiness; web /healthz; Agent authenticated probe | 镜像内健康检查命令；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 |
+| C241 / `services.<service>.init` | D / compose-field | backend/agent 为 `true`；web 未设置 | 容器进程信号与回收处理，保持经过验证的入口。 |
+| C242 / `services.web.depends_on` | D / compose-field | 等待 backend 健康；集群还需等待 backend-b 健康 | 启动就绪依赖；不等于持续流量健康管理。 |
+| C249 / `services.<service>.healthcheck.test` | D / command | backend 使用就绪探针；web 使用 `/healthz`；Agent 使用带认证的探针 | 镜像内健康检查命令；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 |

@@ -4,16 +4,35 @@
 
 ## Entry and workflow
 
-Concurrency; task concurrency policy. Actions depend on account permissions; identify the object and environment first.
+Concurrency; task concurrency policy. ADMIN can create, edit and delete configuration. OPERATOR and VIEWER can read summaries but cannot modify configuration. See the [role matrix](users-audits.md) for all actions.
 
 ## Configuration and actions
 
-| Field/action | Purpose and rules |
-| --- | --- |
-| `插件限制` | Bounds plugin concurrency; removing it removes only this layer. |
-| `任务并发` | Task bound or no task-layer limit; saving does not publish a task version. |
-| `共享资源` | Name/code/limit/enabled; all bound resources must grant permits. |
-| `上限/活动实例/版本` | Limits 1–10000; active instances differ from permits. Backend guards/version checks apply. |
+### Concurrency fields
+
+| Field | Required | Initial form value | Shown when | Description |
+| --- | --- | --- | --- | --- |
+| Name | Required | Empty | Concurrency resource | Resource display name, up to 128 characters. |
+| Resource code | Required | Generated; editable | Concurrency resource | Unique code using letters, numbers, dots, underscores and hyphens, up to 128 characters. |
+| Maximum concurrency | Required | Empty | Resource/plugin limits, or a task limit is enabled | Integer from 1 to 10000; all configured layers apply together. |
+| Enabled | Initialized | On | Concurrency resource | Disabling prevents bound tasks from acquiring permits. |
+| Description | Optional | Empty | Concurrency resource | Purpose, up to 500 characters. |
+| Task limit mode | Initialized | No task limit when unconfigured | Task concurrency policy | Removes only the task cap; plugin and shared-resource limits still apply. |
+| Shared concurrency resources | Optional | None bound | Task concurrency policy | Every selected resource must grant a permit. |
+
+### Page information
+
+| Display | Meaning | Shown when |
+| --- | --- | --- |
+| Active instances | Includes waiting, running, paused and event-waiting instances; not permit occupancy. | Always |
+| Policy version | Used to check concurrent edits on save; conflicts require reviewing current values. | Always |
+
+### Actions
+
+| Action | Roles | Available when | Result |
+| --- | --- | --- | --- |
+| Save | ADMIN | Valid fields, matching version and passing active-instance/permit checks | Change concurrency configuration without publishing a task. Active resources cannot have limits lowered or be disabled. |
+| Remove limit | ADMIN | No active instances or unreleased permits for the plugin policy; version check passes | Remove only the plugin-level limit. |
 
 ## Use and verify
 

@@ -79,7 +79,6 @@ def main():
         ("backend", "develop/api/ijob/ijob-starter/target/ijob-starter-1.0.0.jar"),
         ("agent", "develop/api/ijob-monitor-agent/target/ijob-monitor-agent-1.0.0.jar"),
         ("setup", "develop/api/ijob/ijob-setup-tool/target/ijob-setup-tool-1.0.0.jar"),
-        ("migration", "develop/api/ijob/ijob-migration-tool/target/ijob-migration-tool-1.0.0.jar"),
     ):
         path = root / relative
         with zipfile.ZipFile(path) as archive:

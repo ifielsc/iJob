@@ -6,14 +6,15 @@
 
 | Goal | Reading path |
 | --- | --- |
-| First install/build | [Installation](installation.md) → Windows/Linux/Docker → [Quick start](quickstart.md) |
+| First use | [Concepts](concepts.md) → [Requirements](installation/requirements.md) → [Installation](installation.md) → [Initialization](installation/first-start.md) → [Quick start](quickstart.md) |
 | Tune platform settings | [Configuration](configuration.md) → routing/plugins/capacity → [254-entry catalog](configuration-catalog.md) |
-| Configure/use pages | [Page reference](user-guide/README.md) → [11 plugins](user-guide/plugins/README.md) → [16 scenarios](examples.md) |
+| Configure/use pages | [Page reference](user-guide/README.md) → [11 plugins](user-guide/plugins/README.md) → [Scenario tutorials](examples.md) |
 | Accounts, mode changes, backup/upgrades | [Operations](operations.md) → relevant workflow |
-| Source changes/release candidates | [Development](development.md) → [Follow-up](development/release-checklist.md) |
 
-## Terms
+## Concepts and references
 
-A task performs one plugin action; a workflow combines tasks/subjobs/dependencies. Saving publishes a definition version. A trigger is an execution request; an instance is actual execution. Resources hold external connections/secrets; parameter templates describe inputs. Node roles differ from account roles; execution groups are not user groups.
+Start with the [concept model and execution lifecycle](concepts.md), then use the separate [glossary](glossary.md). See [variables and expressions](reference/variables.md) for system context and custom inputs, and the [permission matrix](user-guide/users-audits.md) for role-specific actions.
 
-Keep program bundles separate from IJOB_HOME, which contains configuration, secrets and data. Screenshots use an independent real environment with synthetic data and separate language captures. Each scenario states its verification scope. GitHub remains private. The [approved structure/scope](documentation-plan.md) records organizational principles.
+The [changelog](releases.md) records the current 1.0.0 documentation scope.
+
+Keep program bundles separate from IJOB_HOME, which contains configuration, secrets and data. Interface screenshots come from real environments using synthetic accounts and sample data. Prepare your own resources and parameters according to each page’s requirements.

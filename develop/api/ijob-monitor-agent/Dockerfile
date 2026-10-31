@@ -18,6 +18,9 @@ ENV JAVA_VERSION=jdk-21.0.13+9
 ARG PLEXUS_UTILS_URL=https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-utils/3.6.1/plexus-utils-3.6.1.jar
 ADD --checksum=sha256:05a63effd67e2d6b9d610cc82e2bd7473289d34802e57a529b28110f28af5679 ${PLEXUS_UTILS_URL} /usr/share/maven/lib/plexus-utils-3.6.1.jar
 RUN rm /usr/share/maven/lib/plexus-utils-3.6.0.jar
+ARG GUAVA_URL=https://repo.maven.apache.org/maven2/com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.jar
+ADD --checksum=sha256:b530942257fb935f8b2cfaa5f8eb5bd59c555fd8e8d01b8ce98912e077ea606c ${GUAVA_URL} /usr/share/maven/lib/guava-33.7.2-jre.jar
+RUN rm /usr/share/maven/lib/guava-33.4.8-jre.jar
 
 FROM build-base AS build
 WORKDIR /build

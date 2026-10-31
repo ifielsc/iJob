@@ -60,3 +60,5 @@ start 自动初始化新安装。按提示输入独立管理员账号、密码�
 ```
 
 新开终端也可直接运行 `D:/ijob/instances/a/ijob.cmd status`，无需重新设置变量。目录/语言及升级规则见[统一入口](instance-launcher.md)。旧 start/initialize/stop/status/logs/restart.cmd 仍兼容，直接调用它们时遵循该页的环境变量与默认目录规则。
+
+MySQL/Oracle 需要用户自备 JDBC 驱动，见[驱动安装](../installation.md#jdbc-驱动)。PostgreSQL、SQL Server、SQLite 驱动继续随包提供。

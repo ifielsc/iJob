@@ -4,9 +4,9 @@
 
 ## Deployment entry points
 
-`IJOB_HOME` selects the private installation directory; `IJOB_LANG=en/zh` controls setup prompts, not browser language. JAVA_HOME selects Java 21. Native IJOB_START_TIMEOUT/IJOB_STOP_TIMEOUT differ from application-executor timeouts. After first setup, edit actual files; initialization variables do not rewrite an existing installation.
+With an [instance launcher](../installation/instance-launcher.md), the data directory and prompt language come from `instance.conf`, which takes precedence over inherited `IJOB_HOME` and `IJOB_LANG`. With legacy launchers, `IJOB_HOME` selects the private installation directory and `IJOB_LANG=en/zh` controls setup prompts; neither changes browser language. `JAVA_HOME` selects Java 21. Native `IJOB_START_TIMEOUT` / `IJOB_STOP_TIMEOUT` differ from application-executor timeouts. After first setup, edit actual files; initialization variables do not rewrite an existing installation.
 
-Treat advanced Compose templates separately from generated first-run Compose. The former may consume IJOB_HTTP_BIND and other template variables; the latter uses its actual mappings, mounts and resource limits. After changes, run `legacy/start-docker.sh --recreate` from the matching complete bundle. Do not reuse another environment's project name, directories or secret files.
+Treat advanced Compose templates separately from generated first-run Compose. The former may consume IJOB_HTTP_BIND and other template variables; the latter uses its actual mappings, mounts and resource limits. After changing generated Compose, run the corresponding instance’s `ijob.sh restart`. Use legacy launchers only in compatibility workflows that explicitly select the same `IJOB_HOME`. Do not reuse another environment's project name, directories or secret files.
 
 ## Agent
 
@@ -25,7 +25,7 @@ These are source/implementation defaults; see the [complete catalog](../configur
 | C180 / `agent.collect-queue-capacity` | B / integer | ${IJOB_AGENT_COLLECT_QUEUE_CAPACITY:4} | Collection queue capacity; excessive queues can delay responses. |
 | C181 / `agent.hostname` | A / text | unset: detected automatically | Reported hostname; detected when omitted, may be set to identify the monitored host. |
 | C197 / `server.port` | B / port | 8081 in image; not explicitly set in Agent YAML | Agent image internal port 8081; update probes and platform resource connection together. |
-| C199 / `IJOB_HOME` | A / path | Windows: sibling ijob-data; Linux: sibling ijob-data-linux; Docker: sibling ijob-data-docker | Installation data root; use consistently for all commands. Changing it does not migrate data. |
+| C199 / `IJOB_HOME` | A / path | Legacy launcher defaults: Windows uses sibling ijob-data; Linux uses sibling ijob-data-linux; Docker uses sibling ijob-data-docker | Installation data root; use consistently for all commands. Changing it does not migrate data. |
 | C200 / `IJOB_LANG` | A / enum | en; zh selects Chinese | Setup/management language, distinct from UI preference and notification locale. |
 | C201 / `JAVA_HOME` | A / path | unset: resolve Java from PATH | Java 21 installation directory for native launch. |
 | C202 / `IJOB_START_TIMEOUT` | B / seconds | 120 | Readiness wait in seconds, range 1–600; Linux scripts only, Windows waits are currently fixed. |

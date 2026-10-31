@@ -4,7 +4,7 @@
 
 ## 1. Prerequisites and one-time configuration
 
-Prepare Linux Docker Engine, Compose v2, Bash and a complete Docker bundle. Use an authorized account; these examples consistently use sudo. From the program directory:
+Prepare Linux Docker Engine, the Compose plugin providing the `docker compose` command, Bash and a complete Docker bundle. Check the installed versions with `docker version` and `docker compose version`. Use an authorized account; these examples consistently use sudo. From the program directory:
 
 ```sh
 sudo mkdir -p /srv/ijob/instances /srv/ijob-data
@@ -64,4 +64,5 @@ Generated backend/web services use `restart: unless-stopped`. Enable Docker itse
 
 Initial `start` and explicit `restart` use Compose to wait for backend health before starting web. When the Docker daemon restores existing containers, each follows its own restart policy; the Compose dependency declaration does not guarantee strict ordering at every boot. See [Compose startup order](https://docs.docker.com/compose/how-tos/startup-order/). After recovery, verify backend/web health, an actual login and a repeatable business task, then check history and data integrity.
 
-Two isolated instances in an independent Linux VM passed backend process failure recovery, Docker service restart, VM reboot and container recreation through the instance `restart` command. Login and task execution succeeded after recovery; the manually stopped instance stayed stopped across both service and VM restarts. Recreation preserved task history and instance configuration SHA-256 values. These checks do not establish transactional external writes during power loss; business writes still require their own idempotency and recovery design.
+After recovery or container recreation, confirm that this instance retains its definitions, history and configuration, and that other instances on the host keep their intended running or stopped state. For writing tasks that were active before recovery, inspect the actual target-system results before retrying. Container recovery does not make external writes transactional; business operations still need idempotency and recovery design.
+MySQL/Oracle require user-supplied JDBC drivers; see [driver installation](../installation.md#jdbc-drivers). PostgreSQL/SQL Server/SQLite drivers remain included.

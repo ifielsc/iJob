@@ -260,9 +260,13 @@ public final class SetupTool {
                     "Initialization started; do not delete after an interrupted setup.\n");
             Path runtime = home.resolve("runtime");
             privateDirectory(runtime);
+            Path drivers = home.resolve("drivers");
+            privateDirectory(drivers);
             writeProperties(home.resolve("application.properties"), config);
             if (mode.equals("docker")) {
                 writePrivate(home.resolve("compose.yaml"), compose(home, vendor));
+                Files.setPosixFilePermissions(
+                        drivers, PosixFilePermissions.fromString("rwxr-xr-x"));
                 owner(runtime, 10001, 10001);
                 owner(home.resolve("application.properties"), 10001, 10001);
             }
@@ -273,6 +277,7 @@ public final class SetupTool {
                 if (uid < 0 || gid < 0) throw new SetupException("Invalid host owner");
                 owner(home.resolve("compose.yaml"), uid, gid);
                 owner(home.resolve("installation.properties"), uid, gid);
+                owner(drivers, uid, gid);
                 owner(home, uid, gid);
             }
             writePrivate(home.resolve("setup.complete"), "1\n");
@@ -280,6 +285,17 @@ public final class SetupTool {
                     (SetupMessages.text(chinese, "initialized"))
                             + home
                             + (SetupMessages.text(chinese, "configuration-only")));
+        }
+        Path drivers = home.resolve("drivers");
+        rejectLinks(drivers);
+        try {
+            if (!ExternalDrivers.missing(drivers, installation.getProperty("vendor")).isEmpty())
+                throw new SetupException(
+                        SetupMessages.text(chinese, "external-driver-missing") + drivers);
+        } catch (SetupException error) {
+            throw error;
+        } catch (IOException error) {
+            throw new SetupException(SetupMessages.text(chinese, "external-driver-invalid"));
         }
         if (command.equals("start")) {
             Path jar = bundle.resolve("ijob-starter-1.0.0.jar");
@@ -293,6 +309,7 @@ public final class SetupTool {
             ProcessBuilder builder =
                     new ProcessBuilder(
                             Path.of(System.getProperty("java.home"), "bin", "java").toString(),
+                            "-Dloader.path=" + drivers.toUri(),
                             "-jar",
                             jar.toString(),
                             "--spring.profiles.active=release",
@@ -511,6 +528,7 @@ public final class SetupTool {
     private static String compose(Path home, String vendor) {
         String config = yaml(home.resolve("application.properties").toString());
         String runtime = yaml(home.resolve("runtime").toString());
+        String drivers = yaml(home.resolve("drivers").toString());
         return """
                name: ijob-setup-%s
                services:
@@ -528,6 +546,10 @@ public final class SetupTool {
                      - type: bind
                        source: %s
                        target: /var/lib/ijob
+                     - type: bind
+                       source: %s
+                       target: /opt/ijob/drivers
+                       read_only: true
                    read_only: true
                    tmpfs: ['/tmp:size=256m,mode=0700,uid=10001,gid=10001,exec']
                    cap_drop: [ALL]
@@ -559,7 +581,8 @@ public final class SetupTool {
                         Integer.toUnsignedString(home.toString().hashCode(), 16),
                         vendor,
                         config,
-                        runtime);
+                        runtime,
+                        drivers);
     }
 
     private static final class SetupException extends IOException {

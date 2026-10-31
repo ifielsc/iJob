@@ -1,52 +1,117 @@
 # Data checks
 
-[简体中文](../../../zh-CN/user-guide/plugins/data-check.md) · [Manual home](../../README.md)
+[简体中文](../../../zh-CN/user-guide/plugins/data-check.md) · [Manual](../../README.md)
 
-## Entry and prerequisites
+Applies to **1.0.0**. Tasks → New/Edit → plugin `DATA_CHECK`.
 
-Tasks → New/Edit → plugin `DATA_CHECK`. Prepare the resources, permissions and execution-node dependencies listed below. See [Tasks](../tasks.md) for shared timeout/retry/publication behavior.
+## Before you start
 
-## Fields and behavior
+Use ADMIN to create, configure and save tasks. ADMIN or OPERATOR can execute published definitions; ADMIN reads detailed logs and input/output variables. Resources must be enabled and reachable from the execution node. See [tasks](../tasks.md) for common timeout, retry and version settings, and the [permission matrix](../users-audits.md).
 
-| Page field/action | Purpose and rules |
+## Field reference
+
+“Default” means the **initial value of a new 1.0.0 form**. An empty value means the field has not been filled in; required fields still need a value. Visibility follows the selected branch; conditional requirements apply only to that branch.
+
+### Query
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Database resource | Required | None | Always | Current task version |
+| Query timeout (seconds) | Has a default | 30 | Always | Current task version |
+
+- **Database resource**: Business database resource used to run check SQL.
+- **Query timeout (seconds)**: 1–3600 seconds per check query.
+
+### Checks
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Name | Required | Empty | Each check | Current task version |
+| Query SQL | Required | Empty | Each check | Current task version |
+| Type | Select | NORMAL | Each check | Current task version |
+| Level | Select | ERROR | Each check | Current task version |
+| Comparison | Conditionally required | EQ | Except EMPTY | Current task version |
+| Expected value | Conditionally required | Empty | Except EMPTY and BETWEEN | Current task version |
+| Lower bound (inclusive) | Conditionally required | Empty | BETWEEN | Current task version |
+| Upper bound (inclusive) | Conditionally required | Empty | BETWEEN | Current task version |
+| Actual-value variable (optional) | Optional | Empty | Each check | Current task version |
+
+- **Name**: Names must be unique; 1–100 checks.
+- **Query SQL**: Read-only query.
+- **Type**: NORMAL compares the first value; COUNT compares the number of returned rows, not the scalar value of SQL COUNT(*).
+- **Level**: ERROR/WARN。
+- **Comparison**: EXISTS supports only EQ/NE.
+- **Expected value**: EXISTS uses booleans; preserve numeric and boolean value types.
+- **Lower bound (inclusive)**: Inclusive lower bound.
+- **Upper bound (inclusive)**: Inclusive upper bound.
+- **Actual-value variable (optional)**: Publish the actual value when variable result handling is enabled.
+
+### Result handling
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Export result variables | Optional | false | Always | Current task version |
+| Send notification | Optional | false | Always | Current task version |
+| Send notification | Conditionally required | null | Notifications enabled | Current task version |
+| Also notify when all checks pass | Optional | false | Notifications enabled | Current task version |
+
+- **Export result variables**: When enabled, add a result handler with type=VARIABLE to export actual check values.
+- **Send notification**: When enabled, add a result handler with type=NOTIFY to send check-result notifications.
+- **Send notification**: Select the notification configuration for the handler with type=NOTIFY.
+- **Also notify when all checks pass**: For type=NOTIFY, choose whether to notify when all checks pass.
+
+## Behavior and boundaries
+
+- NORMAL compares the first query value; COUNT compares result-set row count. Use NORMAL for a business count returned by SELECT COUNT(*).
+- handlers is an array. Exporting variables adds an item with type=VARIABLE; notifications add type=NOTIFY. Notification configuration and notify-on-success settings are in that NOTIFY item's params.
+
+## Typical configuration: Check that the orders table has exactly three rows
+
+Fill in the form below, replacing resource names with your enabled resources. This is a configuration guide, not importable JSON. Follow the tutorial linked below for data preparation and execution.
+
+Prepare three orders; use the separate orders_short table for the failure variant without deleting the original rows.
+
+| Setting | Value |
 | --- | --- |
-| Database resource / Query timeout (seconds) | Business DB resource; per-query timeout defaults to 30 seconds. |
-| Check name / Query SQL / Type | Give each check a name/query; type NORMAL/COUNT/EXISTS/EMPTY selects result semantics. |
-| Comparison / Expected value / Lower and upper bounds | EQ/NE/GT/GE/LT/LE/BETWEEN; use expected for ordinary comparisons and bounds for ranges, preserving numeric types. |
-| Actual-value variable / Level / Result handlers | Output variable, severity (default ERROR) and handlers; warnings do not repair data. |
+| Database resource | Tutorial business database containing three orders |
+| Check name | three-orders |
+| Query SQL | SELECT COUNT(*) FROM orders |
+| Type | NORMAL |
+| Comparison | EQ |
+| Expected value type | Number |
+| Expected value | 3 |
+| Severity | ERROR |
 
-## Minimal example and verification
+**Expected result:** Passes with three rows; fails after an isolated copy is changed to two rows.
 
-Prepare the dedicated resources above, fill the form, save, then trigger manually and verify the instance, outputs and target system as described below. Saving alone does not execute.
+[Follow the full tutorial](../../examples/sql-and-validation.md). Save the definition before running it; inspect execution state and business results separately.
 
-| Setting | Value to enter |
-| --- | --- |
-| Database resource | Select the test resource containing three orders rows |
-| Check name | `three-orders` |
-| Query SQL | `SELECT COUNT(*) FROM orders` |
-| Type | Value comparison (NORMAL) |
-| Comparison | Equal EQ |
-| Value type | Number |
-| Expected value | `3` |
-| Level | Error ERROR |
-
-Add the DB resource and run against three rows, then use an independent two-row copy to verify failure. Inspect individual checks and overall status. Do not confuse COUNT semantics with SQL COUNT(*); the scalar example uses NORMAL. Checking detects problems and does not repair data unless an explicit handler does so.
-
-Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
-
-## Real page examples
-
-NORMAL value comparison with ERROR severity; comparison values are further down the form.
+## Actual interface
 
 ![NORMAL value comparison with ERROR severity; comparison values are further down the form.](../../images/manual/check-editor.png)
 
-## Technical key reference (optional)
+## Configuration keys
 
-These stored keys help developers and troubleshooting; they are not a task JSON blob to paste into the UI. Automatically validated metadata is not a manual form input.
+Use these keys when inspecting imported configuration, API payloads or errors. `[]` denotes a collection item; the form does not require you to enter key names.
 
-| Page field/group | Stored keys |
+| Category / field | Configuration key |
 | --- | --- |
-| Database resource / Query timeout (seconds) | `resourceId / queryTimeoutSeconds` |
-| Check name / Query SQL / Type | `checks[].name / sql / type` |
-| Comparison / Expected value / Lower and upper bounds | `compareType / expected / minValue / maxValue` |
-| Actual-value variable / Level / Result handlers | `variable / level / handlers` |
+| Query / Database resource | `resourceId` |
+| Query / Query timeout (seconds) | `queryTimeoutSeconds` |
+| Checks / Name | `checks[].name` |
+| Checks / Query SQL | `checks[].sql` |
+| Checks / Type | `checks[].type` |
+| Checks / Level | `checks[].level` |
+| Checks / Comparison | `checks[].compareType` |
+| Checks / Expected value | `checks[].expected` |
+| Checks / Lower bound (inclusive) | `checks[].minValue` |
+| Checks / Upper bound (inclusive) | `checks[].maxValue` |
+| Checks / Actual-value variable (optional) | `checks[].variable` |
+| Result handling / Export result variables | `handlers[].type` |
+| Result handling / Send notification | `handlers[].type` |
+| Result handling / Send notification | `handlers[].params.notifyConfigId` |
+| Result handling / Also notify when all checks pass | `handlers[].params.notifyOnSuccess` |
+
+## Related pages
+
+[Tasks and versions](../tasks.md) · [Parameters and expressions](../../reference/variables.md) · [Scenario tutorials](../../examples.md)

@@ -4,16 +4,28 @@
 
 ## Entry and workflow
 
-Calendars → New/Edit. Actions depend on account permissions; identify the object and environment first.
+Calendars → New/Edit. ADMIN can create, edit and delete configuration. OPERATOR and VIEWER can read summaries but cannot modify configuration. See the [role matrix](users-audits.md) for all actions.
 
 ## Configuration and actions
 
-| Field/action | Purpose and rules |
-| --- | --- |
-| `名称/说明` | Describe the business period, e.g. docs-business-days. |
-| `规则与日期例外` | Configure supported weekday/date exclusions and exceptions using business-zone dates. |
-| `调度关联` | Select the saved calendar on a schedule; calendars do not trigger tasks by themselves. |
-| `预览验证` | Verify ordinary weekdays, weekends, exception dates and time boundaries separately. |
+After saving, select it in the schedule’s Calendar (optional) field. Check weekdays, weekends, exception dates and time boundaries separately.
+
+### Calendar fields
+
+| Field | Required | Initial form value | Shown when | Description |
+| --- | --- | --- | --- | --- |
+| Name | Required | Empty | Always | Describe the business period, for example business-days. |
+| Description | Optional | Empty | Always | Describe calendar usage. |
+| Weekly workdays | Required | Monday to Friday | Always | Set allowed weekdays; exception dates take priority. |
+| Date | Required | Today in the business timezone | Exception-date row | Use business-zone dates without duplicates. |
+| Type | Initialized | New exceptions default to Holiday | Exception-date row | Choose Holiday or Workday to override the weekly rule. |
+
+### Actions
+
+| Action | Roles | Available when | Result |
+| --- | --- | --- | --- |
+| Save | ADMIN | Name, weekday rules and exception dates are valid | Save the calendar; a calendar does not create triggers by itself. |
+| Date preview | ADMIN / OPERATOR / VIEWER | Calendar selected and preview range valid | Calculate allowed dates using saved rules; this does not indicate actual scheduled execution. |
 
 ## Use and verify
 

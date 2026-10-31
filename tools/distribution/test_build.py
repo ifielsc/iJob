@@ -4,6 +4,8 @@
 import json
 import hashlib
 import io
+import importlib.util
+import os
 from pathlib import Path
 import tempfile
 import tarfile
@@ -15,6 +17,113 @@ import build
 
 
 class DistributionBoundaryTest(unittest.TestCase):
+    def test_user_supplied_jdbc_drivers_cannot_enter_runtime_bundles(self):
+        for name in ['mysql-connector-j-8.3.0.jar', 'ojdbc8-19.30.0.0.jar',
+                     'ojdbc11-23.jar', 'orai18n-19.30.0.0.jar']:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                bundle = Path(directory)
+                with zipfile.ZipFile(bundle / 'app.jar', 'w') as archive:
+                    archive.writestr('BOOT-INF/lib/' + name, b'not redistributed')
+                with self.assertRaisesRegex(ValueError, 'User-supplied JDBC'):
+                    build.write_third_party_notices(bundle)
+
+    def test_private_website_cannot_be_reintroduced_through_the_allowlist(self):
+        spec = importlib.util.spec_from_file_location('repository_policy', build.ROOT / 'tools/repository/prepare.py')
+        policy = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(policy)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / '.repository').mkdir()
+            for name in ['tools/public-site/build.py', 'website/site.css', 'website-private/site.js',
+                         'TOOLS/PUBLIC-SITE/catalog.json']:
+                with self.subTest(name=name):
+                    path = root / name
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text('private website content')
+                    (root / '.repository/allowlist.json').write_text(json.dumps({'files': [name]}))
+                    self.assertTrue(policy.forbidden(name))
+                    with self.assertRaisesRegex(ValueError, 'Forbidden'):
+                        policy.load_files(root)
+                    with patch.object(build, 'ROOT', root):
+                        with self.assertRaisesRegex(ValueError, 'Private website'):
+                            build.source_files()
+
+    def test_public_product_snapshot_keeps_manuals_but_excludes_website(self):
+        names = build.source_files()
+        self.assertIn('document/zh-CN/installation.md', names)
+        self.assertIn('document/en/installation.md', names)
+        self.assertIn('develop/web/ijob/package.json', names)
+        self.assertFalse(any(name.startswith(('tools/public-site/', 'website/', 'website-private/'))
+                             for name in names))
+
+    def test_both_targets_publish_external_source_and_checksummed_runtime_assets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'source'
+            (root / '.repository').mkdir(parents=True)
+            (root / 'program.java').write_bytes(b'// source only\n')
+            (root / 'run.sh').write_bytes(b'#!/bin/sh\n')
+            names = ['.repository/allowlist.json', 'program.java', 'run.sh']
+            (root / names[0]).write_text(json.dumps({'files': names}))
+            hashes = []
+
+            def runtime(work, bundle, reports):
+                self.assertTrue((work / 'program.java').is_file())
+                (bundle / 'app.jar').write_bytes(b'compiled artifact')
+                return {'tests': 'fixture, not a real compilation'}
+
+            for target in ['native', 'docker']:
+                output = root.parent / target
+                with patch.object(build, 'ROOT', root), patch.object(build, 'git_source', return_value=(None, {})), \
+                        patch.object(build, 'copy_deployment'), patch.object(build, 'native', side_effect=runtime), \
+                        patch.object(build, 'docker', side_effect=runtime), \
+                        patch.object(build, 'write_third_party_notices', return_value={}), \
+                        patch.dict(os.environ, {}, clear=True), \
+                        patch('sys.argv', ['build.py', '--target', target, '--output', str(output)]):
+                    build.main()
+                bundle = output / 'ijob-1.0.0'
+                metadata = json.loads((bundle / 'MANIFEST.json').read_text())
+                source = output / 'ijob-1.0.0-source.zip'
+                hashes.append(build.digest(source))
+                self.assertEqual({'filename': source.name, 'sha256': hashes[-1], 'bundled': False},
+                                 metadata['source_archive'])
+                self.assertFalse((bundle / 'source.zip').exists())
+                with zipfile.ZipFile(source) as archive:
+                    self.assertEqual({'ijob-1.0.0-source/' + name for name in names}, set(archive.namelist()))
+                    self.assertEqual(b'// source only\n', archive.read('ijob-1.0.0-source/program.java'))
+                    self.assertEqual(0o755, (archive.getinfo('ijob-1.0.0-source/run.sh').external_attr >> 16) & 0o777)
+                runtime_files = {p.relative_to(output).as_posix() for p in bundle.rglob('*') if p.is_file()}
+                with zipfile.ZipFile(output / f'ijob-1.0.0-{target}.zip') as archive:
+                    self.assertEqual(runtime_files, set(archive.namelist()))
+                with tarfile.open(output / f'ijob-1.0.0-{target}.tar.gz') as archive:
+                    self.assertEqual(runtime_files, {p.name for p in archive.getmembers() if p.isfile()})
+                for checksum_root in [output, bundle]:
+                    rows = (checksum_root / 'SHA256SUMS.txt').read_text().splitlines()
+                    self.assertEqual(3, len(rows))
+                    for row in rows:
+                        expected, name = row.split('  ', 1)
+                        self.assertEqual(expected, build.digest(checksum_root / name))
+                # A second target must not depend on source mtimes or filesystem modes.
+                os.utime(root / 'program.java', (1700000000, 1700000000))
+            self.assertEqual(hashes[0], hashes[1])
+
+    def test_finalization_rejects_embedded_source_and_mismatched_external_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / 'ijob-1.0.0'
+            bundle.mkdir()
+            (bundle / 'source-manifest.json').write_text(json.dumps({'file': hashlib.sha256(b'expected').hexdigest()}))
+            with zipfile.ZipFile(root / build.SOURCE_ARCHIVE, 'w') as archive:
+                archive.writestr('ijob-1.0.0-source/file', b'tampered')
+            for name in ['source.zip', build.SOURCE_ARCHIVE, 'source', 'build-source', 'develop']:
+                embedded = bundle / name
+                embedded.write_bytes(b'not allowed')
+                with self.assertRaisesRegex(ValueError, 'must not contain'):
+                    build.finalize_distribution(root, bundle, 'native', {})
+                embedded.unlink()
+            with self.assertRaisesRegex(ValueError, 'checksum mismatch'):
+                build.finalize_distribution(root, bundle, 'native', {})
+            self.assertFalse((root / 'ijob-1.0.0-native.zip').exists())
+
     def test_supplement_is_bound_to_binary_hash_and_verified_before_copy(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

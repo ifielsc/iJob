@@ -1,12 +1,12 @@
 # 完整配置清单
 
-[English](../en/configuration-catalog.md) · [目录改进方案](documentation-plan.md) · [当前用户手册](README.md)
+[English](../en/configuration-catalog.md) · [手册首页](README.md)
 
-状态：目录与 A/B/C/D 分级已经确认；运行默认值保持不变，检查器扩展到 54 项。配置源码基线为 1.0.0 / `525070ea2a61919fd92dad4837f1ee8b5a8894a8`；当前来源哈希见共享清单。
+适用于 **iJob 1.0.0**。本页按 A/B/C/D 分类汇总配置的来源、默认值和变更方式；settings/check-settings 检查器覆盖其中 54 项。源码默认值与新安装生成值分别说明，具体配置来源见文末。
 
 ## 1. 范围与阅读方式
 
-这份清单覆盖所列源码中的平台与 Agent 配置属性，并补充启动变量、镜像锁和常用 Compose 运维字段。它不穷举 Spring、JVM、操作系统、Nginx 的全部选项。测试专用配置、历史迁移工具输入、自动生成的 installation.properties/PID 标记不作为用户调参项。任务/作业/资源/通知等页面里的业务字段另列入操作手册，不与 application.properties 混放。
+这份清单覆盖所列源码中的平台与 Agent 配置属性，并补充启动变量、镜像锁和常用 Compose 运维字段。它不穷举 Spring、JVM、操作系统、Nginx 的全部选项。测试专用配置、自动生成的 installation.properties/PID 标记不作为用户调参项。任务/作业/资源/通知等页面里的业务字段另列入操作手册，不与 application.properties 混放。
 
 平台属性和 Agent 属性以“组件 + 键名”区分；例如两者都有 server.port。环境变量别名是同一属性的入口，不算独立功能。Compose 的 `<service>` 是模板占位符，不是实际服务名称。
 
@@ -17,21 +17,21 @@
 | C 受控 | 允许按指定运维流程变更；包括账号、凭据、数据库与模式切换 | 专门操作步骤、备份和恢复要求；不是禁止修改 |
 | D 内部 | 不建议作为普通用户调参入口 | 完整附录保留说明，不提供“绕过保护”的配置配方 |
 
-分级是已确认的维护建议，不是新增权限控制。settings/check-settings 覆盖 54 项格式检查，详见[配置入口](configuration.md)；不代表已经校验全部 254 项或跨参数业务约束。
+A/B/C/D 表示配置的用途与变更要求，不授予服务器或页面操作权限。settings/check-settings 覆盖 54 项格式检查，详见[配置入口](configuration.md)；不代表已经校验全部 254 项或跨参数业务约束。
 
 ### 默认值和生效规则
 
 - “源码声明”保留实际配置表达式，包括 `${变量:回退值}`；相关文件未加载时，该声明不会生效。数据库专用值只适用于选中的数据库；mail profile 中的值仅在该 profile 加载时写入，但邮件实现本身缺省也启用。
 - “新安装/覆盖”列出初始化器和平台差异。未另写入表示使用实际加载的配置/实现默认值，不保证所有框架隐式默认值都在清单内。Java 配置类的初始值不应直接当作安装默认值。
-- 平台 application.properties 修改后重启本安装；Docker 使用对应包的 legacy/start-docker.sh --recreate 重新建立挂载并读取配置。Agent 的配置需重启 Agent；构建变量只在重建镜像/前端时生效。
+- 平台 application.properties 修改后重启本安装；Docker 使用对应实例的 ijob.sh restart 重新建立挂载并读取配置。Agent 的配置需重启 Agent；构建变量只在重建镜像/前端时生效。
 - IJOB_* 有些只是 YAML 占位符输入或脚本输入，不能笼统认定它们覆盖外部文件。明确的启动参数、系统属性、直接绑定的环境变量也可能参与最终值；不要重复维护同一参数。
-- `secret` 项只列变量/生成规则，不提供实际值。普通配置变更不需要重新打包程序。此稿中的建议不改变现有生产或演示环境。
+- `secret` 项只列变量名与生成规则，不提供实际值。普通运行配置变更不需要重新打包程序；保存配置后，按对应章节重启或重建，使变更生效。
 
 ### 类型说明
 
 duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/天；bytes 是字节数；size 使用实现支持的容量单位。枚举及列表按每行说明填写。分组规范化后最多 16 个，每个匹配 `[a-z0-9][a-z0-9._-]{0,63}`；任务/作业 ID 分别最多 100 个，均须为正整数。整数的相互约束仍由启动校验器判断，不能仅凭类型列推断全部合法范围。
 
-## 2. 已确认的行为边界
+## 2. 行为与适用范围
 
 ### 分组与任务/作业白名单
 
@@ -138,9 +138,9 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | C173<br>`spring.datasource.hikari.data-source-properties.journal_mode`<br>枚举 | `WAL` (S06) | 未另写入；采用所加载配置/实现默认值 | — | **D** WAL 日志模式；仅 SQLite，评估并发和持久性影响。 | 仅 SQLite；重启本安装 |
 | C174<br>`spring.datasource.hikari.data-source-properties.synchronous`<br>枚举 | `NORMAL` (S06) | 未另写入；采用所加载配置/实现默认值 | — | **D** 同步持久性策略；仅 SQLite，评估并发和持久性影响。 | 仅 SQLite；重启本安装 |
 | C175<br>`spring.datasource.hikari.data-source-properties.transaction_mode`<br>枚举 | `IMMEDIATE` (S06) | 未另写入；采用所加载配置/实现默认值 | — | **D** IMMEDIATE 事务模式；仅 SQLite，评估并发和持久性影响。 | 仅 SQLite；重启本安装 |
-| C183<br>`spring.datasource.url`<br>文本 | `generated from database selection` (S10) | 按所选数据库和输入生成；SQLite 为本安装 runtime/platform.db | — | **C** 平台数据库连接；换数据库产品属于迁移，不能只改 URL。 | 平台；重启本安装 |
-| C184<br>`spring.datasource.username`<br>文本 | `user input; empty for SQLite` (S10) | 输入值；SQLite 为空 | — | **C** 数据库连接账号；与权限和数据库口令一起维护。 | 平台；重启本安装 |
-| C185<br>`spring.datasource.password`<br>秘密 | `private input; empty for SQLite` (S10) | 私有输入；SQLite 为空 | — | **C** 数据库口令；在受限文件中轮换并验证连接。 | 平台；重启本安装 |
+| C183<br>`spring.datasource.url`<br>文本 | 根据所选数据库生成 (S10) | 按所选数据库和输入生成；SQLite 为本安装 runtime/platform.db | — | **C** 平台数据库连接；换数据库产品属于迁移，不能只改 URL。 | 平台；重启本安装 |
+| C184<br>`spring.datasource.username`<br>文本 | 用户输入；SQLite 为空 (S10) | 输入值；SQLite 为空 | — | **C** 数据库连接账号；与权限和数据库口令一起维护。 | 平台；重启本安装 |
+| C185<br>`spring.datasource.password`<br>秘密 | 私密输入；SQLite 为空 (S10) | 私有输入；SQLite 为空 | — | **C** 数据库口令；在受限文件中轮换并验证连接。 | 平台；重启本安装 |
 
 <a id="auth"></a>
 
@@ -298,7 +298,7 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | C022<br>`app.resource-browser.local-roots`<br>路径列表 | `[]` (S01) | 未另写入；采用所加载配置/实现默认值 | — | **A** LOCAL 资源草稿允许浏览的绝对根目录；不等价于所有脚本的文件系统沙箱。 | 平台；重启本安装 |
 | C102<br>`app.http.connect-timeout`<br>时长 | `${IJOB_HTTP_CONNECT_TIMEOUT:5s}` (S01) | 未另写入；采用所加载配置/实现默认值 | `IJOB_HTTP_CONNECT_TIMEOUT` | **A** 共用 HTTP 客户端连接超时；不覆盖所有插件自身的超时。 | 平台；重启本安装 |
 | C103<br>`app.http.read-timeout`<br>时长 | `${IJOB_HTTP_READ_TIMEOUT:30s}` (S01) | 未另写入；采用所加载配置/实现默认值 | `IJOB_HTTP_READ_TIMEOUT` | **A** 共用 HTTP 客户端读取超时；与任务总超时区分。 | 平台；重启本安装 |
-| C182<br>`server.address`<br>文本 | `generated: native=127.0.0.1; docker=0.0.0.0` (S10) | 原生 127.0.0.1；Docker 0.0.0.0 | — | **A** 原生监听地址；Docker 内部必须与健康检查和代理保持一致。 | 平台；重启本安装 |
+| C182<br>`server.address`<br>文本 | 安装时生成：原生为 `127.0.0.1`；Docker 为 `0.0.0.0` (S10) | 原生 127.0.0.1；Docker 0.0.0.0 | — | **A** 原生监听地址；Docker 内部必须与健康检查和代理保持一致。 | 平台；重启本安装 |
 
 <a id="logging"></a>
 
@@ -316,7 +316,7 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | C159<br>`management.endpoint.health.show-details`<br>枚举 | `never` (S01) | 未另写入；采用所加载配置/实现默认值 | — | **C** 健康细节展示；按访问权限设计，不直接对外开放。 | 平台；重启本安装 |
 | C160<br>`management.health.livenessstate.enabled`<br>布尔 | `true` (S01) | 未另写入；采用所加载配置/实现默认值 | — | **D** 存活状态探针，保留部署探测契约。 | 平台；重启本安装 |
 | C161<br>`management.health.readinessstate.enabled`<br>布尔 | `true` (S01) | 未另写入；采用所加载配置/实现默认值 | — | **D** 就绪状态探针，保留部署探测契约。 | 平台；重启本安装 |
-| C190<br>`logging.config`<br>URI | `launcher: <bundle>/support/logging-native.xml` (S11) | 未另写入；采用所加载配置/实现默认值 | — | **D** 原生日志配置资源位置，由启动器设置。 | 原生安装；重启本安装 |
+| C190<br>`logging.config`<br>URI | 启动器指定 `<bundle>/support/logging-native.xml` (S11) | 未另写入；采用所加载配置/实现默认值 | — | **D** 原生日志配置资源位置，由启动器设置。 | 原生安装；重启本安装 |
 | C194<br>`ijob.logging.max-file-size`<br>容量 | `10MB` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **A** 原生日志单文件滚动大小。 | 原生安装；重启本安装 |
 | C195<br>`ijob.logging.max-history`<br>天 | `14` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **A** 原生日志归档保留天数。 | 原生安装；重启本安装 |
 | C196<br>`ijob.logging.total-size-cap`<br>容量 | `200MB` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **A** 原生日志归档总容量，可能先于天数触发清理。 | 原生安装；重启本安装 |
@@ -341,12 +341,12 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | C162<br>`spring.config.activate.on-profile`<br>文本 | `mail` (S02) | 未另写入；采用所加载配置/实现默认值 | — | **D** 邮件 profile 的激活条件，属于配置结构。 | 平台；重启本安装 |
 | C169<br>`mybatis.configuration.jdbc-type-for-null`<br>文本 | `NULL` (S04) | 未另写入；采用所加载配置/实现默认值 | — | **D** Oracle 空值绑定规则。 | 平台；重启本安装 |
 | C186<br>`spring.profiles.active`<br>文本列表 | `release` (S10) | 初始化 release；原生启动追加 native-background | — | **D** 启动器选择 release/native-background 或容器配置，非日常功能开关。 | 平台；重启本安装 |
-| C187<br>`app.web.enabled`<br>布尔 | `native=true; docker uses separate web service` (S10) | 原生 true；Docker 不生成 | — | **D** 原生静态前端托管开关；由安装方式决定，Docker 使用独立 Web 容器。 | 原生安装；重启本安装 |
-| C188<br>`app.web.directory`<br>路径 | `native=<bundle>/web-dist` (S10) | 原生 &lt;bundle&gt;/web-dist；Docker 独立 Web 服务 | — | **D** 前端资源目录；原生启动器按当前包传入，换目录不会重建前端。 | 原生安装；重启本安装 |
-| C189<br>`spring.config.additional-location`<br>URI | `launcher: external private configuration URI` (S11) | 未另写入；采用所加载配置/实现默认值 | — | **D** 启动器指定私有外部配置的位置，勿同时维护多个冲突入口。 | 平台；重启本安装 |
-| C191<br>`ijob.native.home`<br>路径 | `launcher: IJOB_HOME process identity` (S11) | 未另写入；采用所加载配置/实现默认值 | — | **D** 进程身份校验标记；启动器生成，不可冒用或独立改写。 | 原生安装；重启本安装 |
-| C192<br>`ijob.native.log-directory`<br>路径 | `launcher: <IJOB_HOME>/logs` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **D** 日志目录由 IJOB_HOME 派生，随安装目录管理。 | 原生安装；重启本安装 |
-| C193<br>`ijob.native.log-session`<br>文本 | `launcher-generated unique launch identity` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **D** 本次启动的就绪日志标记，由启动器生成。 | 原生安装；重启本安装 |
+| C187<br>`app.web.enabled`<br>布尔 | 原生为 `true`；Docker 使用独立 Web 服务 (S10) | 原生 true；Docker 不生成 | — | **D** 原生静态前端托管开关；由安装方式决定，Docker 使用独立 Web 容器。 | 原生安装；重启本安装 |
+| C188<br>`app.web.directory`<br>路径 | 原生为 `<bundle>/web-dist` (S10) | 原生 &lt;bundle&gt;/web-dist；Docker 独立 Web 服务 | — | **D** 前端资源目录；原生启动器按当前包传入，换目录不会重建前端。 | 原生安装；重启本安装 |
+| C189<br>`spring.config.additional-location`<br>URI | 启动器指定的外部私有配置 URI (S11) | 未另写入；采用所加载配置/实现默认值 | — | **D** 启动器指定私有外部配置的位置，勿同时维护多个冲突入口。 | 平台；重启本安装 |
+| C191<br>`ijob.native.home`<br>路径 | 启动器使用 `IJOB_HOME` 标记进程身份 (S11) | 未另写入；采用所加载配置/实现默认值 | — | **D** 进程身份校验标记；启动器生成，不可冒用或独立改写。 | 原生安装；重启本安装 |
+| C192<br>`ijob.native.log-directory`<br>路径 | 启动器指定 `<IJOB_HOME>/logs` (S12) | 未另写入；采用所加载配置/实现默认值 | — | **D** 日志目录由 IJOB_HOME 派生，随安装目录管理。 | 原生安装；重启本安装 |
+| C193<br>`ijob.native.log-session`<br>文本 | 启动器为每次启动生成唯一标识 (S12) | 未另写入；采用所加载配置/实现默认值 | — | **D** 本次启动的就绪日志标记，由启动器生成。 | 原生安装；重启本安装 |
 
 <a id="agent"></a>
 
@@ -359,9 +359,9 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | C178<br>`agent.collect-timeout`<br>毫秒 | `${IJOB_AGENT_COLLECT_TIMEOUT:10000}` (S08) | 未另写入；采用所加载配置/实现默认值 | `IJOB_AGENT_COLLECT_TIMEOUT` | **B** 单次采集超时，毫秒；按被监控主机负载评估。 | 独立 Agent；重启 Agent |
 | C179<br>`agent.collect-concurrency`<br>整数 | `${IJOB_AGENT_COLLECT_CONCURRENCY:2}` (S08) | 未另写入；采用所加载配置/实现默认值 | `IJOB_AGENT_COLLECT_CONCURRENCY` | **B** 并行采集数；结合目标主机资源评估。 | 独立 Agent；重启 Agent |
 | C180<br>`agent.collect-queue-capacity`<br>整数 | `${IJOB_AGENT_COLLECT_QUEUE_CAPACITY:4}` (S08) | 未另写入；采用所加载配置/实现默认值 | `IJOB_AGENT_COLLECT_QUEUE_CAPACITY` | **B** 采集等待队列容量；过大可能延迟返回。 | 独立 Agent；重启 Agent |
-| C181<br>`agent.hostname`<br>文本 | `unset: detected automatically` (S09) | 未另写入；采用所加载配置/实现默认值 | — | **A** 上报的主机名称；不配置时自动探测，可用于明确监控对象身份。 | 独立 Agent；重启 Agent |
-| C197<br>`server.port`<br>端口 | `8081 in image; not explicitly set in Agent YAML` (S13) | 未另写入；采用所加载配置/实现默认值 | — | **B** Agent 镜像内部 8081；修改需同步探针和平台资源连接。 | 独立 Agent；重启 Agent |
-| C198<br>`spring.config.import`<br>URI | `configtree:/run/secrets/ in image` (S13) | 未另写入；采用所加载配置/实现默认值 | — | **D** 镜像私有 agent.token 文件导入方式，保留与挂载一致。 | 独立 Agent；重启 Agent |
+| C181<br>`agent.hostname`<br>文本 | 未设置时自动探测 (S09) | 未另写入；采用所加载配置/实现默认值 | — | **A** 上报的主机名称；不配置时自动探测，可用于明确监控对象身份。 | 独立 Agent；重启 Agent |
+| C197<br>`server.port`<br>端口 | 镜像中为 `8081`；Agent YAML 未显式设置 (S13) | 未另写入；采用所加载配置/实现默认值 | — | **B** Agent 镜像内部 8081；修改需同步探针和平台资源连接。 | 独立 Agent；重启 Agent |
+| C198<br>`spring.config.import`<br>URI | 镜像中为 `configtree:/run/secrets/` (S13) | 未另写入；采用所加载配置/实现默认值 | — | **D** 镜像私有 agent.token 文件导入方式，保留与挂载一致。 | 独立 Agent；重启 Agent |
 
 <a id="deployment"></a>
 
@@ -369,32 +369,32 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 
 | 编号 / 键 / 类型 | 源码声明与来源 | 新安装 / 覆盖 | 环境别名 | 建议与说明 | 范围 / 生效 |
 | --- | --- | --- | --- | --- | --- |
-| C199<br>`IJOB_HOME`<br>路径 | `Windows: sibling ijob-data; Linux: sibling ijob-data-linux; Docker: sibling ijob-data-docker` (S14) | 见默认值及适用范围 | — | **A** 安装数据根目录；所有管理命令一致，更改路径不会自动搬迁数据。 | 启动环境；下一次对应命令生效 |
-| C200<br>`IJOB_LANG`<br>枚举 | `en; zh selects Chinese` (S15) | 见默认值及适用范围 | — | **A** 初始化/管理命令语言，不是界面偏好或通知语言。 | 启动环境；下一次对应命令生效 |
-| C201<br>`JAVA_HOME`<br>路径 | `unset: resolve Java from PATH` (S11) | 见默认值及适用范围 | — | **A** 原生启动的 Java 21 安装目录。 | 原生安装；重启本安装 |
+| C199<br>`IJOB_HOME`<br>路径 | 旧入口默认值：Windows 为程序包同级 `ijob-data`；Linux 为同级 `ijob-data-linux`；Docker 为同级 `ijob-data-docker` (S14) | 见默认值及适用范围 | — | **A** 安装数据根目录；所有管理命令一致，更改路径不会自动搬迁数据。 | 启动环境；下一次对应命令生效 |
+| C200<br>`IJOB_LANG`<br>枚举 | 默认 `en`；`zh` 选择中文 (S15) | 见默认值及适用范围 | — | **A** 初始化/管理命令语言，不是界面偏好或通知语言。 | 启动环境；下一次对应命令生效 |
+| C201<br>`JAVA_HOME`<br>路径 | 未设置时从 `PATH` 查找 Java (S11) | 见默认值及适用范围 | — | **A** 原生启动的 Java 21 安装目录。 | 原生安装；重启本安装 |
 | C202<br>`IJOB_START_TIMEOUT`<br>秒 | `120` (S16) | 见默认值及适用范围 | — | **B** 等待启动就绪的秒数，范围 1–600；仅 Linux 启动脚本使用，Windows 当前固定等待。 | 仅 Linux 原生脚本 |
 | C203<br>`IJOB_STOP_TIMEOUT`<br>秒 | `120` (S17) | 见默认值及适用范围 | — | **B** 等待优雅停止的秒数，范围 1–600；仅 Linux 启动脚本使用，Windows 当前固定等待。 | 仅 Linux 原生脚本 |
 | C204<br>`IJOB_HTTP_PORT`<br>端口 | `18080` (S10) | 见默认值及适用范围 | — | **A** Docker 宿主映射端口，改变后用同一安装包 --recreate。 | Docker；重建对应容器 |
 | C205<br>`IJOB_HTTP_BIND`<br>文本 | `127.0.0.1` (S18) | 见默认值及适用范围 | — | **B** 仅仓库高级 Compose 模板支持；初始化器生成的 Compose 固定回环绑定，不能只设置此变量。 | 仓库高级 Compose；重建对应容器 |
-| C206<br>`IJOB_CONFIG_PATH`<br>路径 | `required; no default` (S18) | 见默认值及适用范围 | — | **C** 高级 Compose 私有 YAML 路径；首次安装包使用 IJOB_HOME/application.properties。 | 仓库高级 Compose；重建对应容器 |
-| C207<br>`IJOB_AGENT_TOKEN_PATH`<br>路径 | `required; no default` (S19) | 见默认值及适用范围 | — | **C** Agent 私有令牌文件路径，不是令牌值。 | Agent Compose；重建 Agent |
+| C206<br>`IJOB_CONFIG_PATH`<br>路径 | 必填，无默认值 (S18) | 见默认值及适用范围 | — | **C** 高级 Compose 私有 YAML 路径；首次安装包使用 IJOB_HOME/application.properties。 | 仓库高级 Compose；重建对应容器 |
+| C207<br>`IJOB_AGENT_TOKEN_PATH`<br>路径 | 必填，无默认值 (S19) | 见默认值及适用范围 | — | **C** Agent 私有令牌文件路径，不是令牌值。 | Agent Compose；重建 Agent |
 | C208<br>`IJOB_IMAGE_TAG`<br>文本 | `1.0.0` (S18) | 见默认值及适用范围 | — | **D** 仅高级 Compose 标签；交付包按镜像 ID 锁启动，标签不替代来源校验。 | 仓库高级 Compose；重建对应容器 |
-| C209<br>`IJOB_PLATFORM_DB`<br>枚举 | `setup selects vendor; repository YAML fallback mysql` (S10) | 见默认值及适用范围 | — | **C** 原生启动器从安装元数据传入；Docker 需在 backend environment 中一致配置。 | 启动环境；下一次对应命令生效 |
-| C210<br>`IJOB_PLATFORM_DB_SCHEMA`<br>文本 | `PostgreSQL public; SQL Server dbo; Oracle IJOB_DB_USERNAME or ijob` (S04) | 见默认值及适用范围 | — | **C** 数据库专用配置的 schema 占位符；对齐 JDBC、平台及迁移 schema。 | 启动环境；下一次对应命令生效 |
-| C211<br>`IJOB_DB_USERNAME`<br>文本 | `ijob for Oracle schema fallback only` (S04) | 见默认值及适用范围 | — | **C** 在 Oracle 模板中仅作为 schema 回退，不会替代 spring.datasource.username。 | 启动环境；下一次对应命令生效 |
-| C212<br>`IJOB_MAVEN_IMAGE`<br>镜像 | `pinned in develop/deployment/docker/images.env` (S20) | 见默认值及适用范围 | — | **D** 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 | 构建阶段；重建镜像 |
-| C213<br>`IJOB_JRE_IMAGE`<br>镜像 | `pinned in develop/deployment/docker/images.env` (S20) | 见默认值及适用范围 | — | **D** 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 | 构建阶段；重建镜像 |
-| C214<br>`IJOB_NODE_IMAGE`<br>镜像 | `pinned in develop/deployment/docker/images.env` (S20) | 见默认值及适用范围 | — | **D** 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 | 构建阶段；重建镜像 |
-| C215<br>`IJOB_NGINX_IMAGE`<br>镜像 | `pinned in develop/deployment/docker/images.env` (S20) | 见默认值及适用范围 | — | **D** 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 | 构建阶段；重建镜像 |
-| C216<br>`JAVA_TOOL_OPTIONS`<br>文本 | `images: -XX:MaxRAMPercentage=70 -Duser.timezone=UTC` (S21) | 见默认值及适用范围 | — | **B** JVM 启动参数；容器内保留 UTC 约定，结合内存限制调整。build.py 拒绝继承此变量。 | JVM；重启进程或重建容器 |
-| C217<br>`IJOB_DEV_API_TARGET`<br>URI | `unset: no proxy` (S22) | 见默认值及适用范围 | — | **B** 前端开发服务代理目标；不写入正式包的运行配置，不能误连演示环境。 | 开发服务；重启开发服务 |
-| C218<br>`SPRING_PROFILES_ACTIVE`<br>文本 | `backend image container; first-run override release` (S21) | 见默认值及适用范围 | — | **D** 由镜像/启动器选择配置 profile；不当作普通环境开关。 | Docker；重建对应容器 |
-| C219<br>`SPRING_CONFIG_ADDITIONAL_LOCATION`<br>URI | `image /run/secrets/ijob.yaml; first-run /run/secrets/application.properties` (S10) | 见默认值及适用范围 | — | **D** Docker 外部配置挂载读取位置，必须与实际挂载一致。 | Docker；重建对应容器 |
-| C220<br>`SPRING_CONFIG_IMPORT`<br>URI | `agent image configtree:/run/secrets/` (S13) | 见默认值及适用范围 | — | **D** Agent 镜像通过配置树读取私有 token 文件。 | Agent 镜像；重建 Agent 容器 |
-| C221<br>`SERVER_PORT`<br>端口 | `Agent image 8081` (S13) | 见默认值及适用范围 | — | **D** Agent 镜像设置内部端口；需要与探针和连接配置同步。 | Agent 镜像；重建 Agent 容器 |
-| C222<br>`IJOB_BACKEND_IMAGE`<br>镜像 ID | `generated sha256 image ID in docker-images.lock` (S23) | 见默认值及适用范围 | — | **D** 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 | 包生成记录；重建交付包 |
-| C223<br>`IJOB_WEB_IMAGE`<br>镜像 ID | `generated sha256 image ID in docker-images.lock` (S23) | 见默认值及适用范围 | — | **D** 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 | 包生成记录；重建交付包 |
-| C224<br>`IJOB_AGENT_IMAGE`<br>镜像 ID | `generated sha256 image ID in docker-images.lock` (S23) | 见默认值及适用范围 | — | **D** 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 | 包生成记录；重建交付包 |
+| C209<br>`IJOB_PLATFORM_DB`<br>枚举 | 初始化器选择数据库产品；仓库 YAML 的回退值为 `mysql` (S10) | 见默认值及适用范围 | — | **C** 原生启动器从安装元数据传入；Docker 需在 backend 服务的 environment 配置中保持一致。 | 启动环境；下一次对应命令生效 |
+| C210<br>`IJOB_PLATFORM_DB_SCHEMA`<br>文本 | PostgreSQL 为 `public`；SQL Server 为 `dbo`；Oracle 使用 `IJOB_DB_USERNAME`，未提供时回退到 `ijob` (S04) | 见默认值及适用范围 | — | **C** 数据库专用配置的 schema 占位符；对齐 JDBC、平台及迁移 schema。 | 启动环境；下一次对应命令生效 |
+| C211<br>`IJOB_DB_USERNAME`<br>文本 | `ijob`，仅用作 Oracle schema 的回退值 (S04) | 见默认值及适用范围 | — | **C** 在 Oracle 模板中仅作为 schema 回退，不会替代 spring.datasource.username。 | 启动环境；下一次对应命令生效 |
+| C212<br>`IJOB_MAVEN_IMAGE`<br>镜像 | 固定在 `develop/deployment/docker/images.env` (S20) | 见默认值及适用范围 | — | **D** 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 | 构建阶段；重建镜像 |
+| C213<br>`IJOB_JRE_IMAGE`<br>镜像 | 固定在 `develop/deployment/docker/images.env` (S20) | 见默认值及适用范围 | — | **D** 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 | 构建阶段；重建镜像 |
+| C214<br>`IJOB_NODE_IMAGE`<br>镜像 | 固定在 `develop/deployment/docker/images.env` (S20) | 见默认值及适用范围 | — | **D** 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 | 构建阶段；重建镜像 |
+| C215<br>`IJOB_NGINX_IMAGE`<br>镜像 | 固定在 `develop/deployment/docker/images.env` (S20) | 见默认值及适用范围 | — | **D** 构建基础镜像锁；按依赖升级审核更新，不作为运行调参。 | 构建阶段；重建镜像 |
+| C216<br>`JAVA_TOOL_OPTIONS`<br>文本 | 镜像中为 `-XX:MaxRAMPercentage=70 -Duser.timezone=UTC` (S21) | 见默认值及适用范围 | — | **B** JVM 启动参数；容器内保留 UTC 约定，结合内存限制调整。build.py 拒绝继承此变量。 | JVM；重启进程或重建容器 |
+| C217<br>`IJOB_DEV_API_TARGET`<br>URI | 未设置时不使用代理 (S22) | 见默认值及适用范围 | — | **B** 前端开发服务代理目标；不写入正式包的运行配置，不能误连演示环境。 | 开发服务；重启开发服务 |
+| C218<br>`SPRING_PROFILES_ACTIVE`<br>文本 | backend 镜像使用 `container`；首次初始化覆盖为 `release` (S21) | 见默认值及适用范围 | — | **D** 由镜像/启动器选择配置 profile；不当作普通环境开关。 | Docker；重建对应容器 |
+| C219<br>`SPRING_CONFIG_ADDITIONAL_LOCATION`<br>URI | 镜像使用 `/run/secrets/ijob.yaml`；首次初始化使用 `/run/secrets/application.properties` (S10) | 见默认值及适用范围 | — | **D** Docker 外部配置挂载读取位置，必须与实际挂载一致。 | Docker；重建对应容器 |
+| C220<br>`SPRING_CONFIG_IMPORT`<br>URI | Agent 镜像使用 `configtree:/run/secrets/` (S13) | 见默认值及适用范围 | — | **D** Agent 镜像通过配置树读取私有 token 文件。 | Agent 镜像；重建 Agent 容器 |
+| C221<br>`SERVER_PORT`<br>端口 | Agent 镜像使用 `8081` (S13) | 见默认值及适用范围 | — | **D** Agent 镜像设置内部端口；需要与探针和连接配置同步。 | Agent 镜像；重建 Agent 容器 |
+| C222<br>`IJOB_BACKEND_IMAGE`<br>镜像 ID | 生成并写入 `docker-images.lock` 的 sha256 镜像 ID (S23) | 见默认值及适用范围 | — | **D** 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 | 包生成记录；重建交付包 |
+| C223<br>`IJOB_WEB_IMAGE`<br>镜像 ID | 生成并写入 `docker-images.lock` 的 sha256 镜像 ID (S23) | 见默认值及适用范围 | — | **D** 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 | 包生成记录；重建交付包 |
+| C224<br>`IJOB_AGENT_IMAGE`<br>镜像 ID | 生成并写入 `docker-images.lock` 的 sha256 镜像 ID (S23) | 见默认值及适用范围 | — | **D** 交付包生成的镜像锁记录，不是可覆盖启动镜像的普通环境变量。 | 包生成记录；重建交付包 |
 
 <a id="compose"></a>
 
@@ -402,31 +402,31 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 
 | 编号 / 键 / 类型 | 源码声明与来源 | 新安装 / 覆盖 | 环境别名 | 建议与说明 | 范围 / 生效 |
 | --- | --- | --- | --- | --- | --- |
-| C225<br>`name`<br>Compose 字段 | `setup-generated project; advanced ijob-v1-candidate` (S10) | 见默认值及适用范围 | — | **C** 项目身份；恢复或多实例必须使用独立项目名。 | 对应 Compose 服务；重建容器 |
-| C226<br>`services.<service>.image`<br>Compose 字段 | `distribution exact image ID override` (S10) | 见默认值及适用范围 | — | **D** 精确镜像锁归包管理；不要只改固定 1.0.0 标签升级。 | 对应 Compose 服务；重建容器 |
+| C225<br>`name`<br>Compose 字段 | 初始化器生成项目名；高级模板使用 `ijob-v1-candidate` (S10) | 见默认值及适用范围 | — | **C** 项目身份；恢复或多实例必须使用独立项目名。 | 对应 Compose 服务；重建容器 |
+| C226<br>`services.<service>.image`<br>Compose 字段 | 发行包按精确镜像 ID 覆盖 (S10) | 见默认值及适用范围 | — | **D** 精确镜像锁归包管理；不要只改固定 1.0.0 标签升级。 | 对应 Compose 服务；重建容器 |
 | C227<br>`services.web.ports`<br>Compose 字段 | `127.0.0.1:<IJOB_HTTP_PORT>:8080` (S10) | 见默认值及适用范围 | — | **B** 宿主绑定地址与映射端口；对外访问需配套入口和权限。 | 对应 Compose 服务；重建容器 |
-| C228<br>`services.<service>.volumes`<br>Compose 字段 | `setup config/runtime binds; advanced named data volumes` (S10) | 见默认值及适用范围 | — | **C** 私有配置、数据和插件挂载；恢复时逐项检查源目录及权限。 | 对应 Compose 服务；重建容器 |
-| C229<br>`services.<service>.environment`<br>Compose 字段 | `template-specific` (S10) | 见默认值及适用范围 | — | **C** 容器环境变量；不是宿主 shell 的自动继承，保持与配置文件一致。 | 对应 Compose 服务；重建容器 |
+| C228<br>`services.<service>.volumes`<br>Compose 字段 | 初始化配置绑定 config/runtime 目录；高级模板使用命名数据卷 (S10) | 见默认值及适用范围 | — | **C** 私有配置、数据和插件挂载；恢复时逐项检查源目录及权限。 | 对应 Compose 服务；重建容器 |
+| C229<br>`services.<service>.environment`<br>Compose 字段 | 由所用模板决定 (S10) | 见默认值及适用范围 | — | **C** 容器环境变量；不是宿主 shell 的自动继承，保持与配置文件一致。 | 对应 Compose 服务；重建容器 |
 | C230<br>`services.<service>.mem_limit`<br>Compose 字段 | `backend 1g; web 128m; agent 256m` (S18) | 见默认值及适用范围 | — | **B** 内存上限；与 JVM 比例和工作负载共同调整。 | 对应 Compose 服务；重建容器 |
-| C231<br>`services.<service>.cpus`<br>Compose 字段 | `backend 2.0; advanced web/agent 1.0; setup web unset` (S18) | 见默认值及适用范围 | — | **B** CPU 配额；初始化 Web 未显式设置，高级模板与初始化模板需区分。 | 对应 Compose 服务；重建容器 |
+| C231<br>`services.<service>.cpus`<br>Compose 字段 | backend 为 `2.0`；高级模板的 web/agent 为 `1.0`；初始化模板未设置 web 配额 (S18) | 见默认值及适用范围 | — | **B** CPU 配额；初始化 Web 未显式设置，高级模板与初始化模板需区分。 | 对应 Compose 服务；重建容器 |
 | C232<br>`services.<service>.restart`<br>Compose 字段 | `unless-stopped` (S18) | 见默认值及适用范围 | — | **B** 进程重启策略；不等于任务恢复或幂等保证。 | 对应 Compose 服务；重建容器 |
-| C233<br>`services.<service>.stop_grace_period`<br>Compose 字段 | `backend 120s; advanced web/agent 30s; setup web unset` (S18) | 见默认值及适用范围 | — | **B** 停止宽限；初始化 Web 未显式设置，后端应覆盖排空与关闭所需时间。 | 对应 Compose 服务；重建容器 |
+| C233<br>`services.<service>.stop_grace_period`<br>Compose 字段 | backend 为 `120s`；高级模板的 web/agent 为 `30s`；初始化模板未设置 web 停止宽限 (S18) | 见默认值及适用范围 | — | **B** 停止宽限；初始化 Web 未显式设置，后端应覆盖排空与关闭所需时间。 | 对应 Compose 服务；重建容器 |
 | C234<br>`services.<service>.logging.driver`<br>Compose 字段 | `json-file` (S18) | 见默认值及适用范围 | — | **B** 容器日志驱动；更换时验证采集和查看方式。 | 对应 Compose 服务；重建容器 |
 | C235<br>`services.<service>.logging.options.max-size`<br>Compose 字段 | `10m` (S18) | 见默认值及适用范围 | — | **A** 每份容器日志滚动大小。 | 对应 Compose 服务；重建容器 |
 | C236<br>`services.<service>.logging.options.max-file`<br>Compose 字段 | `backend/web 5; agent 3` (S18) | 见默认值及适用范围 | — | **A** 保留容器日志文件数量。 | 对应 Compose 服务；重建容器 |
-| C237<br>`services.<service>.tmpfs`<br>Compose 字段 | `backend 256m; web 128m; agent 64m; template permissions` (S18) | 见默认值及适用范围 | — | **B** 临时空间大小、权限及 exec 标志；与插件运行需要一起审核。 | 对应 Compose 服务；重建容器 |
+| C237<br>`services.<service>.tmpfs`<br>Compose 字段 | backend 为 `256m`；web 为 `128m`；agent 为 `64m`；权限由模板决定 (S18) | 见默认值及适用范围 | — | **B** 临时空间大小、权限及 exec 标志；与插件运行需要一起审核。 | 对应 Compose 服务；重建容器 |
 | C238<br>`services.<service>.read_only`<br>Compose 字段 | `true` (S18) | 见默认值及适用范围 | — | **D** 只读容器根文件系统约束，使用明确的数据挂载。 | 对应 Compose 服务；重建容器 |
 | C239<br>`services.<service>.cap_drop`<br>Compose 字段 | `ALL` (S18) | 见默认值及适用范围 | — | **D** 保留最小容器权限，不为业务能力直接放开。 | 对应 Compose 服务；重建容器 |
 | C240<br>`services.<service>.security_opt`<br>Compose 字段 | `no-new-privileges:true` (S18) | 见默认值及适用范围 | — | **D** 保留禁止提权约束。 | 对应 Compose 服务；重建容器 |
-| C241<br>`services.<service>.init`<br>Compose 字段 | `backend/agent true; web not set` (S18) | 见默认值及适用范围 | — | **D** 容器进程信号与回收处理，保持经过验证的入口。 | 对应 Compose 服务；重建容器 |
-| C242<br>`services.web.depends_on`<br>Compose 字段 | `backend health; cluster also backend-b health` (S18) | 见默认值及适用范围 | — | **D** 启动就绪依赖；不等于持续流量健康管理。 | 对应 Compose 服务；重建容器 |
-| C243<br>`secrets.<secret>.file`<br>Compose 字段 | `advanced private config/token paths` (S18) | 见默认值及适用范围 | — | **C** 高级 Compose 秘密文件源；限制权限，不进仓库。 | 对应 Compose 服务；重建容器 |
-| C244<br>`volumes.<volume>`<br>Compose 字段 | `advanced backend-data / backend-b-data` (S18) | 见默认值及适用范围 | — | **C** 高级模板持久卷身份；勿指向旧环境或删除以重置。 | 对应 Compose 服务；重建容器 |
+| C241<br>`services.<service>.init`<br>Compose 字段 | backend/agent 为 `true`；web 未设置 (S18) | 见默认值及适用范围 | — | **D** 容器进程信号与回收处理，保持经过验证的入口。 | 对应 Compose 服务；重建容器 |
+| C242<br>`services.web.depends_on`<br>Compose 字段 | 等待 backend 健康；集群还需等待 backend-b 健康 (S18) | 见默认值及适用范围 | — | **D** 启动就绪依赖；不等于持续流量健康管理。 | 对应 Compose 服务；重建容器 |
+| C243<br>`secrets.<secret>.file`<br>Compose 字段 | 高级模板使用的私有配置与 token 文件路径 (S18) | 见默认值及适用范围 | — | **C** 高级 Compose 秘密文件源；限制权限，不进仓库。 | 对应 Compose 服务；重建容器 |
+| C244<br>`volumes.<volume>`<br>Compose 字段 | 高级模板使用 `backend-data` / `backend-b-data` (S18) | 见默认值及适用范围 | — | **C** 高级模板持久卷身份；勿指向旧环境或删除以重置。 | 对应 Compose 服务；重建容器 |
 | C245<br>`services.<service>.healthcheck.interval`<br>时长 | `backend/web 15s; Agent 30s` (S21) | 见默认值及适用范围 | — | **B** 健康检查周期；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
 | C246<br>`services.<service>.healthcheck.timeout`<br>时长 | `backend/Agent 6s; web 5s` (S21) | 见默认值及适用范围 | — | **B** 单次健康检查超时；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
-| C247<br>`services.<service>.healthcheck.start_period`<br>时长 | `backend 90s; Agent 30s; web not explicitly set` (S21) | 见默认值及适用范围 | — | **B** 启动探测宽限；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
+| C247<br>`services.<service>.healthcheck.start_period`<br>时长 | backend 为 `90s`；Agent 为 `30s`；web 未显式设置 (S21) | 见默认值及适用范围 | — | **B** 启动探测宽限；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
 | C248<br>`services.<service>.healthcheck.retries`<br>整数 | `3` (S21) | 见默认值及适用范围 | — | **B** 失败次数阈值；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
-| C249<br>`services.<service>.healthcheck.test`<br>命令 | `backend readiness; web /healthz; Agent authenticated probe` (S21) | 见默认值及适用范围 | — | **D** 镜像内健康检查命令；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
+| C249<br>`services.<service>.healthcheck.test`<br>命令 | backend 使用就绪探针；web 使用 `/healthz`；Agent 使用带认证的探针 (S21) | 见默认值及适用范围 | — | **D** 镜像内健康检查命令；镜像默认值来自各 Dockerfile，覆盖后重新验证就绪判定。 | Docker；重建对应容器 |
 
 ## 实例持久入口（instance.conf）
 
@@ -435,12 +435,12 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | ID / 字段 | 级别 | 初始值 | 说明 |
 | --- | --- | --- | --- |
 | C250 / `instance.conf:version` | D | 1 (S33/S34) | 控制文件格式版本；当前为 1，不手动调整。 |
-| C251 / `instance.conf:bundle` | C | configure: program directory (S33/S34) | 完整程序目录；停机后按升级流程调整。 |
-| C252 / `instance.conf:home` | C | configure: required explicit data directory (S33/S34) | 本实例数据目录；覆盖继承的 IJOB_HOME，修改不会搬迁数据。 |
-| C253 / `instance.conf:lang` | A | en; zh selects Chinese (S33/S34) | 实例启动提示语言；覆盖继承的 IJOB_LANG，不改变网页语言。 |
-| C254 / `instance.conf:mode` | C | Windows: windows; Bash: linux (or explicit docker) (S33/S34) | 创建时确定的部署方式；不能只改此值迁移实例，不是 STANDALONE/CLUSTER。 |
+| C251 / `instance.conf:bundle` | C | 由 `configure` 保存程序目录 (S33/S34) | 完整程序目录；停机后按升级流程调整。 |
+| C252 / `instance.conf:home` | C | 由 `configure` 保存选定的数据目录 (S33/S34) | 本实例数据目录；覆盖继承的 IJOB_HOME，修改不会搬迁数据。 |
+| C253 / `instance.conf:lang` | A | 默认 `en`；`zh` 选择中文 (S33/S34) | 实例启动提示语言；覆盖继承的 IJOB_LANG，不改变网页语言。 |
+| C254 / `instance.conf:mode` | C | Windows 使用 `windows`；Bash 使用 `linux`，或明确选择 `docker` (S33/S34) | 创建时确定的部署方式；不能只改此值迁移实例，不是 STANDALONE/CLUSTER。 |
 
-## 源码依据与维护
+## 配置来源
 
 来源路径均相对仓库根。共享机器清单位于 `document/reference/configuration-review.json`，含双语说明、来源哈希及分类。两种语言由同一批条目生成；表内来源 ID 对应下表。Compose 中 Agent 差异还应对照 compose.agent.yaml，集群差异对照 compose.cluster.yaml；构建时按三个 Dockerfile 的探针声明核对。
 
@@ -481,4 +481,4 @@ duration 使用带单位时长；seconds/milliseconds/days 分别为秒/毫秒/�
 | S33 | `develop/deployment/first-run/support/instance.ps1` |
 | S34 | `develop/deployment/first-run/ijob.sh` |
 
-分组、白名单和全部插件开关按已确认分级进入正文；数据库/凭据使用受控流程，内部参数保留附录。详见[配置正文](configuration.md)与[页面手册](user-guide/README.md)。
+按[配置入口](configuration.md)选择分组、插件与容量等主题；数据库和凭据变更按对应运维流程进行。任务、资源等页面中的业务配置见[页面手册](user-guide/README.md)。

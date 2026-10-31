@@ -4,6 +4,7 @@
 param(
     [Parameter(Mandatory)][ValidateSet('mysql', 'postgresql', 'sqlserver', 'oracle', 'sqlite')][string]$Database,
     [Parameter(Mandatory)][string]$ConfigPath,
+    [Parameter(Mandatory)][string]$DriversDirectory,
     [switch]$Cluster,
     [switch]$Build
 )
@@ -23,6 +24,11 @@ $docker = Get-Command docker -ErrorAction SilentlyContinue
 if (-not $docker) { throw 'Docker CLI is unavailable; no container validation or build was performed.' }
 $env:IJOB_PLATFORM_DB = $Database
 $env:IJOB_CONFIG_PATH = $resolvedConfig
+$resolvedDrivers = (Resolve-Path -LiteralPath $DriversDirectory).Path
+if (-not (Test-Path -LiteralPath $resolvedDrivers -PathType Container) -or $resolvedDrivers.StartsWith($developRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+    throw 'Use a JDBC driver directory outside the source/build contexts; it may be empty for SQLite/PostgreSQL/SQL Server.'
+}
+$env:IJOB_JDBC_DRIVERS_DIR = $resolvedDrivers
 $composeArgs = @('compose', '--env-file', (Join-Path $PSScriptRoot 'images.env'), '-f', (Join-Path $PSScriptRoot 'compose.yaml'))
 if ($Cluster) { $composeArgs += @('-f', (Join-Path $PSScriptRoot 'compose.cluster.yaml')) }
 & $docker.Source @composeArgs config --quiet

@@ -1,48 +1,119 @@
 # Push database results to messaging
 
-[简体中文](../../../zh-CN/user-guide/plugins/push.md) · [Manual home](../../README.md)
+[简体中文](../../../zh-CN/user-guide/plugins/push.md) · [Manual](../../README.md)
 
-## Entry and prerequisites
+Applies to **1.0.0**. Tasks → New/Edit → plugin `PUSH`.
 
-Tasks → New/Edit → plugin `PUSH`. Prepare the resources, permissions and execution-node dependencies listed below. See [Tasks](../tasks.md) for shared timeout/retry/publication behavior.
+## Before you start
 
-## Fields and behavior
+Use ADMIN to create, configure and save tasks. ADMIN or OPERATOR can execute published definitions; ADMIN reads detailed logs and input/output variables. Resources must be enabled and reachable from the execution node. See [tasks](../tasks.md) for common timeout, retry and version settings, and the [permission matrix](../users-audits.md).
 
-| Page field/action | Purpose and rules |
+## Field reference
+
+“Default” means the **initial value of a new 1.0.0 form**. An empty value means the field has not been filled in; required fields still need a value. Visibility follows the selected branch; conditional requirements apply only to that branch.
+
+### Source and target
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Database resource | Required | None | Always | Current task version |
+| Query SQL | Required | Empty | Always | Current task version |
+| Target type | Select | KAFKA | Always | Current task version |
+| Target resource | Required | None | Always | Current task version |
+| Topic | Conditionally required | Empty | Kafka | Current task version |
+| Exchange | Conditionally required | Empty string allowed | RabbitMQ | Current task version |
+| Routing key | Conditionally required | Empty | RabbitMQ | Current task version |
+| Serializer | Fixed supported value | json | Always | Current task version |
+| Compression | Select | none | Always | Current task version |
+
+- **Database resource**: Provide the database connection for querying business data.
+- **Query SQL**: Use a read-only query to obtain business records to publish.
+- **Target type**: Choose a Kafka or RabbitMQ target.
+- **Target resource**: Provide connection and authentication for the target broker.
+- **Topic**: Specify the target Kafka topic.
+- **Exchange**: Specify the RabbitMQ exchange; an empty string selects the default exchange.
+- **Routing key**: Specify the RabbitMQ publication routing key.
+- **Serializer**: Serialize each business record as JSON.
+- **Compression**: Choose uncompressed or gzip-compressed message payloads.
+
+### Batching and limits
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Fetch size | Has a default | 500 | Advanced settings | Current task version |
+| Publish buffer size | Has a default | 500 | Advanced settings | Current task version |
+| Send window size | Has a default | 500 | Advanced settings | Current task version |
+| Window wait timeout (s) | Has a default | 60 | Advanced settings | Current task version |
+| Message send retries | Has a default | 3 | Advanced settings | Current task version |
+| Maximum message bytes | Has a default | 1048576 | Advanced settings | Current task version |
+| Maximum message count | Has a default | 1000000 | Advanced settings | Current task version |
+| Maximum total payload bytes | Has a default | 1073741824 | Advanced settings | Current task version |
+
+- **Fetch size**: 1–10000。
+- **Publish buffer size**: 1–10000。
+- **Send window size**: 1–10000。
+- **Window wait timeout (s)**: 1–3600。
+- **Message send retries**: 0–10; retryTimes retries the message window, not the task-level execution.
+- **Maximum message bytes**: 1024–16777216。
+- **Maximum message count**: 1–100000000。
+- **Maximum total payload bytes**: 1024–107374182400。
+
+## Behavior and boundaries
+
+- SQL must be read-only; serializer supports only json, and compression supports none/gzip.
+- PUSH publishes business messages; it does not send run-result notifications.
+- Publication acknowledgement does not establish downstream completion; use stable business keys for deduplication.
+
+## Typical configuration: Publish order data to Kafka
+
+Fill in the form below, replacing resource names with your enabled resources. This is a configuration guide, not importable JSON. Follow the tutorial linked below for data preparation and execution.
+
+Prepare the three-row orders dataset, a dedicated empty topic and an independent consumer that can inspect records; task SUCCESS alone does not prove downstream receipt.
+
+| Setting | Value |
 | --- | --- |
-| Database resource / Query SQL | Database source/query; select only necessary fields and avoid unbounded reads. |
-| Target resource / Type / Topic or exchange and routing key | KAFKA uses topic; RABBITMQ uses exchange/routingKey. Match the messaging resource type. |
-| Serialization / Message compression | Defaults json / none; match the consumer contract. |
-| Fetch size / Publish buffer / In-flight window / Window timeout / Publish retries | Defaults 500 / 500 / 500 / 60 seconds / 3; plugin retries differ from task retries. |
-| Message size / Message count / Total payload limits | Defaults 1 MiB / 1000000 / 1 GiB; Broker limits also apply. |
+| Database resource | Order business database |
+| Query SQL | See code below |
+| Target type | KAFKA |
+| Target resource | Isolated Kafka resource |
+| Topic | docs-orders |
+| Serializer | json |
+| Compression | none |
 
-## Minimal example and verification
-
-Prepare the dedicated resources above, fill the form, save, then trigger manually and verify the instance, outputs and target system as described below. Saving alone does not execute.
-
-| Setting | Value to enter |
-| --- | --- |
-| Database resource | Select the test DB containing three sample rows |
-| Target type / Resource | KAFKA / Dedicated test messaging resource |
-| Topic | `docs-orders` (create in advance with a test consumer) |
-| Serialization / Compression | json / none |
+Query SQL：
 
 ```sql
-SELECT id, amount FROM orders ORDER BY id;
+SELECT id, amount FROM orders ORDER BY id
 ```
 
-Use a dedicated test topic/queue and consumer. Send three rows first, checking consumed count, business keys and payloads. PUSH sends business messages, not platform email notifications. Confirmation/retry can duplicate deliveries; consumers need idempotency. A form screenshot without a real Broker is not delivery evidence.
+**Expected result:** An independent consumer reads three business records whose id and amount match the source; publication success alone is insufficient.
 
-Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
+[Follow the full tutorial](../../examples/push-and-notifications.md). Save the definition before running it; inspect execution state and business results separately.
 
-## Technical key reference (optional)
+## Configuration keys
 
-These stored keys help developers and troubleshooting; they are not a task JSON blob to paste into the UI. Automatically validated metadata is not a manual form input.
+Use these keys when inspecting imported configuration, API payloads or errors. `[]` denotes a collection item; the form does not require you to enter key names.
 
-| Page field/group | Stored keys |
+| Category / field | Configuration key |
 | --- | --- |
-| Database resource / Query SQL | `sourceResourceId / sql` |
-| Target resource / Type / Topic or exchange and routing key | `target.resourceId / type / properties` |
-| Serialization / Message compression | `serializer / compression` |
-| Fetch size / Publish buffer / In-flight window / Window timeout / Publish retries | `fetchSize / batchSize / maxInflight / publishTimeoutSeconds / retryTimes` |
-| Message size / Message count / Total payload limits | `maxMessageBytes / maxMessages / maxTotalPayloadBytes` |
+| Source and target / Database resource | `sourceResourceId` |
+| Source and target / Query SQL | `sql` |
+| Source and target / Target type | `target.type` |
+| Source and target / Target resource | `target.resourceId` |
+| Source and target / Topic | `target.properties.topic` |
+| Source and target / Exchange | `target.properties.exchange` |
+| Source and target / Routing key | `target.properties.routingKey` |
+| Source and target / Serializer | `serializer` |
+| Source and target / Compression | `compression` |
+| Batching and limits / Fetch size | `fetchSize` |
+| Batching and limits / Publish buffer size | `batchSize` |
+| Batching and limits / Send window size | `maxInflight` |
+| Batching and limits / Window wait timeout (s) | `publishTimeoutSeconds` |
+| Batching and limits / Message send retries | `retryTimes` |
+| Batching and limits / Maximum message bytes | `maxMessageBytes` |
+| Batching and limits / Maximum message count | `maxMessages` |
+| Batching and limits / Maximum total payload bytes | `maxTotalPayloadBytes` |
+
+## Related pages
+
+[Tasks and versions](../tasks.md) · [Parameters and expressions](../../reference/variables.md) · [Scenario tutorials](../../examples.md)

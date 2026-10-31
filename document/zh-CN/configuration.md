@@ -6,7 +6,7 @@
 
 | 类型 | 修改入口 | 生效 |
 | --- | --- | --- |
-| 平台启动配置 | IJOB_HOME/application.properties | 原生重启；Docker 使用 legacy/start-docker.sh --recreate |
+| 平台启动配置 | IJOB_HOME/application.properties | 使用本实例的 ijob.sh / ijob.cmd restart；Docker 由实例入口重建容器 |
 | 宿主/容器配置 | 环境变量、同一 home 的 compose.yaml | 重新启动对应进程或重建容器 |
 | 任务/作业/资源/调度等业务配置 | 管理页面 | 按页面保存/发布/启用；一般不重启平台 |
 
@@ -43,16 +43,16 @@ Windows 将 --home 改为自己的绝对目录。检查器列出并检查下表 
 | --- | --- | --- | --- |
 | `server.address` | text | 127.0.0.1 | 原生监听地址；Docker 容器内部保持 0.0.0.0。 |
 | `server.port` | port | 18080 | 原生 HTTP 端口；Docker 保持内部 8080，修改宿主端口映射。 |
-| `spring.datasource.url` | text | generated | 初始化生成的数据库地址；更换数据库产品必须另行迁移。 |
-| `spring.datasource.username` | text | generated | 数据库账号，SQLite 不使用；不要将凭据写入连接地址。 |
-| `spring.datasource.password` | secret | generated | 仅在受限 application.properties 内修改，不通过命令行传递。 |
+| `spring.datasource.url` | text | 安装时生成 | 初始化生成的数据库地址；更换数据库产品必须另行迁移。 |
+| `spring.datasource.username` | text | 安装时生成 | 数据库账号，SQLite 不使用；不要将凭据写入连接地址。 |
+| `spring.datasource.password` | secret | 安装时生成 | 仅在受限 application.properties 内修改，不通过命令行传递。 |
 | `spring.datasource.hikari.maximum-pool-size` | positive-int | 4 | 连接池大小，应与数据库可承受连接数一起规划。 |
 | `app.schedule.enabled` | boolean | true | 全局调度扫描开关；具体调度仍需在页面启用。 |
 | `app.plugin.etl.enabled` | boolean | true | 启用 ETL 任务。 |
 | `app.plugin.batch-etl.enabled` | boolean | true | 启用批量 ETL 任务。 |
 | `app.plugin.local-jar.enabled` | boolean | false | 准备好目录和依赖后，按需启用可信 Local JAR 插件。 |
-| `app.plugin.local-jar.root-directory` | text | empty | 执行节点的插件绝对目录；Docker 需要显式挂载。 |
-| `app.resource-browser.local-roots` | text | empty | 允许浏览 LOCAL 资源草稿的绝对根目录，多个目录用逗号分隔。 |
+| `app.plugin.local-jar.root-directory` | text | 空 | 执行节点的插件绝对目录；Docker 需要显式挂载。 |
+| `app.resource-browser.local-roots` | text | 空 | 允许浏览 LOCAL 资源草稿的绝对根目录，多个目录用逗号分隔。 |
 | `app.http.connect-timeout` | duration | 5s | 共用 HTTP 客户端连接超时，不代表所有外部插件的超时。 |
 | `app.http.read-timeout` | duration | 30s | 共用 HTTP 客户端读取超时。 |
 | `app.notification.locale` | notification-locale | en | 通知默认语言，可被具体通知配置覆盖。 |
@@ -64,11 +64,11 @@ Windows 将 --home 改为自己的绝对目录。检查器列出并检查下表 
 | `ijob.logging.total-size-cap` | size | 200MB | 原生日志归档总容量上限，可能提前清理未到期归档。 |
 | `spring.web.locale` | locale | en | 服务端缺省语言；Accept-Language 和前端偏好另有作用。 |
 | `app.scheduling.pool-size` | positive-int | 8 | 内部周期扫描线程数量；不是业务任务最大并发数。 |
-| `app.runtime.instance-name` | text | generated | 节点标识；集群各节点取不同名称，便于追踪运行。 |
+| `app.runtime.instance-name` | text | 安装时生成 | 节点标识；集群各节点取不同名称，便于追踪运行。 |
 | `app.runtime.roles` | roles | API,SCHEDULER,WORKER,MAINTENANCE | API/SCHEDULER/WORKER/MAINTENANCE 职责；部署前确保所需角色仍有人承担。 |
 | `app.runtime.groups` | groups | default | 节点执行分组；与发布定义的分组匹配，空节点分组并不表示能接所有分组。 |
-| `app.runtime.allowed-task-ids` | ids | empty | 允许领取的根触发目标任务 ID；与作业白名单共同限制范围，见组合规则。 |
-| `app.runtime.allowed-job-ids` | ids | empty | 允许领取的根触发目标作业 ID；不等价于对子作业内每个任务逐一授权。 |
+| `app.runtime.allowed-task-ids` | ids | 空 | 允许领取的根触发目标任务 ID；与作业白名单共同限制范围，见组合规则。 |
+| `app.runtime.allowed-job-ids` | ids | 空 | 允许领取的根触发目标作业 ID；不等价于对子作业内每个任务逐一授权。 |
 | `app.runtime.work-queue.max-inflight-roots` | positive-int | 20 | 节点在途根运行上限；结合线程池、任务并发和资源容量评估。 |
 | `app.schedule.zone-id` | zone | Asia/Shanghai | 调度默认业务时区；与用户显示时区不同，核验单条调度设置。 |
 | `app.schedule.misfire-policy` | misfire | FIRE_ONCE | 错过触发默认策略 SKIP/FIRE_ONCE/CATCH_UP_BOUNDED；可能产生实际补发。 |

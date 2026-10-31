@@ -24,7 +24,7 @@ export IJOB_HOME="$data_home"
 source "$bundle/support/native-common.sh"
 session="service-$(date +%s)-$$"
 exec env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME="$HOME" IJOB_HOME="$data_home" IJOB_LANG="${instance[lang]}" IJOB_PLATFORM_DB="$vendor" \
-    "$java" "-Dijob.native.home=$data_home" -jar "$bundle/ijob-starter-1.0.0.jar" \
+    "$java" "-Dijob.native.home=$data_home" "-Dloader.path=$(file_uri "$data_home/drivers/")" -jar "$bundle/ijob-starter-1.0.0.jar" \
     --spring.profiles.active=release,native-background \
     "--spring.config.additional-location=$(file_uri "$data_home/application.properties")" \
     "--app.web.directory=$bundle/web-dist" "--logging.config=$(file_uri "$bundle/support/logging-native.xml")" \

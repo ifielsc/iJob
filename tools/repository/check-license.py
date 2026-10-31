@@ -13,12 +13,15 @@ checked = 0
 copies = 0
 for name in files:
     path = ROOT / name
-    if name.endswith('/META-INF/LICENSE') or name == 'develop/web/ijob/public/LICENSE.txt':
+    if name.endswith('/META-INF/LICENSE') or name in {
+        'develop/web/ijob/public/LICENSE.txt',
+        'develop/web/ijob/packages/ui-directives/LICENSE',
+    }:
         assert path.read_bytes() == license_text, f'License copy differs: {name}'
         copies += 1
     if '/.mvn/' in name or '/patches/' in name:
         continue
-    if path.suffix not in {'.java', '.ts', '.vue', '.css', '.mjs', '.py', '.ps1', '.sh'} and path.name != 'Dockerfile':
+    if path.suffix not in {'.java', '.ts', '.cts', '.vue', '.css', '.mjs', '.cjs', '.py', '.ps1', '.sh'} and path.name != 'Dockerfile':
         continue
     text = path.read_text(encoding='utf-8-sig')
     head = '\n'.join(text.splitlines()[:7])

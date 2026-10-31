@@ -33,6 +33,11 @@ services:
       IJOB_RUNTIME_INSTANCE_NAME: container-a
     volumes:
       - backend-data:/var/lib/ijob
+      - type: bind
+        source: ${IJOB_JDBC_DRIVERS_DIR:?Set an absolute directory for locally supplied JDBC drivers (may be empty)}
+        target: /opt/ijob/drivers
+        read_only: true
+        bind: {create_host_path: false}
   web:
     image: ijob-web:${IJOB_IMAGE_TAG:-1.0.0}
     build:

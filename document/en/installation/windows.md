@@ -60,3 +60,5 @@ After backing up and editing application.properties in the data home according t
 ```
 
 A fresh terminal can directly run `D:/ijob/instances/a/ijob.cmd status` without resetting variables. See the [unified entry](instance-launcher.md) for path/language and upgrade rules. Legacy start/initialize/stop/status/logs/restart.cmd remain compatible; their environment/default-home rules are documented there.
+
+MySQL/Oracle require user-supplied JDBC drivers; see [driver installation](../installation.md#jdbc-drivers). PostgreSQL/SQL Server/SQLite drivers remain included.

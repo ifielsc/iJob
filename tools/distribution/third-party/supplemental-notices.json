@@ -610,6 +610,18 @@
         "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
         "source": "https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/13.4.0.jre11/mssql-jdbc-13.4.0.jre11-sources.jar!/mssql/googlecode/cityhash/LICENSE",
         "source_archive_sha256": "20cc22b65833951b86849177e1c8e714aaeef6833a771e291ca8b6e6626aaac9"
+      },
+      {
+        "file": "96783d7ed4ff39e20c9ae6642ac6de02692ec8909e9910700e3694d68211ee97.txt",
+        "sha256": "96783d7ed4ff39e20c9ae6642ac6de02692ec8909e9910700e3694d68211ee97",
+        "source": "https://raw.githubusercontent.com/microsoft/mssql-jdbc/v13.4.0/LICENSE"
+      },
+      {
+        "file": "236fe5a235d55a6ce8cfa176d3d63c4bd939e2970d1822380970b62820ebba5c.txt",
+        "sha256": "236fe5a235d55a6ce8cfa176d3d63c4bd939e2970d1822380970b62820ebba5c",
+        "source": "https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/13.4.0.jre11/mssql-jdbc-13.4.0.jre11-sources.jar!/com/microsoft/sqlserver/jdbc/SQLServerDriver.java",
+        "source_archive_sha256": "20cc22b65833951b86849177e1c8e714aaeef6833a771e291ca8b6e6626aaac9",
+        "extraction": "Verbatim leading Microsoft copyright and MIT license notice"
       }
     ]
   },
@@ -2553,6 +2565,22 @@
         "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04",
         "source": "https://www.mozilla.org/media/MPL/2.0/index.txt",
         "applicability": "Exact binary okhttp3/internal/publicsuffix/NOTICE explicitly requires MPL 2.0 for bundled Public Suffix List"
+      }
+    ]
+  },
+  "c1814b3fcdfd8d1e95643f67f5cee5e1efdaff29692cc1738dc84a8daf62176e": {
+    "filename": "snappy-java-1.1.10.10.jar",
+    "purl": "pkg:maven/org.xerial.snappy/snappy-java@1.1.10.10?type=jar",
+    "notices": [
+      {
+        "file": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5.txt",
+        "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+        "source": "https://raw.githubusercontent.com/xerial/snappy-java/v1.1.10.10/LICENSE"
+      },
+      {
+        "file": "396e5ff756e04da010095628e43cdc9c0b49bd4fd9319e7c52423db6d3cdf00c.txt",
+        "sha256": "396e5ff756e04da010095628e43cdc9c0b49bd4fd9319e7c52423db6d3cdf00c",
+        "source": "https://raw.githubusercontent.com/xerial/snappy-java/v1.1.10.10/NOTICE"
       }
     ]
   }

@@ -1,40 +1,106 @@
-# Local and remote file transfer
+# Copy an orders file and verify its contents
 
 [简体中文](../../zh-CN/examples/file-transfer.md) · [Manual home](../README.md)
 
-**Verification: tested in this round’s isolated environment within the scope below.**
+Copy a CSV to a separate directory and verify contents, hashes and source preservation.
 
-Fields: [File transfer and archives](../user-guide/plugins/file-transfer.md).
+## Audience and outcome
 
-## Prepare, configure and run
+For users delivering files such as CSV reports, with integrity, source retention and existing-target handling.
 
-Prepare two independent LOCAL file resources and orders.csv under the source root:
+## Before you start
 
+Complete the [shared preparation](../examples.md), then prepare the resources below.
+
+| Resource | Requirement |
+| --- | --- |
+| Directories | Two new directories on the executing Worker for LOCAL source and target roots; the target starts empty. |
+
+## Configuration
+
+| Field / setting | Example value |
+| --- | --- |
+| Source / target path | . / . |
+| Pattern / recursion | *.csv / disabled |
+| First copy: overwrite / delete source | Enabled / disabled; target starts empty |
+
+## Steps
+
+### 1. Prepare the CSV and resources
+
+Save UTF-8 orders.csv in the source directory:
 ```csv
 id,amount
 1,100
 2,200
 3,300
 ```
+Create two LOCAL file resources rooted at the source and target directories on the execution node.
 
-Choose source/target resources, sourcePath=`.`, targetPath=`.`, filePattern=`*.csv`, recursive=false, overwrite=false and deleteSource=false. After running, compare target filename, bytes and SHA-256 and confirm the source remains.
+### 2. Configure and publish the transfer
 
-A repeat may fail because the target exists: this tests overwrite policy. Use fresh targets for overwrite/archive variants. SFTP/S3 need separate services, identities, buckets/directories and write verification; LOCAL success does not establish those protocols.
+Create FILE_TRANSFER using the two resources and the relative paths/options in the table. Save/publish and run manually.
 
-## Scope verified this round
+### 3. Check actual files
 
-This round transferred a UTF-8 sample CSV through isolated LOCAL, SFTP, FTP and S3-compatible services and verified matching SHA-256 on readback. Checks covered preserving existing targets with overwrite=false, FTP write denial for a read-only account and S3 rejection of incorrect keys. Large files, archive limits, resumable transfers and other vendors remain separate.
+Expect orders.csv in the target and the source still present. Use Get-FileHash -Algorithm SHA256 on Windows or sha256sum on Linux for both files. Compare hashes and inspect the target header plus three data rows.
 
-## Finish
+### 4. Check existing-target behavior
 
-Retain inputs, definition versions, trigger/instance IDs, sanitized logs and target checks. Stop only processes/schedules owned by this case; other environments and historical evidence are not cleanup targets.
+Keep the target file, change `overwrite` to false, save/publish and run again. Expect SUCCESS with `fileTransfer.uploadedFileCount=0` and `fileTransfer.skippedFileCount=1`; the target hash is unchanged and the source remains. Success here means a configured skip, not a second upload.
 
-## Real page examples
+Use separate directory copies to try replacement or archiving, then check the resulting contents.
 
-Exercised LOCAL transfer configuration, not proof of SFTP/S3 acceptance.
+### 5. Optional: use a remote protocol
 
-![Exercised LOCAL transfer configuration, not proof of SFTP/S3 acceptance.](../images/manual/transfer-editor.png)
+SFTP, FTP or S3-compatible resources require dedicated accounts and paths/buckets. Repeat copying, read-back hashes and permission checks with those resources.
 
-Successful transfer from an isolated S3-compatible service to LOCAL, captured on 2026-10-26. The downloaded file was separately verified by SHA-256; this screenshot shows execution status and does not replace content verification.
+## SFTP delivery extension
 
-![Actual successful S3-compatible-to-LOCAL execution and matching details.](../images/manual/s3-transfer-run.png)
+Prepare the restricted Linux account, verified host key and writable directory from the [SSH tutorial](remote-script.md). Add an SFTP file resource using your own host, port, account, private-key file path and host key. Set its root to the dedicated writable directory and test the connection.
+
+| Field / setting | Value for this example |
+| --- | --- |
+| Source resource / path | The earlier LOCAL resource / `.` |
+| Target resource / path | The new SFTP resource / `delivery` |
+| Match / recursive | `*.csv` / off |
+| Remote publish mode | Temporary file followed by rename (`TEMP_RENAME`) |
+| Overwrite / delete source | On / off; remote destination initially empty |
+
+Run the task, then read back `delivery/orders.csv` over the trusted SFTP session or run `sha256sum` remotely. Its SHA-256 and three order rows must match the source, which remains in place. Rename support depends on the server and directory permissions. This path uses Ubuntu 24.04 / OpenSSH; FTP, S3, permission rejection, large files and archive behavior require separate exercises.
+
+## Expected results
+
+| Check | Expected value |
+| --- | --- |
+| Target contents | One orders.csv with matching header and 3 data rows |
+| Integrity and source retention | Matching SHA-256; source still exists |
+| First copy | uploadedFileCount=1, skippedFileCount=0 |
+| Existing target with overwrite=false | SUCCESS, uploadedFileCount=0, skippedFileCount=1; target hash unchanged |
+
+## Common failures
+
+| Symptom | Action |
+| --- | --- |
+| Target already exists | Review overwrite policy rather than enabling source deletion or overwrite merely to get success. |
+| Remote denial | Check resource identity and directory/bucket permissions; saving configuration is not successful transfer. |
+
+## Safety and cleanup
+
+Remove only the tutorial-created directories/resources once no longer needed, preserving unrelated files.
+
+## Version and limitations
+
+Applies to 1.0.0 LOCAL-to-LOCAL and LOCAL-to-SFTP copying, SHA-256 checks and skipping an existing local target. The SFTP path uses Ubuntu 24.04 / OpenSSH and temporary-file rename. SUCCESS can mean a configured skip; inspect upload/skip counts. FTP, S3, replacing existing contents, archives and large files are separate extensions.
+
+## Interface reference
+
+These are actual interface references for this capability. Names and instance IDs may differ from your run; follow the steps and expected results for extensions.
+
+![Interface reference: transfer-editor](../images/manual/transfer-editor.png)
+
+## Related pages
+
+- [File transfer and archives](../user-guide/plugins/file-transfer.md)
+
+- [LOCAL, FTP, SFTP and S3 file resources](../user-guide/resources-file.md)

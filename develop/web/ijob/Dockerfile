@@ -20,6 +20,7 @@ FROM build-base AS build
 WORKDIR /build
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY patches ./patches
+COPY packages/ui-directives ./packages/ui-directives
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build

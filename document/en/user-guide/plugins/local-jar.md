@@ -1,44 +1,76 @@
 # Trusted Local JAR plugins
 
-[简体中文](../../../zh-CN/user-guide/plugins/local-jar.md) · [Manual home](../../README.md)
+[简体中文](../../../zh-CN/user-guide/plugins/local-jar.md) · [Manual](../../README.md)
 
-## Entry and prerequisites
+Applies to **1.0.0**. Tasks → New/Edit → plugin `LOCAL_JAR`.
 
-Tasks → New/Edit → plugin `LOCAL_JAR`. Prepare the resources, permissions and execution-node dependencies listed below. See [Tasks](../tasks.md) for shared timeout/retry/publication behavior.
+## Before you start
 
-## Fields and behavior
+Use ADMIN to create, configure and save tasks. ADMIN or OPERATOR can execute published definitions; ADMIN reads detailed logs and input/output variables. Resources must be enabled and reachable from the execution node. See [tasks](../tasks.md) for common timeout, retry and version settings, and the [permission matrix](../users-audits.md).
 
-| Page field/action | Purpose and rules |
+## Field reference
+
+“Default” means the **initial value of a new 1.0.0 form**. An empty value means the field has not been filled in; required fields still need a value. Visibility follows the selected branch; conditional requirements apply only to that branch.
+
+### Artifact and parameters
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| JAR filename | Required | Empty | Always | Current task version |
+| SHA-256 checksum | Required | Empty | Always | Current task version |
+| Entry class | Required | Empty | Always | Current task version |
+| Business parameters | Defined by the extension contract | Empty object | Always | Current task version |
+| File size | Automatically verified | None | After saving | Current task version |
+| Artifact version | Automatically verified | None | After saving | Current task version |
+| SPI version | Automatically verified | 1 | After saving | Current task version |
+
+- **JAR filename**: Name an actual JAR in the extension directory, without a path.
+- **SHA-256 checksum**: Verify the exact bytes of the reviewed JAR.
+- **Entry class**: Provide the fully qualified entry class implementing the extension interface.
+- **Business parameters**: Provide JSON business parameters according to the extension contract. New forms start with an empty object; the root may be an object, array, string, number, boolean or null.
+- **File size**: Actual artifact size recorded by artifact verification.
+- **Artifact version**: Extension implementation version recorded from artifact metadata.
+- **SPI version**: Interface protocol version verified from the artifact; the current protocol is 1.
+
+## Behavior and boundaries
+
+- Business parameters use the userConfig key.
+- The JAR filename has no path; SHA-256 consists of 64 hexadecimal characters.
+- The API and Worker both require the same reviewed artifact; the page does not upload JAR files.
+- Configuration protocol 1; host SPI Maven version 1.0.0. Configuration limits are 256 KiB, depth 64 and 10000 nodes.
+- Extensions are not an untrusted-code sandbox; do not bundle platform classes.
+
+## Typical configuration: Run a trusted HelloTask extension
+
+Fill in the form below, replacing resource names with your enabled resources. This is a configuration guide, not importable JSON. Follow the tutorial linked below for data preparation and execution.
+
+Compile the actual HelloTask artifact from the linked tutorial, deploy it to the API and target Worker, and enter its verified SHA-256. Use an empty object for this example's business parameters.
+
+| Setting | Value |
 | --- | --- |
-| Configuration format / SPI protocol (validated automatically) | New-namespace configuration/protocol use 1; SPI Maven version is 1.0.0. |
-| JAR filename / File size / SHA-256 checksum | Deploy the reviewed artifact to the API and Worker artifact directories, then enter its filename and actual SHA-256. The page does not upload files or accept paths; the server validates size. |
-| Artifact version / Entry class | Record implementation version and entry class implementing this SPI. |
-| Business parameters | Enter names, types and values in the parameter editor; objects and arrays can be edited level by level. The plugin defines the schema and validation. Stored JSON does not require pasting a complete task JSON blob. |
+| JAR filename | hello-job-1.0.0.jar |
+| SHA-256 checksum | Actual artifact SHA-256; placeholders are invalid |
+| Entry class | com.example.jobs.HelloTask |
+| Business parameters | {} |
 
-## Minimal example and verification
+**Expected result:** With HelloTask compiled from the linked tutorial, the instance is SUCCESS, logs contain hello-localjar and output variable rows is the number 3.
 
-Prepare the dedicated resources above, fill the form, save, then trigger manually and verify the instance, outputs and target system as described below. Saving alone does not execute.
+[Follow the full tutorial](../../examples/local-jar.md). Save the definition before running it; inspect execution state and business results separately.
 
-| Setting | Value to enter |
+## Configuration keys
+
+Use these keys when inspecting imported configuration, API payloads or errors. `[]` denotes a collection item; the form does not require you to enter key names.
+
+| Category / field | Configuration key |
 | --- | --- |
-| JAR filename | `hello-job-1.0.0.jar` (deploy to API and Worker artifact directories first) |
-| SHA-256 checksum | Enter the actual 64-digit hexadecimal checksum |
-| Entry class | `com.example.jobs.HelloTask` (must match the actual artifact) |
-| Business parameters | Enter names, types and values required by this plugin |
+| Artifact and parameters / JAR filename | `jarFile` |
+| Artifact and parameters / SHA-256 checksum | `sha256` |
+| Artifact and parameters / Entry class | `entryClass` |
+| Artifact and parameters / Business parameters | `userConfig` |
+| Artifact and parameters / File size | `jarSize` |
+| Artifact and parameters / Artifact version | `implementationVersion` |
+| Artifact and parameters / SPI version | `spiVersion` |
 
-Enable the plugin and prepare Worker directories as documented. Use the host SPI without bundling platform classes under com.ifielsc.ijob, com.ifelio.ijob or com.ifeel.ijob. Recompile old-namespace plugins and register entry/hash again. Begin with harmless code and verify outputs, stop and exceptions. Local JAR is not an untrusted-code sandbox.
+## Related pages
 
-Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
-
-## Technical key reference (optional)
-
-These stored keys help developers and troubleshooting; they are not a task JSON blob to paste into the UI. Automatically validated metadata is not a manual form input.
-
-| Page field/group | Stored keys |
-| --- | --- |
-| Configuration format / SPI protocol (validated automatically) | `formatVersion / spiVersion` |
-| JAR filename / File size / SHA-256 checksum | `jarFile / jarSize / sha256` |
-| Artifact version / Entry class | `implementationVersion / entryClass` |
-| Business parameters | `userConfigJson` |
-
-SPI: `com.ifielsc:ijob-plugin-spi:1.0.0`; Manifest: `IJob-Plugin-Api-Version: 1`.
+[Tasks and versions](../tasks.md) · [Parameters and expressions](../../reference/variables.md) · [Scenario tutorials](../../examples.md)

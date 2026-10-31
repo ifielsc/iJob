@@ -1,55 +1,93 @@
 # Script
 
-[简体中文](../../../zh-CN/user-guide/plugins/script.md) · [Manual home](../../README.md)
+[简体中文](../../../zh-CN/user-guide/plugins/script.md) · [Manual](../../README.md)
 
-## Entry and prerequisites
+Applies to **1.0.0**. Tasks → New/Edit → plugin `SCRIPT`.
 
-Tasks → New/Edit → plugin `SCRIPT`. Prepare the resources, permissions and execution-node dependencies listed below. See [Tasks](../tasks.md) for shared timeout/retry/publication behavior.
+## Before you start
 
-## Fields and behavior
+Use ADMIN to create, configure and save tasks. ADMIN or OPERATOR can execute published definitions; ADMIN reads detailed logs and input/output variables. Resources must be enabled and reachable from the execution node. See [tasks](../tasks.md) for common timeout, retry and version settings, and the [permission matrix](../users-audits.md).
 
-| Page field/action | Purpose and rules |
+## Field reference
+
+“Default” means the **initial value of a new 1.0.0 form**. An empty value means the field has not been filled in; required fields still need a value. Visibility follows the selected branch; conditional requirements apply only to that branch.
+
+### Execution settings
+
+| Field | Required | Default | Visible when | Scope |
+| --- | --- | --- | --- | --- |
+| Execution mode | Select | LOCAL | Always | Current task version |
+| SSH resource | Conditionally required | None | SSH | Current task version |
+| Script engine | Required | SHELL | Always | Current task version |
+| Python interpreter | Conditionally required | python3 | PYTHON | Current task version |
+| Script content | Required | Empty | Always | Current task version |
+| Working directory (optional) | Optional | Empty | Always | Current task version |
+| Script encoding | Has a default | UTF-8 | Always | Current task version |
+| Output encoding | Has a default | UTF-8 | Always | Current task version |
+| Environment variables | Optional | Empty list | Always | Current task version |
+
+- **Execution mode**: LOCAL executes on the Worker; SSH executes on the resource's remote host.
+- **SSH resource**: Select an enabled SSH resource.
+- **Script engine**: LOCAL supports SHELL/BAT/POWERSHELL/PYTHON; SSH supports only SHELL/PYTHON.
+- **Python interpreter**: A single interpreter command or path without appended arguments.
+- **Script content**: Script content; supports platform variable replacement.
+- **Working directory (optional)**: For LOCAL, leave blank to use the process working directory. For SSH, use a remote absolute path starting with /. This field does not perform platform variable interpolation.
+- **Script encoding**: Character encoding of the generated script file.
+- **Output encoding**: Character encoding used to decode stdout/stderr.
+- **Environment variables**: Environment variables are not secret storage; SSH names use [A-Za-z_][A-Za-z0-9_]*. This field does not perform platform variable interpolation.
+
+## Behavior and boundaries
+
+- The complete script configuration is limited to 8 MiB.
+- The platform replaces script ${name}; escape native ${...} as $${...}.
+- A nonzero exit code means failure; logs and outputs are bounded.
+- Closing an SSH connection does not establish that the remote process has terminated.
+- Only script performs platform interpolation; env and workingDir are static configuration values.
+
+## Typical configuration: Publish a processed-row count of three
+
+Fill in the form below, replacing resource names with your enabled resources. This is a configuration guide, not importable JSON. Follow the tutorial linked below for data preparation and execution.
+
+Use a Worker with a BAT or SHELL interpreter. This script outputs text and variables; it does not process orders.
+
+| Setting | Value |
 | --- | --- |
-| Execution mode / SSH resource | LOCAL executes on the Worker/container; SSH uses an SSH resource and executes remotely. |
-| Script engine / Python interpreter | Match the execution OS; provide an installed interpreter path where needed. Use BAT on Windows and SHELL /bin/sh on Linux. |
-| Script content / Working directory / Environment variables | Script text, working directory and environment. Paths belong to the execution machine, not the browser. Store secrets in resources. |
-| Script encoding / Output encoding | Configure script-file encoding and output decoding independently; prefer UTF-8. charset is a compatibility field. |
+| Execution mode | LOCAL |
+| Script engine | Windows: BAT / Linux: SHELL |
+| Script content | See code below |
 
-## Minimal example and verification
+Script content：
 
-Prepare the dedicated resources above, fill the form, save, then trigger manually and verify the instance, outputs and target system as described below. Saving alone does not execute.
-
-| Setting | Value to enter |
-| --- | --- |
-| Execution mode | Local Worker (LOCAL) |
-| Script engine | BAT on Windows; SHELL on Linux |
-| Working directory | Leave empty for the first exercise |
-
-```bat
+```text
 echo hello-ijob
 echo __VAR__:rows=3
 exit 0
 ```
 
-Choose LOCAL/BAT for the example; on Linux use SHELL with /bin/sh and the same echo/exit commands. A nonzero exit code fails the task. stdout/stderr are recorded in instance logs with STDOUT/STDERR labels. Limits include 16 KiB per line, 256 KiB capture/log budgets, up to 1000 captured lines, 16 KiB per variable and 100 variables. `__VAR__:rows=3` creates an output variable whose value is redacted in logs. Truncated output is not a large-file store. Stop requests terminate the process but cannot undo completed writes.
+**Expected result:** The instance is SUCCESS, output variable rows is the string "3", and the logs contain hello-ijob.
 
-Replace example resources, paths and object names with values from your environment. See the [case index](../../examples.md) for actual external-protocol verification status.
+[Follow the full tutorial](../../examples/script-lifecycle.md). Save the definition before running it; inspect execution state and business results separately.
 
-## Real page examples
-
-Windows LOCAL/BAT example.
+## Actual interface
 
 ![Windows LOCAL/BAT example.](../../images/manual/script-editor.png)
 
-## Technical key reference (optional)
+## Configuration keys
 
-These stored keys help developers and troubleshooting; they are not a task JSON blob to paste into the UI. Automatically validated metadata is not a manual form input.
+Use these keys when inspecting imported configuration, API payloads or errors. `[]` denotes a collection item; the form does not require you to enter key names.
 
-| Page field/group | Stored keys |
+| Category / field | Configuration key |
 | --- | --- |
-| Execution mode / SSH resource | `executionMode / sshResourceId` |
-| Script engine / Python interpreter | `engine / interpreter` |
-| Script content / Working directory / Environment variables | `script / workingDir / env` |
-| Script encoding / Output encoding | `scriptCharset / outputCharset` |
+| Execution settings / Execution mode | `executionMode` |
+| Execution settings / SSH resource | `sshResourceId` |
+| Execution settings / Script engine | `engine` |
+| Execution settings / Python interpreter | `interpreter` |
+| Execution settings / Script content | `script` |
+| Execution settings / Working directory (optional) | `workingDir` |
+| Execution settings / Script encoding | `scriptCharset` |
+| Execution settings / Output encoding | `outputCharset` |
+| Execution settings / Environment variables | `env` |
 
-In SSH mode, closing the connection does not guarantee remote process termination. In this round, the remote fixture completed a later write after the platform reported TIMED_OUT. Remote tasks need their own deadline, idempotency and cancellation.
+## Related pages
+
+[Tasks and versions](../tasks.md) · [Parameters and expressions](../../reference/variables.md) · [Scenario tutorials](../../examples.md)

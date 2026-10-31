@@ -4,15 +4,35 @@
 
 ## Entry and workflow
 
-Approvals. Actions depend on account permissions; identify the object and environment first.
+Approvals. Approval requires ADMIN or OPERATOR, membership in the allowed-approver list, and an unprocessed, unexpired wait record. VIEWER cannot approve. Event publication and binding configuration require ADMIN. See the [role matrix](users-audits.md) for all actions.
 
 ## Configuration and actions
 
-| Field/action | Purpose and rules |
-| --- | --- |
-| `待处理/已处理` | Locate waits by state, business association and time; check the source instance first. |
-| `允许操作人` | Only identities satisfying permissions and allowedOperatorIds may act. |
-| `批准/拒绝与说明` | Actions affect real waits/downstream dependencies; record a reason and verify the terminal state. |
+Allowed approvers are maintained in the EVENT task’s approval-wait configuration, not edited on this page. Ordinary event waits have no manual approval actions.
+
+### Approval information
+
+| Display | Meaning | Shown when |
+| --- | --- | --- |
+| Status | Waiting, approved, rejected, withdrawn and timed-out records have different outcomes. | Always |
+| Instance ID | Identify the approval node; verify its origin before acting. | Always |
+| Root instance ID | Identify the complete root business run. | Always |
+| Wait started | Time when the node started waiting. | Always |
+| Deadline | The backend determines expiry and final status; an unset deadline is shown as No limit. | Always |
+
+### Decision field
+
+| Field | Required | Initial form value | Shown when | Description |
+| --- | --- | --- | --- | --- |
+| Comment (optional) | Optional | Empty | Actionable approval details | Up to 500 characters explaining the decision. |
+
+### Actions
+
+| Action | Roles | Available when | Result |
+| --- | --- | --- | --- |
+| Approve | ADMIN / OPERATOR | Account is an allowed approver; record is still waiting and unexpired | The approval node succeeds; downstream work follows job policy. |
+| Reject | ADMIN / OPERATOR | Account is an allowed approver; record is still waiting and unexpired | The approval node fails; downstream work follows job policy. |
+| Refresh status | ADMIN / OPERATOR | The account can access this record | Verify the actual backend outcome before repeating an uncertain decision. |
 
 ## Use and verify
 

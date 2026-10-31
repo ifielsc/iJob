@@ -31,7 +31,7 @@ config_uri=$(file_uri "$data_home/application.properties")
 (
     cd -- "$data_home/runtime"
     exec env IJOB_PLATFORM_DB="$vendor" nohup "$java" "-Dijob.native.home=$data_home" \
-        -jar "$bundle/ijob-starter-1.0.0.jar" --spring.profiles.active=release,native-background \
+        "-Dloader.path=$(file_uri "$data_home/drivers/")" -jar "$bundle/ijob-starter-1.0.0.jar" --spring.profiles.active=release,native-background \
         "--spring.config.additional-location=$config_uri" "--app.web.directory=$bundle/web-dist" \
         "--logging.config=$(file_uri "$bundle/support/logging-native.xml")" \
         "--ijob.native.log-directory=$data_home/logs" "--ijob.native.log-session=$session"

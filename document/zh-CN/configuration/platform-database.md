@@ -23,10 +23,10 @@ SQL、ETL、PUSH 等插件访问的 **业务数据库** 在页面“资源 → �
 | spring.datasource.url | 指向共享平台库；主机地址必须从该节点或容器可达。容器 localhost 指容器自身。 |
 | spring.datasource.username / password | 每个节点的数据库连接身份；需具有平台要求的权限，并连接同一个平台 schema。不是网页登录账号。 |
 | spring.datasource.hikari.maximum-pool-size | 每节点连接池上限；数据库总容量需考虑所有节点的合计及其他连接。 |
-| 数据库产品、驱动、平台/Flyway/default schema | 与连接和安装元数据保持一致；不能只改 URL 来更换产品或迁移数据。 |
+| 数据库产品、驱动、平台 / Flyway / 默认 schema | 与连接和安装元数据保持一致；不能只改 URL 来更换产品或迁移数据。 |
 
 新安装向导默认 STANDALONE，选择服务数据库不会自动开启集群。已有平台库改地址先区分“同一库的新地址”和“新库/跨产品迁移”，后者需单独迁移/恢复方案。按[备份恢复](../operations/backup-restore.md)保留原数据库、配置和 AES 密钥，变更后检查启动迁移、登录、旧定义/历史及无副作用任务。
 
 ## 与启动入口的关系
 
-instance.conf 只定位程序包、home、语言和安装方式；数据库参数仍留在 home/application.properties。settings/check-settings 的 54 项检查不等于数据库连通或集群一致性验收，服务数据库是否可用要以启动和实际运行验证为准。
+instance.conf 只定位程序包、home、语言和安装方式；数据库参数仍留在 home/application.properties。settings/check-settings 的 54 项检查不等于数据库连通或集群一致性检查，服务数据库是否可用要以启动和实际运行验证为准。
