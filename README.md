@@ -6,7 +6,7 @@ iJob 是一个任务调度与执行平台，提供任务配置、可视化作业
 
 ## 发布状态
 
-**1.0.0 已作为首个正式版本发布。** 从 [GitHub Releases](https://github.com/ifielsc/iJob/releases/tag/v1.0.0) 下载 Native/Docker 安装包、项目源码、匹配的第三方源码和 SHA-256 校验文件。请同时阅读发布说明中的验证范围与已知风险。官网：[https://ijob.ifielsc.com](https://ijob.ifielsc.com)（暂未上线）。源码 ZIP 是构建输入，不是可直接启动的完整运行包。
+**1.0.0 已作为首个正式版本发布。** 从 [GitHub Releases](https://github.com/ifielsc/iJob/releases/tag/v1.0.0) 下载 Native/Docker 安装包、项目源码、匹配的第三方源码和 SHA-256 校验文件。请同时阅读发布说明中的验证范围与已知风险。官网：[https://ijob.ifielsc.com](https://ijob.ifielsc.com)。源码 ZIP 是构建输入，不是可直接启动的完整运行包。
 
 暂不提供独立在线演示，也未安排开放时间。可以通过[场景教程](document/zh-CN/examples.md)和手册中的真实界面截图了解使用流程。
 
