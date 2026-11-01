@@ -2,7 +2,7 @@
 
 [English](../en/releases.md) · [手册首页](README.md)
 
-本文档对应 **iJob 1.0.0**。当前公开下载尚未开放；文档内容与正式发行状态分别标明，不根据文档更新推断新的产品版本。
+本文档对应 **iJob 1.0.0**。首个正式版本已在 [GitHub Releases](https://github.com/ifielsc/iJob/releases/tag/v1.0.0) 发布；文档内容与正式发行状态分别标明，不根据文档更新推断新的产品版本。
 
 ## 1.0.0 功能范围
 
@@ -16,7 +16,7 @@
 
 功能的条件与限制以对应页面为准。产品版本 1.0.0、任务/作业定义版本、Local JAR 协议 1 和正式数据库安装迁移 V1 分别管理。
 
-## 1.0.0 本地候选说明（2026-11-01，尚未发布）
+## 1.0.0 首个正式版本（2026-11-01）
 
 首次正式安装从空数据库 V1 开始，不再提供将开发期旧库转换为 V1 的 `ijob-migration-tool`。不要把旧库直接交给当前程序启动。MySQL Connector/J、Oracle JDBC/NLS 改由部署者合法取得并放入实例外部驱动目录；PostgreSQL、SQL Server、SQLite 驱动随包提供。配置方式见[平台数据库](configuration/platform-database.md)。
 
@@ -30,15 +30,15 @@ Native 需要部署者准备 Java 21 和对应操作系统依赖；Docker 包面
 | `ijob-1.0.0-docker.zip` / `ijob-1.0.0-docker.tar.gz` | Docker 程序、模板及离线镜像；任选一种归档格式 |
 | `ijob-1.0.0-source.zip` | 本版本项目源码，不能直接代替运行包 |
 | `ijob-1.0.0-third-party-sources.zip` | 匹配二进制的适用第三方对应源码、补丁和构建资料 |
-| `SHA256SUMS.txt` | 上述六份归档的 SHA-256 |
+| `SHA256SUMS.txt` | 六份归档、发布说明和发行清单的 SHA-256 |
 
-安装包已包含双语手册和许可告知。二进制与匹配的第三方源码必须从同一发行下载位置取得，第三方源码不另收费。公开下载尚未开放，本页不提供占位下载链接。
+安装包已包含双语手册和许可告知。二进制与匹配的第三方源码必须从同一发行下载位置取得，第三方源码不另收费。从 [v1.0.0 Release](https://github.com/ifielsc/iJob/releases/tag/v1.0.0) 获取配套的九个交付文件。
 
 下载后在 Linux 使用 `sha256sum --check --ignore-missing SHA256SUMS.txt`（只核对已下载的文件），或在 PowerShell 使用 `Get-FileHash -Algorithm SHA256 <下载文件>` 与清单逐项比对，再解压使用；不要混用不同候选的同名文件。SHA-256 校验用于检查字节一致性，不是数字签名。
 
 ### 问题反馈与安全漏洞
 
-源码仓库已公开。普通问题、一般缺陷和功能建议使用 [GitHub Issues](https://github.com/ifielsc/iJob/issues)；安全漏洞使用已启用的 [GitHub 私密漏洞报告](https://github.com/ifielsc/iJob/security/advisories/new)，提交报告需要登录 GitHub。不另设报告邮箱，正式安装包尚未发布。
+源码仓库已公开。普通问题、一般缺陷和功能建议使用 [GitHub Issues](https://github.com/ifielsc/iJob/issues)；安全漏洞使用已启用的 [GitHub 私密漏洞报告](https://github.com/ifielsc/iJob/security/advisories/new)，提交报告需要登录 GitHub。不另设报告邮箱；正式安装包、匹配的第三方源码和校验文件见 [v1.0.0 Release](https://github.com/ifielsc/iJob/releases/tag/v1.0.0)。
 
 普通反馈请说明版本、操作系统、部署方式、复现步骤、预期与实际结果，并提供脱敏日志。安全漏洞请在仓库 **Security and quality → Report a vulnerability** 中私密提交受影响版本、影响范围与复现方法；不要将漏洞细节发到公开 Issue、PR 或评论，也不要提交真实密码、令牌、私钥、数据库或完整配置。如果报告按钮尚不可见，请不要改用公开 Issue 披露漏洞细节。
 
@@ -46,9 +46,9 @@ Native 需要部署者准备 Java 21 和对应操作系统依赖；Docker 包面
 
 截至 2026-11-01 的本地审查仍有已记录的漏洞扫描项：backend/Agent 各 31 条 Ubuntu 包级命中（27 MEDIUM、4 LOW，跨镜像去重 24 个 CVE），当时官方可用更新没有给出修复版本。它们属于镜像交付范围，不能因宿主由用户准备而忽略；web 镜像本次扫描为 0 命中。
 
-Spring MVC 的 CVE-2026-47884、CVE-2026-47890 原始扫描等级为 CRITICAL；当前路由断言未发现相关 XSLT/隐式视图或 SSE 片段功能，但这不是修复。MyBatis 内嵌 OGNL 的 CVE-2026-113730 为 MEDIUM；尝试升级 MyBatis 后与现有 PageHelper 分页出现实际兼容失败，因此保留已验证版本与风险记录。不能将这些项表述为已修复或“零漏洞”。扫描使用 Trivy 0.76.1、2026-10-31 更新的数据库，正式发布前需核对时效。
+Spring MVC 的 CVE-2026-47884、CVE-2026-47890 原始扫描等级为 CRITICAL；当前路由断言未发现相关 XSLT/隐式视图或 SSE 片段功能，但这不是修复。MyBatis 内嵌 OGNL 的 CVE-2026-113730 为 MEDIUM；尝试升级 MyBatis 后与现有 PageHelper 分页出现实际兼容失败，因此保留已验证版本与风险记录。不能将这些项表述为已修复或“零漏洞”。发行审查使用 Trivy 0.76.1、2026-11-01 更新的漏洞库；Java 识别索引复用尚未到 NextUpdate 的 2026-10-31 已验证索引。详细扫描范围见正式发布说明。
 
-本轮证据覆盖与未执行范围见[候选交付检查](development/release-checklist.md)。未把打包跳过测试、旧环境结果或未运行的 Full/扩展矩阵记作本轮通过。正式发行前仍须核对实际制品与提交、远端 CI 和验收证据的对应关系，并在上传后验证真实下载链接。源码仓库已公开、反馈入口已启用；仓库公开和 CI 通过不代表成品包已发布，当前成品包下载尚未开放。
+发行冻结于 `c1054599f1559afc5d67579feeeaa8e91066906a`。完整 Basic CI 在 `01c7b39` 通过（1683 项后端/Agent 通过、2 项条件跳过），之后仅七个 Markdown 文件变化；程序和构建输入相同，运行字节保持一致。发行提交的仓库检查通过，但未在该提交重跑完整 Basic、Full 或扩展矩阵。九个交付文件已从匿名下载入口完整回读并核对 SHA-256。归档内文档保留冻结提交的发布前状态，当前状态以 [v1.0.0 Release](https://github.com/ifielsc/iJob/releases/tag/v1.0.0) 为准。维护核对流程见[候选交付检查](development/release-checklist.md)。
 
 ## 文档更新：2026-10-31
 

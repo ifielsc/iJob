@@ -4,7 +4,7 @@
 
 ## 程序包获取状态
 
-当前尚未开放公开下载。以下指南适用于已经取得完整程序包的用户；请先查看[版本说明与获取状态](releases.md)，再选择安装方式。
+从 [v1.0.0 Release](https://github.com/ifielsc/iJob/releases/tag/v1.0.0) 下载完整 Native 或 Docker 包及校验文件；核对 SHA-256 后再解压。请先阅读[版本说明](releases.md)中的验证范围与已知风险，再选择安装方式。
 
 ## 先选择安装方式
 

@@ -4,7 +4,7 @@
 
 ## Bundle availability
 
-Public downloads are not available yet. These guides apply when you already have a complete bundle. Read the [release and availability notes](releases.md) before choosing an installation method.
+Download the complete Native or Docker bundle and checksums from the [v1.0.0 Release](https://github.com/ifielsc/iJob/releases/tag/v1.0.0). Verify SHA-256 before extraction. Read the [release notes](releases.md) for validation scope and known risks before choosing an installation method.
 
 ## Choose an installation method
 
