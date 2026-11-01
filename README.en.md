@@ -6,7 +6,7 @@ iJob is a task scheduling and execution platform for task configuration, visual 
 
 ## Release status
 
-**The official 1.0.0 release is in preparation. Binary downloads are not available yet.** The official website address, GitHub Release and public feedback links will be added when available. A source ZIP is build input, not a ready-to-run bundle. A successful local build does not establish release acceptance.
+**The official 1.0.0 release is in preparation. Binary downloads are not available yet.** Official website: [https://ijob.ifielsc.com](https://ijob.ifielsc.com) (not live yet). GitHub Release and public feedback links will be added when available. A source ZIP is build input, not a ready-to-run bundle. A successful local build does not establish release acceptance.
 
 An independent online demo is not currently offered, and no opening date is scheduled. Explore the [scenario tutorials](document/en/examples.md) and actual interface screenshots in the manual.
 
