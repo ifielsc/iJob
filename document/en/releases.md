@@ -38,7 +38,7 @@ On Linux, run `sha256sum --check --ignore-missing SHA256SUMS.txt` to verify the 
 
 ### Feedback and security vulnerabilities
 
-The channels are decided: **GitHub Issues** for general questions, ordinary bugs and feature requests; **GitHub Private vulnerability reporting** for security vulnerabilities, with no separate reporting mailbox. The repository is not public yet. These entry points will become available only after publication and activation of the respective features.
+The source repository is public. Use [GitHub Issues](https://github.com/ifielsc/iJob/issues) for general questions, ordinary bugs and feature requests, and the enabled [GitHub private vulnerability reporting](https://github.com/ifielsc/iJob/security/advisories/new) for security vulnerabilities. Sign in to GitHub to submit a report. No separate reporting mailbox is used; official runtime packages have not been released.
 
 For general feedback, include the version, operating system, deployment method, reproduction steps, expected versus actual results and redacted logs. Submit vulnerabilities privately through **Security and quality → Report a vulnerability**, including affected versions, impact and reproduction. Do not post vulnerability details in public issues, pull requests or comments, or submit real passwords, tokens, private keys, databases or complete configurations. If the reporting button is absent, do not disclose vulnerability details in a public issue instead.
 
@@ -48,7 +48,7 @@ The local review as of 2026-11-01 retains known scan findings: 31 Ubuntu package
 
 Spring MVC CVE-2026-47884 and CVE-2026-47890 retain their raw CRITICAL scanner ratings. Current route assertions found no related XSLT/implicit views or SSE fragment features; that is not a patch. MyBatis shaded OGNL CVE-2026-113730 is MEDIUM. A MyBatis upgrade produced an actual pagination incompatibility with the current PageHelper, so the verified version and risk record remain. Do not describe these findings as fixed or claim zero vulnerabilities. The scan used Trivy 0.76.1 and databases updated on 2026-10-31; check freshness before formal publication.
 
-See [candidate checks](development/release-checklist.md) for evidence and unexecuted scope. Packaging skips, historical environments and unexecuted Full/expanded matrices are not passes in this run. Before first publication, verify that the actual assets match their commit, remote CI and acceptance evidence; activate and verify the chosen GitHub Issues/private reporting channels, then verify real download links after upload. Private commits, pushes and successful CI do not imply public availability or a release. Public downloads are not open yet.
+See [candidate checks](development/release-checklist.md) for evidence and unexecuted scope. Packaging skips, historical environments and unexecuted Full/expanded matrices are not passes in this run. Before the formal release, verify that the actual assets match their commit, remote CI and acceptance evidence, then verify real download links after upload. The source repository and reporting channels are public and enabled; a public repository and successful CI do not mean runtime packages have been released. Runtime downloads are not open yet.
 
 ## Documentation update: 2026-10-31
 

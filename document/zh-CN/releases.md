@@ -38,7 +38,7 @@ Native 需要部署者准备 Java 21 和对应操作系统依赖；Docker 包面
 
 ### 问题反馈与安全漏洞
 
-反馈方案已确定：普通问题、一般缺陷和功能建议使用 **GitHub Issues**；安全漏洞使用 **GitHub Private vulnerability reporting（私密漏洞报告）**，不另设报告邮箱。仓库目前尚未公开，入口须在正式公开且对应功能启用后才能使用。
+源码仓库已公开。普通问题、一般缺陷和功能建议使用 [GitHub Issues](https://github.com/ifielsc/iJob/issues)；安全漏洞使用已启用的 [GitHub 私密漏洞报告](https://github.com/ifielsc/iJob/security/advisories/new)，提交报告需要登录 GitHub。不另设报告邮箱，正式安装包尚未发布。
 
 普通反馈请说明版本、操作系统、部署方式、复现步骤、预期与实际结果，并提供脱敏日志。安全漏洞请在仓库 **Security and quality → Report a vulnerability** 中私密提交受影响版本、影响范围与复现方法；不要将漏洞细节发到公开 Issue、PR 或评论，也不要提交真实密码、令牌、私钥、数据库或完整配置。如果报告按钮尚不可见，请不要改用公开 Issue 披露漏洞细节。
 
@@ -48,7 +48,7 @@ Native 需要部署者准备 Java 21 和对应操作系统依赖；Docker 包面
 
 Spring MVC 的 CVE-2026-47884、CVE-2026-47890 原始扫描等级为 CRITICAL；当前路由断言未发现相关 XSLT/隐式视图或 SSE 片段功能，但这不是修复。MyBatis 内嵌 OGNL 的 CVE-2026-113730 为 MEDIUM；尝试升级 MyBatis 后与现有 PageHelper 分页出现实际兼容失败，因此保留已验证版本与风险记录。不能将这些项表述为已修复或“零漏洞”。扫描使用 Trivy 0.76.1、2026-10-31 更新的数据库，正式发布前需核对时效。
 
-本轮证据覆盖与未执行范围见[候选交付检查](development/release-checklist.md)。未把打包跳过测试、旧环境结果或未运行的 Full/扩展矩阵记作本轮通过。首次公开前仍须核对实际制品与提交、远端 CI 和验收证据的对应关系，启用并验证已确定的 GitHub Issues/私密漏洞报告入口，并在上传后验证真实下载链接。私有提交、推送和 CI 通过不代表已经公开或发布；当前公开下载尚未开放。
+本轮证据覆盖与未执行范围见[候选交付检查](development/release-checklist.md)。未把打包跳过测试、旧环境结果或未运行的 Full/扩展矩阵记作本轮通过。正式发行前仍须核对实际制品与提交、远端 CI 和验收证据的对应关系，并在上传后验证真实下载链接。源码仓库已公开、反馈入口已启用；仓库公开和 CI 通过不代表成品包已发布，当前成品包下载尚未开放。
 
 ## 文档更新：2026-10-31
 

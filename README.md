@@ -6,7 +6,7 @@ iJob 是一个任务调度与执行平台，提供任务配置、可视化作业
 
 ## 发布状态
 
-**1.0.0 正在准备正式发布，成品包下载尚未开放。** 官网：[https://ijob.ifielsc.com](https://ijob.ifielsc.com)（暂未上线）。GitHub Release 和公共反馈入口将在可用后补充。源码 ZIP 是构建输入，不是可直接启动的完整运行包；本地构建成功也不代表已通过正式发布验收。
+**1.0.0 正在准备正式发布，成品包下载尚未开放。** 官网：[https://ijob.ifielsc.com](https://ijob.ifielsc.com)（暂未上线）。GitHub Release 下载链接将在正式发行后补充。源码 ZIP 是构建输入，不是可直接启动的完整运行包；本地构建成功也不代表已通过正式发布验收。
 
 暂不提供独立在线演示，也未安排开放时间。可以通过[场景教程](document/zh-CN/examples.md)和手册中的真实界面截图了解使用流程。
 
@@ -53,7 +53,7 @@ python tools/distribution/build.py --target native --output ../ijob-build-001
 
 ## 问题反馈与安全
 
-普通问题、一般缺陷和功能建议使用 **GitHub Issues**；安全漏洞使用 **GitHub Private vulnerability reporting（私密漏洞报告）**，不另设报告邮箱。仓库公开且相应功能启用后开放入口，目前尚不可用。
+源码仓库已公开。普通问题、一般缺陷和功能建议使用 [GitHub Issues](https://github.com/ifielsc/iJob/issues)；安全漏洞使用已启用的 [GitHub 私密漏洞报告](https://github.com/ifielsc/iJob/security/advisories/new)，提交报告需要登录 GitHub。不另设报告邮箱，正式安装包尚未发布。
 
 普通反馈请提供版本、操作系统、部署方式、复现步骤、预期与实际结果及脱敏日志。安全漏洞请通过仓库 **Security and quality → Report a vulnerability** 私密提交，说明受影响版本、影响与复现方法；不要在公开 Issue、PR 或评论中披露漏洞细节，也不要提交真实密码、令牌、私钥、数据库或完整配置。具体流程和当前状态见 [安全报告政策](SECURITY.md)。
 

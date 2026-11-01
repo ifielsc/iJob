@@ -6,7 +6,7 @@ iJob is a task scheduling and execution platform for task configuration, visual 
 
 ## Release status
 
-**The official 1.0.0 release is in preparation. Binary downloads are not available yet.** Official website: [https://ijob.ifielsc.com](https://ijob.ifielsc.com) (not live yet). GitHub Release and public feedback links will be added when available. A source ZIP is build input, not a ready-to-run bundle. A successful local build does not establish release acceptance.
+**The official 1.0.0 release is in preparation. Binary downloads are not available yet.** Official website: [https://ijob.ifielsc.com](https://ijob.ifielsc.com) (not live yet). GitHub Release download links will be added after the packages are published. A source ZIP is build input, not a ready-to-run bundle. A successful local build does not establish release acceptance.
 
 An independent online demo is not currently offered, and no opening date is scheduled. Explore the [scenario tutorials](document/en/examples.md) and actual interface screenshots in the manual.
 
@@ -53,7 +53,7 @@ Before developing, read [AGENTS.md](AGENTS.md), the [standards index](document/s
 
 ## Feedback and security
 
-Use **GitHub Issues** for general questions, ordinary bugs and feature requests. Use **GitHub Private vulnerability reporting** for security vulnerabilities, with no separate reporting mailbox. These entry points will open once the repository is public and the respective features are enabled; they are not available yet.
+The source repository is public. Use [GitHub Issues](https://github.com/ifielsc/iJob/issues) for general questions, ordinary bugs and feature requests, and the enabled [GitHub private vulnerability reporting](https://github.com/ifielsc/iJob/security/advisories/new) for security vulnerabilities. Sign in to GitHub to submit a report. No separate reporting mailbox is used; official runtime packages have not been released.
 
 For general feedback, include the version, operating system, deployment method, reproduction steps, expected versus actual results and redacted logs. For vulnerabilities, submit privately through **Security and quality → Report a vulnerability**, describing affected versions, impact and reproduction. Do not disclose vulnerability details in public issues, pull requests or comments, or submit real passwords, tokens, private keys, databases or complete configurations. See the [security reporting policy](SECURITY.md) for the process and current status.
 
