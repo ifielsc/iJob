@@ -48,7 +48,7 @@ The local review as of 2026-11-01 retains known scan findings: 31 Ubuntu package
 
 Spring MVC CVE-2026-47884 and CVE-2026-47890 retain their raw CRITICAL scanner ratings. Current route assertions found no related XSLT/implicit views or SSE fragment features; that is not a patch. MyBatis shaded OGNL CVE-2026-113730 is MEDIUM. A MyBatis upgrade produced an actual pagination incompatibility with the current PageHelper, so the verified version and risk record remain. Do not describe these findings as fixed or claim zero vulnerabilities. The scan used Trivy 0.76.1 and databases updated on 2026-10-31; check freshness before formal publication.
 
-See [candidate checks](development/release-checklist.md) for evidence and unexecuted scope. Packaging skips, historical environments and unexecuted Full/expanded matrices are not passes in this run. First publication still needs a frozen commit, remote CI review, activation and verification of the chosen GitHub Issues/private reporting channels and verification of real download links after upload. This candidate has not been committed, pushed or published.
+See [candidate checks](development/release-checklist.md) for evidence and unexecuted scope. Packaging skips, historical environments and unexecuted Full/expanded matrices are not passes in this run. Before first publication, verify that the actual assets match their commit, remote CI and acceptance evidence; activate and verify the chosen GitHub Issues/private reporting channels, then verify real download links after upload. Private commits, pushes and successful CI do not imply public availability or a release. Public downloads are not open yet.
 
 ## Documentation update: 2026-10-31
 
